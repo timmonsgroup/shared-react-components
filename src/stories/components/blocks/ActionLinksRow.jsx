@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Link from '@mui/material/Link';
-import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
+import {Link, Divider, Box} from '@mui/material';
+import {useTheme} from '@mui/material/styles';
 
 const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
   const theme = useTheme();
+
   // eslint-disable-next-line react/prop-types
   if (!links || links.length === 0) {
     return null;
@@ -68,4 +67,4 @@ ActionLinksRow.propTypes = {
   }))
 };
 
-export  default ActionLinksRow;
+export default ActionLinksRow;

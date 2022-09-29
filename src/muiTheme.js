@@ -32,6 +32,7 @@ const theTheme = createTheme({
     justifyContent: 'space-between'
   },
   actionLinkRow: {
+    fontFamily: 'inherit',
     color: orange,
     fontSize: '12px',
     fontWeight: 'bold',
@@ -185,6 +186,7 @@ const theTheme = createTheme({
   typography: {
     fontFamily: ['"PT Sans"', 'Helvetica', 'Arial', 'sans-serif'].join(','),
     navLink: {
+      fontFamily: 'inherit',
       fontSize: '0.875rem',
       fontWeight: 'bold',
       color: `${orange} !important`,

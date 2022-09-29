@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Typography from '@mui/material/Typography';
+import {Typography} from '@mui/material';
 
 const LineItem = ({label, value, units, ...props}) => {
   return (<Typography {...props}>
