@@ -2,11 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { useTheme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
-import InfoIcon from '@mui/icons-material/Info';
-import Divider from '@mui/material/Divider';
+import { Typography, Box, Tooltip, Divider} from '@mui/material';
+import { Info } from '@mui/icons-material/Info';
 
 const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDivider }) => {
   const theme = useTheme();
@@ -18,7 +15,7 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
     if (toolTip && toolTip.length > 0) {
       return (
         <Tooltip title={toolTip} placement="top">
-          <InfoIcon sx={inspector.icon}></InfoIcon>
+          <Info sx={inspector.icon}></Info>
         </Tooltip>
       );
     }

@@ -1,11 +1,17 @@
-import ActionLinksRow from './stories/components/blocks/ActionLinksRow';
-import LineItem from './stories/components/blocks/LineItem';
-import Button from './stories/Button';
-import Thingy from './comps/Thingy';
+import { Button, Typeahead, ContainerWithCard, RequiredIndicator } from './stories';
+
+// Blocks
+import {
+  ActionLinksRow, LineItem, FlexCard, HeadingFlexRow
+} from './stories/components/blocks';
 
 export {
-  Thingy,
   Button,
+  Typeahead,
+  ContainerWithCard,
+  RequiredIndicator,
   ActionLinksRow,
   LineItem,
-}
+  FlexCard,
+  HeadingFlexRow,
+};
