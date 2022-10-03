@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "source": "src/lib.package.js",
   "main": "dist/shared-react-components.js",
@@ -64,7 +64,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4"
   },
-  "theseSHOULDbeInPeerButCantCauseReasons":{
+  "theseSHOULDbeInPeerButCantCauseReasons": {
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6"
   },
