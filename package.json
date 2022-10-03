@@ -1,6 +1,6 @@
 {
-  "name": "shared-react-components",
-  "version": "0.1.0",
+  "name": "@timmons-group/shared-react-components",
+  "version": "0.0.0",
   "private": true,
   "source": "src/lib.package.js",
   "main": "dist/shared-react-components.js",
