@@ -1,24 +1,21 @@
 {
-  "name": "shared-react-components",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@timmons-group/shared-react-components",
+  "version": "0.1.1",
+  "private": false,
   "source": "src/lib.package.js",
   "main": "dist/shared-react-components.js",
   "type": "module",
   "umd:main": "dist/shared-react-components.umd.js",
   "module": "dist/shared-react-components.mjs",
+  "files": [
+    "dist"
+  ],
   "exports": {
     "require": "./dist/shared-react-components.js",
     "default": "./dist/shared-react-components.modern.mjs"
   },
   "types": "dist/shared-react-components.d.ts",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react-router-dom": "^6.4.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -59,8 +56,8 @@
   },
   "peerDependencies": {
     "prop-types": "^15.8.1",
-    "react": ">=17.0.1",
-    "react-dom": ">=17.0.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4"
   },
@@ -69,6 +66,12 @@
     "@mui/material": "^5.10.6"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react-router-dom": "^6.4.1",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4",
     "react": ">=17.0.1",
     "react-dom": ">=17.0.1",
     "@emotion/react": "^11.10.4",
