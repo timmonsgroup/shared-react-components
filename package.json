@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": false,
   "source": "src/lib.package.js",
   "main": "dist/shared-react-components.js",
@@ -15,8 +15,7 @@
     "default": "./dist/shared-react-components.modern.mjs"
   },
   "types": "dist/shared-react-components.d.ts",
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -61,7 +60,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4"
   },
-  "theseSHOULDbeInPeerButCantCauseReasons":{
+  "theseSHOULDbeInPeerButCantCauseReasons": {
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6"
   },
