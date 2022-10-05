@@ -6,7 +6,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import FormErrorMessage from './FormErrorMessage';
-import RequiredIndicator from '../components/RequiredIndicator';
+import RequiredIndicator from './RequiredIndicator';
 
 const RadioOptions = ({ row, id, label, items, error, isRequired, ...props }) => {
   const renderRadios = () => {

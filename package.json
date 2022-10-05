@@ -4,7 +4,6 @@
   "private": false,
   "source": "src/lib.package.js",
   "main": "dist/shared-react-components.js",
-  "type": "module",
   "umd:main": "dist/shared-react-components.umd.js",
   "module": "dist/shared-react-components.mjs",
   "files": [
@@ -15,11 +14,7 @@
     "default": "./dist/shared-react-components.modern.mjs"
   },
   "types": "dist/shared-react-components.d.ts",
-  "dependencies": {
-    "@emotion/react": "^11.8.2",
-    "@emotion/styled": "^11.8.1",
-    "@mui/material": "^5.5.2"
-  },
+  "dependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -60,21 +55,19 @@
   "peerDependencies": {
     "prop-types": "^15.8.1",
     "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4"
+    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "theseSHOULDbeInPeerButCantCauseReasons": {
     "@mui/icons-material": "^5.10.6",
-    "@mui/material": "^5.10.6"
+    "@mui/material": "^5.10.6",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "react-router-dom": "^6.4.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
     "@emotion/react": "^11.10.4",

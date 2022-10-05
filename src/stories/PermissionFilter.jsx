@@ -4,9 +4,6 @@ import { Navigate } from 'react-router-dom';
 import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../helpers';
 import { useAuth } from '../hooks/useAuth';
 
-// Export the ACL constant to ease the use of this in other components
-export { ACLS } from '../constants';
-
 /**
  * Component that checks if the user has the required permissions
  * Should set ONE of the following properties permission, any, OR all
