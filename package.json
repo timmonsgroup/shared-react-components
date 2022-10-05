@@ -15,7 +15,11 @@
     "default": "./dist/shared-react-components.modern.mjs"
   },
   "types": "dist/shared-react-components.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.5.2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -71,8 +75,8 @@
     "react-router-dom": "^6.4.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
-    "react": ">=17.0.1",
-    "react-dom": ">=17.0.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.6",
