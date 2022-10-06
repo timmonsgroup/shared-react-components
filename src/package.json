@@ -14,7 +14,6 @@
     "default": "./dist/shared-react-components.modern.mjs"
   },
   "types": "dist/shared-react-components.d.ts",
-  "type":"module",
   "dependencies": {},
   "scripts": {
     "start": "react-scripts start",
@@ -56,13 +55,13 @@
   "peerDependencies": {
     "prop-types": "^15.8.1",
     "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "theseSHOULDbeInPeerButCantCauseReasons": {
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4"
-  },
-  "theseSHOULDbeInPeerButCantCauseReasons": {
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
