@@ -10,12 +10,11 @@
     "dist"
   ],
   "exports": {
-    "require": "./dist/shared-react-components.js",
-    "default": "./dist/shared-react-components.modern.mjs"
+    "require": "./dist/index.js",
+    "default": "./dist/index.js"
   },
   "types": "dist/shared-react-components.d.ts",
-  "type":"module",
-  "dependencies": {},
+  "type": "module",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -23,7 +22,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "build:babel": "rm -rf dist && NODE_ENV=production babel src/src/stories --out-dir dist --copy-files"
   },
   "eslintConfig": {
     "extends": [
@@ -54,27 +54,21 @@
     ]
   },
   "peerDependencies": {
-    "prop-types": "^15.8.1",
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
-    "@mui/icons-material": "^5.10.6",
-    "@mui/material": "^5.10.6",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4"
-  },
-  "theseSHOULDbeInPeerButCantCauseReasons": {
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react-router-dom": "^6.4.1",
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.19.3",
+    "@babel/plugin-syntax-export-default-from": "^7.18.6",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.19.3",
+    "@babel/preset-react": "^7.18.6",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
     "@storybook/addon-interactions": "^6.5.12",
@@ -85,7 +79,12 @@
     "@storybook/preset-create-react-app": "^4.1.2",
     "@storybook/react": "^6.5.12",
     "@storybook/testing-library": "^0.0.13",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "babel-plugin-add-import-extension": "^1.6.0",
     "babel-plugin-named-exports-order": "^0.0.2",
+    "babel-plugin-proptypes-require": "^1.0.0",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
     "microbundle": "^0.15.1",

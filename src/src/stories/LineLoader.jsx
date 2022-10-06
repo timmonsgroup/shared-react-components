@@ -1,6 +1,5 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Box, LinearProgress } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const LineLoader = ({ width, message, messageAlign, ...props }) => {

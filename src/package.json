@@ -3,26 +3,8 @@
   "version": "0.2.0",
   "private": false,
   "source": "src/lib.package.js",
-  "main": "dist/shared-react-components.js",
-  "umd:main": "dist/shared-react-components.umd.js",
-  "module": "dist/shared-react-components.mjs",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    "require": "./dist/shared-react-components.js",
-    "default": "./dist/shared-react-components.modern.mjs"
-  },
-  "types": "dist/shared-react-components.d.ts",
   "dependencies": {},
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build:lib": "microbundle --jsx React.createElement --jsxImportSource react --globals react/jsx-runtime=jsx --format modern,cjs",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": [
@@ -51,17 +33,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "peerDependencies": {
-    "prop-types": "^15.8.1",
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
-  },
-  "theseSHOULDbeInPeerButCantCauseReasons": {
-    "@mui/icons-material": "^5.10.6",
-    "@mui/material": "^5.10.6",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
