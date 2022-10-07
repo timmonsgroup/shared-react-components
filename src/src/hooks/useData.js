@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosRetry  from 'axios-retry';
 
-import { mockMapConfig } from '../data/mapConfig';
-import { valuesExpMockConfig } from '../data/valuesExpConfig';
-import { IS_DEBUG } from '../constants';
-
 // Use as persistent store to keep track of the state of the data and prevent refetching
 const CACHE = {};
 
@@ -23,7 +19,7 @@ export const useLayout = (type, key) => {
 export const useMapConfig = (map_key) => {
   const url = `/api/map/config/getForMap/${map_key}`;
   // If debug mode is enabled, we will use the fake data
-  const defaultValue = IS_DEBUG ? mockMapConfig : [];
+  const defaultValue = [];
   const [data, isLoading ] = useStaleData(url, defaultValue, false);
   const [mapConfig, setMapConfig] = useState([]);
   const [mapConfigLoading, setMapConfigLoading] = useState(true);
@@ -45,7 +41,7 @@ export const useConfig = (config_key) => {
 
   const url = `/api/app/config/get?configKey=${config_key}`;
   // If debug mode is enabled, we will use the fake data
-  const defaultValue = IS_DEBUG ? valuesExpMockConfig : {};
+  const defaultValue = {};
   const [data, isLoading ] = useStaleData(url, defaultValue, false);
   const [config, setConfig] = useState([]);
   const [configLoading, setConfigLoading] = useState(true);

@@ -1,12 +1,8 @@
 import * as React from 'react';
 import Button from './Button';
 import PropTypes from 'prop-types';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogActions, DialogContent, IconButton, Typography } from '@mui/material';
+import { CloseIcon } from '@mui/icons-material';
 
 /**
  * Wrapper of the Mui Dialog component

@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import {Box, TextField, Autocomplete, InputLabel} from '@mui/material';
+
+import { Box, TextField, Autocomplete, InputLabel } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
 
 /**

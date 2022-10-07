@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Link, Divider, Box} from '@mui/material';
-import {useTheme} from '@mui/material/styles';
+import { Link, Divider, Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
   const theme = useTheme();
@@ -12,7 +12,7 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
     return null;
   }
 
-  const {actionLinkRow} = theme;
+  const { actionLinkRow } = theme;
 
   const alr = themeGroup?.actionLinkRow || actionLinkRow;
 

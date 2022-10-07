@@ -1,10 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+
+import { FormControl, FormControlLabel, FormLabel, RadioGroup, Radio } from '@mui/material';
 import FormErrorMessage from './FormErrorMessage';
 import RequiredIndicator from './RequiredIndicator';
 
@@ -21,7 +18,7 @@ const RadioOptions = ({ row, id, label, items, error, isRequired, ...props }) =>
 
   return (
     <FormControl error={!!error}>
-      <FormLabel id={`${id}-radio-buttons-group-label`}><RequiredIndicator isRequired={isRequired}/>{label}</FormLabel>
+      <FormLabel id={`${id}-radio-buttons-group-label`}><RequiredIndicator isRequired={isRequired} />{label}</FormLabel>
       <RadioGroup
         row={row}
         aria-labelledby={`${id}-radio-buttons-group-label`}

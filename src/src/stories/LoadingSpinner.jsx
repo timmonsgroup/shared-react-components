@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Backdrop, Box, CircularProgress, Stack } from '@mui/material/Box';
 
 const LoadingSpinner = ({ isActive, variant, message }) => {
   return (
@@ -13,9 +10,9 @@ const LoadingSpinner = ({ isActive, variant, message }) => {
         open={isActive}
       >
         <Stack alignItems="center">
-          <CircularProgress sx={{justifySelf: 'center'}} color={variant} />
+          <CircularProgress sx={{ justifySelf: 'center' }} color={variant} />
           {message &&
-            <Box component="p" sx={{color: (theme) => theme.palette[variant].text}}>{message}</Box>
+            <Box component="p" sx={{ color: (theme) => theme.palette[variant].text }}>{message}</Box>
           }
         </Stack>
       </Backdrop>

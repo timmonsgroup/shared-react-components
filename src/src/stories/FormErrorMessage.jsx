@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormHelperText from '@mui/material/FormHelperText';
+import {FormHelperText} from '@mui/material';
 
 const FormErrorMessage = ({ error, ...props }) => {
   if (error) {

@@ -3,10 +3,7 @@ import './AppBar.css';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import MUIAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
+import { Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material/Stack';
 
 import Button from './Button';
 import UserMenu from './UserMenu';

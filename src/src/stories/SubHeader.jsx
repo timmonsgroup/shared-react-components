@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import MUIAppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 
 /**
  * if a titleRenderr is passed in, it will be used to render the title
@@ -40,12 +37,12 @@ const SubHeader = ({ title, titleRender, rightRender }) => {
   };
 
   return (
-    <MUIAppBar position="sticky" color="accent">
+    <AppBar position="sticky" color="accent">
       <Toolbar sx={{ fontWeight: '700' }} variant="dense">
         {renderTitle()}
         {renderRight()}
       </Toolbar>
-    </MUIAppBar>
+    </AppBar>
   );
 };
 

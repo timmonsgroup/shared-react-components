@@ -4,10 +4,10 @@ import Typeahead from './Typeahead';
 import ContainerWithCard from './ContainerWithCard';
 import RequiredIndicator from './RequiredIndicator';
 
-export { 
-    Button, 
+export {
+    Button,
     LineLoader,
     Typeahead,
     ContainerWithCard,
-    RequiredIndicator
+    RequiredIndicator,
 };

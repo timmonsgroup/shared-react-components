@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { useTheme } from '@mui/material/styles';
 import { Typography, Box, Tooltip, Divider} from '@mui/material';
-import { Info } from '@mui/icons-material/Info';
+import { Info } from '@mui/icons-material';
 
 const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDivider }) => {
   const theme = useTheme();
