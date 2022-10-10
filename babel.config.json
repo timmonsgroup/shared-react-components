@@ -14,7 +14,7 @@
                 "modules": false
             }
         ],
-        [ 
+        [
             "@babel/preset-react",
             {
                 "runtime": "automatic",
@@ -23,6 +23,7 @@
         ]
     ],
     "plugins": [
+        "@babel/plugin-proposal-export-default-from",
         "babel-plugin-add-import-extension",
         "babel-plugin-proptypes-require"
     ]

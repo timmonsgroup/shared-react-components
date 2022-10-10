@@ -2,7 +2,7 @@ import * as React from 'react';
 import Button from './Button';
 import PropTypes from 'prop-types';
 import { Dialog, DialogActions, DialogContent, IconButton, Typography } from '@mui/material';
-import { CloseIcon } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 
 /**
  * Wrapper of the Mui Dialog component
@@ -24,7 +24,7 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
               color: (theme) => theme.palette.grey[500],
             }}
           >
-            <CloseIcon />
+            <Close />
           </IconButton>
           {title}
         </>

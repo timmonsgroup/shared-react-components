@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Backdrop, Box, CircularProgress, Stack } from '@mui/material/Box';
+import { Backdrop, Box, CircularProgress, Stack } from '@mui/material';
 
 const LoadingSpinner = ({ isActive, variant, message }) => {
   return (

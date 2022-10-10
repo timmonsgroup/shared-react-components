@@ -1,15 +1,13 @@
-import './AppBar.css';
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material/Stack';
+import { Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material';
 
 import Button from './Button';
 import UserMenu from './UserMenu';
 
-import PermissionFilter, { ACLS } from './PermissionFilter';
-
+import PermissionFilter from './PermissionFilter';
+import { ACLS } from '../constants';
 const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, ...props }) => {
   // Helper render method to simplify the final render returned
   const renderMenu = () => {
@@ -71,6 +69,14 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, ...props }) => {
     );
   };
 
+  const logoStyle = {
+    height: '100%',
+    width: 'auto',
+    maxHeight: '44px',
+    top: '3px',
+    position: 'relative'
+  };
+
   return (
     <Box sx={{ flexGrow: 1, height: '64px' }}>
       <MUIAppBar
@@ -84,7 +90,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, ...props }) => {
               <img
                 alt="Logo"
                 src={logoUrl}
-                style={{ maxHeight: '44px', top: '3px', position: 'relative' }}
+                style={logoStyle}
                 className="appbar-logo"
               />
             ) : (
@@ -109,17 +115,9 @@ AppBar.propTypes = {
 AppBar.defaultProps = {
   navLinks: [
     { title: 'Home', href: '/' },
-    {
-      title: 'Communities',
-      href: '/communities',
-      permission: ACLS.VIEW_COMMUNITIES,
-    },
-    { title: 'Plans', href: '/pam/plans', permission: ACLS.VIEW_PLANS },
-    {
-      title: 'Explorer',
-      href: '/explorer/hvra',
-      permission: ACLS.VIEW_EXPLORER,
-    },
+    { title: 'Communities', href: '/communities' },
+    { title: 'Plans', href: '/pam/plans' },
+    { title: 'Explorer', href: '/explorer/hvra' },
   ],
   user: null,
   logoUrl:

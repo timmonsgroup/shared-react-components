@@ -8,9 +8,9 @@
   ],
   "exports": {
     ".": "./dist/index.js",
-    "./stories": "./dist/stories/index.js",
-    "./blocks": "./dist/stories/components/blocks/index.js",
-    "./hooks": "./dist/hooks/index.js"
+    "./hooks": "./dist/hooks/index.js",
+    "./helpers": "./dist/helpers/index.js",
+    "./constants": "./dist/constants.js"
   },
   "scripts": {
     "build": "react-scripts build",
@@ -19,11 +19,12 @@
     "eject": "react-scripts eject",
     "start": "start-storybook -p 6006 -s public",
     "clean": "rimraf dist",
-    "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:index",
+    "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
     "build-storybook": "build-storybook -s public",
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
-    "build:index": "set NODE_ENV=production&&babel src/src/index.js --out-dir dist --copy-files"
+    "build:helpers": "set NODE_ENV=production&&babel src/src/helpers --out-dir dist/helpers --copy-files",
+    "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js --out-dir dist --copy-files"
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +59,8 @@
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6",
+    "axios": "^0.27.2",
+    "axios-retry": "^3.3.1",
     "prop-types": "^15.8.1",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
@@ -65,7 +68,7 @@
   "devDependencies": {
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.19.3",
-    "@babel/plugin-syntax-export-default-from": "^7.18.6",
+    "@babel/plugin-proposal-export-default-from": "^7.18.6",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.19.3",
     "@babel/preset-react": "^7.18.6",
@@ -87,7 +90,6 @@
     "babel-plugin-proptypes-require": "^1.0.0",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "microbundle": "^0.15.1",
     "prop-types": "^15.8.1",
     "rimraf": "^3.0.2",
     "webpack": "^5.74.0"

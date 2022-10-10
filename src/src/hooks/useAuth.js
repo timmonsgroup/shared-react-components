@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { ACLS, AUTH_STATES } from '../constants';
 import PropTypes from 'prop-types';
-import { parseTokens, decodeTokenToJWT } from '../JWTUtil';
+import { parseTokens, decodeTokenToJWT } from '../helpers/JWTUtil';
 import axios from 'axios';
 
 const openWindow = false;
