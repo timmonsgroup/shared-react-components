@@ -1,5 +1,6 @@
 import React, {
   useState,
+  useRef,
   useEffect,
   useContext,
   createContext,
@@ -102,18 +103,17 @@ const useProvideAuth = (props) => {
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
   const [authState, dispatch] = useReducer(authReducer, initialState);
+  const intercept = useRef();
 
   // This will be run once and only once when is first called
   useEffect(() => {
-
-    axios.interceptors.request.use((request) => {
+    intercept.current = axios.interceptors.request.use((request) => {
       request.headers['Content-Type'] = 'application/json';
       const token = getActiveBearerToken();
       if (token) {
         request.headers.Authorization = `Bearer ${token}`;
       }
       dispatch({ type: ACTIONS.SET_LAST_REQUEST_TIME, time: Date.now() });
-
       return request;
     });
 
@@ -123,7 +123,7 @@ const useProvideAuth = (props) => {
 
     if (window.location.protocol !== 'https:') {
       console.error('Only fools would try to use http');
-      return false;
+      throw new Error('Only fools would try to use http');
     }
 
     // Add our listener to the window
@@ -152,20 +152,24 @@ const useProvideAuth = (props) => {
 
         dispatch({ type: ACTIONS.BEGIN_LOGIN });
 
-        return startWithRefreshToken(initInfo.refreshToken);
+        startWithRefreshToken(initInfo.refreshToken);
       }
       // The user is not logged in
       else {
         dispatch({ type: ACTIONS.FINISH_LOGOUT });
       }
-
-
     } else {
       // If the config is not valid, we will set the state to be error
       console.log('useProvideAuth: config is invalid');
       dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
     }
 
+    return () => {
+      if (intercept.current) {
+        axios.interceptors.request.eject(intercept.current);
+      }
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
 
