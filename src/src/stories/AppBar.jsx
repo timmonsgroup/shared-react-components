@@ -28,6 +28,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, ...props }) => {
   const renderButton = (item, index) => {
     const theButton = (
       <Button
+        end={true}
         sx={{
           color: (theme) => theme.palette['secondary'].text,
           borderRadius: '0px',
