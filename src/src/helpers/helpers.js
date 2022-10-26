@@ -155,7 +155,6 @@ function getStructure(field) {
     path: field.path,
     isArrayData: !!model.multiple,
     isStringId: !!model.isStringId,
-    width: field.width || 100,
     render: {
       type: field.type,
       label,
@@ -175,6 +174,14 @@ function getStructure(field) {
     })) : [];
 
     dynField.render.choices = choices;
+  }
+
+  if(field.width) {
+    dynField.width = field.width
+  }
+
+  if(field.flex) {
+    dynField.flex = field.flex
   }
 
   return dynField;

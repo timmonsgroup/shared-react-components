@@ -16,12 +16,30 @@ import { dateFormatter, processLayout } from '../helpers';
  * return {Object} - The column config for the MUIGrid component
  * @see https://mui.com/components/data-grid/columns/
  */
-const baseColumnConfig = (layoutCcolumn) => {
-  return {
-    field: layoutCcolumn.render.name,
-    headerName: layoutCcolumn.render.label,
-    headerClassName: 'cpp-grid-header',
+const baseColumnConfig = (layoutColumn) => {
+  let retCol = {
+    field: layoutColumn.render.name,
+    headerName: layoutColumn.render.label,
+    headerClassName: 'cpp-grid-header'
   };
+
+  // If the layout column has flex set then set the flex property
+  if(layoutColumn.flex != undefined && layoutColumn.flex != null) {
+    retCol.flex = layoutColumn.flex;
+
+    // Additionally if the width is set then set the minWidth property
+    if (layoutColumn.width != undefined && layoutColumn.width != null) {
+      retCol.minWidth = layoutColumn.width;
+    }
+  } else {
+    // Otherwise if the width is set then set the width property
+    if (layoutColumn.width != undefined && layoutColumn.width != null) {
+      retCol.width = layoutColumn.width;
+    }
+  }
+
+  return retCol;
+
 }
 
 /**
@@ -238,9 +256,6 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
  */
 const convertLayoutColumnToMuiColumn = (column) => {
   let ret = baseColumnConfig(column);
-
-  if (column.width)
-    ret.width = column.width;
 
   switch (column.type) {
     case 0: // Short Text
