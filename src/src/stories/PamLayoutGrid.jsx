@@ -4,6 +4,15 @@ import PropTypes from 'prop-types';
 import { ButtonGroup } from '@mui/material';
 import { DataGrid as MUIGrid, GridToolbar as MUIGridToolbar } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
+
+const defaultSX = {
+  width: '100%',
+  height: '100%',
+  minHeight: '500px',
+  minWidth: '700px',
+  flexGrow: 1
+}
 
 import Button from './Button';
 
@@ -20,11 +29,11 @@ const baseColumnConfig = (layoutColumn) => {
   let retCol = {
     field: layoutColumn.render.name,
     headerName: layoutColumn.render.label,
-    headerClassName: 'cpp-grid-header'
+    headerClassName: 'pam-grid-header'
   };
 
   // If the layout column has flex set then set the flex property
-  if(layoutColumn.flex != undefined && layoutColumn.flex != null) {
+  if (layoutColumn.flex != undefined && layoutColumn.flex != null) {
     retCol.flex = layoutColumn.flex;
 
     // Additionally if the width is set then set the minWidth property
@@ -192,7 +201,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { linkFormat }) => {
     muiGridColumn.renderCell = (params) => {
       let value = params.row[params.field]
       if (params && value) {
-        let link = linkFormat
+        let link = linkFormat;
         link = link.replace('{id}', value.id)
           .replace('${streamID}', value.streamID)
           .replace('${name}', value.name);
@@ -220,7 +229,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { linkFormat }) => {
       compareValue = 1;
     }
 
-    return compareValue
+    return compareValue;
   }
 
 }
@@ -233,7 +242,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { linkFormat }) => {
  */
 const addExternalLinkFormatting = (muiGridColumn) => { // Link
   muiGridColumn.renderCell = (params) => {
-    if(typeof params.value === 'string') {
+    if (typeof params.value === 'string') {
       if (params && params.value) {
         return (<a href={params.value} target="_blank" rel="noreferrer" >
           {params.value}
@@ -278,12 +287,27 @@ const convertLayoutColumnToMuiColumn = (column) => {
  * @param {Object} props - The props for the component
  * @param {Object} props.data - The data for the grid
  * @param {Object} props.layout - The layout for the grid
- * @param {Object} props.initialSortColumn - The initial sort column for the grid
- * @param {Object} props.initialSortDirection - The initial sort direction for the grid
- * @param {Object} props.showToolbar - Whether to show the toolbar
+ * @param {String} props.initialSortColumn - The initial sort column for the grid
+ * @param {String} props.initialSortDirection - The initial sort direction for the grid
+ * @param {Boolean} props.showToolbar - Whether to show the toolbar
+ * @param {Array} props.actions - The actions column for the grid
+ * @param {Object} props.themeGroup - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
  */
 // eslint-disable-next-line
-const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, ...props }) => {
+const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, themeGroup, ...props }) => {
+
+  const theme = useTheme();
+  // Extract the 'pamGrid' theme group from the theme
+  const { pamGrid } = theme;
+
+  // If a theme group was passed in, use that instead of the default
+  const theming = themeGroup || pamGrid;
+  // We add several safeguard values to the theme group, they will be overriden if they are defined in the theme group
+  // Not setting these values will cause the grid to render in less than ideal ways
+  const sxProps = {
+    ...defaultSX,
+    ...theming,
+  };
 
   const processedLayout = processLayout(layout);
   const layoutColumns = processedLayout && processedLayout.length ? processedLayout[0].fields : [];
@@ -320,34 +344,12 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     };
   }
 
-
-  const styleOverrides = {
-    width: '100%',
-    height: '100%',
-    minHeight: '500px',
-    minWidth: '700px',
-    flexGrow: 1,
-    '& .cpp-grid-header': { // This is the header to the grid. We set the background color to match the theme from invision
-      backgroundColor: 'rgba(43,92,146,1)',
-      color: 'white'
-    },
-    '& .MuiDataGrid-iconButtonContainer > .MuiButtonBase-root': { // Since the header is dark the icons need to be light
-      color: 'white'
-    },
-    '& .MuiDataGrid-menuIcon > .MuiButtonBase-root': { // Since the header is dark the icons need to be light
-      color: 'white'
-    },
-    '& .row-odd': { // Odd rows are slightly darker
-      backgroundColor: 'rgba(230,236,242,1)',
-    }
-  };
-
   return (
     <>
       <MUIGrid
         rows={data}
         columns={renderColumns}
-        sx={styleOverrides}
+        sx={sxProps}
         initialState={initialState}
         {...props}
         components={components}

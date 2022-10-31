@@ -22,9 +22,30 @@ LinkBehavior.propTypes = {
 };
 
 const darkBlue = '#1F4765';
+const lightBlue = '#2b5c92';
 const orange = '#D16400';
 
 const theTheme = createTheme({
+  pamGrid: {
+    width: '100%',
+    height: '100%',
+    minHeight: '500px',
+    minWidth: '700px',
+    flexGrow: 1,
+    '& .pam-grid-header': { // This is the header to the grid. We set the background color to match the theme from invision
+      backgroundColor: lightBlue,
+      color: 'white'
+    },
+    '& .MuiDataGrid-iconButtonContainer > .MuiButtonBase-root': { // Since the header is dark the icons need to be light
+      color: 'white'
+    },
+    '& .MuiDataGrid-menuIcon > .MuiButtonBase-root': { // Since the header is dark the icons need to be light
+      color: 'white'
+    },
+    '& .row-odd': { // Odd rows are slightly darker
+      backgroundColor: '#e6ecf2',
+    }
+  },
   singleFlexRow: {
     display: 'flex',
     flexDirection: 'row',
@@ -102,8 +123,8 @@ const theTheme = createTheme({
       display: 'inline-block',
     },
     featuredCard: {
-      heading: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
-      legend: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
+      heading: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
+      legend: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
     }
   },
   filterableCard: {
@@ -127,7 +148,7 @@ const theTheme = createTheme({
         marginBottom: '10px',
         marginTop: '15px',
       },
-      inner:{
+      inner: {
         padding: '0.5em',
       },
       divider: {
@@ -135,7 +156,7 @@ const theTheme = createTheme({
       }
     },
     mapSidebar: {
-      background: '#2B5C92',
+      background: lightBlue,
       selectedBackground: '#002D4C',
       text: '#ffffff',
       selectedText: '#ffffff',
@@ -162,12 +183,17 @@ const theTheme = createTheme({
       light: '#F68802',
       text: '#ffffff',
     },
+    regressive: {
+      main: orange,
+      light: '#F68802',
+      text: '#ffffff',
+    },
     tertiary: {
       main: '#939743',
       text: '#44461F',
       light: '#c5c871',
       dark: '#636915',
-      lightBlue: '#2B5C92'
+      lightBlue: lightBlue
     },
     accent: {
       main: '#FFFFFF',
@@ -313,6 +339,20 @@ const theTheme = createTheme({
           style: {
             textTransform: 'none',
             border: '2px dashed grey',
+          },
+        },
+        {
+          props: {
+            variant: 'appbar',
+          },
+          style: {
+            color: 'white',
+            borderRadius: '0px',
+            background: 'none',
+            '&.active': {
+              borderBottom: '2px solid',
+              borderColor: orange,
+            },
           },
         },
       ],

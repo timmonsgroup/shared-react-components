@@ -46,7 +46,7 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
       <DialogContent>{children}</DialogContent>
       {hideActions ? null : (
         <DialogActions>
-          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={'secondary'}></ShowHidden>
+          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={'regressive'}></ShowHidden>
           <ShowHidden hide={hideOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} />
         </DialogActions>
       )

@@ -7,8 +7,22 @@ import Button from './Button';
 import UserMenu from './UserMenu';
 
 import PermissionFilter from './PermissionFilter';
+//We are making the bold and, hopefully, correct assumption that your application will always use 'Can Sign In' as the permission string
 import { ACLS } from '../constants';
-const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, ...props }) => {
+
+/**
+ * App Bar Component for the application
+ * @param {object} props
+ * @param {object} props.user - The user object from the authState
+ * @param {function} props.onLogout - A logout function to call when the user clicks the logout button
+ * @param {function} props.onLogin - The login function to call when the user clicks the login button
+ * @param {array} props.navLinks - An array of objects to render as nav links
+ * @param {string} props.navLinks[].title - The label for the nav link
+ * @param {string} props.navLinks[].href - The path for the nav link
+ * @param {string} props.logoUrl - The url for the logo
+ * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
+ */
+const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', ...props }) => {
   // Helper render method to simplify the final render returned
   const renderMenu = () => {
     if (user) {
@@ -29,15 +43,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, ...props }) => {
     const theButton = (
       <Button
         end={true}
-        sx={{
-          color: (theme) => theme.palette['secondary'].text,
-          borderRadius: '0px',
-          background: 'none',
-          '&.active': {
-            borderBottom: '2px solid',
-            borderColor: (theme) => theme.palette['secondary'].main,
-          },
-        }}
+        variant={buttonVariant}
         disableElevation={true}
         key={index}
         href={item.href}
