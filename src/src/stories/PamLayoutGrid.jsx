@@ -6,6 +6,7 @@ import { DataGrid as MUIGrid, GridToolbar as MUIGridToolbar } from '@mui/x-data-
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
+// Default options for a somewhat sane initial render of the grid
 const defaultSX = {
   width: '100%',
   height: '100%',
@@ -326,10 +327,24 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
   let renderColumns = (layoutColumns || []).map(convertLayoutColumnToMuiColumn).filter(Boolean); // Remove any columns that are not defined
 
-  // If we have showToolbar set to true, then we add the toolbar component
-  const components = {
-    Toolbar: showToolbar ? MUIGridToolbar : null,
-  }
+  // If we have showToolbar set to true add the Toolbar component to the grid and set other props
+  const compThings = showToolbar ? {
+    components: { Toolbar: MUIGridToolbar },
+    // Four buttons appear on the MUI grid by default, we want to hide them
+    disableColumnSelector: true,
+    disableDensitySelector: true,
+    disableExportSelector: true,
+    componentsProps: {
+      toolbar: {
+        // Quick filter is a search box that appears in the toolbar
+        showQuickFilter: true,
+        quickFilterProps: { debounceMs: 500 },
+        //Disable csv and print to completely remove the "Export" button
+        csvOptions: { disableToolbarButton: false },
+        printOptions: { disableToolbarButton: true },
+      },
+    },
+  } : {};
 
   const initialState = {
     pagination: {
@@ -352,7 +367,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
         sx={sxProps}
         initialState={initialState}
         {...props}
-        components={components}
+        {...compThings}
         rowsPerPageOptions={props.rowsPerPageOptions || [10, 25, 50, 100]}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
