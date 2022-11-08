@@ -6,6 +6,10 @@ import { DataGrid as MUIGrid, GridToolbar as MUIGridToolbar } from '@mui/x-data-
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
+import Button from './Button';
+
+import { dateFormatter, processLayout } from '../helpers';
+
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
   width: '100%',
@@ -14,10 +18,6 @@ const defaultSX = {
   minWidth: '700px',
   flexGrow: 1
 }
-
-import Button from './Button';
-
-import { dateFormatter, processLayout } from '../helpers';
 
 /**
  * This is the base config for a column that is used by the MUIGrid component

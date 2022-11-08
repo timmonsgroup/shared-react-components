@@ -11,18 +11,22 @@
 import { ThemeProvider } from '@mui/material/styles';
 import { addDecorator } from '@storybook/react';
 import theme from '../src/muiTheme';
-// import { authContext } from '../src/hooks/useAuth';
+import { authContext } from '../src/hooks/useAuth';
 
 const ThemeProviderFn = (storyFn) => {
   // Creating a fake auth context so useAuth will work in certain stories
-  const auth = {authState: {
-    user: {
-      acl: null
-    }}
+  const auth = {
+    authState: {
+      user: {
+        acl: null
+      }
+    }
   };
 
   // Wrap our component with a theme and auth provider so we can pass them to our components
-  return <ThemeProvider theme={theme}>{storyFn()}</ThemeProvider>
+  return <authContext.Provider value={auth}>
+    <ThemeProvider theme={theme}>{storyFn()}</ThemeProvider>
+  </authContext.Provider>
 };
 
 addDecorator(ThemeProviderFn);
