@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 import UserMenu from './UserMenu';
@@ -9,6 +10,18 @@ import UserMenu from './UserMenu';
 import PermissionFilter from './PermissionFilter';
 //We are making the bold and, hopefully, correct assumption that your application will always use 'Can Sign In' as the permission string
 import { ACLS } from '../constants';
+
+const theTheme = {
+  appBar: {
+    logo: {
+      height: '100%',
+      width: 'auto',
+      maxHeight: '44px',
+      top: '3px',
+      position: 'relative'
+    },
+  }
+}
 
 /**
  * App Bar Component for the application
@@ -22,7 +35,14 @@ import { ACLS } from '../constants';
  * @param {string} props.logoUrl - The url for the logo
  * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
  */
-const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', ...props }) => {
+const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, ...props }) => {
+  const theme = useTheme();
+  const appBar = theme?.appBar || theTheme.appBar;
+
+  // If a theme group was passed in, use that instead of the default
+  const theming = themeGroup || appBar;
+  const logoStyle = theming?.logo || theTheme.appBar.logo;
+
   // Helper render method to simplify the final render returned
   const renderMenu = () => {
     if (user) {
@@ -74,14 +94,6 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
         />
       </PermissionFilter>
     );
-  };
-
-  const logoStyle = {
-    height: '100%',
-    width: 'auto',
-    maxHeight: '44px',
-    top: '3px',
-    position: 'relative'
   };
 
   return (

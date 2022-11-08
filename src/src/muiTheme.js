@@ -26,6 +26,15 @@ const lightBlue = '#2b5c92';
 const orange = '#D16400';
 
 const theTheme = createTheme({
+  appBar: {
+    logo: {
+      height: '100%',
+      width: 'auto',
+      maxHeight: '44px',
+      top: '3px',
+      position: 'relative'
+    },
+  },
   pamGrid: {
     width: '100%',
     height: '100%',
@@ -308,6 +317,14 @@ const theTheme = createTheme({
         {
           props: {
             variant: 'contained',
+          },
+          style: {
+            borderRadius: 28,
+          },
+        },
+        {
+          props: {
+            variant: 'user',
           },
           style: {
             borderRadius: 28,
