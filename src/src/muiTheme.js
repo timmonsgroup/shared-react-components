@@ -7,6 +7,10 @@ import { NavLink } from 'react-router-dom';
 const LinkBehavior = forwardRef(function LinkBehavior(props, ref) {
   const { href, ...other } = props;
   // Map href (MUI) -> to (react-router)
+  //If href starts with http or https, then it is an external link
+  if (href.startsWith('http')) {
+    return <a href={href} ref={ref} {...other} />;
+  }
   return <NavLink end ref={ref} to={href} {...other} />;
 });
 
