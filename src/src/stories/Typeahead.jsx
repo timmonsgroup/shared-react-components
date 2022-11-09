@@ -23,14 +23,31 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
 
   // See: https://material-ui.com/api/autocomplete/#getoptionlabel-item
   const getOptionLabel = (option) => {
-    const lab = option?.label || option?.name || 'Select an Option';
-    return lab;
+    const foundOpt = getOpObj(option);
+    return foundOpt?.label || foundOpt?.name || 'Select an Option';
   };
 
-  // See: https://material-ui.com/api/autocomplete/#getoptionselected-item
+  // See: https://material-ui.com/api/autocomplete/#isOptionEqualToValue-item
   const isOptionEqualToValue = (option, value) => {
-    return option.value === value.value;
+    const foundOpt = getOpObj(value);
+    const isEqual = foundOpt? option.id === foundOpt.id || option.value === foundOpt.value : false;
+    return isEqual;
   }
+
+  /**
+   * Helper method to get the option object can either be an object or just the value of the id
+   * @param {*} option
+   * @returns
+   */
+  const getOpObj = (option) => {
+    if (!option.id){
+      option = items.find(op => {
+        return op.id.toString() === option?.toString();
+    });
+    }
+
+    return option;
+  };
 
   return (
     <Autocomplete

@@ -10,7 +10,7 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
  * @param {*} param0
  * @returns
  */
-const SubHeader = ({ title, titleRender, rightRender }) => {
+const SubHeader = ({ title, titleRender, rightRender, color = 'accent' }) => {
   const renderTitle = () => {
     if (titleRender || title) {
       return (
@@ -37,7 +37,7 @@ const SubHeader = ({ title, titleRender, rightRender }) => {
   };
 
   return (
-    <AppBar position="sticky" color="accent">
+    <AppBar position="sticky" color={color}>
       <Toolbar sx={{ fontWeight: '700' }} variant="dense">
         {renderTitle()}
         {renderRight()}
@@ -48,6 +48,7 @@ const SubHeader = ({ title, titleRender, rightRender }) => {
 
 SubHeader.propTypes = {
   title: PropTypes.string,
+  color: PropTypes.string,
   titleRender: PropTypes.func,
   rightRender: PropTypes.func,
 };

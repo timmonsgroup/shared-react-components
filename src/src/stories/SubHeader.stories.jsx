@@ -14,6 +14,7 @@ const Template = (args) => <SubHeader {...args} />;
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  titleRender: () => <h3> Welcome to the Collaborative Planning Portal</h3>,
+  title: 'Sub Header',
+  color: 'primary',
   rightRender: () => <Button label="Add Community" color="secondary" />,
 };
