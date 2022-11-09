@@ -35,7 +35,7 @@ const theTheme = {
  * @param {string} props.logoUrl - The url for the logo
  * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
  */
-const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, ...props }) => {
+const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, ...props }) => {
   const theme = useTheme();
   const appBar = theme?.appBar || theTheme.appBar;
 
@@ -91,6 +91,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
           onLogin={onLogin}
           onLogout={onLogout}
           sx={{ position: 'absolute', left: '0px' }}
+          links={userLinks}
         />
       </PermissionFilter>
     );
@@ -129,6 +130,7 @@ AppBar.propTypes = {
   onLogout: PropTypes.func.isRequired,
   navLinks: PropTypes.array,
   logoUrl: PropTypes.string,
+  userLinks: PropTypes.array,
 };
 
 AppBar.defaultProps = {

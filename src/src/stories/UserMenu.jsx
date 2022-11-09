@@ -2,8 +2,9 @@ import React from 'react';
 import Button from './Button';
 import { Menu, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
+import Link from "@mui/material/Link";
 
-const UserMenu = ({ user, onLogin, onLogout }) => {
+const UserMenu = ({ user, onLogin, onLogout, links }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -35,8 +36,17 @@ const UserMenu = ({ user, onLogin, onLogout }) => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
+        {
+          links?.map((link, index) => {
+            return (
+              <MenuItem>
+                <Link target="_blank" href={link.href} rel="noreferrer"  >
+                  {link.title}
+                </Link>
+              </MenuItem>
+            );
+          })
+        }
         <MenuItem onClick={onLogout}>Sign Out</MenuItem>
       </Menu>
     </>);
@@ -52,6 +62,7 @@ UserMenu.propTypes = {
   user: PropTypes.shape({ name: PropTypes.string, isSignedIn: PropTypes.bool }),
   onLogin: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
+  links: PropTypes.arrayOf(PropTypes.shape({ title: PropTypes.string, href: PropTypes.string })),
 }
 
 UserMenu.defaultProps = {
