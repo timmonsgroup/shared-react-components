@@ -104,6 +104,40 @@ const useProvideAuth = (props) => {
   // authState should be exposed to the consumer as part of this hook
   const [authState, dispatch] = useReducer(authReducer, initialState);
   const intercept = useRef();
+  const [initInfo, setInitInfo] = useState(null);
+
+
+  useEffect(() => {
+    if (!initInfo) {
+      return;
+    }
+    // Check to see if the config is valid
+    if (isValidConfig(config)) {
+      // Push the config into the state, we probably dont need the full config but it contains the anonymous user info at a minimum
+      dispatch({ type: ACTIONS.SET_CONFIG, config });
+
+      // If we have a boot token we will use it to login
+      if (initInfo.bootToken) {
+        dispatch({ type: ACTIONS.BEGIN_LOGIN });
+        startWithBootToken(initInfo.bootToken, initInfo.bootUser);
+      }
+      // If we have a refresh token we will use it to get a new id and access token
+      else if (initInfo.refreshToken) {
+
+        dispatch({ type: ACTIONS.BEGIN_LOGIN });
+
+        startWithRefreshToken(initInfo.refreshToken);
+      }
+      // The user is not logged in
+      else {
+        dispatch({ type: ACTIONS.FINISH_LOGOUT });
+      }
+    } else {
+      // If the config is not valid, we will set the state to be error
+      console.error('useProvideAuth: config is invalid');
+      dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
+    }
+  }, [initInfo]);
 
   // This will be run once and only once when is first called
   useEffect(() => {
@@ -130,39 +164,19 @@ const useProvideAuth = (props) => {
     // If we login with a new tab this will receive the event
     window.addEventListener('message', handleMessage);
 
-    // get out initialization info from the session storage
-    let initInfo = {
-      refreshToken: getRefreshTokenFromSession(),
-      bootToken: getBootTokenFromSession(),
-      bootUser: getBootUserFromSession(),
-    };
+    async function boop() {
+      // get out initialization info from the session storage
+      let initInfo = {
+        refreshToken: await getRefreshTokenFromSession(),
+        bootToken: getBootTokenFromSession(),
+        bootUser: getBootUserFromSession(),
+      };
+      setInitInfo(initInfo);
 
-    // Check to see if the config is valid
-    if (isValidConfig(config)) {
-      // Push the config into the state, we probably dont need the full config but it contains the anonymous user info at a minimum
-      dispatch({ type: ACTIONS.SET_CONFIG, config });
 
-      // If we have a boot token we will use it to login
-      if (initInfo.bootToken) {
-        dispatch({ type: ACTIONS.BEGIN_LOGIN });
-        startWithBootToken(initInfo.bootToken, initInfo.bootUser);
-      }
-      // If we have a refresh token we will use it to get a new id and access token
-      else if (initInfo.refreshToken) {
-
-        dispatch({ type: ACTIONS.BEGIN_LOGIN });
-
-        startWithRefreshToken(initInfo.refreshToken);
-      }
-      // The user is not logged in
-      else {
-        dispatch({ type: ACTIONS.FINISH_LOGOUT });
-      }
-    } else {
-      // If the config is not valid, we will set the state to be error
-      console.log('useProvideAuth: config is invalid');
-      dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
     }
+    boop();
+
 
     return () => {
       if (intercept.current) {
@@ -176,6 +190,10 @@ const useProvideAuth = (props) => {
   useEffect(() => {
     checkIfStale();
   }, [authState.staleCheckState]);
+
+
+
+
   /**
    * This function is called to start the login process
    * It will open the login endpoint in a new tab
@@ -208,7 +226,7 @@ const useProvideAuth = (props) => {
     let fetchUrl = `https://${config.host}/oauth2/authorize?response_type=code&client_id=${config.clientId}&redirect_uri=${redirect}`;
 
     if (state) {
-      if(typeof state !== 'string') {
+      if (typeof state !== 'string') {
         state = JSON.stringify(state);
       }
       fetchUrl += `&state=${state}`;
@@ -243,7 +261,7 @@ const useProvideAuth = (props) => {
 
   const refresh = async () => {
 
-    const refreshToken = authState.refreshToken || getRefreshTokenFromSession();
+    const refreshToken = authState.refreshToken || await getRefreshTokenFromSession();
     if (refreshToken) {
       dispatch({ type: ACTIONS.SET_REFRESHING });
       return startWithRefreshToken(refreshToken);
@@ -271,7 +289,7 @@ const useProvideAuth = (props) => {
         if (!userActive) {
           logout_internal_soft();
         } else {
-          const refreshToken = authState.refreshToken || getRefreshTokenFromSession();
+          const refreshToken = authState.refreshToken || await getRefreshTokenFromSession();
           if (refreshToken) {
             return startWithRefreshToken(refreshToken);
           } else if (authState.bootToken) {
@@ -314,7 +332,7 @@ const useProvideAuth = (props) => {
    * @param {*} tokenData
    * @returns
    */
-  const parseTokenAndUpdateState = (tokenData, maybeUser) => {
+  const parseTokenAndUpdateState = async (tokenData, maybeUser) => {
     // Check to see if we have a token
     // If it is null or empty we will logout
     if (!tokenData || tokenData.length === 0) {
@@ -354,7 +372,7 @@ const useProvideAuth = (props) => {
       type: ACTIONS.SET_TOKEN_INFO,
       user,
       bearerToken,
-      refreshToken: refresh_token || getRefreshTokenFromSession(),
+      refreshToken: refresh_token || await getRefreshTokenFromSession(),
       permissions: maybeUser?.permissions
     });
 
@@ -416,12 +434,12 @@ const useProvideAuth = (props) => {
     const url = `${window.location.origin}/api/oauth/refresh`;
 
     try {
-      axios.post(url, refreshToken, { headers: { 'content-type': 'application/x-www-form-urlencoded' } } ).then(res => {
+      axios.post(url, refreshToken, { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(res => {
         parseTokenAndUpdateState(res.data.token, res.data.user);
       }
       ).catch(error => {
         if (error.name !== 'CanceledError') {
-          console.log('Error fetching data', error);
+          console.error('Error fetching data', error);
         }
 
         logout_internal();
@@ -533,11 +551,11 @@ const setActiveBearerToken = (bearerToken) => {
  */
 const authReducer = (nextState, action) => {
   switch (action.type) {
-  // Maintain the rest of the current state, only update the refresh token
+    // Maintain the rest of the current state, only update the refresh token
     case ACTIONS.SET_CONFIG: {
       let anonUser = action.config?.anonUser;
       if (anonUser) {
-      // Migrate from the backend model to the frontend model
+        // Migrate from the backend model to the frontend model
         anonUser = {
           id: anonUser.id,
           name: anonUser.name,
@@ -556,12 +574,6 @@ const authReducer = (nextState, action) => {
         user: anonUser || loggedOutUser,
       };
     }
-    case ACTIONS.SET_REFRESH:
-      return {
-        ...nextState,
-        refreshToken: getRefreshTokenFromSession(),
-        bootToken: getBootTokenFromSession(),
-      };
     case ACTIONS.BEGIN_LOGIN:
       return {
         ...nextState,
@@ -576,6 +588,9 @@ const authReducer = (nextState, action) => {
       //TODO: This is a weird side effect
       setActiveBearerToken(action.bearerToken);
 
+      if (action.refreshToken)
+        setRefreshTokenInSession(action.refreshToken);
+
       return {
         ...nextState,
         user: action.user,
@@ -584,7 +599,7 @@ const authReducer = (nextState, action) => {
         state: action.permissions ? AUTH_STATES.LOGGED_IN : nextState.state,
       };
     case ACTIONS.TOKEN_STALE: {
-    // We need to put a flag in the session to indicate that the token is stale and needs to be refreshed when the user performs an action
+      // We need to put a flag in the session to indicate that the token is stale and needs to be refreshed when the user performs an action
       return {
         ...nextState,
         state: AUTH_STATES.TOKEN_STALE,
@@ -638,6 +653,7 @@ const authReducer = (nextState, action) => {
         state: AUTH_STATES.ERROR,
       };
     default:
+      console.error(`Unknown action type: ${action.type}`);
       return nextState;
   }
 };
@@ -647,9 +663,18 @@ const authReducer = (nextState, action) => {
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
  */
-const getRefreshTokenFromSession = () => {
+const getRefreshTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
+
+    //If we dont have it there check the cookie
+    if (!session) {
+      let cook  = await cookieStore.get('ws:refreshToken');
+      if (cook) {
+        session = cook.value;
+      }
+    }
+
     if (session) {
       return session;
     }
@@ -713,6 +738,22 @@ const isValidConfig = (config) => {
  */
 const setRefreshTokenInSession = (refreshToken) => {
   window.localStorage.setItem('refreshToken', refreshToken);
+  // Set the cookie
+
+  let curentDomain = window.location.hostname;
+  // If the domain has a . in it then we need to remove the first part of the domain
+  if (curentDomain.includes('.')) {
+    curentDomain = curentDomain.split('.').slice(1).join('.');
+  }
+
+  cookieStore.set({
+    name: 'ws:refreshToken',
+    value: refreshToken,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 1),
+    // We want this cookie to be availale on all subdomains of the current domain so we need to set the domain to the current domain without the first part
+    Domain: `${curentDomain}`,
+  });
+
 };
 
 /**
