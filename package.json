@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "files": [
     "dist"
