@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { checkPropTypes } from 'prop-types';
 
 import { Box, TextField, Autocomplete, InputLabel } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
@@ -24,13 +24,23 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
   // See: https://material-ui.com/api/autocomplete/#getoptionlabel-item
   const getOptionLabel = (option) => {
     const foundOpt = getOpObj(option);
-    return foundOpt?.label || foundOpt?.name || 'Select an Option';
+    // We need to return an empty string for the label for the place holder to correctly show
+    return foundOpt?.label || foundOpt?.name || '';
   };
 
   // See: https://material-ui.com/api/autocomplete/#isOptionEqualToValue-item
   const isOptionEqualToValue = (option, value) => {
+    /*
+      There always must be a found option. In the event nothing matches one of our options
+      we have to return true. This will "select" the placeholder / null option
+    */
+    if (value === '' || value === null || value === undefined) {
+      return true;
+    }
+
     const foundOpt = getOpObj(value);
-    const isEqual = foundOpt? option.id === foundOpt.id || option.value === foundOpt.value : false;
+    // Things will get strange if we don't have a found option at this point and you dun goofed A A Ron
+    const isEqual = foundOpt ? option.id === foundOpt.id || option.value === foundOpt.value : true;
     return isEqual;
   }
 
