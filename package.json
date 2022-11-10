@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "private": false,
   "files": [
     "dist"
@@ -12,13 +12,13 @@
     "./constants": "./dist/constants.js"
   },
   "scripts": {
-    "build": "react-scripts build",
-    "build:lib": "microbundle --jsx React.createElement --jsxImportSource react --globals react/jsx-runtime=jsx --format modern,cjs",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start": "start-storybook -p 6006 -s public",
-    "clean": "rimraf dist",
+    "clean": "npm run clean:root && npm run clean:hooks && npm run clean:hooks && npm run clean:stories",
+    "clean:hooks": "rimraf dist/hooks/*",
+    "clean:helpers": "rimraf dist/helpers/*",
+    "clean:stories": "rimraf dist/stories/*",
+    "clean:root": "rimraf dist/*.js",
     "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
+    "build:package-localdev": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
     "build-storybook": "build-storybook -s public",
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
