@@ -130,7 +130,12 @@ const useProvideAuth = (props) => {
       }
       // The user is not logged in
       else {
-        dispatch({ type: ACTIONS.FINISH_LOGOUT });
+        if (config.autoLogin) {
+          login();
+        }
+        else {
+          dispatch({ type: ACTIONS.FINISH_LOGOUT });
+        }
       }
     } else {
       // If the config is not valid, we will set the state to be error
@@ -667,14 +672,6 @@ const getRefreshTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
 
-    //If we dont have it there check the cookie
-    if (!session) {
-      let cook  = await cookieStore.get('ws:refreshToken');
-      if (cook) {
-        session = cook.value;
-      }
-    }
-
     if (session) {
       return session;
     }
@@ -738,22 +735,6 @@ const isValidConfig = (config) => {
  */
 const setRefreshTokenInSession = (refreshToken) => {
   window.localStorage.setItem('refreshToken', refreshToken);
-  // Set the cookie
-
-  let curentDomain = window.location.hostname;
-  // If the domain has a . in it then we need to remove the first part of the domain
-  if (curentDomain.includes('.')) {
-    curentDomain = curentDomain.split('.').slice(1).join('.');
-  }
-
-  cookieStore.set({
-    name: 'ws:refreshToken',
-    value: refreshToken,
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 1),
-    // We want this cookie to be availale on all subdomains of the current domain so we need to set the domain to the current domain without the first part
-    Domain: `${curentDomain}`,
-  });
-
 };
 
 /**
