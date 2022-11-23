@@ -19,7 +19,9 @@ const decodeTokenToJWT = (token) => {
 
 const parseTokens = (tokensB64) => {
   const tokenDecoded = decodeBase64Token(tokensB64);
-  const idToken = decodeTokenToJWT(tokenDecoded.id_token);
+  const idToken = tokenDecoded?.id_token ? 
+    decodeTokenToJWT(tokenDecoded.id_token) :
+    decodeTokenToJWT(tokenDecoded.access_token);
   const accessToken = decodeTokenToJWT(tokenDecoded.access_token);
   let name = 'User';
   if (idToken.given_name) {
