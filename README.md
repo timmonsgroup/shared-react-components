@@ -26,7 +26,7 @@ Storybook will let you develop locally without the need to integrate  this lib w
 
 ## How to Run Locally and Link to a Target Project 🏃‍♂️
 
-We can run this library within a target project/application by using `npm link`.  This sort of development is best suited for situations were you need to work on the `hooks`/`helpers` or want to do some manual integration testing of the `components` within your target project.
+We can run this library within a target project/application by using `npm link`.  This sort of development is best suited for situations where you need to work on the `hooks`/`helpers` or want to do some manual integration testing of the `components` within your target project.
 
 1. Delete the `@timmons-group` folder in the `node_modules` folder of the target project.
 1. Boot up the target project's dev web server and let `webpack` fail (due to the goodies we just deleted).
