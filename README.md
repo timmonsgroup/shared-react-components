@@ -1,4 +1,66 @@
-# Getting Started with Create React App
+# Timmons Group Shared React Components
+
+## Overview 📚
+
+This repo contains the source code for the [Timmons Group Shared React Components npm library](https://www.npmjs.com/package/@timmons-group/shared-react-components).  
+
+## Core Files/Folders 📂
+
+`src/helpers` - Helper/utility functions.
+
+`src/hooks` - Reusable hooks for generic routines such as auth and data fetching.
+
+`src/stories` - Storybook stories and reusable components.
+
+## Install Dependencies 🧩
+
+1. Install the `LTS` version of [Node JS](https://nodejs.org/en/download/)
+1. `npm i`
+
+## How to Run Storybook Locally 📖
+
+Storybook will let you develop locally without the need to integrate  this lib with an application (see the section below on Running Locally with a Target Project 🏃‍♂️).  This sort of development is best suited for isolated `component` development.
+
+1. `cd src`
+1. `npm start`
+
+## How to Run Locally and Link to a Target Project 🏃‍♂️
+
+We can run this library within a target project/application by using `npm link`.  This sort of development is best suited for situations were you need to work on the `hooks`/`helpers` or want to do some manual integration testing of the `components` within your target project.
+
+1. Delete the `@timmons-group` folder in the `node_modules` folder of the target project.
+1. Boot up the target project's dev web server and let `webpack` fail (due to the goodies we just deleted).
+1. Stop your dev web server.
+1. In this repo run `npm run build:package`
+1. In this repo run `npm link`
+1. In the target repo run `npm link @timmons-group/shared-react-components`
+1. Restart the target repo's web server and you should be all set
+1. Make changes to this shared component repo and then run `npm run build:package-localdev` (or indiviudally run any of the commands within this command if you specifically know which of the Core Files 📂 you are updating - which hopefully you do 🧙‍♂️).
+
+To remove the `npm link`, simply run `npm i` in the target project (worst case scenario, you may need to delete some stuff in `node_modules` of the target proejct and re- `npm i` if the first `npm i` doesn't work).
+
+## How to Build 🔨
+
+1. `npm run build:package`
+
+## How to Publish to NPM 📦
+
+TODO: add some goodies here about tagging
+
+https://docs.npmjs.com/cli/v9/commands/npm-publish
+
+## Who do I Talk to? 🙋‍♀️
+
+- Bryant Overgard
+- Nathan Grant
+- Travis Walters
+- Chaz Mateer
+
+##  Creat React App (CRA) Boilerplate Below 🍽
+
+---
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
