@@ -142,6 +142,7 @@ const useProvideAuth = (props) => {
       console.error('useProvideAuth: config is invalid');
       dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initInfo]);
 
   // This will be run once and only once when is first called
@@ -189,11 +190,13 @@ const useProvideAuth = (props) => {
       }
       window.removeEventListener('message', handleMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
   useEffect(() => {
     checkIfStale();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState.staleCheckState]);
 
 
@@ -325,7 +328,7 @@ const useProvideAuth = (props) => {
    * @param {integer} timeInSeconds the time in seconds to wait before triggering another stale check
    */
   const scheduleStaleCheck = (timeInSeconds) => {
-    if (staleCheckTimeoutTracker != -1) {
+    if (staleCheckTimeoutTracker !== -1) {
       clearTimeout(staleCheckTimeoutTracker);
       staleCheckTimeoutTracker = -1;
     }

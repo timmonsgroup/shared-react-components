@@ -40,6 +40,7 @@ const useIsModal = (modalClosed, debugId) => {
       modalClosed();
     }
     previousOpen.current = open;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   return { open, setOpen, onClose, onOk, onCancel, previousOpen };
