@@ -775,5 +775,6 @@ const setRefreshTokenInSession = (refreshToken) => {
 const clearRefreshTokenInSession = () => {
   window.sessionStorage.removeItem('refreshToken');
   window.localStorage.removeItem('refreshToken');
-  window.cookieStore.delete('refreshToken');
+  const domain = window.location.hostname.split('.').slice(1).join('.');
+  window.cookieStore.delete({ name: 'refreshToken', domain });
 };
