@@ -18,39 +18,42 @@ const decodeTokenToJWT = (token) => {
 }
 
 const parseTokens = (tokensB64) => {
-  const tokenDecoded = decodeBase64Token(tokensB64);
-  const idToken = decodeTokenToJWT(tokenDecoded.id_token);
-  const accessToken = decodeTokenToJWT(tokenDecoded.access_token);
-  let name = 'User';
-  if (idToken.given_name) {
-    name = idToken.given_name;
-    if (idToken.family_name) {
-      name += ' ' + idToken.family_name;
+  const token = decodeBase64Token(tokensB64) || {};
+  const {id_token, access_token} = token;
+  const idToken = decodeTokenToJWT(id_token || access_token) || {};
+  const accessToken = decodeTokenToJWT(access_token) || {};
+
+  let userName = 'User';
+  const {given_name, family_name, email, name} = idToken;
+  if (given_name) {
+    userName = given_name;
+    if (family_name) {
+      userName += ' ' + family_name;
     }
   }
-  else if (idToken.name) {
-    name = idToken.name;
+  else if (name) {
+    userName = name;
   }
-  else if (idToken.email) {
-    name = idToken.email;
+  else if (email) {
+    userName = email;
   }
 
   return {
-    token: tokenDecoded,
-    accessToken: accessToken,
+    token,
+    accessToken,
     isExpired: () => { console.log(accessToken.exp); return accessToken.exp < (Date.now() / 1000)},
     timeToExpired: () => { return accessToken.exp - (Date.now() / 1000)}, // This should return the time in seconds until the token expires, we can use this to refresh the token
     idToken: idToken,
     user: {
       authenticated: true,
-      name,
-      email: idToken.email,
-      given_name: idToken.given_name,
-      family_name: idToken.family_name,
+      name: userName,
+      email,
+      given_name,
+      family_name,
       id: idToken.sub,
       raw: idToken // So we can use other claims if we want
     },
-    refresh_token: tokenDecoded.refresh_token
+    refresh_token: token.refresh_token
   };
 }
 

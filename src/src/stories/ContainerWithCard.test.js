@@ -9,6 +9,7 @@ const containerThing = () => (
 
 test('renders ContainerWithCard className', () => {
   const { container } = render(containerThing());
+  // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
   expect(container.getElementsByClassName('App').length).toBe(1);
 });
 
