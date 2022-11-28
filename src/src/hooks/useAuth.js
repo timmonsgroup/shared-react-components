@@ -174,8 +174,8 @@ const useProvideAuth = (props) => {
       // get out initialization info from the session storage
       let initInfo = {
         refreshToken: await getRefreshTokenFromSession(),
-        bootToken: getBootTokenFromSession(),
-        bootUser: getBootUserFromSession(),
+        bootToken: await getBootTokenFromSession(),
+        bootUser: await getBootUserFromSession(),
       };
       setInitInfo(initInfo);
 
@@ -677,6 +677,15 @@ const getRefreshTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
 
+    // Check to see if we have a domain cookie with the refresh token
+    if (!session) {
+      const cookie = await window.cookieStore.get('refreshToken');
+      if (cookie) {
+        session = cookie.value;
+      }
+    }
+
+
     if (session) {
       return session;
     }
@@ -689,9 +698,18 @@ const getRefreshTokenFromSession = async () => {
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
  */
-const getBootTokenFromSession = () => {
+const getBootTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('bootToken');
+
+    // Check to see if we have a domain cookie with the refresh token
+    if (!session) {
+      const cookie = await window.cookieStore.get('bootToken');
+      if (cookie) {
+        session = cookie.value;
+      }
+    }
+
     if (session) {
       window.sessionStorage.removeItem('bootToken');
       return session;
@@ -705,9 +723,17 @@ const getBootTokenFromSession = () => {
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
  */
-const getBootUserFromSession = () => {
+const getBootUserFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('bootUser');
+
+    // Check to see if we have a domain cookie with the refresh token
+    if (!session) {
+      const cookie = await window.cookieStore.get('bootUser');
+      if (cookie) {
+        session = cookie.value;
+      }
+    }
 
     try {
       session = JSON.parse(session);
@@ -739,7 +765,13 @@ const isValidConfig = (config) => {
  * Later on we can retrieve it and use it to get a new access token
  */
 const setRefreshTokenInSession = (refreshToken) => {
-  window.localStorage.setItem('refreshToken', refreshToken);
+  //window.localStorage.setItem('refreshToken', refreshToken);
+  //Actuall set it in the cookie for the subdomain
+  // The domain will be something like a.b.c.com
+  // We want to set the cookie for the subdomain b.c.com
+  const domain = window.location.hostname.split('.').slice(1).join('.');
+  console.log('Setting refresh token in cookie for domain: ' + domain);
+  window.cookieStore.set({ name: 'refreshToken', value: refreshToken, domain, sameSite: 'lax' });
 };
 
 /**
@@ -748,4 +780,5 @@ const setRefreshTokenInSession = (refreshToken) => {
 const clearRefreshTokenInSession = () => {
   window.sessionStorage.removeItem('refreshToken');
   window.localStorage.removeItem('refreshToken');
+  window.cookieStore.delete('refreshToken');
 };
