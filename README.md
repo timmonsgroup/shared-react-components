@@ -56,7 +56,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-publish
 - Travis Walters
 - Chaz Mateer
 
-##  Creat React App (CRA) Boilerplate Below 🍽
+##  Create React App (CRA) Boilerplate Below 🍽
 
 ---
 

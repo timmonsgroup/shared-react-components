@@ -18,11 +18,11 @@ const decodeTokenToJWT = (token) => {
 }
 
 const parseTokens = (tokensB64) => {
-  const tokenDecoded = decodeBase64Token(tokensB64);
-  const idToken = tokenDecoded?.id_token ? 
-    decodeTokenToJWT(tokenDecoded.id_token) :
-    decodeTokenToJWT(tokenDecoded.access_token);
-  const accessToken = decodeTokenToJWT(tokenDecoded.access_token);
+  const token = decodeBase64Token(tokensB64) || {};
+  const {id_token, access_token} = token;
+  const idToken = decodeTokenToJWT(id_token || access_token);
+  const accessToken = decodeTokenToJWT(access_token);
+
   let name = 'User';
   if (idToken.given_name) {
     name = idToken.given_name;
@@ -38,7 +38,7 @@ const parseTokens = (tokensB64) => {
   }
 
   return {
-    token: tokenDecoded,
+    token,
     accessToken: accessToken,
     isExpired: () => { console.log(accessToken.exp); return accessToken.exp < (Date.now() / 1000)},
     timeToExpired: () => { return accessToken.exp - (Date.now() / 1000)}, // This should return the time in seconds until the token expires, we can use this to refresh the token
