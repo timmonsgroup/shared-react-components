@@ -53,7 +53,7 @@ const parseTokens = (tokensB64) => {
       id: idToken.sub,
       raw: idToken // So we can use other claims if we want
     },
-    refresh_token: idToken.refresh_token
+    refresh_token: token.refresh_token
   };
 }
 
