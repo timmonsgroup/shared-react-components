@@ -39,8 +39,8 @@ const UserMenu = ({ user, onLogin, onLogout, links }) => {
         {
           links?.map((link, index) => {
             return (
-              <MenuItem>
-                <Link target="_blank" href={link.href} rel="noreferrer" onClick={handleClose} >
+              <MenuItem key={`usermenu_${index}`}>
+                <Link target="_blank"  href={link.href} rel="noreferrer" onClick={handleClose} >
                   {link.title}
                 </Link>
               </MenuItem>

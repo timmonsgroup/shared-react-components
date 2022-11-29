@@ -764,9 +764,22 @@ const setRefreshTokenInSession = (refreshToken) => {
   //Actuall set it in the cookie for the subdomain
   // The domain will be something like a.b.c.com
   // We want to set the cookie for the subdomain b.c.com
-  const domain = window.location.hostname.split('.').slice(1).join('.');
-  console.log('Setting refresh token in cookie for domain: ' + domain);
-  window.cookieStore.set({ name: 'refreshToken', value: refreshToken, domain, sameSite: 'lax' });
+  // But we also need to be aware of any domain that is not a subdomain
+  let domain = window.location.hostname;
+  let parts = domain.split('.');
+  
+  if (parts.length > 2) {
+    parts = parts.slice(1);
+  }
+  domain = parts.join('.');
+
+  let cookie = { name: 'refreshToken', value: refreshToken, sameSite: 'lax' }
+  if (domain && domain !== 'localhost') {
+    cookie.domain = domain;
+  }
+
+  console.debug('Setting refresh token in cookie for domain: ' + domain);
+  window.cookieStore.set(cookie);
 };
 
 /**
