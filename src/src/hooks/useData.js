@@ -33,6 +33,7 @@ export const useMapConfig = (map_key) => {
       setMapConfig(data);
       setMapConfigLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
   return [mapConfig, mapConfigLoading];
 }
@@ -54,6 +55,7 @@ export const useConfig = (config_key) => {
       setConfig(data);
       setConfigLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
   return [config, configLoading];
 }
@@ -139,6 +141,7 @@ export const useStaleData = (url, defaultValue = [], isDev, clearCache, forceErr
         mounted = false;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [data, isLoading];

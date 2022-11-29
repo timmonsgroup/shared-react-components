@@ -142,6 +142,7 @@ const useProvideAuth = (props) => {
       console.error('useProvideAuth: config is invalid');
       dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initInfo]);
 
   // This will be run once and only once when is first called
@@ -189,11 +190,13 @@ const useProvideAuth = (props) => {
       }
       window.removeEventListener('message', handleMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
   useEffect(() => {
     checkIfStale();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState.staleCheckState]);
 
 
@@ -256,7 +259,9 @@ const useProvideAuth = (props) => {
     const redirect = window.location.origin + '/api/oauth/logout';
 
     // Open the logout endpoint in a new tab
-    const fetchUrl = `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`;
+    const fetchUrl = config?.useAzureAD ?
+      `https://${config.host}/oauth2/logout?post_logout_redirect_uri=${redirect}` :
+      `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`;
 
     // If openWindow is true open the logout endpoint in a new tab
     // Otherwise open the logout endpoint in the current tab
@@ -323,7 +328,7 @@ const useProvideAuth = (props) => {
    * @param {integer} timeInSeconds the time in seconds to wait before triggering another stale check
    */
   const scheduleStaleCheck = (timeInSeconds) => {
-    if (staleCheckTimeoutTracker != -1) {
+    if (staleCheckTimeoutTracker !== -1) {
       clearTimeout(staleCheckTimeoutTracker);
       staleCheckTimeoutTracker = -1;
     }

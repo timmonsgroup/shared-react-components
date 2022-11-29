@@ -2,6 +2,10 @@
   "name": "@timmons-group/shared-react-components",
   "version": "0.3.11",
   "private": false,
+  "eslintIgnore": [
+    "node_modules",
+    "build/*"
+  ],
   "files": [
     "dist"
   ],
@@ -23,7 +27,8 @@
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
     "build:helpers": "set NODE_ENV=production&&babel src/src/helpers --out-dir dist/helpers --copy-files",
-    "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js --out-dir dist --copy-files"
+    "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js --out-dir dist --copy-files",
+    "postinstall": "cd src && npm i"
   },
   "eslintConfig": {
     "extends": [
@@ -90,7 +95,8 @@
     "babel-plugin-add-import-extension": "^1.6.0",
     "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-proptypes-require": "^1.0.0",
-    "eslint-plugin-react": "^7.31.8",
+    "eslint": "^8.28.0",
+    "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prop-types": "^15.8.1",
     "rimraf": "^3.0.2",
