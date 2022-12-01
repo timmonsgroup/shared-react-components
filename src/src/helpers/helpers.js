@@ -131,25 +131,48 @@ export const processLayout = (layout) => {
 
   const sections = layout.sections.map((section) => {
     const fields = section.layout.map(getStructure);
-    // return { name: section.name, fields:fields.filter(f => f.type === FIELD_TYPES.TEXT || f.type === FIELD_TYPES.DATE || f.type === FIELD_TYPES.LONG_TEXT || f.type === FIELD_TYPES.LINK ) };
     return { name: section.name, fields: fields };
   });
 
   return sections;
 }
 
-export const processLayoutNew = (layout) => {
-  if (!layout || !layout.sections) {
+export const processGenericLayout = (layout) => {
+  if (!layout || !layout.sections || layout.isGeneric) {
     return layout;
   }
 
   const sections = layout.sections.map((section) => {
     const fields = section.layout.map(getStructure);
-    // return { name: section.name, fields:fields.filter(f => f.type === FIELD_TYPES.TEXT || f.type === FIELD_TYPES.DATE || f.type === FIELD_TYPES.LONG_TEXT || f.type === FIELD_TYPES.LINK ) };
     return { name: section.name, fields: fields };
   });
 
-  return { ...layout, sections, rawSections: layout.sections };
+  const layoutTypes = {
+    1: 'Form',
+    2: 'Grid',
+  }
+
+  const data = {};
+  
+  if(layout.data) {
+    data.source = layout.data;
+  }
+
+  if(layout.grid) {
+    data.gridConfig = layout.grid;
+  }
+
+  let newLayout = {
+    sections: sections,
+    title: layout.name,
+    id: layout.id,
+    type: layoutTypes[layout.type] || "Unknown Layout Type: " + layout.type,
+    editable: layout.editable,
+    data,
+    isGeneric: true,
+  }
+
+  return newLayout;
 }
 
 function getStructure(field) {

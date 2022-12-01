@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { dateFormatter, processLayoutNew } from '../helpers';
+import { dateFormatter, processLayout, processGenericLayout } from '../helpers';
 
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
@@ -390,7 +390,18 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     ...theming,
   };
 
-  const processedLayout = processLayoutNew(layout);
+  let processedLayout = layout;
+
+  //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
+  if(layout.hasOwnProperty('type') && typeof layout.type === 'number') {
+    processedLayout = processGenericLayout(layout);
+  } else if(layout.hasOwnProperty('type') && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
+    processedLayout = layout;
+  } else { //Otherwise use our own layout processing
+    processedLayout = processLayout(layout);
+  }
+
+    
   const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
 
   // Check for optional actions
@@ -440,22 +451,24 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     };
   }
 
-  if(processedLayout.grid) {
-    if(processedLayout.grid.sort) {
-      // The sort property should have a field property and an order property
-      // The field property should be the name of the column to sort by
-      // The order property should be either 'asc' or 'desc'
-      initialState.sortModel = [{
-        field: processedLayout.grid.sort.field,
-        sort: processedLayout.grid.sort.order
-      }];
-    }
-  }
 
+  // This is the start of our new generic layout processing
   if(processedLayout.data) {
     //Check if we have an idField and set the id column of the grid to that
-    if(processedLayout.data.idField) {
-      props.getRowId = (row) => row[processedLayout.data.idField];
+    if(processedLayout.data.source?.idField) {
+      props.getRowId = (row) => row[processedLayout.data.source.idField];
+    }
+
+    if(processedLayout.data.gridConfig) {
+      if(processedLayout.data.gridConfig.sort) {
+        // The sort property should have a field property and an order property
+        // The field property should be the name of the column to sort by
+        // The order property should be either 'asc' or 'desc'
+        initialState.sortModel = [{
+          field: processedLayout.data.gridConfig.sort.field,
+          sort: processedLayout.data.gridConfig.sort.order
+        }];
+      }
     }
   }
 
