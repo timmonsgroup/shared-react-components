@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { dateFormatter, processLayout } from '../helpers';
+import { dateFormatter, processLayoutNew } from '../helpers';
 
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
@@ -27,8 +27,10 @@ const defaultSX = {
  * @see https://mui.com/components/data-grid/columns/
  */
 const baseColumnConfig = (layoutColumn) => {
+
   let retCol = {
     field: layoutColumn.path || layoutColumn.render.name,
+    fieldID: layoutColumn?.model?.field?.id,
     headerName: layoutColumn.render.label,
     headerClassName: 'pam-grid-header'
   };
@@ -354,7 +356,7 @@ const convertLayoutColumnToMuiColumn = (column) => {
     case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
     case 99: addActionButtonFormatting(ret, column.render); break; // Action Buttons
     case 100: addExternalLinkFormatting(ret); break; // Link
-    default: console.log('Unknown column type', column.type); break;
+    default: console.error('Unknown column type', column.type); break;
   }
 
   return ret;
@@ -388,8 +390,8 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     ...theming,
   };
 
-  const processedLayout = processLayout(layout);
-  const layoutColumns = processedLayout && processedLayout.length ? processedLayout[0].fields : [];
+  const processedLayout = processLayoutNew(layout);
+  const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
 
   // Check for optional actions
   if (actions?.length) {
@@ -401,6 +403,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     // Append the actions to the end of the columns
     layoutColumns.push(...actionsColumns);
   }
+
 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
   let renderColumns = (layoutColumns || []).map(convertLayoutColumnToMuiColumn).filter(Boolean); // Remove any columns that are not defined
@@ -435,6 +438,25 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     initialState.sorting = {
       sortModel: [{ field: initialSortColumn, sort: initialSortDirection === 'desc' ? 'desc' : 'asc' }],
     };
+  }
+
+  if(processedLayout.grid) {
+    if(processedLayout.grid.sort) {
+      // The sort property should have a field property and an order property
+      // The field property should be the name of the column to sort by
+      // The order property should be either 'asc' or 'desc'
+      initialState.sortModel = [{
+        field: processedLayout.grid.sort.field,
+        sort: processedLayout.grid.sort.order
+      }];
+    }
+  }
+
+  if(processedLayout.data) {
+    //Check if we have an idField and set the id column of the grid to that
+    if(processedLayout.data.idField) {
+      props.getRowId = (row) => row[processedLayout.data.idField];
+    }
   }
 
   return (

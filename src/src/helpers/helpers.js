@@ -138,6 +138,20 @@ export const processLayout = (layout) => {
   return sections;
 }
 
+export const processLayoutNew = (layout) => {
+  if (!layout || !layout.sections) {
+    return layout;
+  }
+
+  const sections = layout.sections.map((section) => {
+    const fields = section.layout.map(getStructure);
+    // return { name: section.name, fields:fields.filter(f => f.type === FIELD_TYPES.TEXT || f.type === FIELD_TYPES.DATE || f.type === FIELD_TYPES.LONG_TEXT || f.type === FIELD_TYPES.LINK ) };
+    return { name: section.name, fields: fields };
+  });
+
+  return { ...layout, sections, rawSections: layout.sections };
+}
+
 function getStructure(field) {
   const model = field.model || {};
   const name = model.name || `unknown${model.id}`;
