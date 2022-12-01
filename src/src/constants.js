@@ -33,8 +33,26 @@ export const FIELD_TYPES = Object.freeze({
   CHOICE: 7,
   OBJECT: 10,
   // BYNAMEOBJECTREFERENCE: 11,
+  CHECKBOX: 12,
   SPATIAL: 20,
   LINK: 100,
   CLUSTER: 120,
   NONE: 999
+});
+
+export const REQUIRED = 'required';
+
+export const RENDER_VALIDATIONS = Object.freeze({
+  REQUIRED,
+  DISABLED: 'disabled',
+  HIDDEN: 'hidden',
+});
+
+export const VALIDATIONS = Object.freeze({
+  REQUIRED,
+  INTEGER_DIGITS: 'integerDigits',
+  FRACTIONAL_DIGITS: 'fractionalDigits',
+  MAX_VALUE: 'maxValue',
+  MAX_LENGTH: 'maxLength',
+  MIN_LENGTH: 'minLength'
 });
