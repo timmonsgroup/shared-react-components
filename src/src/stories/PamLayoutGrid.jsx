@@ -391,7 +391,6 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   };
 
   let processedLayout = layout;
-  debugger;
   //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
   if(layout.hasOwnProperty('type') && typeof layout.type === 'number') {
     processedLayout = processGenericLayout(layout);
