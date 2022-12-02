@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { ButtonGroup } from '@mui/material';
-import { DataGrid as MUIGrid, GridToolbar as MUIGridToolbar } from '@mui/x-data-grid';
+import { DataGrid as MUIGrid, GridToolbar as MUIGridToolbar, GridFilterInputValue } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { dateFormatter, processLayout } from '../helpers';
+import { dateFormatter, processLayout, processGenericLayout } from '../helpers';
 
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
@@ -27,11 +27,54 @@ const defaultSX = {
  * @see https://mui.com/components/data-grid/columns/
  */
 const baseColumnConfig = (layoutColumn) => {
+
   let retCol = {
-    field: layoutColumn.render.name,
+    field: layoutColumn.path || layoutColumn.render.name,
+    fieldID: layoutColumn?.model?.field?.id,
     headerName: layoutColumn.render.label,
     headerClassName: 'pam-grid-header'
   };
+  
+  if(layoutColumn.path && layoutColumn.path.includes('.') || layoutColumn.type == 10) {
+
+        //We are a subfield, so we need to use the valueGetter to get the value
+    retCol.valueGetter = (params) => {
+      let path = layoutColumn.path.split('.');
+      //Only return the top level value
+      return params.row[path[0]];
+    }
+    
+    // If the path includes a . then we need to dig down into the value so we will need to define a custom filterOperator 
+    // The input component will need to be a text field
+    let filterOperator = {
+      label: 'Contains',
+      value: 'contains',
+      getApplyFilterFn: (filterItem) => {
+        return (params) => {
+          if(!filterItem.value) return true;
+          let path = layoutColumn.path.split('.');
+          let val_ = params?.row;
+          for(const element of path) {
+            val_ = val_ != null ? val_[element] : null;
+          }
+
+          // if the value is an array we need map the names to a string
+          if(Array.isArray(val_)) {
+            val_ = val_.map(v => v.name).join(' ');
+          }
+
+          // If the value is an object then we need to get the name
+          if(typeof val_ === 'object') {
+            val_ = val_?.name;
+          }
+          
+          return val_ != null ? val_.toString().toLowerCase().includes(filterItem.value.toLowerCase()) : false;
+        }
+      },
+      InputComponent: GridFilterInputValue
+    }
+    retCol.filterOperators = [filterOperator];
+  }
 
   // If the layout column has flex set then set the flex property
   if (layoutColumn.flex != undefined && layoutColumn.flex != null) {
@@ -113,6 +156,11 @@ const getValueNameOrDefault = (value, defaultValue) => {
     return defaultValue;
   }
 
+  // If its a list of objects get all their names and join them
+  if(Array.isArray(value)) {
+    return value.map(v => v.name).join(', ');
+  }
+  
   return value.name || defaultValue;
 }
 
@@ -196,11 +244,19 @@ const getBaseAction = (action) => {
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @param {Object} linkFormat - The column from the layout - TODO: This isnt true as we destructured the linkFormat from the layout column
  */
-const addObjectReferenceFormatting = (muiGridColumn, { linkFormat }) => {
+const addObjectReferenceFormatting = (muiGridColumn, {render, path}) => {
+  let { linkFormat } = render;
   // Object Link
   if (linkFormat) {
     muiGridColumn.renderCell = (params) => {
-      let value = params.row[params.field]
+      let path_parts = path.split('.');
+
+      let value = params.row;
+
+      for (const element of path_parts) {
+        value = value != null ? value[element] : null;
+      }
+
       if (params && value) {
         let link = linkFormat;
         link = link.replace('{id}', value.id)
@@ -217,7 +273,31 @@ const addObjectReferenceFormatting = (muiGridColumn, { linkFormat }) => {
     }
   }
 
-  muiGridColumn.valueFormatter = ({ value }) => getValueNameOrDefault(value, 'N/A');
+  if(path) {
+    muiGridColumn.valueFormatter = ({ value }) => {
+
+      let path_parts = path.split('.');
+
+      //Remove the first element from the array
+      path_parts.shift();
+
+      for (const element of path_parts) {
+        value = value != null ? value[element] : null;
+      }
+      
+      // If the result is an object use the getNameOrDefault function to get the name or N/A
+      if (value && typeof value === 'object') {
+        return getValueNameOrDefault(value, 'N/A');
+      }
+
+      // If the result is a string use the string or N/A
+      if (value && typeof value === 'string') {
+        return value;
+      }
+    }
+  } else {
+    muiGridColumn.valueFormatter = ({ value }) => getValueNameOrDefault(value, 'N/A');
+  }
 
   muiGridColumn.sortComparator = (A, B) => {
     let compareValue = 0;
@@ -273,10 +353,10 @@ const convertLayoutColumnToMuiColumn = (column) => {
       break;
     case 5: addDateFormatting(ret); break; // Date
     case 7: addSingleSelectFormatting(ret, column); break; // Single Select
-    case 10: addObjectReferenceFormatting(ret, column.render); break; // Object Link
+    case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
     case 99: addActionButtonFormatting(ret, column.render); break; // Action Buttons
     case 100: addExternalLinkFormatting(ret); break; // Link
-    default: console.log('Unknown column type', column.type); break;
+    default: console.error('Unknown column type', column.type); break;
   }
 
   return ret;
@@ -310,8 +390,19 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     ...theming,
   };
 
-  const processedLayout = processLayout(layout);
-  const layoutColumns = processedLayout && processedLayout.length ? processedLayout[0].fields : [];
+  let processedLayout = layout;
+
+  //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
+  if(layout.hasOwnProperty('type') && typeof layout.type === 'number') {
+    processedLayout = processGenericLayout(layout);
+  } else if(layout.hasOwnProperty('type') && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
+    processedLayout = layout;
+  } else { //Otherwise use our own layout processing
+    processedLayout = processLayout(layout);
+  }
+
+    
+  const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
 
   // Check for optional actions
   if (actions?.length) {
@@ -323,6 +414,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     // Append the actions to the end of the columns
     layoutColumns.push(...actionsColumns);
   }
+
 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
   let renderColumns = (layoutColumns || []).map(convertLayoutColumnToMuiColumn).filter(Boolean); // Remove any columns that are not defined
@@ -357,6 +449,27 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
     initialState.sorting = {
       sortModel: [{ field: initialSortColumn, sort: initialSortDirection === 'desc' ? 'desc' : 'asc' }],
     };
+  }
+
+
+  // This is the start of our new generic layout processing
+  if(processedLayout.data) {
+    //Check if we have an idField and set the id column of the grid to that
+    if(processedLayout.data.source?.idField) {
+      props.getRowId = (row) => row[processedLayout.data.source.idField];
+    }
+
+    if(processedLayout.data.gridConfig) {
+      if(processedLayout.data.gridConfig.sort) {
+        // The sort property should have a field property and an order property
+        // The field property should be the name of the column to sort by
+        // The order property should be either 'asc' or 'desc'
+        initialState.sortModel = [{
+          field: processedLayout.data.gridConfig.sort.field,
+          sort: processedLayout.data.gridConfig.sort.order
+        }];
+      }
+    }
   }
 
   return (
