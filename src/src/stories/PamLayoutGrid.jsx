@@ -34,16 +34,16 @@ const baseColumnConfig = (layoutColumn) => {
     headerName: layoutColumn.render.label,
     headerClassName: 'pam-grid-header'
   };
-  
-  if(layoutColumn.path && layoutColumn.path.includes('.') || layoutColumn.type == 10) {
 
-        //We are a subfield, so we need to use the valueGetter to get the value
+  if (layoutColumn.path && layoutColumn.path.includes('.') || layoutColumn.type == 10) {
+
+    //We are a subfield, so we need to use the valueGetter to get the value
     retCol.valueGetter = (params) => {
       let path = layoutColumn.path.split('.');
       //Only return the top level value
       return params.row[path[0]];
     }
-    
+
     // If the path includes a . then we need to dig down into the value so we will need to define a custom filterOperator 
     // The input component will need to be a text field
     let filterOperator = {
@@ -51,23 +51,23 @@ const baseColumnConfig = (layoutColumn) => {
       value: 'contains',
       getApplyFilterFn: (filterItem) => {
         return (params) => {
-          if(!filterItem.value) return true;
+          if (!filterItem.value) return true;
           let path = layoutColumn.path.split('.');
           let val_ = params?.row;
-          for(const element of path) {
+          for (const element of path) {
             val_ = val_ != null ? val_[element] : null;
           }
 
           // if the value is an array we need map the names to a string
-          if(Array.isArray(val_)) {
+          if (Array.isArray(val_)) {
             val_ = val_.map(v => v.name).join(' ');
           }
 
           // If the value is an object then we need to get the name
-          if(typeof val_ === 'object') {
+          if (typeof val_ === 'object') {
             val_ = val_?.name;
           }
-          
+
           return val_ != null ? val_.toString().toLowerCase().includes(filterItem.value.toLowerCase()) : false;
         }
       },
@@ -157,10 +157,10 @@ const getValueNameOrDefault = (value, defaultValue) => {
   }
 
   // If its a list of objects get all their names and join them
-  if(Array.isArray(value)) {
+  if (Array.isArray(value)) {
     return value.map(v => v.name).join(', ');
   }
-  
+
   return value.name || defaultValue;
 }
 
@@ -244,7 +244,7 @@ const getBaseAction = (action) => {
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @param {Object} linkFormat - The column from the layout - TODO: This isnt true as we destructured the linkFormat from the layout column
  */
-const addObjectReferenceFormatting = (muiGridColumn, {render, path}) => {
+const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
   let { linkFormat } = render;
   // Object Link
   if (linkFormat) {
@@ -273,7 +273,7 @@ const addObjectReferenceFormatting = (muiGridColumn, {render, path}) => {
     }
   }
 
-  if(path) {
+  if (path) {
     muiGridColumn.valueFormatter = ({ value }) => {
 
       let path_parts = path.split('.');
@@ -284,7 +284,7 @@ const addObjectReferenceFormatting = (muiGridColumn, {render, path}) => {
       for (const element of path_parts) {
         value = value != null ? value[element] : null;
       }
-      
+
       // If the result is an object use the getNameOrDefault function to get the name or N/A
       if (value && typeof value === 'object') {
         return getValueNameOrDefault(value, 'N/A');
@@ -391,16 +391,17 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   };
 
   let processedLayout = layout;
+
   //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
-  if(layout.hasOwnProperty('type') && typeof layout.type === 'number') {
+  if (layout.hasOwnProperty('type') && typeof layout.type === 'number') {
     processedLayout = processGenericLayout(layout);
-  } else if(layout.hasOwnProperty('type') && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
+  } else if (layout.hasOwnProperty('type') && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
     processedLayout = layout;
   } else { //Otherwise use our own layout processing
     processedLayout = { name: "Unknown", sections: processLayout(layout) };
   }
 
-    
+
   const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
 
   // Check for optional actions
@@ -452,21 +453,23 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
 
 
   // This is the start of our new generic layout processing
-  if(processedLayout.data) {
+  if (processedLayout.data) {
     //Check if we have an idField and set the id column of the grid to that
-    if(processedLayout.data.source?.idField) {
+    if (processedLayout.data.source?.idField) {
       props.getRowId = (row) => row[processedLayout.data.source.idField];
     }
 
-    if(processedLayout.data.gridConfig) {
-      if(processedLayout.data.gridConfig.sort) {
+    if (processedLayout.data.gridConfig) {
+      if (processedLayout.data.gridConfig.sort) {
         // The sort property should have a field property and an order property
         // The field property should be the name of the column to sort by
         // The order property should be either 'asc' or 'desc'
-        initialState.sortModel = [{
-          field: processedLayout.data.gridConfig.sort.field,
-          sort: processedLayout.data.gridConfig.sort.order
-        }];
+        initialState.sorting = {
+          sortModel: [{
+            field: processedLayout.data.gridConfig.sort.field,
+            sort: processedLayout.data.gridConfig.sort.order === 'desc' ? 'desc' : 'asc'
+          }]
+        };
       }
     }
   }
