@@ -1,4 +1,4 @@
-import { DATE_MSG } from '../constants';
+import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants';
 import { sortOn } from './helpers';
 import {
   string, array, date, number, object
@@ -135,44 +135,96 @@ export function validDoubleFormat(value, int = 4, frac = 4) {
   return new RegExp(`^\\d{0,${int}}(\\.\\d{0,${frac}})?$`).test(value);
 }
 
-/*
-const schema = object().shape({
-      projectName: yupTrimString('Project Name').max(50)
-        .test('unique-name', 'Project Name already exists', () => checker.isValid()),
-      type().when('isCreating', {
-        is: () => editMode !== true,
-        then: yupString('Project Type')
-      }),
-      region: yupMultiselect('Region'),
-      subtype().when('hasSubs', {
-        is: () => hasSubList.value === true,
-        then: yupString('Project Subtype')
-      }),
-      checklistType().when('isCreating', {
-        is: () => editMode !== true,
-        then: yupString('Checklist Type')
-      }),
-      wsfr().required('You must select "Yes" or "No"').label('WSFR Status'),
-      wsfrGrant().when('wsfr', {
-        is: (value) => value === true,
-        then: yupTrimString('WSFR Grant Number').nullable()
-      }),
-      projectLead: yupTypeAhead('Project Lead'),
-      regionContacts: yupMultiselect('Region Contact'),
-      property: array().when('isCreating', {
-        is: () => editMode !== true,
-        then: yupMultiselect('Property')
-      }),
-      // property().when('isCreating', {
-      //   is: () => editMode !== true,
-      //   then: yupTypeAhead('Property')
-      // }),
-      client: yupTypeAhead('Client'),
-      contactName: yupTrimString('Contact Name'),
-      clientAddress: yupTrimString('Mailing Address'),
-      clientBillingAddress: yupTrimString('Billing Address', false),
-      clientEmail: yupTrimString('Email Address'),
-      clientPhone: yupTrimString('Phone Number'),
-      projectDescription: yupTrimString('Project Description').max(500)
-    });
-*/
+export const createFieldValidation = (type, label, validationMap, field) => {
+  let validation = null;
+  const required = validationMap.get(VALIDATIONS.REQUIRED);
+  const maxLength = validationMap.get(VALIDATIONS.MAX_LENGTH);
+
+  switch (type) {
+    case FIELDS.LONG_TEXT:
+      validation = yupTrimStringMax(label, required, maxLength);
+      break;
+    case FIELDS.TEXT:
+
+      validation = yupTrimStringMax(label, required, maxLength);
+      break;
+    case FIELDS.INT:
+      validation = yupInt(
+        label,
+        required,
+        maxLength,
+        'Please enter an integer'
+      );
+      break;
+    case FIELDS.FLOAT: {
+      const intD = validationMap.get(VALIDATIONS.INTEGER_DIGITS);
+      const fracD = validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS);
+      validation = yupFloat(
+        label,
+        required,
+        intD,
+        validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS),
+        maxLength,
+        intD
+          ? `Please enter a number, with up to ${intD} digits and an optional decimal of up to ${fracD} digits`
+          : `Please enter a decimal of up to ${fracD} digits`,
+        validationMap.get(VALIDATIONS.MAX_VALUE),
+      );
+      break;
+    }
+    case FIELDS.CURRENCY:
+      validation = yupCurrency(
+        label,
+        required,
+        maxLength,
+        'Please enter a valid dollar amount, with an optional decimal of up to two digits for cents; e.g., 1234.56'
+      );
+      break;
+
+    case FIELDS.DATE:
+      validation = yupDate(label, required);
+      break;
+
+    // NOTE that Checkboxes are multi-selects, so we use the same validation
+    case FIELDS.CHOICE:
+    case FIELDS.OBJECT: {
+      validation = (field?.render?.multiple ? yupMultiselect : yupTypeAhead)(label, required).nullable();
+      break;
+    }
+
+    // case FIELDS.FLAG: {
+    //   dynField.render.is = 'CheckBox';
+    //   break;
+    // }
+
+    case FIELDS.LINK: {
+      validation = yupTrimStringMax(label, required, maxLength);
+      break;
+    }
+
+    // TODO: Yes clusterfield I know you are here, but I don't know what to do with you yet
+    // case FIELDS.CLUSTER: {
+    //   dynField.render.is = 'ClusterField';
+    //   // Loop through and process fields tied to the cluster.
+    //   const subFieldValidations = {};
+    //   const subFields = field.layout?.map((subF) => {
+    //     const { field: subField, validation: subValid } = getStructure(subF);
+    //     if (subF.model) {
+    //       const subName = subF.model?.name || 'unknownSub';
+    //       if (subValid) {
+    //         subFieldValidations[subName] = subValid;
+    //       }
+    //     }
+    //     return subField;
+    //   });
+    //   dynField.render.fields = subFields;
+    //   validation = array().of(object().shape(subFieldValidations).strict());
+    //   break;
+    // }
+
+    default:
+      break;
+  }
+
+  return validation;
+}

@@ -5,10 +5,17 @@ import axiosRetry  from 'axios-retry';
 // Use as persistent store to keep track of the state of the data and prevent refetching
 const CACHE = {};
 
-export const useLayout = (type, key) => {
-  const url = `/api/pam/Layout/GetLayout?objectType=${type}&layoutKey=${key}`;
+/**
+ * Layout fetching hook that assumes the default pam layout endpoint
+ * @param {string} type - object type for standard PAM get layout endpoint
+ * @param {string} key - layout key for standard PAM get layout endpoint
+ * @param {string} url - optional if you are not using the standard pam endpoint
+ * @returns [object, boolean] - layout, loading
+ */
+export const useLayout = (type, key, url = null) => {
+  const fetchUrl = url || `/api/layout/get?objectType=${type}&layoutKey=${key}`;
+  const [data, isLoading] = useStaleData(fetchUrl, {});
 
-  const [data, isLoading ] = useStaleData(url, {});
   return [data, isLoading];
 }
 
