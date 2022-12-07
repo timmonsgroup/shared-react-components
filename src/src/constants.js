@@ -33,7 +33,6 @@ export const FIELD_TYPES = Object.freeze({
   CHOICE: 7,
   OBJECT: 10,
   // BYNAMEOBJECTREFERENCE: 11,
-  CHECKBOX: 12,
   SPATIAL: 20,
   LINK: 100,
   CLUSTER: 120,
@@ -42,8 +41,9 @@ export const FIELD_TYPES = Object.freeze({
 
 export const REQUIRED = 'required';
 
-export const RENDER_VALIDATIONS = Object.freeze({
+export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
+  URL: 'url',
   DISABLED: 'disabled',
   HIDDEN: 'hidden',
 });

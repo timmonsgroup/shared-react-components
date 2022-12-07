@@ -135,7 +135,7 @@ export function validDoubleFormat(value, int = 4, frac = 4) {
   return new RegExp(`^\\d{0,${int}}(\\.\\d{0,${frac}})?$`).test(value);
 }
 
-export const createFieldValidation = (type, label, validationMap) => {
+export const createFieldValidation = (type, label, validationMap, field) => {
   let validation = null;
   const required = validationMap.get(VALIDATIONS.REQUIRED);
   const maxLength = validationMap.get(VALIDATIONS.MAX_LENGTH);
@@ -185,15 +185,10 @@ export const createFieldValidation = (type, label, validationMap) => {
       validation = yupDate(label, required);
       break;
 
+    // NOTE that Checkboxes are multi-selects, so we use the same validation
     case FIELDS.CHOICE:
     case FIELDS.OBJECT: {
-      // validation = (model.multiple ? yupMultiselect : yupTypeAhead)(label, required);
-      validation = yupTypeAhead(label, required);
-      break;
-    }
-
-    case FIELDS.CHECKBOX: {
-      validation = yupMultiselect(label, required).nullable();
+      validation = (field?.render?.multiple ? yupMultiselect : yupTypeAhead)(label, required).nullable();
       break;
     }
 

@@ -5,10 +5,7 @@ import { Button as MUIButton} from '@mui/material';
 /**
  * Primary UI component for user interaction
  */
-// eslint-disable-next-line
-const Button = ({ primary, backgroundColor, variant, color, size, label, ...props }) => {
-  // const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
-  // const textTransform = 'none';
+const Button = ({ primary, backgroundColor, variant, color, size, label, children, ...props }) => {
   return (
     <MUIButton
       variant={variant}
@@ -17,32 +14,20 @@ const Button = ({ primary, backgroundColor, variant, color, size, label, ...prop
       style={backgroundColor && { backgroundColor}}
       {...props}
     >
-      {label}
+      {label || children}
     </MUIButton>
   );
 };
 
-//{className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}}
-
 Button.propTypes = {
-  /**
-   * What background color to use
-   */
+  children: PropTypes.node,
   backgroundColor: PropTypes.string,
   variant: PropTypes.string,
-  /**
-   * How large should the button be?
-   */
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   color: PropTypes.string,
-  /**
-   * Button contents
-   */
-  label: PropTypes.string.isRequired,
-  /**
-   * Optional click handler
-   */
+  label: PropTypes.string,
   onClick: PropTypes.func,
+
 };
 
 Button.defaultProps = {
