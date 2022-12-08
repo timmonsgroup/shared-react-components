@@ -2,7 +2,7 @@
 
 ## Overview 📚
 
-This repo contains the source code for the [Timmons Group Shared React Components npm library](https://www.npmjs.com/package/@timmons-group/shared-react-components).  
+This repo contains the source code for the [Timmons Group Shared React Components npm library](https://www.npmjs.com/package/@timmons-group/shared-react-components).
 
 ## Core Files/Folders 📂
 
@@ -48,6 +48,25 @@ To remove the `npm link`, simply run `npm i` in the target project (worst case s
 TODO: add some goodies here about tagging
 
 https://docs.npmjs.com/cli/v9/commands/npm-publish
+
+## How to Publish a beta version to NPM
+Steps to publish a npm package to beta that won't be available via latest and won't auto install on ncu updates etc
+
+Ensure any compile is run npm run dist etc
+1. Modify version in package.json to the following format (match with existing version numbers etc)
+   * `"version": "0.1.120-beta.x" where beta.x is the number of those betas`
+1. Publish to npm
+   * `npm publish --tag beta`
+
+There are two options for installation / testing in a project:
+1. Always install beta
+   * `npm install @timmons-group/shared-react-components@beta`
+1. Install specific version with
+   * `npm install @timmons-group/shared-react-components@0.1.120-beta.1`
+
+### How to fix latest if you publish a beta without --tag beta ###
+How to fix latest if you publish a beta without --tag beta (it will default to latest)
+run: `npm dist-tags add @timmons-group/shared-react-components@1.0.3 latest --otp=123456` where 1.0.3 is the version that should be latest `--otp=` is required
 
 ## Who do I Talk to? 🙋‍♀️
 
