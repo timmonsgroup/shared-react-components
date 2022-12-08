@@ -101,7 +101,7 @@ const GenericForm = ({
             <hr />
             <CardContent>
               <form>
-                {sections.map((section) => theSection(section, control))}
+                {sections.map((section, index) => theSection(section, control, index))}
               </form>
             </CardContent>
           </Card>
@@ -131,9 +131,9 @@ GenericForm.propTypes = {
   unitLabel: PropTypes.string,
 }
 
-const renderFormSection = (section, control) => {
+const renderFormSection = (section, control, index) => {
   return (
-    <div>
+    <div key={index}>
       {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
       {section.fields.map((field, index) => (
         <AnyField sx={{ marginTop: index ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
