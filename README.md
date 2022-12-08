@@ -35,9 +35,18 @@ We can run this library within a target project/application by using `npm link`.
 1. In this repo run `npm link`
 1. In the target repo run `npm link @timmons-group/shared-react-components`
 1. Restart the target repo's web server and you should be all set
-1. Make changes to this shared component repo and then run `npm run build:package-localdev` (or indiviudally run any of the commands within this command if you specifically know which of the Core Files 📂 you are updating - which hopefully you do 🧙‍♂️).
+1. Make changes to this shared component repo and then run `npm run build:package-localdev`
+   * You may indiviudally build any of the file types if you are not working on all of them:
+     * `npm run build:components` - This will build the components and stories
+     * `npm run build:helpers` - This will build the helpers
+     * `npm run build:hooks` - This will build the hooks
+     * `npm run build:index` - This will build the index (components that are exported for use) and constants
+       * This must be run if you are adding a new component to the index file for the first time
 
-To remove the `npm link`, simply run `npm i` in the target project (worst case scenario, you may need to delete some stuff in `node_modules` of the target proejct and re- `npm i` if the first `npm i` doesn't work).
+### Ok fine, but how do I get back to the published version? 🤷‍♂️ ###
+To remove the `npm link`
+1. Delete the `@timmons-group` folder in the `node_modules` folder of the target project.
+1. Run `npm i` in the target project.
 
 ## How to Build 🔨
 
@@ -50,11 +59,15 @@ TODO: add some goodies here about tagging
 https://docs.npmjs.com/cli/v9/commands/npm-publish
 
 ## How to Publish a beta version to NPM
-Steps to publish a npm package to beta that won't be available via latest and won't auto install on ncu updates etc
+Note about beta versions of the package
+ * They will NOT install via `npm i @timmons-group/shared-react-components@latest`
+ * Will not appear on `npm outdated` OR install via `npm update`.
 
-Ensure any compile is run npm run dist etc
+### Steps to publish a beta version of the package to beta. ###
 1. Modify version in package.json to the following format (match with existing version numbers etc)
    * `"version": "0.1.120-beta.x" where beta.x is the number of those betas`
+1. Build the package
+   * `npm run build:package`
 1. Publish to npm
    * `npm publish --tag beta`
 

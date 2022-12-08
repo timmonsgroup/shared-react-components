@@ -50,7 +50,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
-  const { formState, watch, trigger, setValue, reset, resetField, setError } = useFormObject;
+  const { formState, watch, trigger, setValue, reset, resetField, setError, clearErrors } = useFormObject;
 
   useEffect(() => {
     if (layoutLoading) {
@@ -207,6 +207,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
       const fetchData = async (fieldId, url) => {
         const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
         const things = await axios.get(fetchUrl).then(res => {
+          // We need to clear the error in the event that the error was caused by a previous failed attempt
+          clearErrors(fieldId);
           return res?.data?.map((opt) => ({ id: opt.id || opt.streamID, label: opt.name || opt.label }));
         }
         ).catch(error => {

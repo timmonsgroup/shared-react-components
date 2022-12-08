@@ -108,7 +108,9 @@ export function yupTrimStringMax(label, isRequired = true, maxLength, msg) {
 }
 
 export function yupMultiselect(label, isRequired = true) {
-  const message = `Please select at least one ${label || 'item'}`;
+  // TODO: Figure out a way to handle unknown pluralization of label
+  // const message = `Please select at least one ${label || 'item'}`;
+  const message = 'Please select at least one item';
   const schema = array().label(label || 'This field');
   return isRequired ? schema.required(message).min(1, message) : schema;
 }
