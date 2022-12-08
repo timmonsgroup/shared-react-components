@@ -135,32 +135,32 @@ const renderFormSection = (section, control, index) => {
   return (
     <div key={index}>
       {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
-      {section.fields.map((field, index) => (
-        <AnyField sx={{ marginTop: index ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+      {section.fields.map((field, fIndex) => (
+        <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
       ))}
     </div>
   );
 }
 
-const renderTwoColumnSection = (section, control) => {
+const renderTwoColumnSection = (section, control, index) => {
   const nextCol = Math.ceil(section.fields.length / 2);
   const leftCol = section.fields.slice(0, nextCol);
   const rightCol = section.fields.slice(nextCol);
 
   return (
-    <div>
+    <div key={index}>
       <Grid
         container
         spacing={{ xs: 1, sm: 2, md: 4 }}
       >
-        <Grid item xs={6} key="left">
-          {leftCol.map((field, index) => (
-            <AnyField sx={{ marginTop: index ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+        <Grid item xs={6} key={`${index}-left`}>
+          {leftCol.map((field, fIndex) => (
+            <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={`${index}-left-${field?.render?.name}`}/>
           ))}
         </Grid>
-        <Grid item xs={6} key="right">
-          {rightCol.map((field, index) => (
-            <AnyField sx={{ marginTop: index ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+        <Grid item xs={6} key={`${index}-right`}>
+          {rightCol.map((field, fIndex) => (
+            <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={`${index}-right-${field?.render?.name}`}/>
           ))}
         </Grid>
       </Grid>
