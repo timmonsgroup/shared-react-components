@@ -19,7 +19,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
 
-const GenericForm = ({ formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, suppressSuccessToast }) => {
+const GenericForm = ({
+    formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
+    domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, suppressSuccessToast
+  }) => {
   const [modifying, setModifying] = useState(false);
   const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying);
   const nav = useNavigate();
@@ -73,6 +76,8 @@ const GenericForm = ({ formTitle, headerTitle, cancelUrl, successUrl, isEdit, de
       )
     }
 
+    const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
+
     return (
       <>
         <SubHeader
@@ -83,7 +88,6 @@ const GenericForm = ({ formTitle, headerTitle, cancelUrl, successUrl, isEdit, de
                 <Button color="tertiary" href={cancelUrl} label="Cancel" />
                 {isEdit && <Button color="primary" onClick={() => reset()} label={'Reset'} />}
                 <Button onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
-                {/* <Button onClick={preSubmit} label={isEdit ? 'Edit' : 'Save'} /> */}
               </Stack>
           }
         />
@@ -96,7 +100,9 @@ const GenericForm = ({ formTitle, headerTitle, cancelUrl, successUrl, isEdit, de
             </CardContent>
             <hr />
             <CardContent>
-              {renderFormContent(sections, control)}
+              <form>
+                {sections.map((section) => theSection(section, control))}
+              </form>
             </CardContent>
           </Card>
         </Container>
@@ -125,19 +131,18 @@ GenericForm.propTypes = {
   unitLabel: PropTypes.string,
 }
 
-const renderFormContent = (sections, control) => {
+const renderFormSection = (section, control) => {
   return (
-    <form>
-      {sections.map((section, index) => {
-        return (
-          <FormSection section={section} control={control} key={index} />
-        );
-      })}
-    </form>
+    <div>
+      {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
+      {section.fields.map((field, index) => (
+        <AnyField sx={{ marginTop: index ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+      ))}
+    </div>
   );
 }
 
-const FormSection = ({section, control}) => {
+const renderTwoColumnSection = (section, control) => {
   const nextCol = Math.ceil(section.fields.length / 2);
   const leftCol = section.fields.slice(0, nextCol);
   const rightCol = section.fields.slice(nextCol);
@@ -161,11 +166,6 @@ const FormSection = ({section, control}) => {
       </Grid>
     </div>
   )
-}
-
-FormSection.propTypes = {
-  section: PropTypes.object,
-  control: PropTypes.object,
 }
 
 export default GenericForm;
