@@ -234,7 +234,7 @@ const checkboxRenderer = (layout) => {
           component="fieldset"
           variant="standard"
         >
-          <FormLabel component="legend">{label}<RequiredIndicator isRequired={!!required} /></FormLabel>
+          <FormLabel component="legend"><RequiredIndicator isRequired={!!required} />{label}</FormLabel>
           {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
