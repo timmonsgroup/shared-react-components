@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { dateFormatter, processLayout, processGenericLayout } from '../helpers';
+import { dateFormatter, processLayout, processGenericLayout } from '../helpers/helpers.js';
 
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
@@ -44,7 +44,7 @@ const baseColumnConfig = (layoutColumn) => {
       return params.row[path[0]];
     }
 
-    // If the path includes a . then we need to dig down into the value so we will need to define a custom filterOperator 
+    // If the path includes a . then we need to dig down into the value so we will need to define a custom filterOperator
     // The input component will need to be a text field
     let filterOperator = {
       label: 'Contains',

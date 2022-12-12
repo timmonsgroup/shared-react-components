@@ -3,7 +3,7 @@ import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER } from '../const
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation } from '../helpers/formHelpers.js';
-import { sortOn } from 'helpers';
+import { sortOn } from '../helpers/helpers.js';
 import axios from 'axios';
 
 const validationTypes = Object.values(VALIDATIONS);
