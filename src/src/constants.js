@@ -46,6 +46,8 @@ export const CONDITIONAL_RENDER = Object.freeze({
   URL: 'url',
   DISABLED: 'disabled',
   HIDDEN: 'hidden',
+  HELPER: 'helperText',
+  REQTEXT: 'requiredErrorText',
 });
 
 export const VALIDATIONS = Object.freeze({

@@ -4,12 +4,12 @@ import {
   string, array, date, number, object
 } from 'yup';
 
-export function yupString(label, isRequired = true) {
+export function yupString(label, isRequired = true, reqMessage) {
   const schema = string().label(label || 'This field');
-  return isRequired ? schema.required() : schema;
+  return isRequired ? schema.required(reqMessage) : schema;
 }
 
-export function yupDate(label, isRequired = false, msg = DATE_MSG) {
+export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
   // If you can't figure out why date validation is not working remove the "typeError(msg)" this will spit out more detail
   const schema = date()
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -20,7 +20,7 @@ export function yupDate(label, isRequired = false, msg = DATE_MSG) {
     //   !context || !context.originalValue ? true : validDateFormat(context.originalValue)
     // ))
     .nullable().label(label);
-  return isRequired ? schema.required() : schema;
+  return isRequired ? schema.required(reqMessage) : schema;
 }
 
 export function validDateFormat(value) {
@@ -36,16 +36,16 @@ export function multiToPayload(selections) {
   return Array.isArray(selections) ? selections.map((id) => ({ id: parseInt(id, 10) })) : [];
 }
 
-export function yupTypeAhead(label, isRequired = true) {
-  return yupString(label, isRequired).nullable();
+export function yupTypeAhead(label, isRequired = true, reqMessage) {
+  return yupString(label, isRequired, reqMessage).nullable();
 }
 
-export function yupTrimString(label, isRequired = true, msg) {
+export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
   // use .strict(false) if submit logic / api will not trim values
-  return yupString(label, isRequired).trim(msg || 'Remove leading and/or trailing spaces');
+  return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces');
 }
 
-export function yupInt(label, isRequired = true, maxLength, msg) {
+export function yupInt(label, isRequired = true, maxLength, msg, reqMessage) {
   let schema = number().integer().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg);
@@ -57,9 +57,9 @@ export function yupInt(label, isRequired = true, maxLength, msg) {
     ));
   }
 
-  return isRequired ? schema.required() : schema;
+  return isRequired ? schema.required(reqMessage) : schema;
 }
-export function yupFloat(label, isRequired = true, int = 5, frac = 2, maxLength, msg, maxValue) {
+export function yupFloat(label, isRequired = true, int = 5, frac = 2, maxLength, msg, maxValue, reqMessage) {
   let schema = number().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg)
@@ -80,10 +80,10 @@ export function yupFloat(label, isRequired = true, int = 5, frac = 2, maxLength,
     ));
   }
 
-  return isRequired ? schema.required() : schema;
+  return isRequired ? schema.required(reqMessage) : schema;
 }
 
-export function yupCurrency(label, isRequired = true, maxLength, msg) {
+export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage) {
   let schema = number().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg)
@@ -98,19 +98,17 @@ export function yupCurrency(label, isRequired = true, maxLength, msg) {
     ));
   }
 
-  return isRequired ? schema.required() : schema;
+  return isRequired ? schema.required(reqMessage) : schema;
 }
 
-export function yupTrimStringMax(label, isRequired = true, maxLength, msg) {
+export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMessage) {
   // use .strict(false) if submit logic / api will not trim values
-  const schema = yupTrimString(label, isRequired, msg);
+  const schema = yupTrimString(label, isRequired, msg, reqMessage);
   return maxLength ? schema.max(maxLength) : schema;
 }
 
-export function yupMultiselect(label, isRequired = true) {
-  // TODO: Figure out a way to handle unknown pluralization of label
-  // const message = `Please select at least one ${label || 'item'}`;
-  const message = 'Please select at least one item';
+export function yupMultiselect(label, isRequired = true, reqMessage) {
+  const message = reqMessage || 'Please select at least one item';
   const schema = array().label(label || 'This field');
   return isRequired ? schema.required(message).min(1, message) : schema;
 }
@@ -123,10 +121,10 @@ export function getSelectValue(multiple, inData) {
   return (inData)?.id?.toString() || '';
 }
 
-export function yupObject(label, isRequired = false) {
+export function yupObject(label, isRequired = false, reqMessage) {
   // Need nullable to avoid type error on 'object' even if required
   const schema = object().label(label).nullable();
-  return isRequired ? schema.required() : schema;
+  return isRequired ? schema.required(reqMessage) : schema;
 }
 
 export function validCurrencyFormat(value) {
@@ -141,21 +139,23 @@ export const createFieldValidation = (type, label, validationMap, field) => {
   let validation = null;
   const required = validationMap.get(VALIDATIONS.REQUIRED);
   const maxLength = validationMap.get(VALIDATIONS.MAX_LENGTH);
+  const reqMessage = field?.render?.requiredErrorText;
 
   switch (type) {
     case FIELDS.LONG_TEXT:
-      validation = yupTrimStringMax(label, required, maxLength);
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
       break;
     case FIELDS.TEXT:
 
-      validation = yupTrimStringMax(label, required, maxLength);
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
       break;
     case FIELDS.INT:
       validation = yupInt(
         label,
         required,
         maxLength,
-        'Please enter an integer'
+        'Please enter an integer',
+        reqMessage
       );
       break;
     case FIELDS.FLOAT: {
@@ -171,6 +171,7 @@ export const createFieldValidation = (type, label, validationMap, field) => {
           ? `Please enter a number, with up to ${intD} digits and an optional decimal of up to ${fracD} digits`
           : `Please enter a decimal of up to ${fracD} digits`,
         validationMap.get(VALIDATIONS.MAX_VALUE),
+        reqMessage
       );
       break;
     }
@@ -179,18 +180,19 @@ export const createFieldValidation = (type, label, validationMap, field) => {
         label,
         required,
         maxLength,
-        'Please enter a valid dollar amount, with an optional decimal of up to two digits for cents; e.g., 1234.56'
+        'Please enter a valid dollar amount, with an optional decimal of up to two digits for cents; e.g., 1234.56',
+        reqMessage
       );
       break;
 
     case FIELDS.DATE:
-      validation = yupDate(label, required);
+      validation = yupDate(label, required, null, reqMessage);
       break;
 
     // NOTE that Checkboxes are multi-selects, so we use the same validation
     case FIELDS.CHOICE:
     case FIELDS.OBJECT: {
-      validation = (field?.render?.multiple ? yupMultiselect : yupTypeAhead)(label, required).nullable();
+      validation = (field?.render?.multiple ? yupMultiselect : yupTypeAhead)(label, required, reqMessage).nullable();
       break;
     }
 
@@ -200,7 +202,7 @@ export const createFieldValidation = (type, label, validationMap, field) => {
     // }
 
     case FIELDS.LINK: {
-      validation = yupTrimStringMax(label, required, maxLength);
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
       break;
     }
 

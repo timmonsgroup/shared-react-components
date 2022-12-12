@@ -75,7 +75,7 @@ export const parseFormLayout = async (layout, urlDomain) => {
 
           // loop through validation object
           Object.keys(validation).forEach((key) => {
-            // Setting layout validations like "required" or "disabled" that must also be visually represented
+            // Setting any dynamic rendering layout like "required" or "disabled" that must be visually represented
             if (conditionalRenderProps.includes(key)) {
               layout.set(key, validation[key]);
             }
@@ -88,9 +88,15 @@ export const parseFormLayout = async (layout, urlDomain) => {
         });
 
         const field = fields.get(aFI);
+
         const { type, label } = field;
+        const mergedField = { ...field };
+        // Convert the layout map to an object
+        const dynRender = Object.fromEntries(layout);
+        // We'll pass the merged field to the createFieldValidation function so that it can use the dynamic render props (like requiredErrorText)
+        mergedField.render = { ...field.render, ...dynRender };
         // Create a yup validation for the field that is triggered by the triggerField
-        fieldValues.set(aFI, { layout, validation: createFieldValidation(type, label, validationProps, field) });
+        fieldValues.set(aFI, { layout, validation: createFieldValidation(type, label, validationProps, mergedField) });
       });
     });
   });
@@ -187,6 +193,8 @@ export const parseField = (field, asyncFieldsMap) => {
       hidden,
       required,
       disabled,
+      helperText: field.helperText,
+      requiredErrorText: field.requiredErrorText,
       readOnly,
       linkFormat,
     }

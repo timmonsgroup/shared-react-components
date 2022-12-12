@@ -30,7 +30,6 @@ const GenericForm = ({
 
   const onSubmit = async (data) => {
     const payload = formatPayload(data);
-    console.log('formatted payload', payload);
 
     addOrUpdate(payload, isEdit, successUrl, cancelUrl);
   }
@@ -56,7 +55,9 @@ const GenericForm = ({
         enqueueSnackbar(`Error ${edit ? 'updating' : 'creating'} ${unitLabel}`, { variant: 'error' });
       }
     } catch (error) {
-      enqueueSnackbar(`Error ${edit ? 'updating' : 'creating'} ${unitLabel}`, { variant: 'error' });
+      // If we have a nice server error use it.
+      const serverError = error?.response?.data?.error;
+      enqueueSnackbar(serverError || `Error ${edit ? 'updating' : 'creating'} ${unitLabel}`, { variant: 'error' });
       setModifying(false);
     }
   };

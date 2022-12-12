@@ -221,7 +221,7 @@ const typeaheadRenderer = ({ label, disabled, choices, required, placeholder } )
 }
 
 const checkboxRenderer = (layout) => {
-  const { label, disabled, choices = [], required } = layout;
+  const { label, disabled, choices = [], required, helperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
     const [value, setValue] = useState(field.value || []);
@@ -232,10 +232,10 @@ const checkboxRenderer = (layout) => {
           error={!!error}
           disabled={disabled}
           component="fieldset"
-          sx={{ m: 3 }}
           variant="standard"
         >
           <FormLabel component="legend">{label}<RequiredIndicator isRequired={!!required} /></FormLabel>
+          {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
             {choices?.map((item, index) => (
