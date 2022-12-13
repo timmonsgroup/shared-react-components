@@ -3,6 +3,7 @@ import PropTypes, { checkPropTypes } from 'prop-types';
 
 import { Box, TextField, Autocomplete, InputLabel } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
+import { object } from 'yup';
 
 /**
  * Wrapper of the Mui Autocomplete component
@@ -39,8 +40,9 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
     }
 
     const foundOpt = getOpObj(value);
+
     // Things will get strange if we don't have a found option at this point and you dun goofed A A Ron
-    const isEqual = foundOpt ? option.id === foundOpt.id || option.value === foundOpt.value : true;
+    const isEqual = foundOpt ? option?.id === foundOpt?.id || option?.value === foundOpt?.value : true;
     return isEqual;
   }
 
@@ -50,10 +52,11 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
    * @returns
    */
   const getOpObj = (option) => {
-    if (!option.id){
+    if (!option.id && !option.value) {
       option = items.find(op => {
-        return op.id.toString() === option?.toString();
-    });
+        const optValue = op?.id?.toString() || option?.value?.toString();
+        return optValue === option?.toString();
+      });
     }
 
     return option;

@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
 
+/**
+ * Helper function to get a value from localStorage.
+ * @param {*} key
+ * @param {*} defaultValue
+ * @returns
+ */
 export const getStorage = (key, defaultValue) => {
   const stored = localStorage.getItem(key);
   if (stored) {
@@ -13,9 +19,16 @@ export const getStorage = (key, defaultValue) => {
   return defaultValue;
 }
 
+/**
+ * A hook to use localStorage as a model for state.
+ * @param {string} key
+ * @param {any} defaultValue
+ * @returns
+ */
 export const useLocalStorage = (key, defaultValue) => {
   const [value, setValue] = useState(() => getStorage(key, defaultValue));
 
+  // Update the localStorage when the value changes.
   useEffect(() => {
     localStorage.setItem(key, JSON.stringify(value));
   }, [key, value]);
