@@ -178,44 +178,75 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
   muiGridColumn.type = 'singleSelect';
   muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name } });
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, 'N/A');
-
 }
 
-// This takes a mui column and adds formatting to it to handle action button fields
-const addActionButtonFormatting = (muiGridColumn, actionData) => {
+/**
+ * This is our default renderer function for grid actions
+ * @param {*} props
+ * @param {Object} props.actions - The actions to render
+ * @param {Object} props.params - The params from the grid
+ * @param {Object} props.themeGroup - The theme group to use for the grid actions
+ * @returns
+ */
+const GridActions = ({actions, params, themeGroup}) => {
+  const theme = useTheme();
+
+  const { gridActionItem } = theme;
+  const gAI = themeGroup?.gridActionItem || gridActionItem || { color: '#231100', paddingX: '0.75rem' };
+
+  return (
+    <ButtonGroup
+      aria-label="action button group"
+      size="small"
+      sx={{
+        margin: 'auto',
+      }}
+      variant="text"
+    >
+      {actions.map((action, index) => {
+        return (
+          <Button
+            key={index}
+            // Pass in the row data to the action - up to the caller to unpack
+            onClick={() => { action.clickHandler(params.row) }}
+            size="small"
+            sx={gAI}
+            variant="text"
+          >
+            {action.label}
+          </Button>
+        )
+      })}
+    </ButtonGroup>
+  );
+}
+
+GridActions.propTypes = {
+  actions: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired,
+  themeGroup: PropTypes.object,
+}
+
+
+/**
+ * This takes a mui column and adds formatting to it to handle action button fields
+ * @param {object} muiGridColumn - The column used by the MUIGrid component
+ * @param {object} actionData - The action data from the layout
+ * @param {object} themeGroup - The theme group to use for the actions. This will override the default theme
+ * @param {JSX} actionsComponent - If you want to use a custom component for the actions, pass it in here
+ */
+const addActionButtonFormatting = (muiGridColumn, actionData, themeGroup, actionsComponent) => {
   // Get actions
   const actions = actionData?.actionList || [];
   actions.sort((a, b) => a.order - b.order);
 
+  // Default to the GridActions component if no custom component is passed in
+  const Actions = actionsComponent || GridActions;
+
   // Create a button group with buttons for each action
   muiGridColumn.renderCell = (params) => {
     return (
-      <ButtonGroup
-        aria-label="action button group"
-        size="small"
-        sx={{
-          margin: 'auto',
-        }}
-        variant="text"
-      >
-        {actions.map((action, index) => {
-          return (
-            <Button
-              key={index}
-              // Pass in the row data to the action - up to the caller to unpack
-              onClick={() => { action.clickHandler(params.row) }}
-              size="small"
-              sx={{
-                color: '#231100', // TODO figure out where to pull from theme - got this hex from invis
-                paddingX: '0.75rem',
-              }}
-              variant="text"
-            >
-              {action.label}
-            </Button>
-          )
-        })}
-      </ButtonGroup>
+      <Actions actions={actions} params={params} themeGroup={themeGroup} />
     );
   }
 }
@@ -344,7 +375,7 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
  * @param {LayoutColumn} column
  * @returns {MuiGridColumn}
  */
-const convertLayoutColumnToMuiColumn = (column) => {
+const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent) => {
   let ret = baseColumnConfig(column);
 
   switch (column.type) {
@@ -354,8 +385,8 @@ const convertLayoutColumnToMuiColumn = (column) => {
     case 5: addDateFormatting(ret); break; // Date
     case 7: addSingleSelectFormatting(ret, column); break; // Single Select
     case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
-    case 99: addActionButtonFormatting(ret, column.render); break; // Action Buttons
-    case 100: addExternalLinkFormatting(ret); break; // Link
+    case 99: addActionButtonFormatting(ret, column.render, themeGroup, actionsComponent); break; // Action Buttons
+    case 100: addExternalLinkFormatting(ret, themeGroup); break; // Link
     default: console.error('Unknown column type', column.type); break;
   }
 
@@ -375,7 +406,7 @@ const convertLayoutColumnToMuiColumn = (column) => {
  * @param {Object} props.themeGroup - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
  */
 // eslint-disable-next-line
-const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, themeGroup, ...props }) => {
+const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, themeGroup, actionsComponent, ...props }) => {
 
   const theme = useTheme();
   // Extract the 'pamGrid' theme group from the theme
@@ -417,7 +448,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
 
 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
-  let renderColumns = (layoutColumns || []).map(convertLayoutColumnToMuiColumn).filter(Boolean); // Remove any columns that are not defined
+  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, themeGroup, actionsComponent)).filter(Boolean); // Remove any columns that are not defined
 
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar ? {
@@ -515,4 +546,6 @@ PamLayoutGrid.defaultProps = {
   showToolbar: false,
 };
 
-export default PamLayoutGrid;
+export {
+  PamLayoutGrid as default,
+};

@@ -124,13 +124,31 @@ export const getSectionChoices = (layout, sectionName, modelName) => {
   return choices;
 }
 
+/**
+ * Simple layout process method to convert the layout object into a format that the layout builder can use.
+ * If you are using GenericForm you should be using the useFormLayout and parseFormLayout methods instead.
+ * @param {object} layout - The layout object to process
+ * @returns
+ */
 export const processLayout = (layout) => {
   if (!layout || !layout.sections) {
     return layout;
   }
 
+  if (layout.type === 1) {
+    console.warn('You are processomh a form layout with the processLayout method. You should be using the useFormLayout and parseFormLayout methods instead.');
+  }
+
   const sections = layout.sections.map((section) => {
     const fields = section.layout.map(getStructure);
+    // This is a small hack to make the layout work with the old layout builder.
+    // If this layout structure predates the new layout types we need to remove the "fields." prefix from the path.
+    if (layout.type === undefined || layout.type === null || layout.type === 2) {
+      // If this a grid layout we need to remove the "fields." prefix from the path.
+      fields.forEach((field) => {
+        field.path = field.path.replace('fields.', '');
+      });
+    }
     return { name: section.name, fields: fields };
   });
 
@@ -153,12 +171,12 @@ export const processGenericLayout = (layout) => {
   }
 
   const data = {};
-  
-  if(layout.data) {
+
+  if (layout.data) {
     data.source = layout.data;
   }
 
-  if(layout.grid) {
+  if (layout.grid) {
     data.gridConfig = layout.grid;
   }
 
@@ -178,7 +196,7 @@ export const processGenericLayout = (layout) => {
 function getStructure(field) {
   const model = field.model || {};
   const name = model.name || `unknown${model.id}`;
-  const { label,linkFormat } = field;
+  const { label, linkFormat } = field;
   const required = !!field.required;
   const readOnly = !!field.readOnly;
   const disabled = false;
@@ -213,11 +231,11 @@ function getStructure(field) {
     dynField.render.choices = choices;
   }
 
-  if(field.width) {
+  if (field.width) {
     dynField.width = field.width
   }
 
-  if(field.flex) {
+  if (field.flex) {
     dynField.flex = field.flex
   }
 
@@ -256,7 +274,7 @@ export function zeroPad(num, size = 3) {
  * @returns string
  */
 export function dateFormatter(inc) {
-  if(inc instanceof Date) {
+  if (inc instanceof Date) {
     return dateToString(inc);
   }
 
