@@ -199,7 +199,9 @@ const theTheme = createTheme({
     regressive: {
       main: orange,
       light: '#F68802',
+      dark: '#683200',
       text: '#ffffff',
+      contrastText: '#ffffff',
     },
     tertiary: {
       main: '#939743',
