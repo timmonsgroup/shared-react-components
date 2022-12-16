@@ -5,3 +5,11 @@ export {
     LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter,
     RadioOptions, RequiredIndicator, SubHeader, Typeahead
 } from './stories';
+
+export {
+    default as defaultMuiTheme,
+    baseThemeProperties,
+    LinkBehavior,
+    mergeThemeProperties,
+    createMergedTheme,
+} from './muiTheme';
