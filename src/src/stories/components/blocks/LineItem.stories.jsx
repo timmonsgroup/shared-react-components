@@ -3,7 +3,7 @@ import LineItem from './LineItem';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CPP/components/blocks/Line Item',
+  title: 'Common/components/blocks/Line Item',
   component: LineItem,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {

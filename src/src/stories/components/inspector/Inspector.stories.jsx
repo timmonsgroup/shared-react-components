@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CPP/components/Inspector',
+  title: 'Common/components/Inspector',
   component: Inspector,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   decorators: [(Story) => <MemoryRouter><Story /></MemoryRouter>],
@@ -39,12 +39,26 @@ const themeGroup = {
     marginLeft: '5px',
     marginRight: '5px',
   },
+  flexCard: {
+    border: '2px solid #C8C8C8',
+    boxShadow: 'none',
+    borderRadius: '4px',
+    marginBottom: '10px',
+    marginTop: '15px',
+  },
 
   inspector: {
     icon: {
       color: orange,
       fontSize: '16px',
       marginRight: '2px'
+    },
+    noData:{
+      color: '#C8C8C8',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     heading: {
       fontFamily: 'Helvetica',
@@ -182,4 +196,12 @@ NoFeaturedCard.args = {
       { label: 'Label', value: 'Value', units: 'Units' }
     ]}
   ],
+};
+
+export const NoData = Template.bind({});
+NoData.args = {
+  theme: themeGroup,
+  heading: null,
+  featuredCard: null,
+  cardData: [],
 };

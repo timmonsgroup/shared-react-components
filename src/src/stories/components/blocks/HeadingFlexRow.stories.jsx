@@ -3,7 +3,7 @@ import HeadingFlexRow from './HeadingFlexRow';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CPP/components/blocks/Heading Flex Row',
+  title: 'Common/components/blocks/Heading Flex Row',
   component: HeadingFlexRow,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {

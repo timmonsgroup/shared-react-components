@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CPP/components/blocks/Flex Card',
+  title: 'Common/components/blocks/Flex Card',
   component: FlexCard,
   decorators: [(Story) => <MemoryRouter><Story /></MemoryRouter>],
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
@@ -35,6 +35,13 @@ const tg = {
     fontSize: '12px',
     marginLeft: '5px',
     marginRight: '5px',
+  },
+  flexCard: {
+    border: '2px solid #C8C8C8',
+    boxShadow: 'none',
+    borderRadius: '4px',
+    marginBottom: '10px',
+    marginTop: '15px',
   },
 
   inspector: {
@@ -99,9 +106,9 @@ Primary.args = {
     legendLabel: 'Legend Label',
     legendColor: 'red',
     lines: [
-      { label: 'Label', value: 'Value', units: 'Units', legend: 'Legend', legendColor: 'red' },
-      { label: 'Label2', value: 'Value', units: 'Acres', legend: 'Legend', legendColor: 'white' },
-      { label: 'Label3', value: 'Value', units: 'Miles', legend: 'Legend', legendColor: 'blue' },
+      { label: 'Label', value: 10, units: 'Units', legend: 'Legend', legendColor: 'red' },
+      { label: 'Label2', value: 20, units: 'Acres', legend: 'Legend', legendColor: 'white' },
+      { label: 'Label3', value: 30, units: 'Miles', legend: 'Legend', legendColor: 'blue' },
     ],
     footerLinks: [
       { label: 'Link 1', url: '//www.google.com' },
@@ -119,9 +126,9 @@ UnitsOptional.args = {
     legendLabel: 'Legend',
     legendColor: 'red',
     lines: [
-      { label: 'Label', value: 'Value', units: null, legend: 'Legend', legendColor: 'red' },
-      { label: 'Label2', value: 'Value', units: 'Acres', legend: 'Legend', legendColor: 'white' },
-      { label: 'Label3', value: 'Value', units: null, legend: 'Legend', legendColor: 'blue' },
+      { label: 'Label', value: 10, units: null, legend: 'Legend', legendColor: 'red' },
+      { label: 'Label2', value: 20, units: 'Acres', legend: 'Legend', legendColor: 'white' },
+      { label: 'Label3', value: 30, units: null, legend: 'Legend', legendColor: 'blue' },
     ],
     footerLinks: [
       { label: 'Link 1', url: '//www.google.com' },
@@ -140,9 +147,9 @@ FooterOptional.args = {
     legendLabel: 'Legend',
     legendColor: 'red',
     lines: [
-      { label: 'Label', value: 'Value', units: 'Units', legend: 'Legend', legendColor: 'red' },
-      { label: 'Label2', value: 'Value', units: 'Acres', legend: 'Legend', legendColor: 'white' },
-      { label: 'Label3', value: 'Value', units: 'Miles', legend: 'Legend', legendColor: 'blue' },
+      { label: 'Label', value: 10, units: 'Units', legend: 'Legend', legendColor: 'red' },
+      { label: 'Label2', value: 20, units: 'Acres', legend: 'Legend', legendColor: 'white' },
+      { label: 'Label3', value: 30, units: 'Miles', legend: 'Legend', legendColor: 'blue' },
     ],
     footerLinks: null
   }
@@ -158,9 +165,9 @@ HeaderOptional.args = {
     legendLabel: 'Legend',
     legendColor: 'red',
     lines: [
-      { label: 'Label', value: 'Value', units: 'Units', legend: 'Legend', legendColor: 'red' },
-      { label: 'Label2', value: 'Value', units: 'Acres', legend: 'Legend', legendColor: 'white' },
-      { label: 'Label3', value: 'Value', units: 'Miles', legend: 'Legend', legendColor: 'blue' },
+      { label: 'Label', value: 10, units: 'Units', legend: 'Legend', legendColor: 'red' },
+      { label: 'Label2', value: 20, units: 'Acres', legend: 'Legend', legendColor: 'white' },
+      { label: 'Label3', value: 30, units: 'Miles', legend: 'Legend', legendColor: 'blue' },
     ],
     footerLinks: [
       { label: 'Link 1', url: '//www.google.com' },
@@ -179,9 +186,9 @@ NoHeaderOrFooter.args = {
     legendLabel: 'Legend',
     legendColor: 'red',
     lines: [
-      { label: 'Label', value: 'Value', units: 'Units', legend: 'Legend', legendColor: 'red' },
-      { label: 'Label2', value: 'Value', units: 'Acres', legend: 'Legend', legendColor: 'white' },
-      { label: 'Label3', value: 'Value', units: 'Miles', legend: 'Legend', legendColor: 'blue' },
+      { label: 'Label', value: 10, units: 'Units', legend: 'Legend', legendColor: 'red' },
+      { label: 'Label2', value: 20, units: 'Acres', legend: 'Legend', legendColor: 'white' },
+      { label: 'Label3', value: 30, units: 'Miles', legend: 'Legend', legendColor: 'blue' },
     ],
     footerLinks: null
   }

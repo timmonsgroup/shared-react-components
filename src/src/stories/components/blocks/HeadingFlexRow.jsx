@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { useTheme } from '@mui/material/styles';
-import { Typography, Box, Tooltip, Divider} from '@mui/material';
-import { Info } from '@mui/icons-material';
+import { Typography, Box, Tooltip, Divider } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { modifyColorOpacity } from '../../../helpers';
+
 
 const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDivider }) => {
   const theme = useTheme();
@@ -15,7 +17,7 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
     if (toolTip && toolTip.length > 0) {
       return (
         <Tooltip title={toolTip} placement="top">
-          <Info sx={inspector.icon}></Info>
+          <InfoIcon sx={inspector.icon}></InfoIcon>
         </Tooltip>
       );
     }
@@ -26,7 +28,7 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
     if (!legendLabel || legendLabel === '') {
       return null;
     }
-    const color = legendColor || theme.palette.primary;
+    const color = legendColor ? modifyColorOpacity(legendColor,1) : theme.palette.primary;
     return (
       <Typography sx={cardHeader} color={color} gutterBottom>{legendLabel}</Typography>
     );
@@ -49,7 +51,7 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
       <Box sx={singleFlexRow}>
         <Box sx={cardHeader}>
           {renderToolTip(toolTip)}
-          <Typography display="contents" gutterBottom>{heading}</Typography>
+          <Typography sx={cardHeader} display="contents" gutterBottom>{heading}</Typography>
         </Box>
         <div>
           {renderLegend(legendColor, legendLabel)}
@@ -60,7 +62,6 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
   );
 }
 
-//heading, toolTip, legendLabel, legendColor
 HeadingFlexRow.propTypes = {
   heading: PropTypes.string,
   toolTip: PropTypes.string,

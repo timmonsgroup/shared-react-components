@@ -1,19 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { Typography, Divider, Box, Button } from '@mui/material';
 import FlexCard from '../blocks/FlexCard';
 import { useTheme } from '@mui/material/styles';
+import { modifyColorOpacity } from '../../../helpers';
 
-const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, headingRenderer, theme }) => {
+const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, headingRenderer, theme, onHeaderActionClicked }) => {
   const defaultTheme = useTheme();
   const tg = theme || defaultTheme;
   const {inspector, singleFlexRow} = tg;
-  const {heading: headingTheme, clearButton, featuredCard: featuredCardTheme } = inspector || {};
+  const {heading: headingTheme, clearButton, featuredCard: featuredCardTheme, noData } = inspector || {};
   const {heading: fcThemeHeading, legend: fcThemeLegend} = featuredCardTheme || {};
+  const featLegendColor = featuredCard?.legendColor || {};
+  const noDataStyle = noData || {
+    color: '#C8C8C8',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '70vh',
+  };
 
   const renderHeading = () => {
     if (headingRenderer) {
@@ -30,7 +37,7 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
           <Typography sx={headingTheme}>
             {heading}
           </Typography>
-          <Button sx={clearButton} color="secondary">Clear</Button>
+          <Button sx={clearButton} onClick={onHeaderActionClicked} color="secondary">Clear</Button>
         </Box>
         <Divider />
       </>
@@ -38,6 +45,7 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
   }
 
   const renderFeaturedCard = () => {
+
     if (featuredCardRenderer) {
       return featuredCardRenderer();
     }
@@ -47,6 +55,8 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
     }
 
     if (featuredCard.legendLabel) {
+      const modifiedColor = modifyColorOpacity(featLegendColor, 1);
+      fcThemeLegend.color = modifiedColor;
       return (
         <>
           <Box sx={fcThemeHeading}>{featuredCard.heading}:</Box>
@@ -69,6 +79,11 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
     return renderSingleCard(card, index);
   });
 
+  if(!cardData || cardData.length === 0) {
+    return (
+      <Box sx={noDataStyle}>Click a feature on the Map to view information</Box>
+    );
+  }
 
   return (
     <div>
@@ -84,26 +99,27 @@ Inspector.propTypes = {
     heading: PropTypes.string,
     toolTip: PropTypes.string,
     legendLabel: PropTypes.string,
-    legendColor: PropTypes.string
+    legendColor: PropTypes.string,
+    lines: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.any,
+      link: PropTypes.string
+    })),
+    footerLinks: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.string,
+      url: PropTypes.string
+    }))
   })),
   heading: PropTypes.string,
   featuredCard: PropTypes.shape({
     heading: PropTypes.string,
-    legendLabel: PropTypes.string
+    legendLabel: PropTypes.string,
+    legendColor: PropTypes.string
   }),
   headingRenderer: PropTypes.func,
   featuredCardRenderer: PropTypes.func,
-  theme: PropTypes.shape({
-    singleFlexRow: PropTypes.object,
-    inspector: PropTypes.shape({
-      heading: PropTypes.object,
-      clearButton: PropTypes.object,
-      featuredCard: PropTypes.shape({
-        heading: PropTypes.object,
-        legend: PropTypes.object
-      })
-    })
-  }),
+  theme: PropTypes.object,
+  onHeaderActionClicked: PropTypes.func,
   children: PropTypes.node,
 };
 

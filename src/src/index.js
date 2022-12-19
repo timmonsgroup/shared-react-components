@@ -1,9 +1,10 @@
 export { ActionLinksRow, FlexCard, HeadingFlexRow, LineItem } from './stories/components/blocks';
+export Inspector from './stories/components/inspector/Inspector';
 
 export {
     AnyField, AppBar, Button, ContainerWithCard, FormErrorMessage, GenericForm, LineLoader,
     LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter,
-    RadioOptions, RequiredIndicator, SubHeader, Typeahead
+    RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
 } from './stories';
 
 export {

@@ -4,7 +4,7 @@ import ActionLinksRow from './ActionLinksRow';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CPP/components/blocks/Action Links Row',
+  title: 'Common/components/blocks/Action Links Row',
   component: ActionLinksRow,
   decorators: [(Story) => <MemoryRouter><Story /></MemoryRouter>],
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes

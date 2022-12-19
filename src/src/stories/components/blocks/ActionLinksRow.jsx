@@ -12,7 +12,7 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
     return null;
   }
 
-  const { actionLinkRow } = theme;
+  const {actionLinkRow} = theme;
 
   const alr = themeGroup?.actionLinkRow || actionLinkRow;
 
@@ -62,9 +62,7 @@ ActionLinksRow.propTypes = {
     target: PropTypes.oneOf(['_blank', '_self', '_parent', '_top'])
   })),
   includeDivider: PropTypes.bool,
-  themeGroup: PropTypes.objectOf(PropTypes.shape({
-    actionLinkRow: PropTypes.object
-  }))
+  themeGroup: PropTypes.object
 };
 
-export default ActionLinksRow;
+export  default ActionLinksRow;

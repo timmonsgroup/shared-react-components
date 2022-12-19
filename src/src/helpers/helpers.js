@@ -301,3 +301,19 @@ export const headerColor = (theme) => {
 export const specialColor = (theme) => {
   return theme.palette.text.special;
 }
+
+/**
+ * Useful when you want/need to share an RGBA color in more than one place with different opacity levels.
+ * If you want to show a color on a map with opacity 0.6 but want the legend value to use the same color
+ * but with opacity 1.0.
+ * @param color : string | an rgba color
+ * @param opacity : number | the opacity to convert to
+ * @returns string | an rgba color with it's opacity modified
+ */
+export const modifyColorOpacity = (color, opacity) => {
+  const opac = opacity || 1;
+  const cleanedColor = color.replace('rgba(', '').replace(')', '');
+  const colorArray = cleanedColor.split(',');
+  const newColor = `rgba(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]}, ${opac})`;
+  return newColor;
+}

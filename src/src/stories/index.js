@@ -13,9 +13,10 @@ import RadioOptions from './RadioOptions';
 import RequiredIndicator from './RequiredIndicator';
 import SubHeader from './SubHeader';
 import Typeahead from './Typeahead';
+import SideBar from './SideBar';
 
 export {
     AnyField, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage, LineLoader,
     LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter,
-    RadioOptions, RequiredIndicator, SubHeader, Typeahead
+    RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
 };
