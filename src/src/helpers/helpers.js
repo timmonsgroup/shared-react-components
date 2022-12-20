@@ -312,6 +312,9 @@ export const specialColor = (theme) => {
  */
 export const modifyColorOpacity = (color, opacity) => {
   const opac = opacity || 1;
+  if (!color || color === undefined)
+    return color;
+
   const cleanedColor = color.replace('rgba(', '').replace(')', '');
   const colorArray = cleanedColor.split(',');
   const newColor = `rgba(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]}, ${opac})`;

@@ -12,7 +12,7 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
   const {inspector, singleFlexRow} = tg;
   const {heading: headingTheme, clearButton, featuredCard: featuredCardTheme, noData } = inspector || {};
   const {heading: fcThemeHeading, legend: fcThemeLegend} = featuredCardTheme || {};
-  const featLegendColor = featuredCard?.legendColor || {};
+  const featLegendColor = featuredCard?.legendColor;
   const noDataStyle = noData || {
     color: '#C8C8C8',
     display: 'flex',
