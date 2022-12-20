@@ -75,15 +75,15 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
     );
   }
 
-  const renderCardData = cardData.map((card, index) => {
-    return renderSingleCard(card, index);
-  });
-
   if(!cardData || cardData.length === 0) {
     return (
       <Box sx={noDataStyle}>Click a feature on the Map to view information</Box>
     );
   }
+
+  const renderCardData = cardData?.map((card, index) => {
+    return renderSingleCard(card, index);
+  });
 
   return (
     <div>
