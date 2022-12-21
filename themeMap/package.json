@@ -1,0 +1,16 @@
+{
+  "name": "@timmons-group/theme-map",
+  "version": "0.0.0",
+  "description": "Reuseable React Map component built using Openlayers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ol": "^6.4.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
