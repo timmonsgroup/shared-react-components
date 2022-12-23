@@ -14,6 +14,7 @@ import { FIELD_TYPES } from '../constants';
 import { Box } from '@mui/material';
 
 const AnyField = ({ control, rules, layout, disabled, ...props }) => {
+  console.log('I am the liqour');
   const renderState = renderType(layout, disabled);
 
   return (

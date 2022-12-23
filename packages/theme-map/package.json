@@ -1,0 +1,47 @@
+{
+  "name": "@timmons-group/theme-map",
+  "version": "0.0.1-beta.1",
+  "description": "Reuseable React Map component built using Openlayers",
+  "private": false,
+  "main": "index.js",
+  "eslintIgnore": [
+    "node_modules",
+    "build/*",
+    "dist/*"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "clean": "npm run clean:root",
+    "clean:root": "rimraf dist/*.js",
+    "build:package": "npm run clean && npm run build:components",
+    "build:package-localdev": "npm run build:components",
+    "build:components": "set NODE_ENV=production&&babel src --out-dir dist --copy-files"
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "ol": "^6.4.3",
+    "ol-themes-ext": "^0.1.32",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.5",
+    "@babel/plugin-proposal-export-default-from": "^7.18.6",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "babel-plugin-named-exports-order": "^0.0.2",
+    "babel-plugin-proptypes-require": "^1.0.0",
+    "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "webpack": "^5.74.0"
+  }
+}

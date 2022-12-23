@@ -1,0 +1,158 @@
+.MapComponentContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  width: 100%;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 1;
+  flex-grow: 0;
+  margin-bottom: 0;
+  margin-top: 0;
+  min-height: 30vh;
+}
+
+.full-page-map .MapComponentContainer {
+  min-height: calc(100vh - 70px);
+}
+
+.full-width-container {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+
+.MapContainer {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+  padding: 0;
+  width: 100%;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.map {
+  width: 100%;
+  /*min-height: 30em;*/
+  height: auto;
+  min-width: 10em;
+  min-height: 20em;
+  margin: 0;
+  font-size: 1em;
+  /* aspect-ratio: 2/1; */
+  opacity: 100%;
+}
+
+.ol-zoom,
+.ol-zoom-extent {
+  left: auto;
+  right: 1em;
+}
+
+.ol-control {
+  background: #2F2F2F;
+  padding: 0px;
+  border-radius: 0px;
+  border-color: black;
+}
+
+.ol-control button {
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 0px;
+  margin: 0px;
+  font-weight: normal;
+  font-size: 1.5em;
+}
+
+.ol-control button i {
+  font-size: 0.8em;
+}
+
+.ol-control button,
+.ol-control button:hover,
+.ol-control button:focus {
+  background-color: white;
+  color: black;
+  border-color: black;
+}
+
+.ol-zoom-in {
+  margin-bottom: 3px !important;
+}
+
+.ol-zoom {
+  background-color: transparent;
+}
+
+.ol-zoom:hover {
+  background-color: transparent;
+}
+
+/* Change the icon for zoom to extent */
+.ol-zoom-extent {
+  margin-top: 6px;
+}
+
+.ol-zoom-extent button {
+  background-color: white;
+  color: transparent !important;
+  background-image: url("./home-icon.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
+
+/* Grid properties */
+.hero-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  min-height: clamp(200px, 50vh, 600px);
+}
+
+.hero-image {
+  grid-row: 1/span 3;
+  grid-column: 1/span 3;
+  width: 100%;
+  min-height: clamp(200px, 50vh, 600px);
+  height: 20vh;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.hero-icon-badge {
+  padding-top: 48px;
+  width: 220px;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.hero-text-wrapper {
+  grid-row: 3;
+  grid-column: 1/span 3;
+  position: relative;
+}
+
+.hero-text {
+  font-size: 48px;
+  color: #ffffff;
+}
+
+.hero-bottom-docker {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 0px;
+  background: rgba(114, 14, 47, 0.6);
+}
