@@ -26,7 +26,8 @@
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
     "build:helpers": "set NODE_ENV=production&&babel src/src/helpers --out-dir dist/helpers --copy-files",
-    "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js src/src/muiTheme.js --out-dir dist --copy-files"
+    "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js src/src/muiTheme.js --out-dir dist --copy-files",
+    "build-storybook": "cd src && npm run build-storybook"
   },
   "eslintConfig": {
     "extends": [

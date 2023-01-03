@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+    install:
+        runtime-versions:
+            nodejs: 16
+    pre_build:
+        commands:
+            - echo Restore started on `date`
+            - npm i
+            - cd src
+            - npm i
+            - cd -
+    build:
+        commands:
+            - /usr/local/bin/npm run build-storybook
+artifacts:
+    base-directory: storybook-dist
+    files:
+        - "**/*"
