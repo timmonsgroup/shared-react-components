@@ -1,6 +1,8 @@
 import React from 'react';
 import { HashRouter as Router } from 'react-router-dom';
+
 import Grid from './PamLayoutGrid';
+
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -25,7 +27,7 @@ const data = [
     id: '1',
     name: 'Name 1',
     type: { id: 1, name: 'Type1' },
-    status: { id: 1, name: 'Status1'},
+    status: { id: 1, name: 'Status1' },
     initiatedOn: '2021-01-01',
     initiatedBy: { id: 1, name: 'Initiated By 1' },
     lastUpdatedOn: '2021-01-01',
@@ -154,147 +156,105 @@ const data = [
 /**
  * This is copied from the response for a layout.
  */
-const layout = [{ name: 'test', fields: [
-  {
-    'hidden': false,
-    'required': false,
-    'disabled': false,
-    'type': 1,
-    'path': 'fields.name',
-    'isArrayData': false,
-    'isStringId': false,
-    'width': 200,
-    'render': {
-      'type': 1,
-      'label': 'Name',
-      'name': 'name',
-      'hidden': false,
-      'required': false,
-      'disabled': false,
-      'readOnly': false
-    }
-  },
-  {
-    'hidden': false,
-    'required': true,
-    'disabled': false,
-    'type': 7,
-    'path': 'fields.type',
-    'isArrayData': false,
-    'isStringId': false,
-    'width': 250,
-    'render': {
-      'type': 7,
-      'label': 'Type',
-      'name': 'type',
-      'hidden': false,
-      'required': true,
-      'disabled': false,
-      'readOnly': false,
-      'choices': [
+const layout = {
+	"data": {
+		"bulkList": "/api/joinRequest/all"
+	},
+	"grid": {
+		"sort": {
+			"field": "createdOn",
+			"order": "asc"
+		},
+		"idColumn": "streamID"
+	},
+	"id": 12,
+	"modelId": 30,
+	"enabled": true,
+	"name": "Test Layout",
+	"editable": false,
+	"layoutKey": "list",
+	"type": 2,
+	"sections": [{
+		"editable": true,
+		"enabled": true,
+		"name": "Test Layout",
+		"order": 20,
+		"layout": [{
+			"label": "ID",
+			"path": "id",
+			"type": 2,
+			"model": {
+				"id": 1,
+				"modelid": 1,
+				"type": 2,
+				"name": "id"
+			},
+			"required": false,
+			"disabled": false,
+			"flex": 1
+		}, {
+			"label": "Name",
+			"path": "name",
+			"type": 0,
+			"model": {
+				"id": 2,
+				"modelid": 1,
+				"type": 0,
+				"name": "name"
+			},
+			"required": false,
+			"disabled": false,
+			"flex": 1
+		}, {
+			"label": "Type",
+			"path": "type",
+			"type": 7,
+      "possibleChoices": [
         {
-          'label': 'Type1',
-          'id': 1
+          "id": 1,
+          "name": "Type1"
         },
         {
-          'label': 'Type2',
-          'id': 2
+          "id": 2,
+          "name": "Type2"
         }
-      ]
-    }
-  },
-  {
-    'hidden': false,
-    'required': true,
-    'disabled': false,
-    'type': 7,
-    'path': 'fields.status',
-    'isArrayData': false,
-    'isStringId': false,
-    'width': 175,
-    'render': {
-      'type': 7,
-      'label': 'Status',
-      'name': 'status',
-      'hidden': false,
-      'required': true,
-      'disabled': false,
-      'readOnly': false,
-      'choices': [
+      ],
+			"model": {
+				"id": 3,
+				"modelid": 1,
+				"type": 7,
+				"name": "type"
+			},
+			"required": false,
+			"disabled": false,
+			"flex": 2
+		}, {
+			"label": "Status",
+			"path": "status",
+			"type": 7,
+      "possibleChoices": [
         {
-          'label': 'Status1',
-          'id': 1
+          "id": 1,
+          "name": "Active"
         },
         {
-          'label': 'Status2',
-          'id': 2
-        },
-        {
-          'label': 'Status3',
-          'id': 3
+          "id": 2,
+          "name": "Inactive"
         }
-      ]
-    }
-  },
-  {
-    'hidden': false,
-    'required': true,
-    'disabled': false,
-    'type': 5,
-    'path': 'fields.initiatedOn',
-    'isArrayData': false,
-    'isStringId': false,
-    'width': 150,
-    'render': {
-      'type': 5,
-      'label': 'Planning Initiated On',
-      'name': 'initiatedOn',
-      'hidden': false,
-      'required': true,
-      'disabled': false,
-      'readOnly': false
-    }
-  },
-  {
-    'hidden': false,
-    'required': false,
-    'disabled': false,
-    'type': 5,
-    'path': 'fields.activeOn',
-    'isArrayData': false,
-    'isStringId': false,
-    'width': 150,
-    'render': {
-      'type': 5,
-      'label': 'Active as of',
-      'name': 'activeOn',
-      'hidden': false,
-      'required': false,
-      'disabled': false,
-      'readOnly': false
-    }
-  },
-  {
-    'hidden': false,
-    'required': false,
-    'disabled': false,
-    'type': 100,
-    'path': 'fields.sampleLink',
-    'isArrayData': false,
-    'isStringId': false,
-    'width': 300,
-    'render': {
-      'type': 100,
-      'label': 'Published Plan Reference URL',
-      'name': 'sampleLink',
-      'hidden': false,
-      'required': false,
-      'disabled': false,
-      'readOnly': false
-    }
-  }
-]
-}];
+      ],
+			"model": {
+				"id": 3,
+				"modelid": 1,
+				"type": 7,
+				"name": "type"
+			},
+			"required": false,
+			"disabled": false,
+      "hidden": true,
+			"flex": 2
+		}]
+	}]
+};
 
 /**
  * This example shows how to use the layout to render a table with a layout and data.
@@ -313,7 +273,7 @@ WithDataAndActions.args = {
   layout: layout,
   actions: [
     {
-      label: '',
+      label: 'Actions 01',
       order: 0,
       actionList: [
         {
