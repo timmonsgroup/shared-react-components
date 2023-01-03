@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { createFeature, getFeatures, makeShapeLayer, useThemeMap } from './useMap';
 import { useRef } from 'react';
 
-const ThemeMap = forwardRef(({ defaultExtent, themes, mapSet, activeLayers, featuresClicked, features, existingFeatureLayer }, ref) => {
+const ThemeMap = forwardRef(({ defaultExtent, themes, mapSet, activeLayers, featuresClicked, features, existingFeatureLayer, highlightStyle }, ref) => {
   const [processing, setProcessing] = useState(false);
   const featureLayer = useRef(null);
   const oThemeMap = useThemeMap(themes, activeLayers);
@@ -82,7 +82,7 @@ const ThemeMap = forwardRef(({ defaultExtent, themes, mapSet, activeLayers, feat
       mapInit.current = true;
 
       if (featuresClicked && !existingFeatureLayer) {
-        featureLayer.current = makeShapeLayer();
+        featureLayer.current = makeShapeLayer(highlightStyle);
         map.addLayer(featureLayer.current);
       }
 
@@ -142,6 +142,8 @@ const ThemeMap = forwardRef(({ defaultExtent, themes, mapSet, activeLayers, feat
 // https://reactjs.org/docs/react-component.html#displayname
 ThemeMap.displayName = 'ThemeMap';
 
+// See Open Layers Style class for shape for highlightStyle
+// https://openlayers.org/en/latest/apidoc/module-ol_style_Style-Style.html
 ThemeMap.propTypes = {
   defaultExtent: PropTypes.array,
   existingFeatureLayer: PropTypes.string,
@@ -151,6 +153,7 @@ ThemeMap.propTypes = {
   featuresClicked: PropTypes.func,
   features: PropTypes.array,
   mapSet: PropTypes.func,
+  highlightStyle: PropTypes.object,
 };
 
 export default ThemeMap;
