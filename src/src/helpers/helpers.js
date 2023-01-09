@@ -320,3 +320,88 @@ export const modifyColorOpacity = (color, opacity) => {
   const newColor = `rgba(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]}, ${opac})`;
   return newColor;
 }
+
+export function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/**
+ * Return a currency string from either an ag grid cell object or string
+ * @param inc  | ag grid cell params
+ * @returns string
+ */
+export function currencyFormatter(inc) {
+  if (!inc || (typeof inc === 'object' && !inc.value)) {
+    return '';
+  }
+
+  const numOS = typeof inc === 'object' ? inc.value : inc;
+  const num = typeof numOS === 'string' ? parseFloat(numOS) : numOS;
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+}
+
+/**
+ * Return a currency string from either an ag grid cell object or string
+ * @param inc  | ag grid cell params
+ * @returns string
+ */
+export function floatFormatter(inc, decimalPlaces) {
+  if (!inc || (typeof inc === 'object' && !inc.value)) {
+    return '';
+  }
+
+  const numOS = typeof inc === 'object' ? inc.value : inc;
+  const num = typeof numOS === 'string' ? parseFloat(numOS) : numOS;
+  return new Intl.NumberFormat('en-US', { style: 'decimal', currency: 'USD' }).format(parseFloat(num.toFixed(decimalPlaces)));
+}
+
+/**
+ * Convert an array of objects into a string using prop
+ * @param {Array} value - Array to process
+ * @param {string} prop - Display property (also used for sorting)
+ * @param {string} delim - String to place between each value
+ * @returns
+ */
+export function arrayToDisplay(value, prop = 'name', delim = ', ') {
+  return value ? sortOn(value, prop).map((reg) => reg[prop]).join(delim) : null;
+}
+
+/**
+ * Convert an object or array of objects to urls. Intended for use with DetailList/DetailContent component
+ * @param {Object | Array} value - thing or things to turn into urls
+ * @param {string} slug - url slug
+ * @param {boolean} sameTab - open in same tab
+ * @param {string} displayProp - display property for sorthing and link text
+ * @param {string} idProp - id to use with slug to generate url
+ * @returns Object or null
+ */
+export function arrayToUrls(value, slug, skipIds = [], sameTab = true, displayProp = 'name', idProp = 'id') {
+  if (!value) {
+    return null;
+  }
+
+  // Wrap non-array in array, sort, map, ???, profit
+  return sortOn(Array.isArray(value) ? value : [value], displayProp).map((prop) => {
+    const iID = prop[idProp];
+    const createUrl = !(skipIds.length && skipIds.includes(iID));
+    return {
+      sameTab,
+      name: prop[displayProp] || iID.toString(),
+      url: createUrl ? `#/${slug}/${iID}` : null,
+    };
+  });
+}
+
+/**
+ * Convert array of objects to a string for a given key and separator
+ * @param items
+ * @param {string} key
+ * @param {string} separator
+ * @returns {string}
+ */
+export function objectsToString(items, key = 'name', separator = ', ') {
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return '';
+  }
+  return items.map((item) => item[key]).join(separator) || '';
+}
