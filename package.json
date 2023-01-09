@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "private": false,
   "eslintIgnore": [
     "node_modules",
