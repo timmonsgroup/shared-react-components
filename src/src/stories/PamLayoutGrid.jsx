@@ -91,6 +91,11 @@ const baseColumnConfig = (layoutColumn) => {
     }
   }
 
+  // If the layout column has a hidden property set to true then set the hide property
+  if (layoutColumn.hidden) {
+    retCol.hide = true;
+  }
+
   return retCol;
 
 }
@@ -381,8 +386,13 @@ const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent) =>
   switch (column.type) {
     case 0: // Short Text
     case 1: // Long Text // These two fields dont need any special formatting
+    case 2: // Integer
+    case 3: // Float
+    case 4: // Currency
       break;
     case 5: addDateFormatting(ret); break; // Date
+    case 6: // Flag
+      break;
     case 7: addSingleSelectFormatting(ret, column); break; // Single Select
     case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
     case 99: addActionButtonFormatting(ret, column.render, themeGroup, actionsComponent); break; // Action Buttons
