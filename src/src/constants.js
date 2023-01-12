@@ -40,14 +40,20 @@ export const FIELD_TYPES = Object.freeze({
 });
 
 export const REQUIRED = 'required';
+export const IDFIELD = 'idField';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
+  IDFIELD,
   URL: 'url',
   DISABLED: 'disabled',
   HIDDEN: 'hidden',
   HELPER: 'helperText',
   REQTEXT: 'requiredErrorText',
+});
+
+export const SPECIAL_ATTRS = Object.freeze({
+  IDFIELD
 });
 
 export const VALIDATIONS = Object.freeze({

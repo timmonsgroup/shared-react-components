@@ -1,5 +1,5 @@
 import { useLayout } from './useData.js';
-import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER } from '../constants.js';
+import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD } from '../constants.js';
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation } from '../helpers/formHelpers.js';
@@ -8,6 +8,7 @@ import axios from 'axios';
 
 const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
+const specialProps = Object.values(SPECIAL_ATTRS);
 
 /**
  * Layout fetching hook that extends the useLayout hook to parse the layout data into a more usable format
@@ -103,9 +104,10 @@ export const parseFormLayout = async (layout, urlDomain) => {
 
   const fetchData = async (fieldId, url) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
+    const mappedId = fields.get(fieldId).specialProps?.[IDFIELD];
     const things = await axios.get(fetchUrl).then(res => {
       if (res.data?.length) {
-        return res.data.map((d) => ({ id: d.id, label: d.name }));
+        return res.data.map((d) => ({ id: d[mappedId] || d.id, label: d.name }));
       }
     }
     ).catch(error => {
@@ -186,6 +188,7 @@ export const parseField = (field, asyncFieldsMap) => {
     label,
     type,
     hidden,
+    specialProps: {},
     render: {
       type: type,
       label,
@@ -216,6 +219,14 @@ export const parseField = (field, asyncFieldsMap) => {
     parsedField.render.multiple = !!field.multiple;
     parsedField.render.checkbox = !!field.checkbox;
   }
+
+  // map special props to the field
+
+  specialProps.forEach((prop) => {
+    if (data[prop]) {
+      parsedField.specialProps[prop] = data[prop];
+    }
+  });
 
   if (type === FIELDS.LONG_TEXT) {
     parsedField.render.isMultiLine = true;

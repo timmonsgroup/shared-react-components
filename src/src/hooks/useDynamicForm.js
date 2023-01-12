@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // Internal bits
 import { getFieldValue, useFormLayout } from './useFormLayout';
 import axios from 'axios';
+import { IDFIELD } from '../constants';
 
 /**
  * useDynamicForm is a hook that handles the fields and validations for a dynamic form.
@@ -204,12 +205,15 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         });
       }
 
-      const fetchData = async (fieldId, url) => {
+      const fetchData = async (fieldId, url, mappedId) => {
         const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
         const things = await axios.get(fetchUrl).then(res => {
           // We need to clear the error in the event that the error was caused by a previous failed attempt
           clearErrors(fieldId);
-          return res?.data?.map((opt) => ({ id: opt.id || opt.streamID, label: opt.name || opt.label }));
+          return res?.data?.map((opt) => {
+            const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+            return { id, label: opt.name || opt.label }
+          });
         }
         ).catch(error => {
           if (error.name !== 'CanceledError') {
@@ -268,7 +272,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               if (loadOut?.layout?.has('url')) {
                 hasAsync = true;
                 const remoteUrl = loadOut?.layout?.get('url')?.replace('##thevalue##', formValue);
-                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl);
+                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, loadOut?.layout?.get(IDFIELD));
               }
 
               areUpdating[fieldId] = true;
