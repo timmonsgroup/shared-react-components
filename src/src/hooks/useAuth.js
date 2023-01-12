@@ -174,6 +174,7 @@ const useProvideAuth = (props) => {
       // get out initialization info from the session storage
       let initInfo = {
         refreshToken: await getRefreshTokenFromSession(),
+        subject: await getSubjectFromCookie(),
         bootToken: await getBootTokenFromSession(),
         bootUser: await getBootUserFromSession(),
       };
@@ -347,12 +348,27 @@ const useProvideAuth = (props) => {
     // If it is null or empty we will logout
     if (!tokenData || tokenData.length === 0) {
       logout_internal();
+
       return;
     }
 
     // Pull the info out of the token
     const { token, isExpired, user, refresh_token } =
       parseTokens(tokenData);
+
+    const subject = await getSubjectFromCookie();
+
+    //If we have a prior subject and it is different from the current subject we will logout
+    if (subject && subject !== user.sub) {
+      logout_internal();
+
+      if (config.autoLogin) {
+        login();
+      }
+
+      return;
+    }
+
     const bearerToken = token.access_token;
 
     window.isExpired = isExpired;
@@ -427,6 +443,8 @@ const useProvideAuth = (props) => {
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
     clearRefreshTokenInSession();
+    // Clear the cookie
+    await clearSubjectCookie();
     // Dispatch the finish logout action
     dispatch({ type: ACTIONS.FINISH_LOGOUT });
   };
@@ -598,8 +616,14 @@ const authReducer = (nextState, action) => {
       //TODO: This is a weird side effect
       setActiveBearerToken(action.bearerToken);
 
-      if (action.refreshToken)
+      if (action.refreshToken) {
         setRefreshTokenInSession(action.refreshToken);
+      }
+
+      // If we have the sub claim, we can use that to set the subject in to cookie
+      if (action.user.sub) {
+        setSubjectInCookie(action.user.sub);
+      }
 
       return {
         ...nextState,
@@ -676,22 +700,38 @@ const authReducer = (nextState, action) => {
 const getRefreshTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
-
-    // Check to see if we have a domain cookie with the refresh token
-    if (!session) {
-      const cookie = await window.cookieStore.get('refreshToken');
-      if (cookie) {
-        session = cookie.value;
-      }
-    }
-
-
+    
     if (session) {
       return session;
     }
   } catch (ex) { }
   return null;
 };
+
+/**
+ * This will attempt to get the subject from the cookie
+ */
+const getSubjectFromCookie = async () => {
+  // Check to see if there is a cookie containing the sub
+  let subject = null;
+  try {
+    // FireFox doesn't support cookieStore
+    if (window.cookieStore) {
+      const cookie = await window.cookieStore.get('sub');
+      if (cookie) {
+        subject = cookie.value;
+      }
+    } else {
+      subject = document.cookie.split(';').find((c) => c.trim().startsWith('sub=')).split('=')[1];
+    }
+
+  }
+  catch (ex) {
+    console.debug('Error getting sub from cookie', ex);
+  }
+
+  return subject;
+}
 
 /**
  * This function will attempt to get the boot token from session storage
@@ -701,14 +741,6 @@ const getRefreshTokenFromSession = async () => {
 const getBootTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('bootToken');
-
-    // Check to see if we have a domain cookie with the refresh token
-    if (!session) {
-      const cookie = await window.cookieStore.get('bootToken');
-      if (cookie) {
-        session = cookie.value;
-      }
-    }
 
     if (session) {
       window.sessionStorage.removeItem('bootToken');
@@ -726,14 +758,6 @@ const getBootTokenFromSession = async () => {
 const getBootUserFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('bootUser');
-
-    // Check to see if we have a domain cookie with the refresh token
-    if (!session) {
-      const cookie = await window.cookieStore.get('bootUser');
-      if (cookie) {
-        session = cookie.value;
-      }
-    }
 
     try {
       session = JSON.parse(session);
@@ -765,27 +789,39 @@ const isValidConfig = (config) => {
  * Later on we can retrieve it and use it to get a new access token
  */
 const setRefreshTokenInSession = (refreshToken) => {
-  //window.localStorage.setItem('refreshToken', refreshToken);
-  //Actuall set it in the cookie for the subdomain
-  // The domain will be something like a.b.c.com
-  // We want to set the cookie for the subdomain b.c.com
-  // But we also need to be aware of any domain that is not a subdomain
-  let domain = window.location.hostname;
-  let parts = domain.split('.');
-  
-  if (parts.length > 2) {
-    parts = parts.slice(1);
-  }
-  domain = parts.join('.');
-
-  let cookie = { name: 'refreshToken', value: refreshToken, sameSite: 'lax' }
-  if (domain && domain !== 'localhost') {
-    cookie.domain = domain;
-  }
-
-  console.debug('Setting refresh token in cookie for domain: ' + domain);
-  window.cookieStore.set(cookie);
+  window.localStorage.setItem('refreshToken', refreshToken);
 };
+
+/**
+ * This function will set the subject in the cookie
+ */
+const setSubjectInCookie = (subject) => {
+  // Set our subject cookie
+  try {
+    // FireFox doesn't support cookieStore
+    if (window.cookieStore) {
+      let domain = window.location.hostname;
+      domain = domain.split('.').slice(1).join('.');
+
+
+      let cookie = { name: 'sub', value: subject, sameSite: 'lax' }
+
+      if (domain && domain !== 'localhost') {
+        cookie.domain = domain;
+      }
+
+      window.cookieStore.set(cookie)
+    } else {
+      // Set or replace the cookie so that sub is set to the subject
+      const oldValue = document.cookie.split(';');
+      const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
+      newValue.push(`sub=${subject}`);
+      document.cookie = newValue.join(';');
+    }
+  } catch (ex) {
+    console.debug('Error setting refreshToken cookie', ex);
+  }
+}
 
 /**
  * This function will clear the refresh token from session storage
@@ -793,6 +829,32 @@ const setRefreshTokenInSession = (refreshToken) => {
 const clearRefreshTokenInSession = () => {
   window.sessionStorage.removeItem('refreshToken');
   window.localStorage.removeItem('refreshToken');
-  const domain = window.location.hostname.split('.').slice(1).join('.');
-  window.cookieStore.delete({ name: 'refreshToken', domain });
+
 };
+
+/**
+ * This will clear the subject cookie
+ */
+const clearSubjectCookie = async () => {
+
+  let domain = window.location.hostname.split('.').slice(1).join('.');
+
+  try {
+    // FireFox doesn't support cookieStore
+    if (window.cookieStore) {
+      await window.cookieStore.delete('sub', { domain });
+    } else {
+      // Set or replace the cookie so that sub is set to the subject
+      const oldValue = document.cookie.split(';');
+      const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
+      document.cookie = newValue.join(';');
+    }
+
+  } catch (ex) {
+    console.debug('Error clearing refreshToken cookie', ex);
+  }
+
+  // Sometimes the cookie wont delete, who knows why
+  // So we will set it to an empty string
+  setSubjectInCookie('123-456');
+}

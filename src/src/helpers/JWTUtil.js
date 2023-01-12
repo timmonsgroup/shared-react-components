@@ -51,6 +51,7 @@ const parseTokens = (tokensB64) => {
       given_name,
       family_name,
       id: idToken.sub,
+      sub: idToken.sub,
       raw: idToken // So we can use other claims if we want
     },
     refresh_token: token.refresh_token
