@@ -72,9 +72,15 @@ const initialState = {
 
 export const authContext = createContext();
 
+let MYSELF = '123-456';
+
 
 // Wrap the hook with a provider
 export const ProvideAuth = ({ config, children }) => {
+  if (config?.cookieReference) {
+    MYSELF = config.cookieReference;
+  }
+
   const auth = useProvideAuth(config);
   // We are providing the object returned by useProvideAuth as the value of the authContext
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
@@ -172,18 +178,15 @@ const useProvideAuth = (props) => {
 
     async function boop() {
       // get out initialization info from the session storage
-      let initInfo = {
+      const nextInit = {
         refreshToken: await getRefreshTokenFromSession(),
         subject: await getSubjectFromCookie(),
         bootToken: await getBootTokenFromSession(),
         bootUser: await getBootUserFromSession(),
       };
-      setInitInfo(initInfo);
-
-
+      setInitInfo(nextInit);
     }
     boop();
-
 
     return () => {
       if (intercept.current) {
@@ -199,8 +202,6 @@ const useProvideAuth = (props) => {
     checkIfStale();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState.staleCheckState]);
-
-
 
 
   /**
@@ -254,7 +255,7 @@ const useProvideAuth = (props) => {
    */
   const logout = async () => {
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
-    logout_internal();
+    logout_internal('logout');
 
     // Calculate our redirect url based off of the origin of the current page and the logout endpoint in our api
     const redirect = window.location.origin + '/api/oauth/logout';
@@ -277,7 +278,7 @@ const useProvideAuth = (props) => {
       dispatch({ type: ACTIONS.SET_REFRESHING });
       return startWithRefreshToken(refreshToken);
     } else {
-      logout_internal();
+      logout_internal('refresh else');
     }
   }
 
@@ -347,7 +348,7 @@ const useProvideAuth = (props) => {
     // Check to see if we have a token
     // If it is null or empty we will logout
     if (!tokenData || tokenData.length === 0) {
-      logout_internal();
+      logout_internal('parseTokenAndUpdateState no tokenData');
 
       return;
     }
@@ -356,11 +357,14 @@ const useProvideAuth = (props) => {
     const { token, isExpired, user, refresh_token } =
       parseTokens(tokenData);
 
+    console.log('parseTokenAndUpdateState', token, isExpired, user, refresh_token);
     const subject = await getSubjectFromCookie();
 
+    console.log('parseTokenAndUpdateState subject', subject, user.sub)
+
     //If we have a prior subject and it is different from the current subject we will logout
-    if (subject && subject !== user.sub) {
-      logout_internal();
+    if (subject && subject !== MYSELF && subject !== user.sub) {
+      logout_internal('parseTokenAndUpdateState subject mismatch');
 
       if (config.autoLogin) {
         login();
@@ -438,14 +442,19 @@ const useProvideAuth = (props) => {
   /**
    * Called to reset the state of the auth object
    */
-  const logout_internal = async () => {
+  const logout_internal = async (debug) => {
+    console.log('logout_internal: ', debug);
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
     clearRefreshTokenInSession();
     // Clear the cookie
+    console.time('Clearing the cookie');
     await clearSubjectCookie();
+    console.timeEnd('Clearing the cookie');
+
     // Dispatch the finish logout action
+    console.log('Dispatching the finish logout action');
     dispatch({ type: ACTIONS.FINISH_LOGOUT });
   };
 
@@ -470,13 +479,13 @@ const useProvideAuth = (props) => {
           console.error('Error fetching data', error);
         }
 
-        logout_internal();
+        logout_internal('startwithrefreshtoken axios catch');
       }).finally(() => {
         // todo: do we need to do anything here?
       });
     } catch (ex) {
       console.error(`Failed to refresh token: ${ex}`);
-      logout_internal();
+      logout_internal('startwithrefreshtoken failed refresh catch');
     }
   };
 
@@ -700,7 +709,7 @@ const authReducer = (nextState, action) => {
 const getRefreshTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
-    
+
     if (session) {
       return session;
     }
@@ -714,6 +723,7 @@ const getRefreshTokenFromSession = async () => {
 const getSubjectFromCookie = async () => {
   // Check to see if there is a cookie containing the sub
   let subject = null;
+  console.log('getSubjectFromCookie')
   try {
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
@@ -836,25 +846,33 @@ const clearRefreshTokenInSession = () => {
  * This will clear the subject cookie
  */
 const clearSubjectCookie = async () => {
-
+  console.log('clearSubjectCookie')
   let domain = window.location.hostname.split('.').slice(1).join('.');
-
+  let deleted = false;
   try {
+    console.log('clearSubjectCookie try')
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
       await window.cookieStore.delete('sub', { domain });
+      deleted = true;
     } else {
       // Set or replace the cookie so that sub is set to the subject
       const oldValue = document.cookie.split(';');
       const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
       document.cookie = newValue.join(';');
+      deleted = true;
     }
-
+    console.log('\tclearSubjectCookie deleted in try')
   } catch (ex) {
+    console.log('\tclearSubjectCookie caught')
     console.debug('Error clearing refreshToken cookie', ex);
   }
 
   // Sometimes the cookie wont delete, who knows why
   // So we will set it to an empty string
-  setSubjectInCookie('123-456');
+  if (!deleted) {
+    console.log('\tclearSubjectCookie not deleted')
+  }
+  console.log('clearSubjectCookie end ', MYSELF)
+  setSubjectInCookie(MYSELF);
 }
