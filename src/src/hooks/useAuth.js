@@ -72,13 +72,15 @@ const initialState = {
 
 export const authContext = createContext();
 
-let MYSELF = '123-456';
+// If multiple apps are using the same cookie, we need to be able to differentiate which one logged out
+let APP_ID = '123-456';
 
 
 // Wrap the hook with a provider
+// Use cookieReference to differentiate between multiple apps using the same cookie
 export const ProvideAuth = ({ config, children }) => {
   if (config?.cookieReference) {
-    MYSELF = config.cookieReference;
+    APP_ID = config.cookieReference;
   }
 
   const auth = useProvideAuth(config);
@@ -111,7 +113,6 @@ const useProvideAuth = (props) => {
   const [authState, dispatch] = useReducer(authReducer, initialState);
   const intercept = useRef();
   const [initInfo, setInitInfo] = useState(null);
-
 
   useEffect(() => {
     if (!initInfo) {
@@ -357,13 +358,12 @@ const useProvideAuth = (props) => {
     const { token, isExpired, user, refresh_token } =
       parseTokens(tokenData);
 
-    console.log('parseTokenAndUpdateState', token, isExpired, user, refresh_token);
     const subject = await getSubjectFromCookie();
 
-    console.log('parseTokenAndUpdateState subject', subject, user.sub)
-
     //If we have a prior subject and it is different from the current subject we will logout
-    if (subject && subject !== MYSELF && subject !== user.sub) {
+    // We need to check against the APP_ID to allow an application that logged itself out to log back in
+    // If another application using this 'sub' cookie on the same domain logged out we will insure this session logs out
+    if (subject && subject !== APP_ID && subject !== user.sub) {
       logout_internal('parseTokenAndUpdateState subject mismatch');
 
       if (config.autoLogin) {
@@ -443,18 +443,15 @@ const useProvideAuth = (props) => {
    * Called to reset the state of the auth object
    */
   const logout_internal = async (debug) => {
-    console.log('logout_internal: ', debug);
+    // console.log('logout_internal: ', debug);
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
     clearRefreshTokenInSession();
     // Clear the cookie
-    console.time('Clearing the cookie');
     await clearSubjectCookie();
-    console.timeEnd('Clearing the cookie');
 
     // Dispatch the finish logout action
-    console.log('Dispatching the finish logout action');
     dispatch({ type: ACTIONS.FINISH_LOGOUT });
   };
 
@@ -723,7 +720,7 @@ const getRefreshTokenFromSession = async () => {
 const getSubjectFromCookie = async () => {
   // Check to see if there is a cookie containing the sub
   let subject = null;
-  console.log('getSubjectFromCookie')
+
   try {
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
@@ -846,11 +843,9 @@ const clearRefreshTokenInSession = () => {
  * This will clear the subject cookie
  */
 const clearSubjectCookie = async () => {
-  console.log('clearSubjectCookie')
   let domain = window.location.hostname.split('.').slice(1).join('.');
   let deleted = false;
   try {
-    console.log('clearSubjectCookie try')
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
       await window.cookieStore.delete('sub', { domain });
@@ -862,17 +857,12 @@ const clearSubjectCookie = async () => {
       document.cookie = newValue.join(';');
       deleted = true;
     }
-    console.log('\tclearSubjectCookie deleted in try')
   } catch (ex) {
-    console.log('\tclearSubjectCookie caught')
     console.debug('Error clearing refreshToken cookie', ex);
   }
 
   // Sometimes the cookie wont delete, who knows why
   // So we will set it to an empty string
-  if (!deleted) {
-    console.log('\tclearSubjectCookie not deleted')
-  }
-  console.log('clearSubjectCookie end ', MYSELF)
-  setSubjectInCookie(MYSELF);
+  // Setting to special string so the application can check it if logged itself out of it if another app did it
+  setSubjectInCookie(APP_ID);
 }
