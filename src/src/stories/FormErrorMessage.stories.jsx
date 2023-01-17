@@ -2,7 +2,7 @@ import React from 'react';
 import FormErrorMessage from './FormErrorMessage';
 
 export default {
-  title: 'CCP/Form Error Message',
+  title: 'Form/Form Error Message',
   component: FormErrorMessage,
 };
 

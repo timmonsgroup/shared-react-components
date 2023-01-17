@@ -1,0 +1,136 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs';
+import GenericForm from './GenericForm';
+import { HashRouter as Router } from 'react-router-dom';
+
+<Meta title="Form/GenericForm" component={GenericForm} />
+
+
+# GenericForm
+
+A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
+
+export const layout = {
+  "data": {
+    "bulkList": "/api/joinRequest/all"
+  },
+  "grid": {
+    "sort": {
+      "field": "createdOn",
+      "order": "asc"
+    },
+    "idColumn": "streamID"
+  },
+  "id": 12,
+  "modelId": 30,
+  "enabled": true,
+  "name": "Test Layout",
+  "editable": false,
+  "layoutKey": "list",
+  "type": 2,
+  "sections": [{
+    "editable": true,
+    "enabled": true,
+    "name": "Test Layout",
+    "order": 20,
+    "layout": [{
+      "label": "ID",
+      "path": "id",
+      "type": 2,
+      "model": {
+        "id": 1,
+        "modelid": 1,
+        "type": 2,
+        "name": "id"
+      },
+      "required": false,
+      "disabled": false,
+      "flex": 1
+    }, {
+      "label": "Name",
+      "path": "name",
+      "type": 0,
+      "model": {
+        "id": 2,
+        "modelid": 1,
+        "type": 0,
+        "name": "name"
+      },
+      "required": false,
+      "disabled": false,
+      "flex": 1
+    }, {
+      "label": "Type",
+      "path": "type",
+      "type": 7,
+      "possibleChoices": [
+        {
+          "id": 1,
+          "name": "Type1"
+        },
+        {
+          "id": 2,
+          "name": "Type2"
+        }
+      ],
+      "model": {
+        "id": 3,
+        "modelid": 1,
+        "type": 7,
+        "name": "type"
+      },
+      "required": false,
+      "disabled": false,
+      "flex": 2
+    }, {
+      "label": "Status",
+      "path": "status",
+      "type": 7,
+      "possibleChoices": [
+        {
+          "id": 1,
+          "name": "Active"
+        },
+        {
+          "id": 2,
+          "name": "Inactive"
+        }
+      ],
+      "model": {
+        "id": 3,
+        "modelid": 1,
+        "type": 7,
+        "name": "type"
+      },
+      "required": false,
+      "disabled": false,
+      "hidden": false,
+      "flex": 2
+    }]
+  }]
+};
+
+
+const domainUrl = "";
+
+## No Data
+
+When there is no data the columns will still be rendered but the data will say no rows. This can show wehn you have a data source that has no results.
+
+<Canvas>
+  <Story name="No Data">
+  <Router>
+    <GenericForm
+        layoutOptions={layout}
+        domainUrl={""}
+        successUrl="/"
+        cancelUrl="/"
+        twoColumn={true}
+        headerTitle="Request Access"
+        unitLabel="Organization Access Request"
+        formatSubmitMessage={() => 'Request submitted.'}
+        helpText={() => null}
+        submitUrl={`/api/organization/joinRequest`}
+      />
+    </Router>
+  </Story>
+</Canvas>

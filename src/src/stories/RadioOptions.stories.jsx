@@ -3,7 +3,7 @@ import RadioOptions from './RadioOptions';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CCP/RadioOptions',
+  title: 'Form/RadioOptions',
   component: RadioOptions,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {

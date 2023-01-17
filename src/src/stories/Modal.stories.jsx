@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './Modal';
 
 export default {
-  title: 'CCP/Modal',
+  title: 'Components/Modal',
   component: Modal,
 };
 

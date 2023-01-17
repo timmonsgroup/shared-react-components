@@ -239,6 +239,10 @@ function getStructure(field) {
     dynField.flex = field.flex
   }
 
+  if(field.nullValue) {
+    dynField.nullValue = field.nullValue;
+  }
+
   return dynField;
 }
 

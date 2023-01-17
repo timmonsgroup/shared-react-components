@@ -3,7 +3,7 @@ import SubHeader from './SubHeader';
 import Button from './Button';
 
 export default {
-  title: 'CCP/Sub Header',
+  title: 'Components/Sub Header',
   component: SubHeader,
   // argTypes: {
   //   backgroundColor: { control: 'color' },

@@ -6,7 +6,7 @@ import Grid from './PamLayoutGrid';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CCP/PamLayoutGrid',
+  title: 'Components/PamLayoutGrid',
   component: Grid,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {

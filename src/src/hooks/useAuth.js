@@ -260,9 +260,9 @@ const useProvideAuth = (props) => {
     const redirect = window.location.origin + '/api/oauth/logout';
 
     // Open the logout endpoint in a new tab
-    const fetchUrl = config?.useAzureAD ?
+    const fetchUrl = config?.logoutURL || ( config?.useAzureAD ?
       `https://${config.host}/oauth2/logout?post_logout_redirect_uri=${redirect}` :
-      `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`;
+      `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`);
 
     // If openWindow is true open the logout endpoint in a new tab
     // Otherwise open the logout endpoint in the current tab

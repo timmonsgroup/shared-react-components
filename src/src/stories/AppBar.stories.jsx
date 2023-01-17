@@ -6,7 +6,7 @@ import {
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'CCP/AppBar',
+  title: 'Components/AppBar',
   component: AppBar,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {

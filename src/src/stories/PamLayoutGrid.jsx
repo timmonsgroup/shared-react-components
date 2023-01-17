@@ -26,7 +26,7 @@ const defaultSX = {
  * return {Object} - The column config for the MUIGrid component
  * @see https://mui.com/components/data-grid/columns/
  */
-const baseColumnConfig = (layoutColumn) => {
+const baseColumnConfig = (layoutColumn, nullValue) => {
 
   let retCol = {
     field: layoutColumn.path || layoutColumn.render.name,
@@ -96,6 +96,8 @@ const baseColumnConfig = (layoutColumn) => {
     retCol.hide = true;
   }
 
+  retCol.nullValue = layoutColumn.nullValue || nullValue;
+
   return retCol;
 
 }
@@ -146,7 +148,7 @@ const getDateOrDefaultFormatted = (value, defaultValue) => {
 const addDateFormatting = (muiGridColumn) => {
   muiGridColumn.type = 'date';
   muiGridColumn.valueGetter = ({ value }) => getDateOrDefault(value, null); // Value GETTER needs to return null for the date to be displayed as N/A and for the filter to work
-  muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, 'N/A');
+  muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, muiGridColumn.nullValue);
 }
 
 /**
@@ -182,7 +184,7 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
   // single select
   muiGridColumn.type = 'singleSelect';
   muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name } });
-  muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, 'N/A');
+  muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
 }
 
 /**
@@ -305,7 +307,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
           </Link>
         )
       }
-      return 'N/A';
+      return muiGridColumn.nullValue;
     }
   }
 
@@ -323,7 +325,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
 
       // If the result is an object use the getNameOrDefault function to get the name or N/A
       if (value && typeof value === 'object') {
-        return getValueNameOrDefault(value, 'N/A');
+        return getValueNameOrDefault(value, muiGridColumn.nullValue);
       }
 
       // If the result is a string use the string or N/A
@@ -332,7 +334,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
       }
     }
   } else {
-    muiGridColumn.valueFormatter = ({ value }) => getValueNameOrDefault(value, 'N/A');
+    muiGridColumn.valueFormatter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
   }
 
   muiGridColumn.sortComparator = (A, B) => {
@@ -370,7 +372,7 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
         {params.value?.label || params.value.url}
       </a>);
     }
-    return 'N/A';
+    return muiGridColumn.nullValue;
   }
 }
 
@@ -380,8 +382,8 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
  * @param {LayoutColumn} column
  * @returns {MuiGridColumn}
  */
-const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent) => {
-  let ret = baseColumnConfig(column);
+const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nullValue) => {
+  let ret = baseColumnConfig(column, nullValue);
 
   switch (column.type) {
     case 0: // Short Text
@@ -432,7 +434,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   };
 
   let processedLayout = layout;
-
+  
   //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
   if (layout.hasOwnProperty('type') && typeof layout.type === 'number') {
     processedLayout = processGenericLayout(layout);
@@ -441,6 +443,8 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   } else { //Otherwise use our own layout processing
     processedLayout = { name: "Unknown", sections: processLayout(layout) };
   }
+
+  let nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
 
 
   const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
@@ -458,7 +462,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
 
 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
-  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, themeGroup, actionsComponent)).filter(Boolean); // Remove any columns that are not defined
+  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, themeGroup, actionsComponent, nullValue)).filter(Boolean); // Remove any columns that are not defined
 
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar ? {

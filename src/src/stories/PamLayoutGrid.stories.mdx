@@ -1,7 +1,7 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import Grid from './PamLayoutGrid';
 
-<Meta title="Grid/Stuff" component={Grid} />
+<Meta title="Grid/PAM Layout Grid" component={Grid} />
 
 
 # Grid
@@ -100,11 +100,97 @@ export const layout = {
       },
       "required": false,
       "disabled": false,
-      "hidden": true,
+      "hidden": false,
       "flex": 2
     }]
   }]
 };
+
+export const nullDataLayout = { ...layout, data: { ...layout.data, nullValue: "Empty" }, name: "Null Value" }
+
+export const nullDataColumnLayout = { ...layout, data: { ...layout.data, nullValue: "Empty" }, name: "Null Value", "sections": [{
+    "editable": true,
+    "enabled": true,
+    "name": "Test Layout",
+    "order": 20,
+    "layout": [{
+      "label": "ID",
+      "path": "id",
+      "type": 2,
+      "model": {
+        "id": 1,
+        "modelid": 1,
+        "type": 2,
+        "name": "id"
+      },
+      "required": false,
+      "disabled": false,
+      "flex": 1
+    }, {
+      "label": "Name",
+      "path": "name",
+      "type": 0,
+      "model": {
+        "id": 2,
+        "modelid": 1,
+        "type": 0,
+        "name": "name"
+      },
+      "required": false,
+      "disabled": false,
+      "flex": 1
+    }, {
+      "label": "Type",
+      "path": "type",
+      "type": 7,
+      "possibleChoices": [
+        {
+          "id": 1,
+          "name": "Type1"
+        },
+        {
+          "id": 2,
+          "name": "Type2"
+        }
+      ],
+      "model": {
+        "id": 3,
+        "modelid": 1,
+        "type": 7,
+        "name": "type"
+      },
+      "required": false,
+      "disabled": false,
+      "flex": 2
+    }, {
+      "label": "Status",
+      "path": "status",
+      "nullValue":"No Value",
+      "type": 7,
+      "possibleChoices": [
+        {
+          "id": 1,
+          "name": "Active"
+        },
+        {
+          "id": 2,
+          "name": "Inactive"
+        }
+      ],
+      "model": {
+        "id": 3,
+        "modelid": 1,
+        "type": 7,
+        "name": "type"
+      },
+      "required": false,
+      "disabled": false,
+      "hidden": false,
+      "flex": 2
+    }]
+  }] }
+
+
 export const data = [
   {
     id: '1',
@@ -128,7 +214,7 @@ export const data = [
   {
     id: '3',
     name: 'Name 3',
-    type: { id: 2, name: 'Type2' },
+    type: null,
     status: { id: 3, name: 'Status3' },
   },
   {
@@ -237,7 +323,7 @@ export const data = [
 ];
 
 
-A `PamLayoutGrid` component takes a `PamLayout` and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
+A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
 
 
 
@@ -257,7 +343,29 @@ When there is no data the columns will still be rendered but the data will say n
 When there is data the data will be rendered
 
 <Canvas>
-  <Story name="Some Data">
+  <Story name="With Data">
     <Grid layout={layout} data={data} />
+  </Story>
+</Canvas>
+
+
+## Grid null value override
+
+If you wish to override the default value of 'N/A' for null values you can set the nullValue property in data to what you want to display instead. For example we provide "Empty" for nullValue below.
+
+<Canvas>
+  <Story name="Null Value Override">
+    <Grid layout={nullDataLayout} data={data} />
+  </Story>
+</Canvas>
+
+
+## Grid null value override on a column
+
+Additionally the nullValue can be set on the column level.
+
+<Canvas>
+  <Story name="Column Null Value Override">
+    <Grid layout={nullDataColumnLayout} data={data} />
   </Story>
 </Canvas>
