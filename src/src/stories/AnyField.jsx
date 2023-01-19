@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
@@ -179,12 +179,12 @@ const dateRenderer = ({ id, name, label, disabled, required }) => {
  *
  * @returns {function} A custom renderer for the Typeahead component
  */
-const typeaheadRenderer = ({ label, disabled, choices, required, placeholder } ) => {
+const typeaheadRenderer = ({ label, disabled, choices, required, placeholder }) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
     return (
-    // We need to manually connect a few props here for react hook form
+      // We need to manually connect a few props here for react hook form
       <Typeahead
         {...field}
         sx={{ width: '100%' }}
@@ -224,7 +224,16 @@ const checkboxRenderer = (layout) => {
   const { label, disabled, choices = [], required, helperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
-    const [value, setValue] = useState(field.value || []);
+    const handleCheck = (checkedId) => {
+      const ids = field.value;
+      // If the id is in the array, remove it, otherwise add it
+      const newIds = ids?.includes(checkedId)
+        ? ids?.filter((id) => id !== checkedId)
+        : [...(ids ?? []), checkedId];
+      return newIds;
+    }
+
+
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
     return (
       <>
@@ -243,34 +252,20 @@ const checkboxRenderer = (layout) => {
                 key={item.id}
                 control={<Checkbox
                   onBlur={field.onBlur}
+                  checked={field?.value.includes(item.id)}
                   onChange={(e) => {
-                    let valueCopy = [...value];
-
-                    // update checkbox value
-                    valueCopy[index] = e.target.checked ? e.target.value : null;
-
-                    const noNulls = valueCopy.filter((v) => v !== null && v !== undefined);
-
-                    // If the array ONLY contains null values, set it to an empty array for required validation purposes
-                    if (noNulls.length === 0) {
-                      valueCopy = [];
-                    }
-                    // send data to react hook form
-                    field.onChange(valueCopy);
-
-                    // update local state
-                    setValue(valueCopy);
+                    field.onChange(handleCheck(item.id));
                   }}
                 />}
                 label={item.label}
-                value={item.id}
               />
             ))}
             <FormErrorMessage error={error} />
           </FormGroup>
         </FormControl>
       </>
-    )};
+    )
+  };
 
   Checkboxes.propTypes = {
     field: PropTypes.object,
