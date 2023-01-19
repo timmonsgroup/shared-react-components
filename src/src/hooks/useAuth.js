@@ -72,9 +72,17 @@ const initialState = {
 
 export const authContext = createContext();
 
+// If multiple apps are using the same cookie, we need to be able to differentiate which one logged out
+let APP_ID = '123-456';
+
 
 // Wrap the hook with a provider
+// Use cookieReference to differentiate between multiple apps using the same cookie
 export const ProvideAuth = ({ config, children }) => {
+  if (config?.cookieReference) {
+    APP_ID = config.cookieReference;
+  }
+
   const auth = useProvideAuth(config);
   // We are providing the object returned by useProvideAuth as the value of the authContext
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
@@ -105,7 +113,6 @@ const useProvideAuth = (props) => {
   const [authState, dispatch] = useReducer(authReducer, initialState);
   const intercept = useRef();
   const [initInfo, setInitInfo] = useState(null);
-
 
   useEffect(() => {
     if (!initInfo) {
@@ -172,18 +179,15 @@ const useProvideAuth = (props) => {
 
     async function boop() {
       // get out initialization info from the session storage
-      let initInfo = {
+      const nextInit = {
         refreshToken: await getRefreshTokenFromSession(),
         subject: await getSubjectFromCookie(),
         bootToken: await getBootTokenFromSession(),
         bootUser: await getBootUserFromSession(),
       };
-      setInitInfo(initInfo);
-
-
+      setInitInfo(nextInit);
     }
     boop();
-
 
     return () => {
       if (intercept.current) {
@@ -199,8 +203,6 @@ const useProvideAuth = (props) => {
     checkIfStale();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState.staleCheckState]);
-
-
 
 
   /**
@@ -254,7 +256,7 @@ const useProvideAuth = (props) => {
    */
   const logout = async () => {
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
-    logout_internal();
+    logout_internal('logout');
 
     // Calculate our redirect url based off of the origin of the current page and the logout endpoint in our api
     const redirect = window.location.origin + '/api/oauth/logout';
@@ -277,7 +279,7 @@ const useProvideAuth = (props) => {
       dispatch({ type: ACTIONS.SET_REFRESHING });
       return startWithRefreshToken(refreshToken);
     } else {
-      logout_internal();
+      logout_internal('refresh else');
     }
   }
 
@@ -347,7 +349,7 @@ const useProvideAuth = (props) => {
     // Check to see if we have a token
     // If it is null or empty we will logout
     if (!tokenData || tokenData.length === 0) {
-      logout_internal();
+      logout_internal('parseTokenAndUpdateState no tokenData');
 
       return;
     }
@@ -359,8 +361,10 @@ const useProvideAuth = (props) => {
     const subject = await getSubjectFromCookie();
 
     //If we have a prior subject and it is different from the current subject we will logout
-    if (subject && subject !== user.sub) {
-      logout_internal();
+    // We need to check against the APP_ID to allow an application that logged itself out to log back in
+    // If another application using this 'sub' cookie on the same domain logged out we will insure this session logs out
+    if (subject && subject !== APP_ID && subject !== user.sub) {
+      logout_internal('parseTokenAndUpdateState subject mismatch');
 
       if (config.autoLogin) {
         login();
@@ -438,13 +442,15 @@ const useProvideAuth = (props) => {
   /**
    * Called to reset the state of the auth object
    */
-  const logout_internal = async () => {
+  const logout_internal = async (debug) => {
+    // console.log('logout_internal: ', debug);
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
     clearRefreshTokenInSession();
     // Clear the cookie
     await clearSubjectCookie();
+
     // Dispatch the finish logout action
     dispatch({ type: ACTIONS.FINISH_LOGOUT });
   };
@@ -470,13 +476,13 @@ const useProvideAuth = (props) => {
           console.error('Error fetching data', error);
         }
 
-        logout_internal();
+        logout_internal('startwithrefreshtoken axios catch');
       }).finally(() => {
         // todo: do we need to do anything here?
       });
     } catch (ex) {
       console.error(`Failed to refresh token: ${ex}`);
-      logout_internal();
+      logout_internal('startwithrefreshtoken failed refresh catch');
     }
   };
 
@@ -700,7 +706,7 @@ const authReducer = (nextState, action) => {
 const getRefreshTokenFromSession = async () => {
   try {
     let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
-    
+
     if (session) {
       return session;
     }
@@ -714,6 +720,7 @@ const getRefreshTokenFromSession = async () => {
 const getSubjectFromCookie = async () => {
   // Check to see if there is a cookie containing the sub
   let subject = null;
+
   try {
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
@@ -836,25 +843,26 @@ const clearRefreshTokenInSession = () => {
  * This will clear the subject cookie
  */
 const clearSubjectCookie = async () => {
-
   let domain = window.location.hostname.split('.').slice(1).join('.');
-
+  let deleted = false;
   try {
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
       await window.cookieStore.delete('sub', { domain });
+      deleted = true;
     } else {
       // Set or replace the cookie so that sub is set to the subject
       const oldValue = document.cookie.split(';');
       const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
       document.cookie = newValue.join(';');
+      deleted = true;
     }
-
   } catch (ex) {
     console.debug('Error clearing refreshToken cookie', ex);
   }
 
   // Sometimes the cookie wont delete, who knows why
   // So we will set it to an empty string
-  setSubjectInCookie('123-456');
+  // Setting to special string so the application can check it if logged itself out of it if another app did it
+  setSubjectInCookie(APP_ID);
 }
