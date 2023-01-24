@@ -137,22 +137,22 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @returns {function} A custom renderer for the MUI DatePicker component
  */
 const dateRenderer = ({ id, name, label, disabled, required }) => {
-  const DateField = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
+  const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
-        <DatePicker
-          name={name}
-          disabled={disabled}
-          id={id}
-          value={value}
-          onChange={onChange}
-          renderInput={(params) => (
-            <>
-              <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>
-              <TextField sx={{ width: '100%' }} {...params} />
-            </>
-          )}
-        />
-        <FormErrorMessage error={error} />
+      <DatePicker
+        name={name}
+        disabled={disabled}
+        id={id}
+        value={value}
+        onChange={onChange}
+        renderInput={(params) => (
+          <>
+            <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>
+            <TextField sx={{ width: '100%' }} {...params} />
+          </>
+        )}
+      />
+      <FormErrorMessage error={error} />
     </>
   );
 
