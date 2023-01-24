@@ -42,7 +42,7 @@ export function yupTypeAhead(label, isRequired = true, reqMessage) {
 
 export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
   // use .strict(false) if submit logic / api will not trim values
-  return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces');
+  return yupString(label, isRequired, reqMessage).strict(true).trim(trimMsg || 'Remove leading and/or trailing spaces');
 }
 
 export function yupInt(label, isRequired = true, maxLength, msg, reqMessage) {
@@ -74,8 +74,9 @@ export function yupFloat(label, isRequired = true, int = 5, frac = 2, maxLength,
     ));
   }
 
-  if (maxValue !== null && maxValue !== undefined) {
-    schema = schema.test('maxValue', `${label} cannot be greater than 1`, (value, context) => (
+  //TO-DO: Decide how we want it to work
+  if (maxValue !== null && maxValue !== undefined && maxValue !== false) { // maxValue seems to functionally be a boolean that flags that the value must be less than 1. Maybe we should rename this value? I thought it was a number we set saying the value can't be greater than it at first - Eric Schmiel 1/19/23
+    schema = schema.test('maxValue', `${label} cannot be greater than 1`, (value, context) => ( // Before my minor tweak, if any maxValue existed at all, this codeblock would fire
       !context || !context.originalValue ? true : parseFloat(context.originalValue.toString()) <= 1
     ));
   }
@@ -143,10 +144,8 @@ export const createFieldValidation = (type, label, validationMap, field) => {
 
   switch (type) {
     case FIELDS.LONG_TEXT:
-      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
-      break;
     case FIELDS.TEXT:
-
+    case FIELDS.LINK:
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
       break;
     case FIELDS.INT:
@@ -159,18 +158,20 @@ export const createFieldValidation = (type, label, validationMap, field) => {
       );
       break;
     case FIELDS.FLOAT: {
-      const intD = validationMap.get(VALIDATIONS.INTEGER_DIGITS);
-      const fracD = validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS);
+      const intD = validationMap.get(VALIDATIONS.INTEGER_DIGITS) ?? 5;
+      const fracD = validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS) ?? 2;
+      const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
+
       validation = yupFloat(
         label,
         required,
         intD,
-        validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS),
+        fracD,
         maxLength,
         intD
           ? `Please enter a number, with up to ${intD} digits and an optional decimal of up to ${fracD} digits`
           : `Please enter a decimal of up to ${fracD} digits`,
-        validationMap.get(VALIDATIONS.MAX_VALUE),
+        maxValue,
         reqMessage
       );
       break;
@@ -200,11 +201,6 @@ export const createFieldValidation = (type, label, validationMap, field) => {
     //   dynField.render.is = 'CheckBox';
     //   break;
     // }
-
-    case FIELDS.LINK: {
-      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
-      break;
-    }
 
     // TODO: Yes clusterfield I know you are here, but I don't know what to do with you yet
     // case FIELDS.CLUSTER: {

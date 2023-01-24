@@ -94,14 +94,15 @@ AnyField.propTypes = {
  * @returns {function} A custom renderer for the MUI TextField component
  */
 const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled }) => {
-  const TextFieldWrapped = ({ field: { value, onChange }, fieldState: { error } }) => (
+  const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
       <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />{label}</InputLabel>
       <TextField sx={{ width: '100%' }}
         disabled={disabled}
         id={id || name}
         error={!!error}
-        onChange={onChange}
+        onChange={onChange} 
+        onBlur = {onBlur}
         value={value}
         multiline={isMultiLine}
         minRows={isMultiLine ? 3 : 1}
@@ -136,22 +137,22 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @returns {function} A custom renderer for the MUI DatePicker component
  */
 const dateRenderer = ({ id, name, label, disabled, required }) => {
-  const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
+  const DateField = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
-      <DatePicker
-        name={name}
-        disabled={disabled}
-        id={id}
-        value={value}
-        onChange={onChange}
-        renderInput={(params) => (
-          <>
-            <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>
-            <TextField sx={{ width: '100%' }} {...params} />
-          </>
-        )}
-      />
-      <FormErrorMessage error={error} />
+        <DatePicker
+          name={name}
+          disabled={disabled}
+          id={id}
+          value={value}
+          onChange={onChange}
+          renderInput={(params) => (
+            <>
+              <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>
+              <TextField sx={{ width: '100%' }} {...params} />
+            </>
+          )}
+        />
+        <FormErrorMessage error={error} />
     </>
   );
 
@@ -252,7 +253,7 @@ const checkboxRenderer = (layout) => {
                 key={item.id}
                 control={<Checkbox
                   onBlur={field.onBlur}
-                  checked={field?.value.includes(item.id)}
+                  checked={field?.value?.includes(item.id)}
                   onChange={(e) => {
                     field.onChange(handleCheck(item.id));
                   }}
