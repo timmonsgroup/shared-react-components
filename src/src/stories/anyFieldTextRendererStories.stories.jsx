@@ -77,7 +77,7 @@ FloatField.args = {
   setDigits: true,
   integerDigits: undefined,
   fractionalDigits: undefined,
-  maxValue: 12,
+  maxValue: undefined,
 };
 
 LinkField.args = {
