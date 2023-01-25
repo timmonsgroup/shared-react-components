@@ -59,11 +59,12 @@ export function yupInt(label, isRequired = true, maxLength, msg, reqMessage) {
 
   return isRequired ? schema.required(reqMessage) : schema;
 }
-export function yupFloat(label, isRequired = true, int = 5, frac = 2, maxLength, msg, maxValue, reqMessage) {
+export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage) {
+  let formatMessage = isNaN(parseInt(int)) && isNaN(parseInt(frac)) ? 'Invalid number format' : msg;
   let schema = number().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
-    .typeError(msg)
-    .test('formatted', msg, (value, context) => (
+    .typeError(formatMessage)
+    .test('formatted', formatMessage, (value, context) => (
       !context || !context.originalValue ? true : validDoubleFormat(context.originalValue, int, frac)
     ));
 
@@ -74,10 +75,14 @@ export function yupFloat(label, isRequired = true, int = 5, frac = 2, maxLength,
     ));
   }
 
-  //TO-DO: Decide how we want it to work
-  if (maxValue !== null && maxValue !== undefined && maxValue !== false) { // maxValue seems to functionally be a boolean that flags that the value must be less than 1. Maybe we should rename this value? I thought it was a number we set saying the value can't be greater than it at first - Eric Schmiel 1/19/23
-    schema = schema.test('maxValue', `${label} cannot be greater than 1`, (value, context) => ( // Before my minor tweak, if any maxValue existed at all, this codeblock would fire
-      !context || !context.originalValue ? true : parseFloat(context.originalValue.toString()) <= 1
+  // Check if maxValue is a number
+  const parsedMax = parseFloat(maxValue);
+  const isNaNMax = isNaN(parsedMax);
+
+  // maxValue seems to functionally be a boolean that flags that the value must be less than 1. Maybe we should rename this value? I thought it was a number we set saying the value can't be greater than it at first - Eric Schmiel 1/19/23
+  if (!isNaNMax) {
+    schema = schema.test('maxValue', `${label} cannot be greater than ${parsedMax}`, (value, context) => ( // Before my minor tweak, if any maxValue existed at all, this codeblock would fire
+      !context || !context.originalValue ? true : parseFloat(context.originalValue.toString()) <= parsedMax
     ));
   }
 
@@ -132,8 +137,25 @@ export function validCurrencyFormat(value) {
   return new RegExp(/^-?\d+\.?\d{0,2}$/).test(value);
 }
 
-export function validDoubleFormat(value, int = 4, frac = 4) {
-  return new RegExp(`^\\d{0,${int}}(\\.\\d{0,${frac}})?$`).test(value);
+/**
+ * Format validation for a double value
+ * if i and f are not passed in, the default is 4 digits before and 4 digits after the decimal
+ * if i or f are passed in and are not numbers, the default is 999999999 digits before and after the decimal
+ * @param {number} value
+ * @param {number} i - number of digits before decimal
+ * @param {number} f - number of digits after decimal
+ * @returns boolean
+ */
+export function validDoubleFormat(value, i = 4, f = 4) {
+  const pInt = parseInt(i);
+  const pFrac = parseInt(f);
+
+  // If one or both of the values are not numbers, set them to an arbitrary digit value
+  const int = isNaN(pInt) ? 999999999 : pInt;
+  const frac = isNaN(pFrac) ? 999999999 : pFrac;
+
+  const re = new RegExp(`^\\d{0,${int}}(\\.\\d{0,${frac}})?$`).test(value);
+  return re;
 }
 
 export const createFieldValidation = (type, label, validationMap, field) => {
@@ -158,8 +180,8 @@ export const createFieldValidation = (type, label, validationMap, field) => {
       );
       break;
     case FIELDS.FLOAT: {
-      const intD = validationMap.get(VALIDATIONS.INTEGER_DIGITS) ?? 5;
-      const fracD = validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS) ?? 2;
+      const intD = validationMap.get(VALIDATIONS.INTEGER_DIGITS);
+      const fracD = validationMap.get(VALIDATIONS.FRACTIONAL_DIGITS);
       const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
 
       validation = yupFloat(

@@ -1,17 +1,17 @@
-import { 
-    generateAnyFieldStoryDefaultExport, 
-    AnyFieldStoryTemplate as Template, 
-    standardSelectionAnyFieldArgs, 
-    standardAnyFieldSelectionArgTypeConfiguration 
-} from "../helpers/story-helpers/anyFieldStoryHelpers";
+import {
+  generateAnyFieldStoryDefaultExport,
+  AnyFieldStoryTemplate as Template,
+  standardSelectionAnyFieldArgs,
+  standardAnyFieldSelectionArgTypeConfiguration
+} from '../helpers/story-helpers/anyFieldStoryHelpers';
 
 
 // ---------- Setup Default Export ----------
 
 
 const anyFieldStoryDefaultExportOptions = {
-    title: "Type Ahead Dropdown Fields",
-    argTypes: standardAnyFieldSelectionArgTypeConfiguration
+  title: 'Type Ahead Dropdown Fields',
+  argTypes: standardAnyFieldSelectionArgTypeConfiguration
 };
 
 export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOptions);
@@ -21,20 +21,20 @@ export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOpti
 
 
 const standardTypeAheadAnyFieldArgs = {
-    ...standardSelectionAnyFieldArgs,
-    multiple: false,
-    checkbox: false,
+  ...standardSelectionAnyFieldArgs,
+  multiple: false,
+  checkbox: false,
 };
 
 export const TypeAheadChoiceField = Template.bind({});
 export const TypeAheadObjectField = Template.bind({});
 
 TypeAheadChoiceField.args = {
-    ...standardTypeAheadAnyFieldArgs,
-    type: 7,
+  ...standardTypeAheadAnyFieldArgs,
+  type: 7,
 };
 
 TypeAheadObjectField.args = {
-    ...standardTypeAheadAnyFieldArgs,
-    type: 10,
+  ...standardTypeAheadAnyFieldArgs,
+  type: 10,
 };

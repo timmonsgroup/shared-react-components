@@ -434,19 +434,18 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   };
 
   let processedLayout = layout;
-  
+  const hasType = Object.prototype.hasOwnProperty.call(layout, 'type');
+
   //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
-  if (layout.hasOwnProperty('type') && typeof layout.type === 'number') {
+  if (hasType && typeof layout.type === 'number') {
     processedLayout = processGenericLayout(layout);
-  } else if (layout.hasOwnProperty('type') && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
+  } else if (hasType && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
     processedLayout = layout;
   } else { //Otherwise use our own layout processing
-    processedLayout = { name: "Unknown", sections: processLayout(layout) };
+    processedLayout = { name: 'Unknown', sections: processLayout(layout) };
   }
 
-  let nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
-
-
+  const nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
   const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
 
   // Check for optional actions

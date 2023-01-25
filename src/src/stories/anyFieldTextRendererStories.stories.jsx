@@ -1,44 +1,42 @@
-import { 
-    generateAnyFieldStoryDefaultExport, 
-    AnyFieldStoryTemplate as Template, 
-    standardAnyFieldArgs, 
-    standardAnyFieldArgTypeConfiguration 
-} from "../helpers/story-helpers/anyFieldStoryHelpers";
+import {
+  generateAnyFieldStoryDefaultExport,
+  AnyFieldStoryTemplate as Template,
+  standardAnyFieldArgs,
+  standardAnyFieldArgTypeConfiguration
+} from '../helpers/story-helpers/anyFieldStoryHelpers';
 
 
 
 // ---------- Setup Default Export ----------
-
-
 const standardAnyFieldTextRendererArgTypeConfiguration = {
-    maxLength: {
-        control: {
-            type: "number"
-        },
+  maxLength: {
+    control: {
+      type: 'number'
     },
-    setDigits: {
-        table: { 
-            disable: true
-        }
+  },
+  setDigits: {
+    table: {
+      disable: true
+    }
+  },
+  integerDigits: {
+    control: {
+      type: 'number'
     },
-    integerDigits: {
-        control: {
-            type: "number"
-        },
-        if: { arg: "setDigits"}
+    if: { arg: 'setDigits' }
+  },
+  fractionalDigits: {
+    control: {
+      type: 'number'
     },
-    fractionalDigits: {
-        control: {
-            type: "number"
-        },
-        if: { arg: "setDigits"}
-    },
-    ...standardAnyFieldArgTypeConfiguration
+    if: { arg: 'setDigits' }
+  },
+  ...standardAnyFieldArgTypeConfiguration
 };
 
 const anyFieldStoryDefaultExportOptions = {
-    title: "Text Renderer Fields",
-    argTypes: standardAnyFieldTextRendererArgTypeConfiguration
+  title: 'Text Renderer Fields',
+  argTypes: standardAnyFieldTextRendererArgTypeConfiguration
 };
 
 export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOptions);
@@ -48,8 +46,8 @@ export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOpti
 
 
 const standardAnyFieldTextRendererArgs = {
-    ...standardAnyFieldArgs,
-    maxLength: "",
+  ...standardAnyFieldArgs,
+  maxLength: '',
 };
 
 export const TextField = Template.bind({});
@@ -59,32 +57,32 @@ export const FloatField = Template.bind({});
 export const LinkField = Template.bind({});
 
 TextField.args = {
-    ...standardAnyFieldTextRendererArgs,
-    type: 0,
+  ...standardAnyFieldTextRendererArgs,
+  type: 0,
 };
 
 LongTextField.args = {
-    ...standardAnyFieldTextRendererArgs,
-    type: 1,
+  ...standardAnyFieldTextRendererArgs,
+  type: 1,
 };
 
 IntField.args = {
-    ...standardAnyFieldTextRendererArgs,
-    type: 2,
+  ...standardAnyFieldTextRendererArgs,
+  type: 2,
 };
 
 FloatField.args = {
-    ...standardAnyFieldTextRendererArgs,
-    type: 3,
-    setDigits: true,
-    integerDigits: undefined,
-    fractionalDigits: undefined,
-    maxValue: false,
+  ...standardAnyFieldTextRendererArgs,
+  type: 3,
+  setDigits: true,
+  integerDigits: undefined,
+  fractionalDigits: undefined,
+  maxValue: 12,
 };
 
 LinkField.args = {
-    ...standardAnyFieldTextRendererArgs,
-    type: 100,
+  ...standardAnyFieldTextRendererArgs,
+  type: 100,
 };
 
 //This is not hooked up yet
@@ -93,6 +91,6 @@ LinkField.args = {
 // CurrencyField.args = {
 //     ...standardAnyFieldTextRendererArgs,
 //     maxLength: "",
-    
+
 //     type: 4
 // };

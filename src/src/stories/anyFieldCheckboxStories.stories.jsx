@@ -1,17 +1,17 @@
-import { 
-    generateAnyFieldStoryDefaultExport, 
-    AnyFieldStoryTemplate as Template, 
-    standardSelectionAnyFieldArgs, 
-    standardAnyFieldSelectionArgTypeConfiguration 
-} from "../helpers/story-helpers/anyFieldStoryHelpers";
+import {
+  generateAnyFieldStoryDefaultExport,
+  AnyFieldStoryTemplate as Template,
+  standardSelectionAnyFieldArgs,
+  standardAnyFieldSelectionArgTypeConfiguration
+} from '../helpers/story-helpers/anyFieldStoryHelpers';
 
 
 // ---------- Setup Default Export ----------
 
 
 const anyFieldStoryDefaultExportOptions = {
-    title: "Checkbox Fields",
-    argTypes: standardAnyFieldSelectionArgTypeConfiguration
+  title: 'Checkbox Fields',
+  argTypes: standardAnyFieldSelectionArgTypeConfiguration
 };
 
 export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOptions);
@@ -21,21 +21,21 @@ export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOpti
 
 
 const standardCheckboxAnyFieldArgs = {
-    ...standardSelectionAnyFieldArgs,
-    helperText: "",
-    multiple: true,
-    checkbox: true,
+  ...standardSelectionAnyFieldArgs,
+  helperText: '',
+  multiple: true,
+  checkbox: true,
 };
 
 export const CheckboxChoiceField = Template.bind({});
 export const CheckboxObjectField = Template.bind({});
 
 CheckboxChoiceField.args = {
-    ...standardCheckboxAnyFieldArgs,
-    type: 7,
+  ...standardCheckboxAnyFieldArgs,
+  type: 7,
 };
 
 CheckboxObjectField.args = {
-    ...standardCheckboxAnyFieldArgs,
-    type: 10,
+  ...standardCheckboxAnyFieldArgs,
+  type: 10,
 };
