@@ -1,13 +1,3 @@
-// export const parameters = {
-//   actions: { argTypesRegex: "^on[A-Z].*" },
-//   controls: {
-//     matchers: {
-//       color: /(background|color)$/i,
-//       date: /Date$/,
-//     },
-//   },
-// }
-
 import { ThemeProvider } from '@mui/material/styles';
 import { addDecorator } from '@storybook/react';
 import theme from '../src/muiTheme';
@@ -26,6 +16,7 @@ const ThemeProviderFn = (storyFn) => {
   };
 
   // Wrap our component with a theme and auth provider so we can pass them to our components
+  // LocalizationProvider is needed for the date picker
   return (
   <LocalizationProvider dateAdapter={AdapterDateFns}>
     <authContext.Provider value={auth}>

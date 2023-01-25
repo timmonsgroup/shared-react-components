@@ -41,8 +41,7 @@ export function yupTypeAhead(label, isRequired = true, reqMessage) {
 }
 
 export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
-  // use .strict(false) if submit logic / api will not trim values
-  return yupString(label, isRequired, reqMessage).strict(true).trim(trimMsg || 'Remove leading and/or trailing spaces');
+  return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces').strict(true);
 }
 
 export function yupInt(label, isRequired = true, maxLength, msg, reqMessage) {
@@ -108,7 +107,6 @@ export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage
 }
 
 export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMessage) {
-  // use .strict(false) if submit logic / api will not trim values
   const schema = yupTrimString(label, isRequired, msg, reqMessage);
   return maxLength ? schema.max(maxLength) : schema;
 }
