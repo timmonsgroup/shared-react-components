@@ -14,7 +14,9 @@ export default generateAnyFieldStoryDefaultExport();
 export const DateField = Template.bind({});
 
 DateField.args = {
+  label: "Date Field",
   ...standardAnyFieldArgs,
+  requiredErrorText: "Date input required",
   type: 5,
   id: 'DateFieldId',
   name: 'DateFieldName',

@@ -31,11 +31,13 @@ export const CheckboxChoiceField = Template.bind({});
 export const CheckboxObjectField = Template.bind({});
 
 CheckboxChoiceField.args = {
+    label: "Checkbox Choice Field",
   ...standardCheckboxAnyFieldArgs,
   type: 7,
 };
 
 CheckboxObjectField.args = {
+    label: "Checkbox Object Field",
   ...standardCheckboxAnyFieldArgs,
   type: 10,
 };

@@ -14,7 +14,7 @@ const standardAnyFieldTextRendererArgTypeConfiguration = {
       type: 'number'
     },
   },
-  setDigits: {
+  useFloatControls: {
     table: {
       disable: true
     }
@@ -23,13 +23,19 @@ const standardAnyFieldTextRendererArgTypeConfiguration = {
     control: {
       type: 'number'
     },
-    if: { arg: 'setDigits' }
+    if: { arg: 'useFloatControls' }
   },
   fractionalDigits: {
     control: {
       type: 'number'
     },
-    if: { arg: 'setDigits' }
+    if: { arg: 'useFloatControls' }
+  },
+  maxValue: {
+    control: {
+      type: 'number'
+    },
+    if: { arg: 'useFloatControls'}
   },
   ...standardAnyFieldArgTypeConfiguration
 };
@@ -45,11 +51,6 @@ export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOpti
 // ---------- Configure Stories ----------
 
 
-const standardAnyFieldTextRendererArgs = {
-  ...standardAnyFieldArgs,
-  maxLength: '',
-};
-
 export const TextField = Template.bind({});
 export const LongTextField = Template.bind({});
 export const IntField = Template.bind({});
@@ -57,31 +58,41 @@ export const FloatField = Template.bind({});
 export const LinkField = Template.bind({});
 
 TextField.args = {
-  ...standardAnyFieldTextRendererArgs,
+  label: "Text Field",
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Text required",
   type: 0,
 };
 
 LongTextField.args = {
-  ...standardAnyFieldTextRendererArgs,
+  label: "Long Text Field",
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Text required",
   type: 1,
 };
 
 IntField.args = {
-  ...standardAnyFieldTextRendererArgs,
+  label: "Int Field",
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Whole number required",
   type: 2,
 };
 
 FloatField.args = {
-  ...standardAnyFieldTextRendererArgs,
+  label: "Float Field",
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Whole number or decimal number required",
   type: 3,
-  setDigits: true,
+  useFloatControls: true,
   integerDigits: undefined,
   fractionalDigits: undefined,
   maxValue: undefined,
 };
 
 LinkField.args = {
-  ...standardAnyFieldTextRendererArgs,
+  label: "Link Field",
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Link text required",
   type: 100,
 };
 
@@ -89,7 +100,7 @@ LinkField.args = {
 // export const CurrencyField = Template.bind({});
 
 // CurrencyField.args = {
-//     ...standardAnyFieldTextRendererArgs,
+//     ...standardAnyFieldArgs,
 //     maxLength: "",
 
 //     type: 4

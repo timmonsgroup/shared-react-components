@@ -78,9 +78,8 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
   const parsedMax = parseFloat(maxValue);
   const isNaNMax = isNaN(parsedMax);
 
-  // maxValue seems to functionally be a boolean that flags that the value must be less than 1. Maybe we should rename this value? I thought it was a number we set saying the value can't be greater than it at first - Eric Schmiel 1/19/23
   if (!isNaNMax) {
-    schema = schema.test('maxValue', `${label} cannot be greater than ${parsedMax}`, (value, context) => ( // Before my minor tweak, if any maxValue existed at all, this codeblock would fire
+    schema = schema.test('maxValue', `${label} cannot be greater than ${parsedMax}`, (value, context) => (
       !context || !context.originalValue ? true : parseFloat(context.originalValue.toString()) <= parsedMax
     ));
   }

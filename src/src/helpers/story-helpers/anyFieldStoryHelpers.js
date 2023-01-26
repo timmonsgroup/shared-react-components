@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object } from 'yup';
 
-import { defaultLayout } from './anyFieldStoryObjects';
 import { parseFormLayout } from '../../hooks';
 import AnyField from '../../stories/AnyField';
 import Button from "../../stories/Button";
@@ -81,14 +80,13 @@ export const standardAnyFieldSelectionArgTypeConfiguration = {
 
 
 export const standardAnyFieldArgs = {
-    label: "Default label",
     disabled: false,
     required: false,
-    requiredErrorText: ""
 };
 
 export const standardSelectionAnyFieldArgs = {
     ...standardAnyFieldArgs,
+    requiredErrorText: "Selection required",
     possibleChoices: [
         {
             name: "default Choice 1",
@@ -151,15 +149,16 @@ export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
 // parse layout
 // retrieve field and return it.
 export async function loadArgsAndGetField(args) {
-    const testLayout = Object.assign(defaultLayout, {});
+    const testLayout = {
+        sections: [{
+            layout: [{ }]
+        }]
+    };
     const testSection = testLayout.sections[0];
     const testSectionLayout = testLayout.sections[0].layout[0];
 
     testSectionLayout.label = args.label ?? "Default Label";
     testSectionLayout.type = args.type ?? 0;
-    testSectionLayout.model.name = args.modelName ?? "defaultModelName";
-    testSectionLayout.model.id = args.modelId ?? 1;
-    testSectionLayout.model.data = args.modelData ?? {};
     testSectionLayout.hidden = args.hidden ?? false;
     testSectionLayout.conditions = args.conditions ?? [];
     testSectionLayout.linkFormat = args.linkFormat ?? {};
@@ -183,12 +182,17 @@ export async function loadArgsAndGetField(args) {
     testSectionLayout.url = args.url ?? "";
     testSectionLayout.path = args.path ?? "";
 
+    // Validations
     testSectionLayout.integerDigits = args.integerDigits ?? null;
     testSectionLayout.fractionalDigits = args.fractionalDigits ?? null;
     testSectionLayout.maxValue = args.maxValue ?? null;
     testSectionLayout.maxLength = args.maxLength ?? null;
     testSectionLayout.minLength = args.minLength ?? null;
-    testSectionLayout.required = args.required ?? null;
+
+    testSectionLayout.model = {};
+    testSectionLayout.model.name = args.modelName ?? "defaultModelName";
+    testSectionLayout.model.id = args.modelId ?? 1;
+    testSectionLayout.model.data = args.modelData ?? {};
 
     testSection.editable = args.editable ?? true;
     testSection.enabled = args.enabled ?? true;
