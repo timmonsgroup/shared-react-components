@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object } from 'yup';
 
-import { parseFormLayout } from '../../hooks';
+import { getFieldValue, parseFormLayout } from '../../hooks';
 import AnyField from '../../stories/AnyField';
 import Button from "../../stories/Button";
 
@@ -131,7 +131,13 @@ export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
   const fieldValidationsInSchemaCreationFormat = { [field.id]: field.validations };
   const validationSchema = object(fieldValidationsInSchemaCreationFormat);
 
-  const { control, trigger, formState } = useForm({
+  // Need to get a correct default value for the field to avoid "uncontrolled to controlled" errors
+  const { value } = getFieldValue(field, {});
+
+  const { control, trigger } = useForm({
+    defaultValues: {
+      [field.id]: value
+    },
     mode: 'onBlur',
     resolver: yupResolver(validationSchema)
   });

@@ -321,6 +321,7 @@ export function getFieldValue(field, formData, isNested = false) {
     case FIELDS.TEXT:
     case FIELDS.INT:
     case FIELDS.CURRENCY:
+    case FIELDS.LINK:
     case FIELDS.FLOAT: {
       value = inData || '';
       break;
@@ -331,8 +332,7 @@ export function getFieldValue(field, formData, isNested = false) {
       break;
     }
 
-    case FIELDS.DATE:
-    case FIELDS.LINK: {
+    case FIELDS.DATE:{
       value = inData || null;
       break;
     }
