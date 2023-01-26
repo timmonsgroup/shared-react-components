@@ -42,10 +42,10 @@ import axios from 'axios';
  * @returns
  */
 const GenericForm = ({
-    formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
-    domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess,
-    suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError
-  }) => {
+  formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
+  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess,
+  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError
+}) => {
   const [modifying, setModifying] = useState(false);
   const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying);
   const nav = useNavigate();

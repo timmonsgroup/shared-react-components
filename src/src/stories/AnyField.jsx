@@ -94,14 +94,15 @@ AnyField.propTypes = {
  * @returns {function} A custom renderer for the MUI TextField component
  */
 const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled }) => {
-  const TextFieldWrapped = ({ field: { value, onChange }, fieldState: { error } }) => (
+  const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
       <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />{label}</InputLabel>
       <TextField sx={{ width: '100%' }}
         disabled={disabled}
         id={id || name}
         error={!!error}
-        onChange={onChange}
+        onChange={onChange} 
+        onBlur = {onBlur}
         value={value}
         multiline={isMultiLine}
         minRows={isMultiLine ? 3 : 1}
@@ -252,7 +253,7 @@ const checkboxRenderer = (layout) => {
                 key={item.id}
                 control={<Checkbox
                   onBlur={field.onBlur}
-                  checked={field?.value.includes(item.id)}
+                  checked={field?.value?.includes(item.id)}
                   onChange={(e) => {
                     field.onChange(handleCheck(item.id));
                   }}
