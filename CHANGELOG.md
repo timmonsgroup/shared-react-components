@@ -5,22 +5,22 @@
 ---
 
 * Setup Storybook stories for various configurations of the anyField component for testing and to provide developer reference. AnyField stories are currently organized into 4 configuration families:
-* * General Stories
-* * Checkbox Stories
-* * Type Ahead Dropdown Stories
-* * Text Renderer Stories.
+    * General Stories
+    * Checkbox Stories
+    * Type Ahead Dropdown Stories
+    * Text Renderer Stories.
 
-Supported configurations include:
-* * Date Field
-* * Checkbox Choice Field
-* * Checkbox Object Field
-* * Type Ahead Choice Field
-* * Type Ahead Object Field
-* * Text Field
-* * Long Text Field
-* * Int Field
-* * Float Field
-* * Link Field
+* Supported configurations include:
+    * Date Field
+    * Checkbox Choice Field
+    * Checkbox Object Field
+    * Type Ahead Choice Field
+    * Type Ahead Object Field
+    * Text Field
+    * Long Text Field
+    * Int Field
+    * Float Field
+    * Link Field
 
 * Created a default layout object that can be fed into the `parseFormLayout` function to generate a field object that can supply an anyField component with the necessary values for reference.
 * Created an example args object that has every possible tweakable parameter set that can be used to create stories for anyField components for reference.
