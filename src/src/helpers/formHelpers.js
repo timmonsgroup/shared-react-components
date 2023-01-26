@@ -44,21 +44,18 @@ export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
   return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces').strict(true);
 }
 
-export function yupInt(label, isRequired = true, maxLength, msg, reqMessage) {
+export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
   let schema = number().integer().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg);
 
-  // Add another test if maxLength is passed in
-  if (maxLength) {
-    schema = schema.test('maxLength', `${label} cannot be more than ${maxLength} characters`, (value, context) => (
-      !context || !context.originalValue ? true : context.originalValue.toString().length <= maxLength
-    ));
-  }
+  // Check for and add tests max/min Length if needed
+  schema = addMaxLength(schema, label, maxLength);
+  schema = addMinLength(schema, label, minLength);
 
   return isRequired ? schema.required(reqMessage) : schema;
 }
-export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage) {
+export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength) {
   let formatMessage = isNaN(parseInt(int)) && isNaN(parseInt(frac)) ? 'Invalid number format' : msg;
   let schema = number().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -67,19 +64,17 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
       !context || !context.originalValue ? true : validDoubleFormat(context.originalValue, int, frac)
     ));
 
-  // Add another test if maxLength is passed in
-  if (maxLength) {
-    schema = schema.test('maxLength', `${label} cannot be more than ${maxLength} characters`, (value, context) => (
-      !context || !context.originalValue ? true : context.originalValue.toString().length <= maxLength
-    ));
-  }
+  // Check for and add tests max/min Length if needed
+  schema = addMaxLength(schema, label, maxLength);
+  schema = addMinLength(schema, label, minLength);
 
   // Check if maxValue is a number
   const parsedMax = parseFloat(maxValue);
   const isNaNMax = isNaN(parsedMax);
 
+  // maxValue seems to functionally be a boolean that flags that the value must be less than 1. Maybe we should rename this value? I thought it was a number we set saying the value can't be greater than it at first - Eric Schmiel 1/19/23
   if (!isNaNMax) {
-    schema = schema.test('maxValue', `${label} cannot be greater than ${parsedMax}`, (value, context) => (
+    schema = schema.test('maxValue', `${label} cannot be greater than ${parsedMax}`, (value, context) => ( // Before my minor tweak, if any maxValue existed at all, this codeblock would fire
       !context || !context.originalValue ? true : parseFloat(context.originalValue.toString()) <= parsedMax
     ));
   }
@@ -87,7 +82,7 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
   return isRequired ? schema.required(reqMessage) : schema;
 }
 
-export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage) {
+export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
   let schema = number().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg)
@@ -95,19 +90,39 @@ export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage
       !context || !context.originalValue ? true : validCurrencyFormat(context.originalValue)
     ));
 
-  // Add another test if maxLength is passed in
-  if (maxLength) {
-    schema = schema.test('maxLength', `${label} cannot be more than ${maxLength} characters`, (value, context) => (
-      !context || !context.originalValue ? true : context.originalValue.toString().length <= maxLength
-    ));
-  }
+  // Check for and add tests max/min Length if needed
+  schema = addMaxLength(schema, label, maxLength);
+  schema = addMinLength(schema, label, minLength);
 
   return isRequired ? schema.required(reqMessage) : schema;
 }
 
-export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMessage) {
-  const schema = yupTrimString(label, isRequired, msg, reqMessage);
-  return maxLength ? schema.max(maxLength) : schema;
+const addMinLength = (schema, label, minLength) => {
+  const pMin = parseInt(minLength);
+  if (!isNaN(pMin)) {
+    return schema.test('minLength', `${label} cannot be less than ${pMin} characters`, (value, context) => (
+      !context || !context.originalValue ? true : context.originalValue.toString().length <= pMin
+    ));
+  }
+  return schema;
+};
+
+const addMaxLength = (schema, label, maxLength) => {
+  const pMax = parseInt(maxLength);
+  if (!isNaN(pMax)) {
+    return schema.test('maxLength', `${label} cannot be more than ${pMax} characters`, (value, context) => (
+      !context || !context.originalValue ? true : context.originalValue.toString().length >= pMax
+    ));
+  }
+  return schema;
+};
+
+export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
+  let schema = yupTrimString(label, isRequired, msg, reqMessage);
+  // Check for and add tests max/min Length if needed
+  schema = addMaxLength(schema, label, maxLength);
+  schema = addMinLength(schema, label, minLength);
+  return schema;
 }
 
 export function yupMultiselect(label, isRequired = true, reqMessage) {
@@ -159,13 +174,14 @@ export const createFieldValidation = (type, label, validationMap, field) => {
   let validation = null;
   const required = validationMap.get(VALIDATIONS.REQUIRED);
   const maxLength = validationMap.get(VALIDATIONS.MAX_LENGTH);
+  const minLength = validationMap.get(VALIDATIONS.MIN_LENGTH);
   const reqMessage = field?.render?.requiredErrorText;
 
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT:
     case FIELDS.LINK:
-      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage);
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
       break;
     case FIELDS.INT:
       validation = yupInt(
@@ -173,7 +189,8 @@ export const createFieldValidation = (type, label, validationMap, field) => {
         required,
         maxLength,
         'Please enter an integer',
-        reqMessage
+        reqMessage,
+        minLength
       );
       break;
     case FIELDS.FLOAT: {
@@ -191,7 +208,8 @@ export const createFieldValidation = (type, label, validationMap, field) => {
           ? `Please enter a number, with up to ${intD} digits and an optional decimal of up to ${fracD} digits`
           : `Please enter a decimal of up to ${fracD} digits`,
         maxValue,
-        reqMessage
+        reqMessage,
+        minLength
       );
       break;
     }
@@ -201,7 +219,8 @@ export const createFieldValidation = (type, label, validationMap, field) => {
         required,
         maxLength,
         'Please enter a valid dollar amount, with an optional decimal of up to two digits for cents; e.g., 1234.56',
-        reqMessage
+        reqMessage,
+        minLength
       );
       break;
 
