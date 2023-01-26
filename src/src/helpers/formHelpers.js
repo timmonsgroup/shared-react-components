@@ -101,7 +101,7 @@ const addMinLength = (schema, label, minLength) => {
   const pMin = parseInt(minLength);
   if (!isNaN(pMin)) {
     return schema.test('minLength', `${label} cannot be less than ${pMin} characters`, (value, context) => (
-      !context || !context.originalValue ? true : context.originalValue.toString().length <= pMin
+      !context || !context.originalValue ? true : context.originalValue.toString().length >= pMin
     ));
   }
   return schema;
@@ -111,7 +111,7 @@ const addMaxLength = (schema, label, maxLength) => {
   const pMax = parseInt(maxLength);
   if (!isNaN(pMax)) {
     return schema.test('maxLength', `${label} cannot be more than ${pMax} characters`, (value, context) => (
-      !context || !context.originalValue ? true : context.originalValue.toString().length >= pMax
+      !context || !context.originalValue ? true : context.originalValue.toString().length <= pMax
     ));
   }
   return schema;
