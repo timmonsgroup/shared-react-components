@@ -45,10 +45,12 @@ We can run this library within a local project/application by using `npm link`. 
        * This must be run if you are adding a new component to the index file for the first time
 
 ### Ok fine, but how do I get back to the published version? 🤷‍♂️ ###
+
 To remove the `npm link`
+
 1. Delete the `@timmons-group` folder in the `node_modules` folder of the target project.
 1. Run `npm i` in the target project.
-
+     1. If you simply `npm i` again artifacts from the `npm link` will still be there.
 ## How to Build 🔨
 
 1. `npm run build:package`
