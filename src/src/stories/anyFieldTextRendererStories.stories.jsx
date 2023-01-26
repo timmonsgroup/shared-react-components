@@ -10,6 +10,15 @@ import {
 // ---------- Setup Default Export ----------
 const standardAnyFieldTextRendererArgTypeConfiguration = {
   maxLength: {
+    name: 'Max Length',
+    description: 'Maximum number of characters allowed in the field.',
+    control: {
+      type: 'number'
+    },
+  },
+  minLength: {
+    name: 'Min Length',
+    description: 'Minimum number of characters allowed in the field.',
     control: {
       type: 'number'
     },
