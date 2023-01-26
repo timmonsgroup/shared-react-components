@@ -4,7 +4,7 @@
 ## Release 0.6.0 - 1/26/23 ##
 ---
 
-* Setup Storybook stories for various configurations of the anyField component for testing and to provide developer reference. AnyField stories are currently organized into 4 configuration families:
+* Setup Storybook stories for various configurations of the anyField component for testing and to provide a reference for developers. AnyField stories are currently organized into 4 configuration families:
     * General Stories
     * Checkbox Stories
     * Type Ahead Dropdown Stories
@@ -22,8 +22,8 @@
     * Float Field
     * Link Field
 
-* Created a default layout object that can be fed into the `parseFormLayout` function to generate a field object that can supply an anyField component with the necessary values for reference.
-* Created an example args object that has every possible tweakable parameter set that can be used to create stories for anyField components for reference.
+* Created a reference default layout object that can be fed into the `parseFormLayout` function to generate a field object that can supply an anyField component with the necessary values.
+* Created a reference example args object that has every possible tweakable parameter set that can be used to create stories for anyField components.
 * Created minimum character length verification in formHelpers. AnyField text renderer components now support minimum character length verification.
 * Fix default value for anyField link components
 * Fixed esLint
