@@ -126,7 +126,6 @@ export function generateAnyFieldStoryDefaultExport(options) {
   });
 }
 
-
 export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
   const fieldValidationsInSchemaCreationFormat = { [field.id]: field.validations };
   const validationSchema = object(fieldValidationsInSchemaCreationFormat);
@@ -163,7 +162,8 @@ export async function loadArgsAndGetField(args) {
   const testSection = testLayout.sections[0];
   const testSectionLayout = testLayout.sections[0].layout[0];
 
-  testSectionLayout.label = args.label ?? "Default Label";
+  testSectionLayout.label = args.label ?? 'Default Label';
+  testSectionLayout.id = args.id ?? 'defaultId';
   testSectionLayout.type = args.type ?? 0;
   testSectionLayout.hidden = args.hidden ?? false;
   testSectionLayout.conditions = args.conditions ?? [];
@@ -171,13 +171,13 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.required = args.required ?? false;
   testSectionLayout.readOnly = args.readOnly ?? false;
   testSectionLayout.disabled = args.disabled ?? false;
-  testSectionLayout.helperText = args.helperText ?? "default helper text";
-  testSectionLayout.requiredErrorText = args.requiredErrorText ?? "";
+  testSectionLayout.helperText = args.helperText ?? 'default helper text';
+  testSectionLayout.requiredErrorText = args.requiredErrorText ?? '';
   testSectionLayout.multiple = args.multiple ?? false;
   testSectionLayout.checkbox = args.checkbox ?? false;
   testSectionLayout.possibleChoices = args.possibleChoices; // url check doesn't work unless this is nullish - EGS 1/30/23
-  testSectionLayout.url = args.url ?? "";
-  testSectionLayout.path = args.path ?? "";
+  testSectionLayout.url = args.url ?? '';
+  testSectionLayout.path = testSectionLayout.id ?? 'defaultId';
 
   // Validations
   testSectionLayout.integerDigits = args.integerDigits ?? null;
@@ -187,15 +187,43 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.minLength = args.minLength ?? null;
 
   testSectionLayout.model = {};
-  testSectionLayout.model.name = args.modelName ?? "defaultModelName";
+  testSectionLayout.model.name = args.modelName ?? 'defaultModelName';
   testSectionLayout.model.id = args.modelId ?? 1;
   testSectionLayout.model.data = args.modelData ?? {};
 
   testSection.editable = args.editable ?? true;
   testSection.enabled = args.enabled ?? true;
-  testSection.name = args.sectionName ?? "default section name";
+  testSection.name = args.sectionName ?? 'default section name';
 
-  const parsedLayout = await parseFormLayout(testLayout);
+  console.log('testLayout: ', testLayout, 'testSection: ', testSection)
+
+  // example of choiceFormatter function
+  const nested = 'data'
+  const choiceFormatter = (fieldId, data, otherOptions) => {
+    if (fieldId == 'bob') {
+      console.log('choiceFormatter', fieldId, data, otherOptions);
+    }
+
+    switch (fieldId) {
+      case 'bob':
+        return data.map((opt, i) => {
+          const id = i;
+          const { mappedId } = otherOptions || {};
+          return data.map((opt, i) => {
+            const id = i;
+            return { id, label: opt.fact }
+          })
+        }
+        )
+      default:
+        return data.map((opt, i) => {
+          const id = i;
+          return { id, label: opt.name }
+        })
+    }
+  }
+
+  const parsedLayout = await parseFormLayout(testLayout, null, { choiceFormatter });
   const fieldId = parsedLayout.sections[0].fields[0];
   const field = parsedLayout.fields.get(fieldId);
 

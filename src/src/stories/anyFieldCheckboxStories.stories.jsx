@@ -34,26 +34,26 @@ export const CheckboxUrlChoiceField = Template.bind({});
 export const CheckboxUrlObjectField = Template.bind({});
 
 CheckboxChoiceField.args = {
-    label: "Checkbox Choice Field",
+  label: 'Checkbox Choice Field',
   ...standardCheckboxAnyFieldArgs,
   type: 7,
 };
 
 CheckboxObjectField.args = {
-    label: "Checkbox Object Field",
+  label: 'Checkbox Object Field',
   ...standardCheckboxAnyFieldArgs,
   type: 10,
 };
 
 CheckboxUrlChoiceField.args = {
-  url: "https://catfact.ninja/facts",  
+  url: 'https://catfact.ninja/facts',
   ...standardCheckboxAnyFieldArgs,
   type: 7,
   possibleChoices: null
 };
 
 CheckboxUrlObjectField.args = {
-  url: "https://catfact.ninja/facts",  
+  url: 'https://catfact.ninja/facts',
   ...standardCheckboxAnyFieldArgs,
   type: 10,
   possibleChoices: null

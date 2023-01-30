@@ -213,7 +213,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           const { data } = res || {};
           clearErrors(fieldId);
           if (asyncOptions?.choiceFormatter) {
-            return asyncOptions.choiceFormatter(fieldId, data, {triggerFieldId, mappedId});
+            return asyncOptions.choiceFormatter(fieldId, res, {triggerFieldId, mappedId});
           } else
             return data?.map((opt) => {
               const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;

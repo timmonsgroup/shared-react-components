@@ -41,6 +41,7 @@ export const FIELD_TYPES = Object.freeze({
 
 export const REQUIRED = 'required';
 export const IDFIELD = 'idField';
+export const LABELFIELD = 'labelField';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
@@ -53,7 +54,8 @@ export const CONDITIONAL_RENDER = Object.freeze({
 });
 
 export const SPECIAL_ATTRS = Object.freeze({
-  IDFIELD
+  IDFIELD,
+  LABELFIELD
 });
 
 export const VALIDATIONS = Object.freeze({

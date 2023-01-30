@@ -1,5 +1,5 @@
 import { useLayout } from './useData.js';
-import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD } from '../constants.js';
+import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD, LABELFIELD } from '../constants.js';
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation } from '../helpers/formHelpers.js';
@@ -53,7 +53,7 @@ export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOpti
  * @param {*} layout assumed to be in the standard PAM layout format
  * @returns @return {ParsedFormLayout} - parsed layout
  */
-export const parseFormLayout = async (layout, urlDomain) => {
+export const parseFormLayout = async (layout, urlDomain, options) => {
   if (!layout) {
     return {};
   }
@@ -106,12 +106,15 @@ export const parseFormLayout = async (layout, urlDomain) => {
   });
 
   const fetchData = async (fieldId, url) => {
+    console.log('fetching data', fieldId, url);
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
     const mappedId = fields.get(fieldId).specialProps?.[IDFIELD];
+    const mappedLabel = fields.get(fieldId).specialProps?.[LABELFIELD];
     const things = await axios.get(fetchUrl).then(res => {
       const { data } = res || {};
-      if (_asyncOptions?.choiceFormatter) {
-        return _asyncOptions.choiceFormatter(fieldId, data);
+      if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
+        console.log('options', options);
+        return options.choiceFormatter(fieldId, res, { mappedId });
       } else if (data?.length) {
         return data.map((d) => ({ id: d[mappedId] || d.id, label: d.name }));
       }
@@ -126,6 +129,7 @@ export const parseFormLayout = async (layout, urlDomain) => {
 
   if (asyncFields.size > 0) {
     const asyncLoaders = {};
+    console.log('asyncFields', asyncFields);
     asyncFields.forEach((choiceUrl, fieldId) => {
       asyncLoaders[fieldId] = () => fetchData(fieldId, choiceUrl);
     });
@@ -208,6 +212,8 @@ export const parseField = (field, asyncFieldsMap) => {
       linkFormat,
     }
   }
+
+  console.log('parsedField', field)
 
   const { data = {} } = model || {};
 
