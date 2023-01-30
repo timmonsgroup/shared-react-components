@@ -175,16 +175,7 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.requiredErrorText = args.requiredErrorText ?? "";
   testSectionLayout.multiple = args.multiple ?? false;
   testSectionLayout.checkbox = args.checkbox ?? false;
-  testSectionLayout.possibleChoices = args.possibleChoices ?? [
-    {
-      name: "default Choice 1",
-      id: 1
-    },
-    {
-      name: "default Choice 2",
-      id: 2
-    }
-  ];
+  testSectionLayout.possibleChoices = args.possibleChoices; // url check doesn't work unless this is nullish - EGS 1/30/23
   testSectionLayout.url = args.url ?? "";
   testSectionLayout.path = args.path ?? "";
 
