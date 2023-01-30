@@ -22,55 +22,55 @@ import PamLayoutForm from './PamLayoutForm';
  */
 // eslint-disable-next-line
 const GenericLayout = ({ data, layout, actions, themeGroup, ...props }) => {
-    const processedLayout = processGenericLayout(layout);
+  const processedLayout = processGenericLayout(layout);
 
-    const getElement = (processedLayout) => {
-        switch (processedLayout.type) {
-            case 'Grid':
-                return <PamLayoutGrid data={data} layout={processedLayout} actions={actions} themeGroup={themeGroup} {...props} />;
-            case 'Form':
-                return <>TODO</>;
-            default:
-                return <div>Unknown layout type: {processLayout.type}</div>;
-        }
-
+  const getElement = (processedLayout) => {
+    switch (processedLayout.type) {
+      case 'Grid':
+        return <PamLayoutGrid data={data} layout={processedLayout} actions={actions} themeGroup={themeGroup} {...props} />;
+      case 'Form':
+        return <>TODO</>;
+      default:
+        return <div>Unknown layout type: {processLayout.type}</div>;
     }
-    return <Stack
+
+  }
+  return <Stack
     spacing={2}
     direction="column"
     sx={{ minWidth: '100%', alignItems: 'center', placeSelf: 'flex-start'  }}>
-        <Stack
-            spacing={2}
-            direction="row"
-            sx={{ minWidth: '100%', alignItems: 'center'}}>
-            <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="sectionHeader">Join Organization Requests</Typography>
-            </Box>
-        </Stack>
-        <Box sx={{ marginLeft: 'auto', minWidth: "100%", flexGrow: 1 }}>
-            {getElement(processedLayout)}
-        </Box>
-    </Stack>;
+    <Stack
+      spacing={2}
+      direction="row"
+      sx={{ minWidth: '100%', alignItems: 'center'}}>
+      <Box sx={{ flexGrow: 1 }}>
+        <Typography variant="sectionHeader">Join Organization Requests</Typography>
+      </Box>
+    </Stack>
+    <Box sx={{ marginLeft: 'auto', minWidth: '100%', flexGrow: 1 }}>
+      {getElement(processedLayout)}
+    </Box>
+  </Stack>;
 };
 
 
 GenericLayout.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    layout: PropTypes.object.isRequired,
-    actions: PropTypes.arrayOf(PropTypes.shape({
-        label: PropTypes.string,
-        order: PropTypes.number.isRequired,
-        width: PropTypes.number,
-        actionList: PropTypes.arrayOf(PropTypes.shape({
-            label: PropTypes.string.isRequired,
-            order: PropTypes.number.isRequired,
-            clickHandler: PropTypes.func.isRequired,
-        })).isRequired,
-    })),
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  layout: PropTypes.object.isRequired,
+  actions: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string,
+    order: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    actionList: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      order: PropTypes.number.isRequired,
+      clickHandler: PropTypes.func.isRequired,
+    })).isRequired,
+  })),
 };
 
 GenericLayout.defaultProps = {
-    showToolbar: false,
+  showToolbar: false,
 };
 
 export default GenericLayout;

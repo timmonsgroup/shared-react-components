@@ -19,10 +19,11 @@ import { IDFIELD } from '../constants';
  * @param {string} url - url if you are not using the standard pam endpoint (optional)
  * @param {string} urlDomain - domain to use for the url (optional)
  * @param {function} setLoading - function to set the loading state of the form for async conditional items (optional)
+ * @param {object} asyncOptions - options for async operations (optional)
  * @returns {...useForm, array, boolean} - all the properties of useFom, and array of the sections, a loading boolean
  */
-export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomain, setLoading) => {
-  const [parsedLayout, layoutLoading] = useFormLayout(layoutOptions?.type, layoutOptions?.key, layoutOptions?.url, urlDomain);
+export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomain, setLoading, asyncOptions) => {
+  const [parsedLayout, layoutLoading] = useFormLayout(layoutOptions?.type, layoutOptions?.key, layoutOptions?.url, urlDomain, asyncOptions);
 
   const [sections, setSections] = useState([]);
   const [hasWatches, setHasWatches] = useState(false);
@@ -205,15 +206,19 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         });
       }
 
-      const fetchData = async (fieldId, url, mappedId) => {
+      const fetchData = async (fieldId, url, mappedId, triggerFieldId) => {
         const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
         const things = await axios.get(fetchUrl).then(res => {
           // We need to clear the error in the event that the error was caused by a previous failed attempt
+          const { data } = res || {};
           clearErrors(fieldId);
-          return res?.data?.map((opt) => {
-            const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
-            return { id, label: opt.name || opt.label }
-          });
+          if (asyncOptions?.choiceFormatter) {
+            return asyncOptions.choiceFormatter(fieldId, data, {triggerFieldId, mappedId});
+          } else
+            return data?.map((opt) => {
+              const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+              return { id, label: opt.name || opt.label }
+            });
         }
         ).catch(error => {
           if (error.name !== 'CanceledError') {
@@ -272,7 +277,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               if (loadOut?.layout?.has('url')) {
                 hasAsync = true;
                 const remoteUrl = loadOut?.layout?.get('url')?.replace('##thevalue##', formValue);
-                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, loadOut?.layout?.get(IDFIELD));
+                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, loadOut?.layout?.get(IDFIELD), name);
               }
 
               areUpdating[fieldId] = true;
@@ -314,7 +319,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           // We check if the field is already being updated because we don't want to reset a field that is being updated
           // This would happen with a field that has a remoteUrl that updates on EVERY triggerfield change.
           if (!value.has(formValue)) {
-            addReset (fieldId);
+            addReset(fieldId);
           } else if (value.has('anyValue') && nullChangeValue) {
             // We need to reset any fields that may have been triggered by an "anyValue" trigger and allow it to be reset when the triggerfield is null
             addReset(fieldId);

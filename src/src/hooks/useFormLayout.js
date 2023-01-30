@@ -10,6 +10,8 @@ const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
 const specialProps = Object.values(SPECIAL_ATTRS);
 
+let _asyncOptions = null;
+
 /**
  * Layout fetching hook that extends the useLayout hook to parse the layout data into a more usable format
  * The loading flag is tied to parsing being complete instead of the layout loading being complete
@@ -18,7 +20,7 @@ const specialProps = Object.values(SPECIAL_ATTRS);
  * @param {string} url - optional if you are not using the standard pam endpoint
  * @returns [object, boolean] - parsedLayout, loading
  */
-export const useFormLayout = (type, key, url = null, urlDomain = null) => {
+export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions) => {
   const [data, isLoading] = useLayout(type, key, url);
   const [parsedLayout, setParsedLayout] = useState(null);
   const [isParsing, setIsParsing] = useState(true);
@@ -26,6 +28,7 @@ export const useFormLayout = (type, key, url = null, urlDomain = null) => {
   useEffect(() => {
     if (!isLoading && data) {
       const waitForParse = async () => {
+        _asyncOptions = asyncOptions || null;
         const parsed = await parseFormLayout(data, urlDomain);
         setParsedLayout(parsed);
         setIsParsing(false);
@@ -106,8 +109,11 @@ export const parseFormLayout = async (layout, urlDomain) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
     const mappedId = fields.get(fieldId).specialProps?.[IDFIELD];
     const things = await axios.get(fetchUrl).then(res => {
-      if (res.data?.length) {
-        return res.data.map((d) => ({ id: d[mappedId] || d.id, label: d.name }));
+      const { data } = res || {};
+      if (_asyncOptions?.choiceFormatter) {
+        return _asyncOptions.choiceFormatter(fieldId, data);
+      } else if (data?.length) {
+        return data.map((d) => ({ id: d[mappedId] || d.id, label: d.name }));
       }
     }
     ).catch(error => {
