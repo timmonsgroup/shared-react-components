@@ -72,24 +72,27 @@ const initialState = {
 
 export const authContext = createContext();
 
+let META_WHITE_LIST = [];
+
 // If multiple apps are using the same cookie, we need to be able to differentiate which one logged out
 let APP_ID = '123-456';
 
 
 // Wrap the hook with a provider
 // Use cookieReference to differentiate between multiple apps using the same cookie
-export const ProvideAuth = ({ config, children }) => {
+export const ProvideAuth = ({ config, whitelist, children }) => {
   if (config?.cookieReference) {
     APP_ID = config.cookieReference;
   }
 
-  const auth = useProvideAuth(config);
+  const auth = useProvideAuth(config, whitelist);
   // We are providing the object returned by useProvideAuth as the value of the authContext
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 };
 
 ProvideAuth.propTypes = {
   config: PropTypes.object.isRequired,
+  whitelist: PropTypes.array,
   children: PropTypes.element,
 };
 
@@ -106,7 +109,7 @@ export const useAuth = () => {
 
 // These are the properties and methods that the "useAuth" hook provides to its consumers
 // We are providing the auth state, login, and logout methods
-const useProvideAuth = (props) => {
+const useProvideAuth = (props, whitelist) => {
   const [config] = useState(props);
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
@@ -117,6 +120,10 @@ const useProvideAuth = (props) => {
   useEffect(() => {
     if (!initInfo) {
       return;
+    }
+
+    if (whitelist?.length > 0) {
+      META_WHITE_LIST = whitelist;
     }
     // Check to see if the config is valid
     if (isValidConfig(config)) {
@@ -262,7 +269,7 @@ const useProvideAuth = (props) => {
     const redirect = window.location.origin + '/api/oauth/logout';
 
     // Open the logout endpoint in a new tab
-    const fetchUrl = config?.logoutURL || ( config?.useAzureAD ?
+    const fetchUrl = config?.logoutURL || (config?.useAzureAD ?
       `https://${config.host}/oauth2/logout?post_logout_redirect_uri=${redirect}` :
       `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`);
 
@@ -398,12 +405,22 @@ const useProvideAuth = (props) => {
 
     // Dispatch the finish login action
 
+    const meta = {};
+    if (META_WHITE_LIST?.length && maybeUser) {
+      META_WHITE_LIST.forEach((key) => {
+        if (maybeUser[key]) {
+          meta[key] = maybeUser[key];
+        }
+      });
+    }
+
     dispatch({
       type: ACTIONS.SET_TOKEN_INFO,
       user,
+      meta,
       bearerToken,
       refreshToken: refresh_token || await getRefreshTokenFromSession(),
-      permissions: maybeUser?.permissions
+      permissions: maybeUser?.permissions,
     });
 
     dispatch({
@@ -618,6 +635,10 @@ const authReducer = (nextState, action) => {
 
       // We've moved setting the "LOGGED_IN" state to the ACTIONS.SET_PERMISSIONS login action
       if (action.permissions) action.user.acl = action.permissions;
+
+      if (action.meta) {
+        action.user.meta = action.meta;
+      }
 
       //TODO: This is a weird side effect
       setActiveBearerToken(action.bearerToken);
