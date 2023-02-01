@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // Internal bits
 import { getFieldValue, useFormLayout } from './useFormLayout';
 import axios from 'axios';
-import { IDFIELD } from '../constants';
+import { IDFIELD, LABELFIELD } from '../constants';
 
 /**
  * useDynamicForm is a hook that handles the fields and validations for a dynamic form.
@@ -206,18 +206,30 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         });
       }
 
-      const fetchData = async (fieldId, url, mappedId, triggerFieldId) => {
+      /**
+       * Loads the data for the async fields
+       * @param {*} fieldId - id of the field that is being loaded
+       * @param {*} url - url to load the data from
+       * @param {*} mappedId - property to use when mapping the id
+       * @param {*} mappedLabel - property to use when mapping the label
+       * @param {*} triggerFieldId - id of the field that triggered the load
+       * @returns promise
+       */
+      const fetchData = async (fieldId, url, mappedId, mappedLabel, triggerFieldId) => {
         const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
         const things = await axios.get(fetchUrl).then(res => {
           // We need to clear the error in the event that the error was caused by a previous failed attempt
           const { data } = res || {};
           clearErrors(fieldId);
-          if (asyncOptions?.choiceFormatter) {
-            return asyncOptions.choiceFormatter(fieldId, res, {triggerFieldId, mappedId});
+          // If there is a valid choice formatter, use it
+          if (asyncOptions?.choiceFormatter && typeof asyncOptions.choiceFormatter === 'function') {
+            // pass along extra options to the choice formatter
+            return asyncOptions.choiceFormatter(fieldId, res, {triggerFieldId, mappedId, mappedLabel});
           } else
             return data?.map((opt) => {
               const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
-              return { id, label: opt.name || opt.label }
+              const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
+              return { id, label }
             });
         }
         ).catch(error => {
@@ -274,10 +286,13 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
             affectedFields.forEach((loadOut, fieldId) => {
               // If the field has a remoteUrl, we need to fetch the data
-              if (loadOut?.layout?.has('url')) {
+              const layout = loadOut?.layout;
+              if (layout?.has('url')) {
                 hasAsync = true;
-                const remoteUrl = loadOut?.layout?.get('url')?.replace('##thevalue##', formValue);
-                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, loadOut?.layout?.get(IDFIELD), name);
+                const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
+                // Note the IDFIELD and LABELFIELD are here different from the useFormLayout hook
+                // These are the values on this field's CONDITIONAL layout, not the default layout
+                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, layout?.get(IDFIELD), layout?.get(LABELFIELD), name);
               }
 
               areUpdating[fieldId] = true;
