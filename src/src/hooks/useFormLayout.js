@@ -114,9 +114,9 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
       const { data } = res || {};
       if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
         console.log('options', options);
-        return options.choiceFormatter(fieldId, res, { mappedId });
+        return options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
       } else if (data?.length) {
-        return data.map((d) => ({ id: d[mappedId] || d.id, label: d.name }));
+        return data.map((d) => ({ id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
       }
     }
     ).catch(error => {

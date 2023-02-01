@@ -2,7 +2,8 @@ import {
   generateAnyFieldStoryDefaultExport,
   AnyFieldStoryTemplate as Template,
   standardSelectionAnyFieldArgs,
-  standardAnyFieldSelectionArgTypeConfiguration
+  standardAnyFieldSelectionArgTypeConfiguration,
+  urlSelectionAnyFieldArgs
 } from '../helpers/story-helpers/anyFieldStoryHelpers';
 
 
@@ -21,7 +22,6 @@ export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOpti
 
 
 const standardCheckboxAnyFieldArgs = {
-  ...standardSelectionAnyFieldArgs,
   helperText: '',
   multiple: true,
   checkbox: true,
@@ -35,26 +35,28 @@ export const CheckboxUrlObjectField = Template.bind({});
 
 CheckboxChoiceField.args = {
   label: 'Checkbox Choice Field',
+  ...standardSelectionAnyFieldArgs,
   ...standardCheckboxAnyFieldArgs,
   type: 7,
 };
 
 CheckboxObjectField.args = {
   label: 'Checkbox Object Field',
+  ...standardSelectionAnyFieldArgs,
   ...standardCheckboxAnyFieldArgs,
   type: 10,
 };
 
 CheckboxUrlChoiceField.args = {
-  url: 'https://catfact.ninja/facts',
+  label: 'URL Checkbox Choice Field',
+  ...urlSelectionAnyFieldArgs,
   ...standardCheckboxAnyFieldArgs,
-  type: 7,
-  possibleChoices: null
+  type: 7
 };
 
 CheckboxUrlObjectField.args = {
-  url: 'https://catfact.ninja/facts',
+  label: 'URL Checkbox Object Field',
+  ...urlSelectionAnyFieldArgs,
   ...standardCheckboxAnyFieldArgs,
   type: 10,
-  possibleChoices: null
 };

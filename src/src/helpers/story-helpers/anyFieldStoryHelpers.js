@@ -8,6 +8,7 @@ import { object } from 'yup';
 import { getFieldValue, parseFormLayout } from '../../hooks';
 import AnyField from '../../stories/AnyField';
 import Button from "../../stories/Button";
+import { StoryInfoBlock } from './infoBlocks/StoryInfoBlock';
 
 
 // ---------- Setup ArgType Configurations ----------
@@ -59,6 +60,16 @@ export const standardAnyFieldArgTypeConfiguration = {
       disable: true
     }
   },
+  infoBlock: {
+    table: {
+      disable: true
+    }
+  },
+  infoBlockOptions: {
+    table: {
+      disable: true
+    }
+  }
 };
 
 export const standardAnyFieldSelectionArgTypeConfiguration = {
@@ -71,6 +82,22 @@ export const standardAnyFieldSelectionArgTypeConfiguration = {
     table: {
       disable: true
     }
+  },
+  url: {
+    table: {
+      disable: true
+    }
+  },
+  disablePossibleChoices: {
+    table: {
+      disable: true
+    }
+  },
+  possibleChoices: {
+    control: {
+      type: 'array'
+    },
+    if: { arg: 'disablePossibleChoices',  truthy: false}
   },
   ...standardAnyFieldArgTypeConfiguration
 };
@@ -99,6 +126,15 @@ export const standardSelectionAnyFieldArgs = {
   ],
 }
 
+export const urlSelectionAnyFieldArgs = {
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Selection required",
+  url: 'https://dog-api.kinduff.com/api/facts?number=5',
+  possibleChoices: null,
+  infoBlock: "AnyFieldUrlSelection",
+  infoBlockOptions: {url: 'https://dog-api.kinduff.com/api/facts?number=5'},
+  disablePossibleChoices: true
+};
 
 // --------------------------------------
 // ---------- Helper Functions ----------
@@ -145,6 +181,7 @@ export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
     <>
       <AnyField control={control} layout={field.render} key={field.render.name} />
       <Button sx={{ marginTop: '16px' }} onClick={() => trigger()} label="Trigger Validation" />
+      <StoryInfoBlock infoBlockName={args.infoBlock} options={args.infoBlockOptions} />
     </>
   );
 }
@@ -180,16 +217,18 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.path = testSectionLayout.id ?? 'defaultId';
 
   // Validations
-  testSectionLayout.integerDigits = args.integerDigits ?? null;
-  testSectionLayout.fractionalDigits = args.fractionalDigits ?? null;
-  testSectionLayout.maxValue = args.maxValue ?? null;
-  testSectionLayout.maxLength = args.maxLength ?? null;
-  testSectionLayout.minLength = args.minLength ?? null;
+  testSectionLayout.integerDigits = args.integerDigits 
+  testSectionLayout.fractionalDigits = args.fractionalDigits 
+  testSectionLayout.maxValue = args.maxValue 
+  testSectionLayout.maxLength = args.maxLength 
+  testSectionLayout.minLength = args.minLength 
 
   testSectionLayout.model = {};
   testSectionLayout.model.name = args.modelName ?? 'defaultModelName';
   testSectionLayout.model.id = args.modelId ?? 1;
   testSectionLayout.model.data = args.modelData ?? {};
+  testSectionLayout.model.data.labelField = args.labelField;
+  testSectionLayout.model.data.idField = args.idField;
 
   testSection.editable = args.editable ?? true;
   testSection.enabled = args.enabled ?? true;
@@ -197,30 +236,16 @@ export async function loadArgsAndGetField(args) {
 
   console.log('testLayout: ', testLayout, 'testSection: ', testSection)
 
-  // example of choiceFormatter function
-  const nested = 'data'
-  const choiceFormatter = (fieldId, data, otherOptions) => {
-    if (fieldId == 'bob') {
-      console.log('choiceFormatter', fieldId, data, otherOptions);
-    }
+  const choiceFormatter = (fieldId, response, options) => {
+    const { data } = response;
 
-    switch (fieldId) {
-      case 'bob':
-        return data.map((opt, i) => {
-          const id = i;
-          const { mappedId } = otherOptions || {};
-          return data.map((opt, i) => {
-            const id = i;
-            return { id, label: opt.fact }
-          })
-        }
-        )
-      default:
-        return data.map((opt, i) => {
-          const id = i;
-          return { id, label: opt.name }
-        })
-    }
+    const choicesData = data.facts;
+
+    const formattedChoices = choicesData.map((choiceData, index) => {
+      return { id: index, label: choiceData};
+      })
+    
+    return formattedChoices;
   }
 
   const parsedLayout = await parseFormLayout(testLayout, null, { choiceFormatter });
