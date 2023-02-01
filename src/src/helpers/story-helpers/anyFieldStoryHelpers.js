@@ -234,8 +234,6 @@ export async function loadArgsAndGetField(args) {
   testSection.enabled = args.enabled ?? true;
   testSection.name = args.sectionName ?? 'default section name';
 
-  console.log('testLayout: ', testLayout, 'testSection: ', testSection)
-
   const choiceFormatter = (fieldId, response, options) => {
     const { data } = response;
 

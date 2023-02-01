@@ -129,7 +129,6 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
 
   if (asyncFields.size > 0) {
     const asyncLoaders = {};
-    console.log('asyncFields', asyncFields);
     asyncFields.forEach((choiceUrl, fieldId) => {
       asyncLoaders[fieldId] = () => fetchData(fieldId, choiceUrl);
     });
@@ -212,8 +211,6 @@ export const parseField = (field, asyncFieldsMap) => {
       linkFormat,
     }
   }
-
-  console.log('parsedField', field)
 
   const { data = {} } = model || {};
 
