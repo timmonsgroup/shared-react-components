@@ -7,10 +7,11 @@
 ### New Functionality ###
 #### Hooks ####
 * useAuth
-  *  ProvideAuth - (context provider component)
-    *  This component can now accept a new property "whiteList" which is an array of strings.
-    *  If the whiteList is provided it will parse out those properties from the maybeUser (user object injected via an applications middleware) and return only those property values in a new "meta" object on the authState.user object.
-    *  This is useful for applications that need to pass user data to the front end but do not want to expose all of the user data to the front end.
+  * ProvideAuth - (context provider component)
+    * This component can now accept a new property `whiteList` which is an array of strings.
+    * If the whiteList is provided it will parse out those properties from the `maybeUser` (user object injected via an application's middleware NOT the parsed token) and return only those property values in a new `meta` object on the `authState.user` object.
+    * NOTE: This does not affect any of the data in the user token that is parsed and `maybeUser.permissions` is AWLAYS passed.
+    * This is useful for applications that need to pass additional user meta data but do not want to expose all of the user data to the `authState` context.
     * Code Example:
         ```javascript
         <ProvideAuth config={config}  whiteList={['organization']}>
@@ -18,7 +19,7 @@
         </ProvideAuth>
         ```
 
-        Would result in the following authState.user object:
+        Would result in the following `authState.user` object:
         ```javascript
         {
           meta: {
@@ -27,7 +28,7 @@
         }
         ```
 
-        Given the maybeUser object:
+        Given the `maybeUser` object:
         ```javascript
         {
           someProperty: 1,
@@ -72,6 +73,19 @@
       const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
       ```
   * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
+
+#### Components ####
+* GenericForm
+  * Can now accept a new property `asyncOptions` as well. See above for more details.
+  * Code Example:
+    ```HTML
+    <GenericForm
+      layoutOptions={layoutOptions}
+      defaultValues={defaultValues}
+      domainUrl={domainUrl}
+      asyncOptions={asyncOptions}
+    />
+    ```
 
 ## Release 0.6.0 - 1/26/23 ##
 ---
