@@ -1,5 +1,5 @@
 import { useLayout } from './useData.js';
-import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD } from '../constants.js';
+import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD, LABELFIELD } from '../constants.js';
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation } from '../helpers/formHelpers.js';
@@ -18,7 +18,7 @@ const specialProps = Object.values(SPECIAL_ATTRS);
  * @param {string} url - optional if you are not using the standard pam endpoint
  * @returns [object, boolean] - parsedLayout, loading
  */
-export const useFormLayout = (type, key, url = null, urlDomain = null) => {
+export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions) => {
   const [data, isLoading] = useLayout(type, key, url);
   const [parsedLayout, setParsedLayout] = useState(null);
   const [isParsing, setIsParsing] = useState(true);
@@ -26,7 +26,7 @@ export const useFormLayout = (type, key, url = null, urlDomain = null) => {
   useEffect(() => {
     if (!isLoading && data) {
       const waitForParse = async () => {
-        const parsed = await parseFormLayout(data, urlDomain);
+        const parsed = await parseFormLayout(data, urlDomain, asyncOptions);
         setParsedLayout(parsed);
         setIsParsing(false);
       }
@@ -50,7 +50,7 @@ export const useFormLayout = (type, key, url = null, urlDomain = null) => {
  * @param {*} layout assumed to be in the standard PAM layout format
  * @returns @return {ParsedFormLayout} - parsed layout
  */
-export const parseFormLayout = async (layout, urlDomain) => {
+export const parseFormLayout = async (layout, urlDomain, options) => {
   if (!layout) {
     return {};
   }
@@ -104,10 +104,15 @@ export const parseFormLayout = async (layout, urlDomain) => {
 
   const fetchData = async (fieldId, url) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
-    const mappedId = fields.get(fieldId).specialProps?.[IDFIELD];
+    const specialFieldProps = fields.get(fieldId).specialProps;
+    const mappedId = specialFieldProps?.[IDFIELD];
+    const mappedLabel = specialFieldProps?.[LABELFIELD];
     const things = await axios.get(fetchUrl).then(res => {
-      if (res.data?.length) {
-        return res.data.map((d) => ({ id: d[mappedId] || d.id, label: d.name }));
+      const { data } = res || {};
+      if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
+        return options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
+      } else if (data?.length) {
+        return data.map((d) => ({ id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
       }
     }
     ).catch(error => {

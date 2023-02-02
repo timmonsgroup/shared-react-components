@@ -2,7 +2,8 @@ import {
   generateAnyFieldStoryDefaultExport,
   AnyFieldStoryTemplate as Template,
   standardSelectionAnyFieldArgs,
-  standardAnyFieldSelectionArgTypeConfiguration
+  standardAnyFieldSelectionArgTypeConfiguration,
+  urlSelectionAnyFieldArgs
 } from '../helpers/story-helpers/anyFieldStoryHelpers';
 
 
@@ -21,7 +22,6 @@ export default generateAnyFieldStoryDefaultExport(anyFieldStoryDefaultExportOpti
 
 
 const standardCheckboxAnyFieldArgs = {
-  ...standardSelectionAnyFieldArgs,
   helperText: '',
   multiple: true,
   checkbox: true,
@@ -30,14 +30,33 @@ const standardCheckboxAnyFieldArgs = {
 export const CheckboxChoiceField = Template.bind({});
 export const CheckboxObjectField = Template.bind({});
 
+export const CheckboxUrlChoiceField = Template.bind({});
+export const CheckboxUrlObjectField = Template.bind({});
+
 CheckboxChoiceField.args = {
-    label: "Checkbox Choice Field",
+  label: 'Checkbox Choice Field',
+  ...standardSelectionAnyFieldArgs,
   ...standardCheckboxAnyFieldArgs,
   type: 7,
 };
 
 CheckboxObjectField.args = {
-    label: "Checkbox Object Field",
+  label: 'Checkbox Object Field',
+  ...standardSelectionAnyFieldArgs,
+  ...standardCheckboxAnyFieldArgs,
+  type: 10,
+};
+
+CheckboxUrlChoiceField.args = {
+  label: 'URL Checkbox Choice Field',
+  ...urlSelectionAnyFieldArgs,
+  ...standardCheckboxAnyFieldArgs,
+  type: 7
+};
+
+CheckboxUrlObjectField.args = {
+  label: 'URL Checkbox Object Field',
+  ...urlSelectionAnyFieldArgs,
   ...standardCheckboxAnyFieldArgs,
   type: 10,
 };

@@ -44,10 +44,10 @@ import axios from 'axios';
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
   domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess,
-  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError
+  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions
 }) => {
   const [modifying, setModifying] = useState(false);
-  const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying);
+  const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
   const nav = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -200,5 +200,14 @@ const renderTwoColumnSection = (section, control, index) => {
     </div>
   )
 }
+
+// example of choiceFormatter function
+// const choiceFormatter = (fieldId, res, otherOptions) => {
+//   const { mappedId } = otherOptions || {};
+//   return res?.data?.map((opt) => {
+//     const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+//     return { id, label: opt.name || opt.label }
+//   })
+// }
 
 export default GenericForm;

@@ -8,6 +8,7 @@ import { object } from 'yup';
 import { getFieldValue, parseFormLayout } from '../../hooks';
 import AnyField from '../../stories/AnyField';
 import Button from "../../stories/Button";
+import { StoryInfoBlock } from './infoBlocks/StoryInfoBlock';
 
 
 // ---------- Setup ArgType Configurations ----------
@@ -59,6 +60,16 @@ export const standardAnyFieldArgTypeConfiguration = {
       disable: true
     }
   },
+  infoBlock: {
+    table: {
+      disable: true
+    }
+  },
+  infoBlockOptions: {
+    table: {
+      disable: true
+    }
+  }
 };
 
 export const standardAnyFieldSelectionArgTypeConfiguration = {
@@ -71,6 +82,22 @@ export const standardAnyFieldSelectionArgTypeConfiguration = {
     table: {
       disable: true
     }
+  },
+  url: {
+    table: {
+      disable: true
+    }
+  },
+  disablePossibleChoices: {
+    table: {
+      disable: true
+    }
+  },
+  possibleChoices: {
+    control: {
+      type: 'array'
+    },
+    if: { arg: 'disablePossibleChoices',  truthy: false}
   },
   ...standardAnyFieldArgTypeConfiguration
 };
@@ -99,6 +126,15 @@ export const standardSelectionAnyFieldArgs = {
   ],
 }
 
+export const urlSelectionAnyFieldArgs = {
+  ...standardAnyFieldArgs,
+  requiredErrorText: "Selection required",
+  url: 'https://dog-api.kinduff.com/api/facts?number=5',
+  possibleChoices: null,
+  infoBlock: "AnyFieldUrlSelection",
+  infoBlockOptions: {url: 'https://dog-api.kinduff.com/api/facts?number=5'},
+  disablePossibleChoices: true
+};
 
 // --------------------------------------
 // ---------- Helper Functions ----------
@@ -126,7 +162,6 @@ export function generateAnyFieldStoryDefaultExport(options) {
   });
 }
 
-
 export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
   const fieldValidationsInSchemaCreationFormat = { [field.id]: field.validations };
   const validationSchema = object(fieldValidationsInSchemaCreationFormat);
@@ -146,6 +181,7 @@ export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
     <>
       <AnyField control={control} layout={field.render} key={field.render.name} />
       <Button sx={{ marginTop: '16px' }} onClick={() => trigger()} label="Trigger Validation" />
+      <StoryInfoBlock infoBlockName={args.infoBlock} options={args.infoBlockOptions} />
     </>
   );
 }
@@ -163,7 +199,8 @@ export async function loadArgsAndGetField(args) {
   const testSection = testLayout.sections[0];
   const testSectionLayout = testLayout.sections[0].layout[0];
 
-  testSectionLayout.label = args.label ?? "Default Label";
+  testSectionLayout.label = args.label ?? 'Default Label';
+  testSectionLayout.id = args.id ?? 'defaultId';
   testSectionLayout.type = args.type ?? 0;
   testSectionLayout.hidden = args.hidden ?? false;
   testSectionLayout.conditions = args.conditions ?? [];
@@ -171,40 +208,45 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.required = args.required ?? false;
   testSectionLayout.readOnly = args.readOnly ?? false;
   testSectionLayout.disabled = args.disabled ?? false;
-  testSectionLayout.helperText = args.helperText ?? "default helper text";
-  testSectionLayout.requiredErrorText = args.requiredErrorText ?? "";
+  testSectionLayout.helperText = args.helperText ?? 'default helper text';
+  testSectionLayout.requiredErrorText = args.requiredErrorText ?? '';
   testSectionLayout.multiple = args.multiple ?? false;
   testSectionLayout.checkbox = args.checkbox ?? false;
-  testSectionLayout.possibleChoices = args.possibleChoices ?? [
-    {
-      name: "default Choice 1",
-      id: 1
-    },
-    {
-      name: "default Choice 2",
-      id: 2
-    }
-  ];
-  testSectionLayout.url = args.url ?? "";
-  testSectionLayout.path = args.path ?? "";
+  testSectionLayout.possibleChoices = args.possibleChoices; // url check doesn't work unless this is nullish - EGS 1/30/23
+  testSectionLayout.url = args.url ?? '';
+  testSectionLayout.path = testSectionLayout.id ?? 'defaultId';
 
   // Validations
-  testSectionLayout.integerDigits = args.integerDigits ?? null;
-  testSectionLayout.fractionalDigits = args.fractionalDigits ?? null;
-  testSectionLayout.maxValue = args.maxValue ?? null;
-  testSectionLayout.maxLength = args.maxLength ?? null;
-  testSectionLayout.minLength = args.minLength ?? null;
+  testSectionLayout.integerDigits = args.integerDigits 
+  testSectionLayout.fractionalDigits = args.fractionalDigits 
+  testSectionLayout.maxValue = args.maxValue 
+  testSectionLayout.maxLength = args.maxLength 
+  testSectionLayout.minLength = args.minLength 
 
   testSectionLayout.model = {};
-  testSectionLayout.model.name = args.modelName ?? "defaultModelName";
+  testSectionLayout.model.name = args.modelName ?? 'defaultModelName';
   testSectionLayout.model.id = args.modelId ?? 1;
   testSectionLayout.model.data = args.modelData ?? {};
+  testSectionLayout.model.data.labelField = args.labelField;
+  testSectionLayout.model.data.idField = args.idField;
 
   testSection.editable = args.editable ?? true;
   testSection.enabled = args.enabled ?? true;
-  testSection.name = args.sectionName ?? "default section name";
+  testSection.name = args.sectionName ?? 'default section name';
 
-  const parsedLayout = await parseFormLayout(testLayout);
+  const choiceFormatter = (fieldId, response, options) => {
+    const { data } = response;
+
+    const choicesData = data.facts;
+
+    const formattedChoices = choicesData.map((choiceData, index) => {
+      return { id: index, label: choiceData};
+      })
+    
+    return formattedChoices;
+  }
+
+  const parsedLayout = await parseFormLayout(testLayout, null, { choiceFormatter });
   const fieldId = parsedLayout.sections[0].fields[0];
   const field = parsedLayout.fields.get(fieldId);
 
