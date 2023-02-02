@@ -7,39 +7,39 @@
 ### New Functionality ###
 #### Hooks ####
 * useAuth
-  * ProvideAuth - (context provider component)
-    * This component can now accept a new property `whiteList` which is an array of strings.
-    * If the whiteList is provided it will parse out those properties from the `maybeUser` (user object injected via an application's middleware NOT the parsed token) and return only those property values in a new `meta` object on the `authState.user` object.
-    * NOTE: This does not affect any of the data in the user token that is parsed and `maybeUser.permissions` is AWLAYS passed.
-    * This is useful for applications that need to pass additional user meta data but do not want to expose all of the user data to the `authState` context.
-    * Code Example:
-        ```javascript
-        <ProvideAuth config={config}  whiteList={['organization']}>
-          <App />
-        </ProvideAuth>
-        ```
+    * ProvideAuth - (context provider component)
+        * This component can now accept a new property `whiteList` which is an array of strings.
+        * If the whiteList is provided it will parse out those properties from the `maybeUser` (user object injected via an application's middleware NOT the parsed token) and return only those property values in a new `meta` object on the `authState.user` object.
+        * NOTE: This does not affect any of the data in the user token that is parsed and `maybeUser.permissions` is AWLAYS passed.
+        * This is useful for applications that need to pass additional user meta data but do not want to expose all of the user data to the `authState` context.
+        * Code Example:
+            ```javascript
+            <ProvideAuth config={config}  whiteList={['organization']}>
+              <App />
+            </ProvideAuth>
+            ```
 
-        Would result in the following `authState.user` object:
-        ```javascript
-        {
-          meta: {
-            organization: 'Timmons Group',
-          },
-        }
-        ```
+            Would result in the following `authState.user` object:
+            ```javascript
+            {
+              meta: {
+                organization: 'Timmons Group',
+              },
+            }
+            ```
 
-        Given the `maybeUser` object:
-        ```javascript
-        {
-          someProperty: 1,
-          youDontNeedThis: 'John Doe',
-          organization: 'Timmons Group',
-        }
-        ```
+            Given the `maybeUser` object:
+            ```javascript
+            {
+              someProperty: 1,
+              youDontNeedThis: 'John Doe',
+              organization: 'Timmons Group',
+            }
+            ```
 * useFormLayout
-  * Can now accept a new property `asyncOptions` which is an object
-      * Currently only supports `choiceFormatter` as a key
-      * `choiceFormatter` is a function that can be used to format the data fetched from an async call
+    * Can now accept a new property `asyncOptions` which is an object
+    * Currently only supports `choiceFormatter` as a key
+    * `choiceFormatter` is a function that can be used to format the data fetched from an async call
         * The function should accept
           * fieldId - string of the field that is being formatted
           * response - the response from the async call
@@ -48,44 +48,43 @@
             * mappedId - id property to use for mapping the id (if any set in the layout)
             * mappedLabel - label property to use for mapping the label (if any set in the layout)
         * The function should return an array of objects with the following properties by default:
-          * label - string
-          * id - string
+            * label - string
+            * id - string
+            * Code Example:
+                ```javascript
+                const asyncOptions = {
+                  const choiceFormatter = (fieldId, res, otherOptions) => {
+                    const { mappedId } = otherOptions || {};
+                    return res?.data?.map((opt) => {
+                      const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+                      return { id, label: opt.name || opt.label }
+                    })
+                  }
+                };
 
-      * Code Example:
+                useFormLayout(type, key, url, urlDomain, asyncOptions);
+                ```
+        * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
+* useDynamicForm
+    * Can now accept a new property `asyncOptions` as well. See above for more details.
+        * Code Example:
         ```javascript
-        const asyncOptions = {
-          const choiceFormatter = (fieldId, res, otherOptions) => {
-            const { mappedId } = otherOptions || {};
-            return res?.data?.map((opt) => {
-              const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
-              return { id, label: opt.name || opt.label }
-            })
-          }
-        };
-
-        useFormLayout(type, key, url, urlDomain, asyncOptions);
+        const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
         ```
     * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
-* useDynamicForm
-  * Can now accept a new property `asyncOptions` as well. See above for more details.
-    * Code Example:
-      ```javascript
-      const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
-      ```
-  * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
 
 #### Components ####
 * GenericForm
-  * Can now accept a new property `asyncOptions` as well. See above for more details.
-  * Code Example:
-    ```HTML
-    <GenericForm
-      layoutOptions={layoutOptions}
-      defaultValues={defaultValues}
-      domainUrl={domainUrl}
-      asyncOptions={asyncOptions}
-    />
-    ```
+    * Can now accept a new property `asyncOptions` as well. See above for more details.
+        * Code Example:
+        ```HTML
+        <GenericForm
+          layoutOptions={layoutOptions}
+          defaultValues={defaultValues}
+          domainUrl={domainUrl}
+          asyncOptions={asyncOptions}
+        />
+        ```
 
 ## Release 0.6.0 - 1/26/23 ##
 ---
