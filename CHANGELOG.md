@@ -36,6 +36,7 @@
               organization: 'Timmons Group',
             }
             ```
+
 * useFormLayout
     * Can now accept a new property `asyncOptions` which is an object
     * Currently only supports `choiceFormatter` as a key
@@ -65,6 +66,7 @@
                 useFormLayout(type, key, url, urlDomain, asyncOptions);
                 ```
         * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
+
 * useDynamicForm
     * Can now accept a new property `asyncOptions` as well. See above for more details.
         * Code Example:
