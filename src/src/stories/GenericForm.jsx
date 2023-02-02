@@ -202,9 +202,9 @@ const renderTwoColumnSection = (section, control, index) => {
 }
 
 // example of choiceFormatter function
-// const choiceFormatter = (fieldId, data, otherOptions) => {
+// const choiceFormatter = (fieldId, res, otherOptions) => {
 //   const { mappedId } = otherOptions || {};
-//   return data?.map((opt) => {
+//   return res?.data?.map((opt) => {
 //     const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
 //     return { id, label: opt.name || opt.label }
 //   })

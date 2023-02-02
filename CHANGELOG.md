@@ -1,6 +1,78 @@
 # Change Log #
 
 
+## Release 0.6.1 - 2/--/23 ##
+---
+
+### New Functionality ###
+#### Hooks ####
+* useAuth
+  *  ProvideAuth - (context provider component)
+    *  This component can now accept a new property "whiteList" which is an array of strings.
+    *  If the whiteList is provided it will parse out those properties from the maybeUser (user object injected via an applications middleware) and return only those property values in a new "meta" object on the authState.user object.
+    *  This is useful for applications that need to pass user data to the front end but do not want to expose all of the user data to the front end.
+    * Code Example:
+        ```javascript
+        <ProvideAuth config={config}  whiteList={['organization']}>
+          <App />
+        </ProvideAuth>
+        ```
+
+        Would result in the following authState.user object:
+        ```javascript
+        {
+          meta: {
+            organization: 'Timmons Group',
+          },
+        }
+        ```
+
+        Given the maybeUser object:
+        ```javascript
+        {
+          someProperty: 1,
+          youDontNeedThis: 'John Doe',
+          organization: 'Timmons Group',
+        }
+        ```
+* useFormLayout
+  * Can now accept a new property `asyncOptions` which is an object
+      * Currently only supports `choiceFormatter` as a key
+      * `choiceFormatter` is a function that can be used to format the data fetched from an async call
+        * The function should accept
+          * fieldId - string of the field that is being formatted
+          * response - the response from the async call
+          * options - various other options that may be needed to format the data
+            * triggerFieldId - the field that triggered the async call (if any) only available if the async call was triggered by a field in useDynamicForm
+            * mappedId - id property to use for mapping the id (if any set in the layout)
+            * mappedLabel - label property to use for mapping the label (if any set in the layout)
+        * The function should return an array of objects with the following properties by default:
+          * label - string
+          * id - string
+
+      * Code Example:
+        ```javascript
+        const asyncOptions = {
+          const choiceFormatter = (fieldId, res, otherOptions) => {
+            const { mappedId } = otherOptions || {};
+            return res?.data?.map((opt) => {
+              const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+              return { id, label: opt.name || opt.label }
+            })
+          }
+        };
+
+        useFormLayout(type, key, url, urlDomain, asyncOptions);
+        ```
+    * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
+* useDynamicForm
+  * Can now accept a new property `asyncOptions` as well. See above for more details.
+    * Code Example:
+      ```javascript
+      const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
+      ```
+  * Now has support for `mappedLabel` property on a field's layout when not overriding the async choice formatter
+
 ## Release 0.6.0 - 1/26/23 ##
 ---
 
