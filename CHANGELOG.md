@@ -88,7 +88,7 @@
         />
         ```
 
-### Storybook ###
+#### Storybook ####
 * anyFieldStoryHelpers
     * AnyFieldStoryTemplate now adds a StoryInfoBlock component to the bottom of the template it generates for anyField stories.
         * This component allows developers to inject documentation directly into the story that can sit beside the story's component demonstration and provide information specific to how the demonstration works.
@@ -122,9 +122,9 @@
     * Refactored some of what's set in `standardCheckboxAnyFieldArgs` to be covered in `standardSelectionAnyFieldArgs`
 
 * anyFieldTypeAheadStories
-  * Added stories that demonstrate the use of the type ahead dropdown components when supplying the data for their options from an external source.
-  * These stories are configured using the new `urlSelectionAnyFieldArgs` objects set up in `anyFieldStoryHelpers`
-  * Refactored some of what's set in `standardTypeAheadAnyFieldArgs` to be covered in `standardSelectionAnyFieldArgs`
+    * Added stories that demonstrate the use of the type ahead dropdown components when supplying the data for their options from an external source.
+    * These stories are configured using the new `urlSelectionAnyFieldArgs` objects set up in `anyFieldStoryHelpers`
+    * Refactored some of what's set in `standardTypeAheadAnyFieldArgs` to be covered in `standardSelectionAnyFieldArgs`
 
 
 ## Release 0.6.0 - 1/26/23 ##
