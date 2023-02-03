@@ -1,7 +1,7 @@
 # Change Log #
 
 
-## Release 0.6.1 - 2/--/23 ##
+## Release 0.6.1 - 2/03/23 ##
 ---
 
 ### New Functionality ###
