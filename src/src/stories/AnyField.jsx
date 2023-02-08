@@ -94,14 +94,18 @@ AnyField.propTypes = {
  * @returns {function} A custom renderer for the MUI TextField component
  */
 const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled }) => {
+  const dataAttrs = {
+    'data-src-field': name
+  }
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
       <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />{label}</InputLabel>
       <TextField sx={{ width: '100%' }}
+        inputProps={dataAttrs}
         disabled={disabled}
         id={id || name}
         error={!!error}
-        onChange={onChange} 
+        onChange={onChange}
         onBlur = {onBlur}
         value={value}
         multiline={isMultiLine}
@@ -116,7 +120,8 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   TextFieldWrapped.propTypes = {
     field: PropTypes.shape({
       value: PropTypes.any,
-      onChange: PropTypes.func
+      onChange: PropTypes.func,
+      onBlur: PropTypes.func
     }),
     fieldState: PropTypes.shape({
       error: PropTypes.any
@@ -140,17 +145,19 @@ const dateRenderer = ({ id, name, label, disabled, required }) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
+        id={id}
         name={name}
         disabled={disabled}
-        id={id}
         value={value}
         onChange={onChange}
-        renderInput={(params) => (
-          <>
-            <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>
-            <TextField sx={{ width: '100%' }} {...params} />
-          </>
-        )}
+        renderInput={(params) => {
+          params.inputProps['data-src-field'] = name;
+          return (
+            <>
+              <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>
+              <TextField sx={{ width: '100%' }} {...params} />
+            </>
+          )}}
       />
       <FormErrorMessage error={error} />
     </>
@@ -180,13 +187,20 @@ const dateRenderer = ({ id, name, label, disabled, required }) => {
  *
  * @returns {function} A custom renderer for the Typeahead component
  */
-const typeaheadRenderer = ({ label, disabled, choices, required, placeholder }) => {
+const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder }) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
+    const dataAttrs = {
+      'data-src-field': name
+    };
+
     return (
       // We need to manually connect a few props here for react hook form
       <Typeahead
+        id={id}
+        name={name}
+        {...dataAttrs}
         {...field}
         sx={{ width: '100%' }}
         disabled={disabled}
@@ -195,6 +209,8 @@ const typeaheadRenderer = ({ label, disabled, choices, required, placeholder }) 
         isRequired={!!required}
         // These are props that are passed to the MUI TextField rendered by Typeahead
         textFieldProps={{
+          id,
+          name,
           placeholder: placeholder || `Select ${label}`,
           error: !!error,
           helperText: error?.message,
@@ -210,6 +226,7 @@ const typeaheadRenderer = ({ label, disabled, choices, required, placeholder }) 
 
   WrappedTypeahead.propTypes = {
     field: PropTypes.shape({
+      id: PropTypes.string,
       value: PropTypes.any,
       onChange: PropTypes.func
     }),
@@ -239,6 +256,7 @@ const checkboxRenderer = (layout) => {
     return (
       <>
         <FormControl
+          data-src-field={field.id}
           error={!!error}
           disabled={disabled}
           component="fieldset"
@@ -252,6 +270,7 @@ const checkboxRenderer = (layout) => {
               <FormControlLabel
                 key={item.id}
                 control={<Checkbox
+                  data-src-checkbox={item.id}
                   onBlur={field.onBlur}
                   checked={field?.value?.includes(item.id)}
                   onChange={(e) => {

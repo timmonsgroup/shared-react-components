@@ -4,6 +4,7 @@ import theme from '../src/muiTheme';
 import { authContext } from '../src/hooks/useAuth';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { SnackbarProvider } from 'notistack';
 
 const ThemeProviderFn = (storyFn) => {
   // Creating a fake auth context so useAuth will work in certain stories
@@ -20,7 +21,9 @@ const ThemeProviderFn = (storyFn) => {
   return (
   <LocalizationProvider dateAdapter={AdapterDateFns}>
     <authContext.Provider value={auth}>
-      <ThemeProvider theme={theme}>{storyFn()}</ThemeProvider>
+        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <ThemeProvider theme={theme}>{storyFn()}</ThemeProvider>
+        </SnackbarProvider>
     </authContext.Provider>
   </LocalizationProvider>);
 };

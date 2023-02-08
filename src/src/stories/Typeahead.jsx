@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import PropTypes, { checkPropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 
 import { Box, TextField, Autocomplete, InputLabel } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
-import { object } from 'yup';
 
 /**
  * Wrapper of the Mui Autocomplete component
@@ -71,8 +70,8 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
       disabled={disabled}
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
-      renderOption={(props, option) => (
-        <Box component="li" {...props}>
+      renderOption={(optProps, option) => (
+        <Box component="li" {...optProps}>
           {option.label}
         </Box>
       )}
@@ -89,6 +88,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
               {...textFieldProps}
               sx={textFieldSX || {}}
               inputProps={{
+
                 ...params.inputProps,
                 sx: inputSX || {},
                 autoComplete: 'new-password', // disable autocomplete and autofill

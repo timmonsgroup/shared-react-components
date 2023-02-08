@@ -113,14 +113,14 @@ const GenericForm = ({
 
     return (
       <>
-        <SubHeader
+        <SubHeader data-src-form-subheader="genericForm"
           title={headerTitle}
           rightRender={
             () =>
               <Stack spacing={2} direction="row" justifyContent="flex-end">
-                <Button color="tertiary" href={cancelUrl} label="Cancel" />
+                <Button data-src-form-button="cancel" color="tertiary" href={cancelUrl} label="Cancel" />
                 {isEdit && <Button color="primary" onClick={() => reset()} label={'Reset'} />}
-                <Button onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
+                <Button data-src-form-button="submit" onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
               </Stack>
           }
         />
@@ -133,7 +133,7 @@ const GenericForm = ({
             </CardContent>
             <hr />
             <CardContent>
-              <form>
+              <form data-src-form="genericForm">
                 {sections.map((section, index) => theSection(section, control, index))}
               </form>
             </CardContent>
