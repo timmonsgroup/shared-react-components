@@ -34,6 +34,10 @@ const AnyField = ({ control, rules, layout, disabled, ...props }) => {
  * @returns  {function} the renderer function
  */
 const renderType = (layout) => {
+  if (layout.hidden) {
+    return () => null;
+  }
+
   const { id, type, label, options } = layout;
   switch (type) {
     case FIELD_TYPES.DATE: {
