@@ -2,6 +2,16 @@ import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import GenericForm from './GenericForm';
 import { HashRouter as Router } from 'react-router-dom';
 
+export const choiceFormatter = (fieldId, res, otherOptions) => {
+  console.log('choiceFormatter', fieldId, res, otherOptions);
+  const { mappedId } = otherOptions || {};
+  return res?.data?.data?.map((opt) => {
+    console.log('opt', opt)
+    // const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+    return { id: opt['ID State'], label: `${opt['State']} - ${opt['Year']}`, ...opt }
+  })
+}
+
 <Meta title="Form/GenericForm" component={GenericForm} />
 
 
@@ -9,108 +19,103 @@ import { HashRouter as Router } from 'react-router-dom';
 
 A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
 
-export const layout = {
-  "data": {
-    "bulkList": "/api/joinRequest/all"
+export const layout = {layout:{
+  'data': {
+    'create': '/api/grantApplication/new'
   },
-  "grid": {
-    "sort": {
-      "field": "createdOn",
-      "order": "asc"
-    },
-    "idColumn": "streamID"
-  },
-  "id": 12,
-  "modelId": 30,
-  "enabled": true,
-  "name": "Test Layout",
-  "editable": false,
-  "layoutKey": "list",
-  "type": 2,
-  "sections": [{
-    "editable": true,
-    "enabled": true,
-    "name": "Test Layout",
-    "order": 20,
-    "layout": [{
-      "label": "ID",
-      "path": "id",
-      "type": 2,
-      "model": {
-        "id": 1,
-        "modelid": 1,
-        "type": 2,
-        "name": "id"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Name",
-      "path": "name",
-      "type": 0,
-      "model": {
-        "id": 2,
-        "modelid": 1,
-        "type": 0,
-        "name": "name"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Type",
-      "path": "type",
-      "type": 7,
-      "possibleChoices": [
+  'id': 2,
+  'modelId': 10,
+  'enabled': true,
+  'name': 'FD Grant Application',
+  'editable': true,
+  'layoutKey': 'new_fd',
+  'type': 1,
+  'sections': [
+    {
+      'editable': true,
+      'enabled': true,
+      'name': 'FD Grant Application',
+      'order': 10,
+      'layout': [
         {
-          "id": 1,
-          "name": "Type1"
+          'label': 'State - Census Year',
+          'path': 'stateCensusYear',
+          'type': 10,
+          'model': {
+            'id': 5,
+            'modelid': 10,
+            'type': 2,
+            'name': 'stateCensusYear',
+            'data': {}
+          },
+          'required': true,
+          'disabled': false,
+          'url': 'https://datausa.io/api/data?drilldowns=State&measures=Population'
         },
         {
-          "id": 2,
-          "name": "Type2"
-        }
-      ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 2
-    }, {
-      "label": "Status",
-      "path": "status",
-      "type": 7,
-      "possibleChoices": [
-        {
-          "id": 1,
-          "name": "Active"
+          'label': 'State ID',
+          'path': 'stateId',
+          'type': 0,
+          'model': {
+            'id': 8,
+            'modelid': 10,
+            'type': 0,
+            'name': 'stateId',
+            'data': {}
+          },
+          'required': false,
+          'readOnly': true,
+          'conditions': [
+            {
+              'then': {
+                'renderPropertyId': 'ID State'
+              },
+              'when': 'stateCensusYear',
+              'isValid': true
+            }
+          ]
         },
         {
-          "id": 2,
-          "name": "Inactive"
+          'label': 'Population',
+          'path': 'population',
+          'type': 0,
+          'model': {
+            'id': 7,
+            'modelid': 10,
+            'type': 0,
+            'name': 'population',
+            'data': {}
+          },
+          'required': false,
+          'readOnly': true,
+          'conditions': [
+            {
+              'then': {
+                'renderPropertyId': 'Population'
+              },
+              'when': 'stateCensusYear',
+              'isValid': true
+            }
+          ]
+        },
+        {
+          'label': 'Date Application Received',
+          'path': 'dateApplicationReceived',
+          'type': 5,
+          'model': {
+            'id': 6,
+            'modelid': 10,
+            'type': 5,
+            'name': 'dateApplicationReceived',
+            'data': {}
+          },
+          'required': true,
+          'disabled': false
         }
-      ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "hidden": false,
-      "flex": 2
-    }]
-  }]
-};
-
-
-const domainUrl = "";
+      ]
+    }
+  ]
+}}
 
 ## No Data
 
@@ -129,6 +134,7 @@ When there is no data the columns will still be rendered but the data will say n
         unitLabel="Organization Access Request"
         formatSubmitMessage={() => 'Request submitted.'}
         helpText={() => null}
+        asyncOptions={{choiceFormatter}}
         submitUrl={`/api/organization/joinRequest`}
       />
     </Router>

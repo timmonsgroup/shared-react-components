@@ -18,8 +18,9 @@ const specialProps = Object.values(SPECIAL_ATTRS);
  * @param {string} url - optional if you are not using the standard pam endpoint
  * @returns [object, boolean] - parsedLayout, loading
  */
-export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions) => {
-  const [data, isLoading] = useLayout(type, key, url);
+export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions, loadedLayout = null) => {
+  // Passing loadedLayout will skip the fetch and use the passed in layout
+  const [data, isLoading] = useLayout(type, key, url, loadedLayout);
   const [parsedLayout, setParsedLayout] = useState(null);
   const [isParsing, setIsParsing] = useState(true);
 
@@ -110,7 +111,9 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
     const things = await axios.get(fetchUrl).then(res => {
       const { data } = res || {};
       if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
-        return options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
+        const parsedOptions = options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
+        console.log('parsedOptions', parsedOptions)
+        return parsedOptions;
       } else if (data?.length) {
         return data.map((d) => ({ id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
       }
@@ -236,6 +239,8 @@ export const parseField = (field, asyncFieldsMap) => {
   if (type === FIELDS.LONG_TEXT) {
     parsedField.render.isMultiLine = true;
   }
+
+  console.log('field', field)
 
   if (field.possibleChoices) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({

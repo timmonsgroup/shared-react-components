@@ -10,11 +10,13 @@ const CACHE = {};
  * @param {string} type - object type for standard PAM get layout endpoint
  * @param {string} key - layout key for standard PAM get layout endpoint
  * @param {string} url - optional if you are not using the standard pam endpoint
+ * @param {object} existingLayout - optional if you already have the layout and do not want to fetch it
  * @returns [object, boolean] - layout, loading
  */
-export const useLayout = (type, key, url = null) => {
+export const useLayout = (type, key, url = null, existingLayout = null) => {
   const fetchUrl = url || `/api/layout/get?objectType=${type}&layoutKey=${key}`;
-  const [data, isLoading] = useStaleData(fetchUrl, {});
+  // If existingLayout is not null, we will set the flag to true to prevent fetching
+  const [data, isLoading] = useStaleData(fetchUrl, existingLayout || {}, existingLayout !== null);
 
   return [data, isLoading];
 }
@@ -70,12 +72,14 @@ export const useConfig = (config_key) => {
 /**
  * Hook that will fetch data from a url and cache it
  * If the isDev flag is set to true, the first fetch will be faked and defaultValue will be returned and set in cache
- * @param {*} url
- * @param {*} defaultValue
- * @param {*} isDev
+ * @param {string} url - url to fetch data from
+ * @param {any} defaultValue - default value to use if the cache is empty
+ * @param {boolean} useDefault - flag to use the default value
+ * @param {boolean} clearCache - flag to clear the cache
+ * @param {boolean} forceError - flag to force an error
  * @returns
  */
-export const useStaleData = (url, defaultValue = [], isDev, clearCache, forceError) => {
+export const useStaleData = (url, defaultValue = [], useDefault, clearCache, forceError) => {
   const [data, setData] = useState(defaultValue);
   const [isLoading, setLoading] = useState(true);
 
@@ -83,7 +87,8 @@ export const useStaleData = (url, defaultValue = [], isDev, clearCache, forceErr
     delete CACHE[url];
   }
 
-  const fakeError = () => {
+  // check against forceError flag and throw an error if true
+  const maybeFakeError = () => {
     // Fake an error
     if(forceError) {
       console.log('force error');
@@ -96,19 +101,19 @@ export const useStaleData = (url, defaultValue = [], isDev, clearCache, forceErr
     let mounted = true;
     let timeRef = null;
 
-    if (isDev && CACHE[cacheId] === undefined) {
+    if (useDefault && CACHE[cacheId] === undefined) {
       // Emulate a request endpoint
       timeRef = setTimeout(() => {
         if (!mounted) {
           return;
         }
 
-        fakeError();
+        maybeFakeError();
 
         CACHE[cacheId] = defaultValue;
         setData(defaultValue);
         setLoading(false);
-      }, 1500);
+      }, 100);
 
       // Add a cleanup function for the timeout
       return () => {
@@ -126,7 +131,7 @@ export const useStaleData = (url, defaultValue = [], isDev, clearCache, forceErr
         }
 
         // Fake an error
-        fakeError();
+        maybeFakeError();
 
         CACHE[cacheId] = res.data;
         setData(res.data);

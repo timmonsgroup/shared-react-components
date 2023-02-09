@@ -34,6 +34,7 @@ const AnyField = ({ control, rules, layout, disabled, ...props }) => {
  * @returns  {function} the renderer function
  */
 const renderType = (layout) => {
+  console.log(`renderType: ${layout.label}`, layout)
   if (layout.hidden) {
     return () => null;
   }
