@@ -131,6 +131,7 @@ AppBar.propTypes = {
   navLinks: PropTypes.array,
   logoUrl: PropTypes.string,
   userLinks: PropTypes.array,
+  buttonVariant: PropTypes.string,
 };
 
 AppBar.defaultProps = {
