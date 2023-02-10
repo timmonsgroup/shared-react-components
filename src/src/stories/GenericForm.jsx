@@ -44,7 +44,7 @@ import axios from 'axios';
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
-  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess,
+  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false,
   suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions
 }) => {
   const [modifying, setModifying] = useState(false);
@@ -111,6 +111,7 @@ const GenericForm = ({
     }
 
     const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
+    const sectOpts = twoColumn ? { alternatingCols } : {};
 
     return (
       <>
@@ -135,7 +136,7 @@ const GenericForm = ({
             <hr />
             <CardContent>
               <form data-src-form="genericForm">
-                {sections.map((section, index) => theSection(section, control, index))}
+                {sections.map((section, index) => theSection(section, control, index, sectOpts))}
               </form>
             </CardContent>
           </Card>
@@ -177,9 +178,20 @@ const renderFormSection = (section, control, index) => {
 }
 
 const renderTwoColumnSection = (section, control, index) => {
-  const nextCol = Math.ceil(section.fields.length / 2);
-  const leftCol = section.fields.slice(0, nextCol);
-  const rightCol = section.fields.slice(nextCol);
+  // create two columns of fields
+  let leftCol = [];
+  let rightCol = [];
+  section.fields.forEach((field, fIndex) => {
+    if (fIndex % 2 === 0) {
+      leftCol.push(field);
+    } else {
+      rightCol.push(field);
+    }
+  });
+
+  // const nextCol = Math.ceil(section.fields.length / 2);
+  // let leftCol = section.fields.slice(0, nextCol);
+  // let rightCol = section.fields.slice(nextCol);
 
   return (
     <div key={index}>

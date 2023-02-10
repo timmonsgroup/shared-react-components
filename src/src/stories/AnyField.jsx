@@ -34,7 +34,6 @@ const AnyField = ({ control, rules, layout, disabled, ...props }) => {
  * @returns  {function} the renderer function
  */
 const renderType = (layout) => {
-  console.log(`renderType: ${layout.label}`, layout)
   if (layout.hidden) {
     return () => null;
   }
@@ -98,15 +97,17 @@ AnyField.propTypes = {
  * @param {boolean} layout.disabled Whether or not the field is disabled
  * @returns {function} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled }) => {
-  const dataAttrs = {
-    'data-src-field': name
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly }) => {
+  const inputAttrs = {
+    'data-src-field': name,
+    readOnly: readOnly
   }
+
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
       <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />{label}</InputLabel>
       <TextField sx={{ width: '100%' }}
-        inputProps={dataAttrs}
+        inputProps={inputAttrs}
         disabled={disabled}
         id={id || name}
         error={!!error}
@@ -146,7 +147,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {boolean} layout.required - whether or not the field is required *
  * @returns {function} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required }) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly }) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -156,7 +157,9 @@ const dateRenderer = ({ id, name, label, disabled, required }) => {
         value={value}
         onChange={onChange}
         renderInput={(params) => {
+          // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
           params.inputProps['data-src-field'] = name;
+          params.inputProps.readOnly = readOnly;
           return (
             <>
               <InputLabel disabled={disabled} htmlFor={id || name} error={!!error}><RequiredIndicator isRequired={!!required} />{label}</InputLabel>

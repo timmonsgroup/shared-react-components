@@ -112,10 +112,9 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
       const { data } = res || {};
       if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
         const parsedOptions = options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
-        console.log('parsedOptions', parsedOptions)
         return parsedOptions;
       } else if (data?.length) {
-        return data.map((d) => ({ id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
+        return data.map((d) => ({ ...d, id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
       }
     }
     ).catch(error => {
@@ -240,16 +239,19 @@ export const parseField = (field, asyncFieldsMap) => {
     parsedField.render.isMultiLine = true;
   }
 
-  console.log('field', field)
-
   if (field.possibleChoices) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({
+      ...item,
       label: item.name,
       id: item.id,
     })) : [];
 
     parsedField.render.choices = choices;
   } else if (field.url) {
+    if (type !== FIELDS.CHOICE || type !== FIELDS.OBJECT) {
+      console.warn(`Field type ${type} does not support async choices`);
+    }
+
     asyncFieldsMap.set(field.path, field.url);
   }
 

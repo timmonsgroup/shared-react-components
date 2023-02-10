@@ -38,29 +38,32 @@ export const layout = {layout:{
       'order': 10,
       'layout': [
         {
-          'label': 'State - Census Year',
-          'path': 'stateCensusYear',
+          'label': 'Fire Department',
+          'path': 'fireDepartment',
           'type': 10,
           'model': {
             'id': 5,
             'modelid': 10,
             'type': 2,
-            'name': 'stateCensusYear',
+            'name': 'fireDepartment',
             'data': {}
           },
           'required': true,
           'disabled': false,
-          'url': 'https://datausa.io/api/data?drilldowns=State&measures=Population'
+          // 'url': 'https://datausa.io/api/data?drilldowns=State&measures=dep'
+          'possibleChoices': [
+            {"name":"BATTENS FD (Coffee County)","id":7403,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Broomtown VFD (Cherokee County)","id":7404,"createdBy":null,"lastModifiedBy":null,"fdid":"1234","state":null,"fireDepartmentType":{"id":1,"name":"Volunteer"},"region":null},{"name":"Cedar Bluff VFD (Cherokee County)","id":7405,"createdBy":null,"lastModifiedBy":null,"fdid":"5678","state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Centre VFD (Cherokee County)","id":7406,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":1,"name":"Volunteer"},"region":null},{"name":"Cloudland VFD (Cherokee County)","id":7407,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"DUNCANVILLE VFD (Bibb County)","id":7408,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Ellisville VFD (Calhoun County)","id":7409,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"FULLERS CROSSROADS FD (Crenshaw County)","id":7410,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Gaylesville VFD (Cherokee County)","id":7411,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Leesburg VFD (Cherokee County)","id":7412,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"McCords Crossroads VFD (Cherokee County)","id":7413,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Mt. Weisner VFD (Calhoun County)","id":7414,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Sand Rock VFD (Cherokee County)","id":7415,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Spring Creek VFD (Cherokee County)","id":7416,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Spring Garden VFD (Calhoun County)","id":7417,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null}
+            ]
         },
         {
-          'label': 'State ID',
-          'path': 'stateId',
+          'label': 'Department Type',
+          'path': 'fdType',
           'type': 0,
           'model': {
             'id': 8,
             'modelid': 10,
             'type': 0,
-            'name': 'stateId',
+            'name': 'fdType',
             'data': {}
           },
           'required': false,
@@ -68,22 +71,22 @@ export const layout = {layout:{
           'conditions': [
             {
               'then': {
-                'renderPropertyId': 'ID State'
+                'renderPropertyId': 'fireDepartmentType.name'
               },
-              'when': 'stateCensusYear',
+              'when': 'fireDepartment',
               'isValid': true
             }
           ]
         },
         {
-          'label': 'Population',
-          'path': 'population',
+          'label': 'Department ID',
+          'path': 'departmentId',
           'type': 0,
           'model': {
             'id': 7,
             'modelid': 10,
             'type': 0,
-            'name': 'population',
+            'name': 'departmentId',
             'data': {}
           },
           'required': false,
@@ -91,9 +94,9 @@ export const layout = {layout:{
           'conditions': [
             {
               'then': {
-                'renderPropertyId': 'Population'
+                'renderPropertyId': 'id'
               },
-              'when': 'stateCensusYear',
+              'when': 'fireDepartment',
               'isValid': true
             }
           ]
@@ -102,6 +105,7 @@ export const layout = {layout:{
           'label': 'Date Application Received',
           'path': 'dateApplicationReceived',
           'type': 5,
+          'readOnly': true,
           'model': {
             'id': 6,
             'modelid': 10,
@@ -134,7 +138,7 @@ When there is no data the columns will still be rendered but the data will say n
         unitLabel="Organization Access Request"
         formatSubmitMessage={() => 'Request submitted.'}
         helpText={() => null}
-        asyncOptions={{choiceFormatter}}
+        asyncOptions={{}}
         submitUrl={`/api/organization/joinRequest`}
       />
     </Router>

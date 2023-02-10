@@ -28,7 +28,35 @@ export const mergeDeep = (target, source) => {
 };
 
 /**
+ * Given an object and a path, return the value at that path.
+ * @example
+ * const obj = { a: { b: { c: 1 } } };
+ * const result = objectReducer(obj, 'a.b.c');
+ * // result === 1
+ *
+ * @param {*} obj - object to search
+ * @param {*} path - path to value
+ * @param {*} separator - separator for path (default: '.')
+ * @returns value at path
+ */
+export const objectReducer = (obj, path, separator = '.') => {
+  return path.split(separator).reduce((r, k) => r?.[k], obj);
+}
+
+/**
  * Cases, we don't need no stinking cases.
+ * @example
+ * const result = caseless('a', 'A');
+ * // result === 0
+ * @example
+ * const result = caseless('a', 'b');
+ * // result === -1
+ * @example
+ * const result = caseless('b', 'a');
+ * // result === 1
+ * @example
+ * const result = caseless('a', '');
+ * // result === -1
  * @param {*} valueA
  * @param {*} valueB
  * @returns
@@ -52,6 +80,12 @@ export function caseless(valueA, valueB) {
 
 /**
  * Used to correctly handle sorting floats
+ * @example const result = floatCompare('1.1', '1.2');
+ * // result === -1
+ * @example const result = floatCompare('1.2', '1.1');
+ * // result === 1
+ * @example const result = floatCompare('1.1', '1.1');
+ * // result === 0
  * @param valueA
  * @param valueB
  * @returns
@@ -76,6 +110,8 @@ export function floatCompare(valueA, valueB) {
 
 /**
  * Sorts array of objects by a given prop and returns a copy
+ * @example const result = sortOn([{ label: 'b' }, { label: 'a' }], 'label');
+ * // result === [{ label: 'a' }, { label: 'b' }]
  * @param items
  * @param prop
  * @returns array
@@ -239,7 +275,7 @@ function getStructure(field) {
     dynField.flex = field.flex
   }
 
-  if(field.nullValue) {
+  if (field.nullValue) {
     dynField.nullValue = field.nullValue;
   }
 
@@ -325,12 +361,20 @@ export const modifyColorOpacity = (color, opacity) => {
   return newColor;
 }
 
+/**
+ * Method to capitalize the first letter of a string
+ * @example capitalizeFirstLetter('hello') => 'Hello'
+ * @example capitalizeFirstLetter('Hello') => 'Hello'
+ * @param {*} string
+ * @returns
+ */
 export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /**
  * Return a currency string from either an ag grid cell object or string
+ * @example currencyFormatter(1234.56) => '$1,234.56'
  * @param inc  | ag grid cell params
  * @returns string
  */

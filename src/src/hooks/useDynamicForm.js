@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getFieldValue, useFormLayout } from './useFormLayout';
 import axios from 'axios';
 import { IDFIELD, LABELFIELD, CONDITIONAL_RENDER } from '../constants';
+import { objectReducer } from '../helpers';
 
 /**
  * useDynamicForm is a hook that handles the fields and validations for a dynamic form.
@@ -230,7 +231,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           // If there is a valid choice formatter, use it
           if (asyncOptions?.choiceFormatter && typeof asyncOptions.choiceFormatter === 'function') {
             // pass along extra options to the choice formatter
-            return asyncOptions.choiceFormatter(fieldId, res, {triggerFieldId, mappedId, mappedLabel});
+            return asyncOptions.choiceFormatter(fieldId, res, { triggerFieldId, mappedId, mappedLabel });
           } else
             return data?.map((opt) => {
               const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
@@ -291,10 +292,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
             let affectedFields = triggerField.fieldValues.get(fValue) || [];
 
             affectedFields.forEach((loadOut, fieldId) => {
-              console.log('AFFECTED fieldId', fieldId)
               // If the field has a remoteUrl, we need to fetch the data
               const layout = loadOut?.layout;
-              console.log('\tlayout', layout)
               if (layout?.has('url')) {
                 hasAsync = true;
                 const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
@@ -303,22 +302,21 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
                 asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, layout?.get(IDFIELD), layout?.get(LABELFIELD), name);
               }
 
-              console.log('RENDER_PROPERTY_ID', CONDITIONAL_RENDER.RENDER_PROPERTY_ID)
+              // If the field has a condtionall dependent renderProperty we need to parse it out
               const renderId = layout?.get(CONDITIONAL_RENDER.RENDER_PROPERTY_ID);
-              console.log('\t\trenderId', renderId)
               if (renderId) {
-                // If the field has a render property, we need to set it
-                // const rootCause = parsedLayout.fields.get(triggerField.id);
+                // Get the choices for the triggering field so we can find the matching selected value
                 const { render: { choices } } = parsedLayout.fields.get(triggerField.id);
-                // Extract render.choices from the root cause field
-                console.log('\t\ttriggerField', choices)
-                const renderValue = choices?.find(c => c.id === formValue);
-                console.log('\t\trenderValue', renderValue)
-                if (renderValue && renderValue[renderId] !== undefined) {
-                  console.log('\t\t\tSetting value', renderValue[renderId])
-                  setValue(fieldId, renderValue[renderId]);
+                const triggerChoice = choices?.find(c => c.id === formValue);
+
+                if (triggerChoice) {
+                  // If the renderId is a dot notation, we need to dig into the object
+                  // Otherwise, we can just use the value
+                  const renderValue = objectReducer(triggerChoice, renderId);
+                  if (renderValue !== undefined && renderValue !== null) {
+                    setValue(fieldId, renderValue);
+                  }
                 }
-                // setValue
               }
 
               areUpdating[fieldId] = true;
