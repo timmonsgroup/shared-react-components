@@ -107,8 +107,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   const inputAttrs = {
     'data-src-field': name,
     readOnly: readOnly,
-    'aria-describedby': `${name}-helper-text`,
-    helperText: helperText
+    'aria-describedby': `${name}-helper-text`
   }
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
