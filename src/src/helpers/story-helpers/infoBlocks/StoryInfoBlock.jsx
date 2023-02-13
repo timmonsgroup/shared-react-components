@@ -1,7 +1,9 @@
 import AnyFieldUrlSelectionStoryInfoBlock from "./AnyFieldUrlSelectionStoryInfoBlock";
+import DynamicFormConditionalValidationStoryInfoBlock from "./DynamicFormConditionalValidationStoryInfoBlock"
 
 const infoBlocks = {
-    AnyFieldUrlSelection: AnyFieldUrlSelectionStoryInfoBlock
+    AnyFieldUrlSelection: AnyFieldUrlSelectionStoryInfoBlock,
+    DynamicFormConditionalValidation: DynamicFormConditionalValidationStoryInfoBlock
 };
 
 export function StoryInfoBlock({infoBlockName, options}) {

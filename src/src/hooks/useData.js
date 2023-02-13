@@ -6,10 +6,10 @@ import axiosRetry  from 'axios-retry';
 const CACHE = {};
 
 /**
- * Layout fetching hook that assumes the default pam layout endpoint
- * @param {string} type - object type for standard PAM get layout endpoint
- * @param {string} key - layout key for standard PAM get layout endpoint
- * @param {string} url - optional if you are not using the standard pam endpoint
+ * Layout fetching hook that assumes the default layout endpoint
+ * @param {string} type - object type for standard get layout endpoint
+ * @param {string} key - layout key for standard get layout endpoint
+ * @param {string} url - optional if you are not using the standard endpoint
  * @returns [object, boolean] - layout, loading
  */
 export const useLayout = (type, key, url = null) => {
