@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
-import { InputLabel, TextField, FormLabel, FormControl, FormGroup, FormControlLabel, FormHelperText, Checkbox } from '@mui/material';
+import InfoIcon from './InfoIcon';
+
+import {
+  InputLabel, TextField, FormLabel, FormControl,
+  FormGroup, FormControlLabel, FormHelperText,
+  Checkbox
+} from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import RadioOptions from './RadioOptions';
@@ -97,15 +103,20 @@ AnyField.propTypes = {
  * @param {boolean} layout.disabled Whether or not the field is disabled
  * @returns {function} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly }) => {
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText }) => {
   const inputAttrs = {
     'data-src-field': name,
-    readOnly: readOnly
+    readOnly: readOnly,
+    'aria-describedby': `${name}-helper-text`,
+    helperText: helperText
   }
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
-      <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />{label}</InputLabel>
+      <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
+        {label}
+      </InputLabel>
+      {iconHelperText && <InfoIcon infoText={iconHelperText} />}
       <TextField sx={{ width: '100%' }}
         inputProps={inputAttrs}
         disabled={disabled}
@@ -247,7 +258,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
 }
 
 const checkboxRenderer = (layout) => {
-  const { label, disabled, choices = [], required, helperText } = layout;
+  const { label, disabled, choices = [], required, helperText, iconHelperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
     const handleCheck = (checkedId) => {
@@ -270,7 +281,9 @@ const checkboxRenderer = (layout) => {
           component="fieldset"
           variant="standard"
         >
-          <FormLabel component="legend"><RequiredIndicator isRequired={!!required} />{label}</FormLabel>
+          <FormLabel component="legend"><RequiredIndicator isRequired={!!required} />
+            {label} {iconHelperText && <InfoIcon infoText={iconHelperText} />}
+          </FormLabel>
           {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}

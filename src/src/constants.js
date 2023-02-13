@@ -40,24 +40,27 @@ export const FIELD_TYPES = Object.freeze({
 });
 
 export const REQUIRED = 'required';
-export const IDFIELD = 'idField';
-export const LABELFIELD = 'labelField';
+export const ID_FIELD = 'idField';
+export const LABEL_FIELD = 'labelField';
+export const DEFAULT_VALUE = 'defaultValue';
+export const TODAY_DEFAULT = 'today';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
-  IDFIELD,
-  READONLY: 'readOnly',
+  ID_FIELD,
+  READ_ONLY: 'readOnly',
   URL: 'url',
   RENDER_PROPERTY_ID: 'renderPropertyId',
   DISABLED: 'disabled',
   HIDDEN: 'hidden',
   HELPER: 'helperText',
-  REQTEXT: 'requiredErrorText',
+  ICON_HELPER: 'iconHelperText',
+  REQ_TEXT: 'requiredErrorText',
 });
 
 export const SPECIAL_ATTRS = Object.freeze({
-  IDFIELD,
-  LABELFIELD
+  ID_FIELD,
+  LABEL_FIELD
 });
 
 export const VALIDATIONS = Object.freeze({

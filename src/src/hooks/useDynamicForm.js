@@ -9,7 +9,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // Internal bits
 import { getFieldValue, useFormLayout } from './useFormLayout';
 import axios from 'axios';
-import { IDFIELD, LABELFIELD, CONDITIONAL_RENDER } from '../constants';
+import {
+  ID_FIELD,
+  LABEL_FIELD,
+  CONDITIONAL_RENDER,
+  DEFAULT_VALUE
+} from '../constants';
 import { objectReducer } from '../helpers';
 
 /**
@@ -297,9 +302,9 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               if (layout?.has('url')) {
                 hasAsync = true;
                 const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
-                // Note the IDFIELD and LABELFIELD are here different from the useFormLayout hook
+                // Note the ID_FIELD and LABEL_FIELD are here different from the useFormLayout hook
                 // These are the values on this field's CONDITIONAL layout, not the default layout
-                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, layout?.get(IDFIELD), layout?.get(LABELFIELD), name);
+                asyncLoaders[fieldId] = () => fetchData(fieldId, remoteUrl, layout?.get(ID_FIELD), layout?.get(LABEL_FIELD), name);
               }
 
               // If the field has a condtionall dependent renderProperty we need to parse it out

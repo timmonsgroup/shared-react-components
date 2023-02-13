@@ -1,5 +1,10 @@
 import { useLayout } from './useData.js';
-import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD, LABELFIELD } from '../constants.js';
+import {
+  FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
+  SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
+  TODAY_DEFAULT,
+  REQUIRED
+} from '../constants.js';
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation } from '../helpers/formHelpers.js';
@@ -106,8 +111,8 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
   const fetchData = async (fieldId, url) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
     const specialFieldProps = fields.get(fieldId).specialProps;
-    const mappedId = specialFieldProps?.[IDFIELD];
-    const mappedLabel = specialFieldProps?.[LABELFIELD];
+    const mappedId = specialFieldProps?.[ID_FIELD];
+    const mappedLabel = specialFieldProps?.[LABEL_FIELD];
     const things = await axios.get(fetchUrl).then(res => {
       const { data } = res || {};
       if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
@@ -185,8 +190,7 @@ export const parseField = (field, asyncFieldsMap) => {
 
   const { label, type, model, hidden = false, conditions = [], linkFormat } = field;
   const name = model.name || `unknown${model.id}`;
-  const required = !!field.required;
-  const readOnly = !!field.readOnly;
+  const readOnly = !!field.readyOnly;
   const disabled = !!field.disabled;
 
   const parsedField = {
@@ -196,13 +200,15 @@ export const parseField = (field, asyncFieldsMap) => {
     type,
     hidden,
     specialProps: {},
+    [DEFAULT_VALUE]: field[DEFAULT_VALUE],
     render: {
       type: type,
       label,
       name,
       hidden,
-      required,
+      [REQUIRED]: !!field[REQUIRED],
       disabled,
+      iconHelperText: field.iconHelperText,
       helperText: field.helperText,
       requiredErrorText: field.requiredErrorText,
       readOnly,
@@ -325,7 +331,13 @@ export function getFieldValue(field, formData, isNested = false) {
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
   // const inData = isNested && data ? data[name] : getObject(data || {}, field.path);
-  const inData = formData[name];
+  let inData = formData[name];
+
+  // If the config specifies a default value, use that value ONLY if the data is undefined.
+  if (inData === undefined && field[DEFAULT_VALUE]) {
+    inData = field[DEFAULT_VALUE];
+  }
+
   let value = null;
 
   switch (field.type) {
@@ -344,7 +356,11 @@ export function getFieldValue(field, formData, isNested = false) {
       break;
     }
 
-    case FIELDS.DATE:{
+    case FIELDS.DATE: {
+      if (inData) {
+        const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(inData);
+        inData = theDate.toDateString();
+      }
       value = inData || null;
       break;
     }
@@ -363,7 +379,7 @@ export function getFieldValue(field, formData, isNested = false) {
           value = getSelectValue(render.multiple || false, inData) || '';
         }
       } else {
-        value = inData || render.multiple ? [] :'';
+        value = inData || render.multiple ? [] : '';
       }
       break;
     }
