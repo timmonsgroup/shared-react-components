@@ -1,8 +1,10 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, TextField, Autocomplete, InputLabel } from '@mui/material';
+import { Box, TextField, Autocomplete, InputLabel, FormHelperText } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
+import AnyFieldLabel from './AnyFieldLabel';
+import FormErrorMessage from './FormErrorMessage';
 
 /**
  * Wrapper of the Mui Autocomplete component
@@ -14,10 +16,26 @@ import RequiredIndicator from './RequiredIndicator';
  * labelSX is styling for the label
  * textFieldSX is styling for the text field this is another MUI wrapper contains an input and the dropdown icon
  * inputLabelSX is styling for the input inside the textField
- * @returns
  * @param {object} props
+ * @param {string} props.label - the label to display
+ * @param {boolean} props.isRequired - is the field required
+ * @param {object} props.items - the items to display in the dropdown
+ * @param {object} props.error - the error message to display
+ * @param {boolean} props.disabled - is the field disabled
+ * @param {object} props.renderSX - the sx styling for the surrounding box
+ * @param {object} props.sx - the sx styling for the Autocomplete component
+ * @param {object} props.labelSX - the sx styling for the label
+ * @param {object} props.textFieldSX - the sx styling for the text field
+ * @param {object} props.iconHelperText - the text to display in the info icon
+ * @param {object} props.helperText - the helper text to display
+ * @param {object} props.textFieldProps - props to pass to the text field
+ * @param {object} props.textFieldProps.inputLabelProps - props to pass to the input label
+ * @param {object} props.textFieldProps.inputProps - props to pass to the input
+ * @returns {JSX.Element}
  */
-const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, disabled, renderSX, labelSX, inputSX, textFieldSX, ...props }, ref) => {
+const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, error,
+  disabled, renderSX, labelSX, inputSX, textFieldSX, iconHelperText, helperText, fieldOptions, ...props
+}, ref) => {
   // Override the default Autocomplete getOptionLabel / getOptionSelected methods
   // We can override the override methods by passing in the same method name as a prop
 
@@ -78,11 +96,16 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
       renderInput={(params) => {
         return (
           <Box sx={renderSX || {}}>
-            <InputLabel
+            <AnyFieldLabel
+              htmlFor={textFieldProps.id || textFieldProps.name}
               error={textFieldProps?.error}
-              htmlFor="typeahead-input"
               sx={labelSX || {}}
-            ><RequiredIndicator isRequired={isRequired} />{label || 'Search'}</InputLabel>
+              label={label || 'Search'}
+              required={!!isRequired}
+              disabled={disabled}
+              iconText={iconHelperText}
+              fieldOptions={fieldOptions}
+            />
             <TextField
               {...params}
               {...textFieldProps}
@@ -94,6 +117,8 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
                 autoComplete: 'new-password', // disable autocomplete and autofill
               }}
             />
+            {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
+            <FormErrorMessage error={props.error} />
           </Box>
         )
       }}
@@ -115,6 +140,9 @@ Typeahead.propTypes = {
   items: PropTypes.array,
   label: PropTypes.string,
   sx: PropTypes.object,
+  helperText: PropTypes.string,
+  iconHelperText: PropTypes.string,
+  error: PropTypes.object,
   renderSX: PropTypes.object,
   labelSX: PropTypes.object,
   textFieldSX: PropTypes.object,

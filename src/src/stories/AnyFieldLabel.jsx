@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import InfoIcon from './InfoIcon';
 
 import {
-  InputLabel, Box
+  InputLabel, Box, FormLabel
 } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
 
@@ -17,6 +17,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {boolean} props.disabled - is the field disabled
  * @param {boolean} props.required - is the field required
  * @param {string} props.label - the label to display
+ * @param {string} props.asFormInput - whether to render the label using FormLabel or InputLabel
  * @param {string} props.iconText - the text to display in the info icon
  * @param {object} props.fieldOptions - the options to pass to the field
  * @param {object} props.fieldOptions.icon - the options to pass to the info icon
@@ -26,7 +27,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {object} props.fieldOptions.icon.iconComponent - a component to use instead of the default InfoIcon
  * @returns
  */
-const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, fieldOptions = {} }) => {
+const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, asFormInput = false, fieldOptions = {} }) => {
   const sx = {
     display: 'flex',
     alignItems: 'center',
@@ -40,11 +41,17 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, fi
 
   const iconProps = fieldOptions?.icon || {color: 'primary'};
 
+  const labelComponent = asFormInput ? (
+    <FormLabel component="legend"><RequiredIndicator isRequired={!!required} />{label}</FormLabel>
+  ) : (
+    <InputLabel htmlFor={htmlFor} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
+      {label}
+    </InputLabel>
+  );
+
   return (
     <Box sx={sx}>
-      <InputLabel htmlFor={htmlFor} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
-        {label}
-      </InputLabel>
+      {labelComponent}
       {iconText && <InfoIcon infoText={iconText} {...iconProps} />}
     </Box>
   );
@@ -52,6 +59,7 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, fi
 
 AnyFieldLabel.propTypes = {
   htmlFor: PropTypes.string.isRequired,
+  asFormInput: PropTypes.bool,
   error: PropTypes.bool,
   disabled: PropTypes.bool,
   required: PropTypes.bool,
