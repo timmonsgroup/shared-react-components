@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { createTheme } from '@mui/material/styles';
 import { NavLink } from 'react-router-dom';
 import { mergeDeep } from './helpers/helpers';
+import { GRID_ACTION_TYPE } from './constants';
 
 // function LinkBehaviour avoids having to do LinkBehavior.displayName = 'LinkBehavior';
 const LinkBehavior = forwardRef(function LinkBehavior(props, ref) {
@@ -61,7 +62,25 @@ const baseThemeProperties = {
     },
     '& .row-odd': { // Odd rows are slightly darker
       backgroundColor: '#e6ecf2',
-    }
+    },
+  },
+  gridActionItem: {
+    types: {
+      [GRID_ACTION_TYPE.ADD]: {
+        variant: 'gridActionAdd'
+      },
+      [GRID_ACTION_TYPE.EDIT]: {
+        variant: 'gridActionEdit'
+      },
+      [GRID_ACTION_TYPE.DELETE]: {
+        variant: 'gridActionDelete'
+      },
+      [GRID_ACTION_TYPE.VIEW]: {
+        variant: 'gridActionView'
+      },
+    },
+    color: '#231100',
+    paddingX: '0.75rem'
   },
   singleFlexRow: {
     display: 'flex',
@@ -90,7 +109,7 @@ const baseThemeProperties = {
       fontSize: '16px',
       marginRight: '3px'
     },
-    noData:{
+    noData: {
       color: lightGray,
       display: 'flex',
       flexDirection: 'row',
@@ -127,7 +146,7 @@ const baseThemeProperties = {
       display: 'inline-block',
     },
     featuredCard: {
-      heading: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
+      heading: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
       legend: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
     }
   },
@@ -311,6 +330,35 @@ const baseThemeProperties = {
         color: 'primary',
       },
       variants: [
+        {
+          props: {
+            variant: 'gridActionAdd',
+          }
+        },
+        {
+          props: {
+            variant: 'gridActionEdit',
+          },
+          style: {
+            // insert styles here
+          }
+        },
+        {
+          props: {
+            variant: 'gridActionView',
+          },
+          style: {
+            // insert styles here
+          }
+        },
+        {
+          props: {
+            variant: 'gridActionDelete',
+          },
+          style: {
+            // insert styles here
+          }
+        },
         {
           props: {
             variant: 'contained',

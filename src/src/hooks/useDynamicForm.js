@@ -12,8 +12,7 @@ import axios from 'axios';
 import {
   ID_FIELD,
   LABEL_FIELD,
-  CONDITIONAL_RENDER,
-  DEFAULT_VALUE
+  CONDITIONAL_RENDER
 } from '../constants';
 import { objectReducer } from '../helpers';
 

@@ -39,6 +39,14 @@ export const FIELD_TYPES = Object.freeze({
   NONE: 999
 });
 
+export const GRID_ACTION_TYPE = Object.freeze({
+  ADD: 'add',
+  EDIT: 'edit',
+  DELETE: 'delete',
+  VIEW: 'view',
+  CUSTOM: 'custom'
+});
+
 export const REQUIRED = 'required';
 export const ID_FIELD = 'idField';
 export const LABEL_FIELD = 'labelField';

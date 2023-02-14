@@ -11,6 +11,7 @@ import Button from './Button';
 import LoadingSpinner from './LoadingSpinner';
 import ContainerWithCard from './ContainerWithCard';
 import AnyField from './AnyField';
+import AcUnitIcon from '@mui/icons-material/AcUnit';
 
 // Custom hooks
 import { useDynamicForm } from '../hooks';
@@ -171,7 +172,13 @@ const renderFormSection = (section, control, index) => {
     <div key={index}>
       {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
       {section.fields.map((field, fIndex) => (
-        <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+        <AnyField
+          sx={{ marginTop: fIndex ? '16px' : null }}
+          layout={field.render}
+          control={control}
+          key={field?.render?.name}
+          options={{icon: {iconComponent: AcUnitIcon}}}
+        />
       ))}
     </div>
   );
@@ -201,12 +208,24 @@ const renderTwoColumnSection = (section, control, index) => {
       >
         <Grid item xs={6} key={`${index}-left`}>
           {leftCol.map((field, fIndex) => (
-            <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={`${index}-left-${field?.render?.name}`}/>
+            <AnyField
+              sx={{ marginTop: fIndex ? '16px' : null }}
+              layout={field.render}
+              control={control}
+              key={`${index}-left-${field?.render?.name}`}
+              // options={{icon: {iconComponent: AcUnitIcon}}}
+            />
           ))}
         </Grid>
         <Grid item xs={6} key={`${index}-right`}>
           {rightCol.map((field, fIndex) => (
-            <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={`${index}-right-${field?.render?.name}`}/>
+            <AnyField
+              sx={{ marginTop: fIndex ? '16px' : null }}
+              layout={field.render}
+              control={control}
+              // options={{icon: {iconComponent: AcUnitIcon}}}
+              key={`${index}-right-${field?.render?.name}`}
+            />
           ))}
         </Grid>
       </Grid>

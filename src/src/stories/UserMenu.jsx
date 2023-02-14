@@ -2,7 +2,7 @@ import React from 'react';
 import Button from './Button';
 import { Menu, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
-import Link from "@mui/material/Link";
+import Link from '@mui/material/Link';
 
 const UserMenu = ({ user, onLogin, onLogout, links }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);

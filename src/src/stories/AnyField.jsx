@@ -15,12 +15,29 @@ import RadioOptions from './RadioOptions';
 import Typeahead from './Typeahead';
 import RequiredIndicator from './RequiredIndicator';
 import FormErrorMessage from './FormErrorMessage';
+import AnyFieldLabel from './AnyFieldLabel';
 
 import { FIELD_TYPES } from '../constants';
 import { Box } from '@mui/material';
 
-const AnyField = ({ control, rules, layout, disabled, ...props }) => {
-  const renderState = renderType(layout, disabled);
+/**
+ * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
+ *
+ * @param {object} props
+ * @param {object} props.control - the react-hook-form control object
+ * @param {object} props.rules - the react-hook-form rules object
+ * @param {object} props.layout - the layout object
+ * @param {boolean} props.disabled - whether the field is disabled
+ * @param {object} props.options - various options for the fields
+ * @param {object} props.options.icon - the options to pass to the info icon
+ * @param {object} props.options.icon.gap - the gap between the label and the icon
+ * @param {object} props.options.icon.color - the color of the icon
+ * @param {object} props.options.icon.beforeLabel - whether to display the icon before the label
+ * @param {object} props.options.icon.iconComponent - a component to use instead of the default InfoIcon
+ * @returns
+ */
+const AnyField = ({ control, rules, layout, options, ...props }) => {
+  const renderState = renderType(layout, options);
 
   return (
     <Box {...props}>
@@ -34,34 +51,48 @@ const AnyField = ({ control, rules, layout, disabled, ...props }) => {
   );
 }
 
+AnyField.propTypes = {
+  control: PropTypes.object.isRequired,
+  rules: PropTypes.object,
+  layout: PropTypes.object.isRequired,
+  options: PropTypes.object,
+}
+
 /**
  * Return the correct renderer for the given type
- * @param {*} layout
+ * @param {object} layout - the layout object for the field
+ * @param {object} fieldOptions - various options for the fields
  * @returns  {function} the renderer function
  */
-const renderType = (layout) => {
+const renderType = (layout, fieldOptions = {}) => {
   if (layout.hidden) {
     return () => null;
+  }
+
+  if (layout.iconHelperText) {
+    fieldOptions.icon = fieldOptions.icon || {};
+    fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
+    // fieldOptions.icon.beforeLabel = true;
   }
 
   const { id, type, label, options } = layout;
   switch (type) {
     case FIELD_TYPES.DATE: {
-      return dateRenderer(layout);
+      return dateRenderer(layout, fieldOptions);
     }
     case FIELD_TYPES.TEXT:
     case FIELD_TYPES.LONG_TEXT:
     case FIELD_TYPES.INT:
     case FIELD_TYPES.LINK:
     case FIELD_TYPES.FLOAT: {
-      return textRenderer(layout);
+      return textRenderer(layout, fieldOptions);
     }
     case FIELD_TYPES.CHOICE:
     case FIELD_TYPES.OBJECT: {
       if (layout.multiple && layout.checkbox) {
-        return checkboxRenderer(layout);
+        return checkboxRenderer(layout, fieldOptions);
       }
-      return typeaheadRenderer(layout);
+      return typeaheadRenderer(layout, fieldOptions);
     }
     case 'radio': {
       const renderRadio = ({ field: { value, onChange }, fieldState: { error } }) => {
@@ -84,13 +115,6 @@ const renderType = (layout) => {
   }
 }
 
-AnyField.propTypes = {
-  control: PropTypes.object.isRequired,
-  rules: PropTypes.object,
-  layout: PropTypes.object.isRequired,
-  disabled: PropTypes.bool,
-}
-
 /**
  * This is a custom renderer for the MUI TextField component to work with react-hook-form
  * @param {object} layout Object containing the layout of the field
@@ -101,21 +125,24 @@ AnyField.propTypes = {
  * @param {string} layout.placeholder The placeholder text for the field
  * @param {boolean} layout.required Whether or not the field is required
  * @param {boolean} layout.disabled Whether or not the field is disabled
+ * @param {object} fieldOptions Various options for the field
  * @returns {function} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText }) => {
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText }, fieldOptions) => {
   const inputAttrs = {
     'data-src-field': name,
     readOnly: readOnly,
-    'aria-describedby': `${name}-helper-text`
   }
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
-      <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
-        {label}
-      </InputLabel>
-      {iconHelperText && <InfoIcon infoText={iconHelperText} />}
+      {/* <Box sx={{display:'flex'}}>
+        <InputLabel htmlFor={id || name} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
+          {label}
+        </InputLabel>
+        {iconHelperText && <InfoIcon infoText={iconHelperText} {...fieldOptions} />}
+      </Box> */}
+      <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
       <TextField sx={{ width: '100%' }}
         inputProps={inputAttrs}
         disabled={disabled}
@@ -129,6 +156,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
         placeholder={placeholder || `Enter ${label}`}
         variant="outlined"
       />
+      {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
       <FormErrorMessage error={error} />
     </>
   );
@@ -157,7 +185,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {boolean} layout.required - whether or not the field is required *
  * @returns {function} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly }) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText }) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -177,6 +205,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly }) => {
             </>
           )}}
       />
+      {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
       <FormErrorMessage error={error} />
     </>
   );
