@@ -46,7 +46,7 @@ import axios from 'axios';
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
   domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false,
-  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions
+  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions, cancelColor = 'tertiary', submitColor = 'primary', editColor = 'primary'
 }) => {
   const [modifying, setModifying] = useState(false);
   const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
@@ -121,9 +121,9 @@ const GenericForm = ({
           rightRender={
             () =>
               <Stack spacing={2} direction="row" justifyContent="flex-end">
-                <Button data-src-form-button="cancel" color="tertiary" href={cancelUrl} label="Cancel" />
-                {isEdit && <Button color="primary" onClick={() => reset()} label={'Reset'} />}
-                <Button data-src-form-button="submit" onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
+                <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl} label="Cancel" />
+                {isEdit && <Button color={editColor} onClick={() => reset()} label={'Reset'} />}
+                <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
               </Stack>
           }
         />
@@ -160,6 +160,9 @@ GenericForm.propTypes = {
     key: PropTypes.string,
     url: PropTypes.string,
   }),
+  twoColumn: PropTypes.bool,
+  alternatingCols: PropTypes.bool,
+  onSuccess: PropTypes.func,
   suppressSuccessToast: PropTypes.bool,
   submitUrl: PropTypes.string.isRequired,
   formatPayload: PropTypes.func.isRequired,
