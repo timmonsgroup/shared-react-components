@@ -1,8 +1,7 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, TextField, Autocomplete, InputLabel, FormHelperText } from '@mui/material';
-import RequiredIndicator from './RequiredIndicator';
+import { Box, TextField, Autocomplete, FormHelperText } from '@mui/material';
 import AnyFieldLabel from './AnyFieldLabel';
 import FormErrorMessage from './FormErrorMessage';
 
@@ -28,6 +27,7 @@ import FormErrorMessage from './FormErrorMessage';
  * @param {object} props.textFieldSX - the sx styling for the text field
  * @param {object} props.iconHelperText - the text to display in the info icon
  * @param {object} props.helperText - the helper text to display
+ * @param {object} props.fieldOptions - the options to pass to the field
  * @param {object} props.textFieldProps - props to pass to the text field
  * @param {object} props.textFieldProps.inputLabelProps - props to pass to the input label
  * @param {object} props.textFieldProps.inputProps - props to pass to the input
@@ -118,7 +118,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
               }}
             />
             {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
-            <FormErrorMessage error={props.error} />
+            <FormErrorMessage error={error} />
           </Box>
         )
       }}
@@ -143,6 +143,7 @@ Typeahead.propTypes = {
   helperText: PropTypes.string,
   iconHelperText: PropTypes.string,
   error: PropTypes.object,
+  fieldOptions: PropTypes.object,
   renderSX: PropTypes.object,
   labelSX: PropTypes.object,
   textFieldSX: PropTypes.object,

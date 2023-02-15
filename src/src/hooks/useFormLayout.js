@@ -190,7 +190,7 @@ export const parseField = (field, asyncFieldsMap) => {
 
   const { label, type, model, hidden = false, conditions = [], linkFormat } = field;
   const name = model.name || `unknown${model.id}`;
-  const readOnly = !!field.readyOnly;
+  const readOnly = !!field.readOnly;
   const disabled = !!field.disabled;
 
   const parsedField = {
@@ -254,7 +254,7 @@ export const parseField = (field, asyncFieldsMap) => {
 
     parsedField.render.choices = choices;
   } else if (field.url) {
-    if (type !== FIELDS.CHOICE || type !== FIELDS.OBJECT) {
+    if (type !== FIELDS.CHOICE && type !== FIELDS.OBJECT) {
       console.warn(`Field type ${type} does not support async choices`);
     }
 

@@ -187,12 +187,16 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
 }
 
+//jsdoc for action type
+
+
 /**
  * This is our default renderer function for grid actions
- * @param {*} props
- * @param {Object} props.actions - The actions to render
+ * @param {Object} props
+ * @param {ActionItem[]} props.actions - The actions to render
  * @param {Object} props.params - The params from the grid
  * @param {Object} props.themeGroup - The theme group to use for the grid actions
+ * @param {Boolean} props.useTypeVariant - If true then use the type to determine the variant
  * @returns
  */
 const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
@@ -204,6 +208,7 @@ const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
   return (
     <ButtonGroup
       aria-label="action button group"
+      className="grid-actions"
       size="small"
       sx={{
         margin: 'auto',
@@ -212,6 +217,10 @@ const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
     >
       {actions.map((action, index) => {
         let variant = 'text';
+        let cssClass = 'grid-action-item';
+        if (action.cssClass) {
+          cssClass = `${cssClass} ${action.cssClass}`;
+        }
         // If the useTypeVariant is true then check the types preferring themeGroup over gridActionItem
         // If themeGroup is not set then use the gridActionItem
         // If NO variant is set then use the default 'text'
@@ -230,10 +239,13 @@ const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
           }
 
           variant = tempVariant || 'text';
+          cssClass = `${cssClass} action-${type}`;
         }
+
         return (
           <Button
             key={index}
+            className={cssClass}
             // Pass in the row data to the action - up to the caller to unpack
             onClick={() => { action.clickHandler(params.row) }}
             size="small"
@@ -257,9 +269,24 @@ GridActions.propTypes = {
 
 
 /**
+ * @typedef {Object} ActionItem
+ * @property {string} label - The label for the action
+ * @property {string} type - The type of action
+ * @property {string} cssClass - The css class to add to the action
+ * @property {number} order - The order to display the action
+ * @property {function} clickHandler - The click handler for the action
+ */
+
+/**
+ * @typedef {Object} ActionData
+ * @property {ActionItem[]} actionList - The list of actions
+ */
+
+
+/**
  * This takes a mui column and adds formatting to it to handle action button fields
  * @param {object} muiGridColumn - The column used by the MUIGrid component
- * @param {object} actionData - The action data from the layout
+ * @param {ActionData} actionData - The action data from the layout
  * @param {object} themeGroup - The theme group to use for the actions. This will override the default theme
  * @param {JSX} actionsComponent - If you want to use a custom component for the actions, pass it in here
  */
@@ -282,6 +309,9 @@ const addActionButtonFormatting = (muiGridColumn, actionData, themeGroup, action
 /**
  * Returns a base action object
  * @param {Object} action - the action
+ * @param {string} action.label - the label for the action
+ * @param {ActionItem[]} action.actionList - the list of actions
+ * @returns {Object} - the base action object
  */
 const getBaseAction = (action) => {
   return {

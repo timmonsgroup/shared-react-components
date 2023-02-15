@@ -55,7 +55,7 @@ import { Box } from '@mui/material';
  *
  * @param {object} props
  * @param {object} props.control - the react-hook-form control object
- * @param {object} props.rules - the react-hook-form rules object
+ * @param {object} props.rules - the react-hook-form rules object (this is not used if using form level validation)
  * @param {object} props.layout - the layout object
  * @param {boolean} props.disabled - whether the field is disabled
  * @param {FieldOptions} props.options - various options for the fields

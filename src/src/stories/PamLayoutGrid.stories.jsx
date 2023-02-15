@@ -303,6 +303,7 @@ WithDataAndActions.args = {
         {
           label: 'View',
           type: GRID_ACTION_TYPE.VIEW,
+          cssClass: 'i-are-view',
           order: 0,
           clickHandler: (row) => {
             console.log('View', row);

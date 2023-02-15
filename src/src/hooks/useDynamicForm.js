@@ -82,7 +82,10 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           dynValues[name] = value;
 
           // Update the validation schema for this field
-          dynValid[field.id] = field.validations;
+          // Do not add validations for read only fields
+          if (!field.render?.readOnly) {
+            dynValid[field.id] = field.validations;
+          }
 
           // If this field exists in the triggerfields we need to watch the form for changes
           if (parsedLayout.triggerFields.has(fieldId)) {
@@ -163,7 +166,9 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               let { render } = fndField;
               // If the  type of update is ...update find the new validations and render bits
               if (field.type === 'update') {
-                dynValid[fieldObject.id] = field.validation;
+                if (!fieldObject.render?.readOnly) {
+                  dynValid[fieldObject.id] = field.validation;
+                }
                 const updatedLayout = Object.fromEntries(field.layout);
                 //Check for aysnc things
                 const choices = asyncThings ? asyncThings[field.id] : null;
@@ -172,7 +177,9 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
                 render = { ...render, ...updatedLayout, ...asyncRender };
               } else {
                 //TODO: Is it possible that reset fields would need to be async?
-                dynValid[fieldObject.id] = fieldObject.validations;
+                if (!fieldObject.render?.readOnly) {
+                  dynValid[fieldObject.id] = fieldObject.validations;
+                }
 
                 // New logic actually reset the field value
                 // Hope past Nathan just missed something and this is not a bad idea
