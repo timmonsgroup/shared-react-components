@@ -4,23 +4,25 @@ import {
     objectToString
   } from '../../../helpers/story-helpers/dynamicFormStoryHelpers';
   
-  export default generateDynamicFormStoryDefaultExport({title: "conditionals/validations/Required"});
+  export default generateDynamicFormStoryDefaultExport({title: "conditionals/validations/maxLength"});
   
   
   // ----------- Configure General AnyField Stories -----------
   
-  const validationObject = {required: true};
+  const validationObject = {maxLength: 3};
 
   const setInfoBlockOptions = {
     conditionalThen: objectToString(validationObject),
-    explanation: 'required validation, which requires the FLOAT FIELD 1 field to have some kind of input'
+    explanation: 'enable the max length validation, configured to allow no more than ' + validationObject.maxLength + ' characters (including  "."s) in its input.',
+    fieldWithConditionalsSetName: "FLOAT FIELD 1"
   };
 
   export const dynamicForm = Template.bind({});
 
   dynamicForm.args = {
-    dynamicFormTestData: "floatConditionalValidation",
-    infoBlock: "DynamicFormConditionalValidation",
+    dynamicFormTestData: "floatConditional",
+    infoBlock: "DynamicFormConditional",
     infoBlockOptions: setInfoBlockOptions,
+    validationStory: true,
     ...validationObject
   }

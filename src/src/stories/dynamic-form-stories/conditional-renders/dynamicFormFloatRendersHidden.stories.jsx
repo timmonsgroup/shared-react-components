@@ -4,7 +4,7 @@ import {
     objectToString
   } from '../../../helpers/story-helpers/dynamicFormStoryHelpers';
   
-  export default generateDynamicFormStoryDefaultExport({title: "conditionals/validations/maxValue"});
+  export default generateDynamicFormStoryDefaultExport({title: "conditionals/renders/Hidden"});
   
   
   // ----------- Configure General AnyField Stories -----------
@@ -12,17 +12,18 @@ import {
 
   export const dynamicForm = Template.bind({});
 
-  const validationObject = {maxValue: 5};
+  const renderObject = {hidden: true};
 
   const setInfoBlockOptions = {
-    conditionalThen: objectToString(validationObject),
-    explanation: "max value validation, configured to allow a value no greater than 5"
+    conditionalThen: objectToString(renderObject),
+    explanation: "sets its hidden attribute to true",
+    fieldWithConditionalsSetName: "FLOAT FIELD 1"
   };
 
 
   dynamicForm.args = {
-    dynamicFormTestData: "floatConditionalValidation",
-    infoBlock: "DynamicFormConditionalValidation",
+    dynamicFormTestData: "floatConditional",
+    infoBlock: "DynamicFormConditional",
     infoBlockOptions: setInfoBlockOptions,
-    maxValue: 5
+    ...renderObject
   }

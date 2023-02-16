@@ -16,13 +16,15 @@ import {
 
   const setInfoBlockOptions = {
     conditionalThen: objectToString(validationObject),
-    explanation: "fractional digits validation, configured to allow no more than " + validationObject.fractionalDigits + " digits after the decimal point"
+    explanation: "enable the fractional digits validation, configured to allow no more than " + validationObject.fractionalDigits + " digits after the decimal point",
+    fieldWithConditionalsSetName: "FLOAT FIELD 1"
   };
 
   dynamicForm.args = {
-    dynamicFormTestData: "floatConditionalValidation",
-    infoBlock: "DynamicFormConditionalValidation",
+    dynamicFormTestData: "floatConditional",
+    infoBlock: "DynamicFormConditional",
     infoBlockOptions: setInfoBlockOptions,
+    validationStory: true,
     ...validationObject
   }
 

@@ -26,8 +26,8 @@ export function dynamicFormTestDataGenerator(fieldList) {
             const label = getFieldLabel(type, fieldTypeCounter[type], options);
 
             field.type = type;
-            field.path = defaultNamingBase + "path";
-            field.model.name = defaultNamingBase + "path";
+            field.path = defaultNamingBase + "name";
+            field.model.name = defaultNamingBase + "name";
             field.label = label;
             field.checkbox = options.checkbox;
             field.multiple = options.checkbox;
@@ -36,6 +36,8 @@ export function dynamicFormTestDataGenerator(fieldList) {
             field.conditions = options.conditions;
             field.required = options.required;
             field.disabled = options.disabled;
+            field.idField = options.idField;
+            field.readOnly = true;
             
             section.layout.push(field);
         }

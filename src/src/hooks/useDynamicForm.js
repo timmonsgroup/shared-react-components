@@ -222,7 +222,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           const { data } = res || {};
           clearErrors(fieldId);
           // If there is a valid choice formatter, use it
-          if (asyncOptions?.choiceFormatter && typeof asyncOptions.choiceFormatter === 'function') {
+          if (asyncOptions?.choiceFormatter && typeof asyncOptions?.choiceFormatter === 'function') {
             // pass along extra options to the choice formatter
             return asyncOptions.choiceFormatter(fieldId, res, {triggerFieldId, mappedId, mappedLabel});
           } else

@@ -83,6 +83,21 @@ const dynamicFormArgTypeConfiguration = {
       disable: true
     },
   },
+  labelField: {
+    table: {
+      disable: true
+    },
+  },
+  useDefaultChoiceFormatter:  {
+    table: {
+      disable: true
+    },
+  },
+  validationStory: {
+    table: {
+      disable: true
+    }
+  }
 }
 
 export function generateDynamicFormStoryDefaultExport(options) {
@@ -97,7 +112,7 @@ export function generateDynamicFormStoryDefaultExport(options) {
     });
   }
 
-  const choiceFormatter = (fieldId, response, options) => {
+  const customChoiceFormatter = (fieldId, response, options) => {
     const { data } = response;
 
     const choicesData = data.facts;
@@ -110,16 +125,30 @@ export function generateDynamicFormStoryDefaultExport(options) {
   }
 
 export const DynamicFormStoryTemplate = ( args ) => {
+  const notQueryParamArgs = [
+    "dynamicFormTestData",
+    "infoBlock",
+    "infoBlockOptions",
+    "validationStory",
+    "useDefaultChoiceFormatter",
+    "url"
+  ];
 
   const iterableArgs = Object.entries(args);
-  let queryParameterString = "1&";
+  let queryParameterString = "1";
   for (const [key, value] of iterableArgs){
-    if(key !=="dynamicFormTestData" && key !== "infoBlock" && key !== "infoBlockOptions") {
-      queryParameterString += key + "=" + value;
+    if(!notQueryParamArgs.includes(key)) { 
+      queryParameterString += "&" + key + "=" + value;
     }
   }
-  const [modifying, setModifying] = useState(false);
-  const { sections, layoutLoading, control, trigger } = useDynamicForm({type: args.dynamicFormTestData, key: queryParameterString}, null, null, setModifying, { choiceFormatter });
+  
+  if (args.url) {
+    queryParameterString += "&url=" + args.url;
+  }
+
+  const choiceFormatter = args.useDefaultChoiceFormatter ? null : customChoiceFormatter;
+
+  const { sections, layoutLoading, control, trigger } = useDynamicForm({type: args.dynamicFormTestData, key: queryParameterString}, null, null, null, { choiceFormatter });
 
   if (layoutLoading) {
     return (
@@ -132,7 +161,7 @@ export const DynamicFormStoryTemplate = ( args ) => {
     return (
       <>
         {sections.map((section, index) => renderFormSection(section, control, index))}
-        <Button sx={{ marginTop: '16px' }} onClick={() => trigger()} label="Trigger Validation" />
+        {args.validationStory && <Button sx={{ marginTop: '16px' }} onClick={() => trigger()} label="Trigger Validation" />}
         <StoryInfoBlock infoBlockName={args.infoBlock} options={args.infoBlockOptions} />
       </>
     );
@@ -161,7 +190,6 @@ export function generateDefaultSection() {
 export function generateDefaultFieldLayout() {
   return {
     label: "Default Label",
-    id: "defaultId",
     type: 0,
     hidden: false,
     conditions: [],
@@ -175,11 +203,11 @@ export function generateDefaultFieldLayout() {
     checkbox: false,
     possibleChoices: null,
     url: '',
-    path: "defaultId",
+    path: "defaultPathModelName",
     model: {
-        name: "defaultModelName",
-        modelId: 1,
-        modelData: {},
+        name: "defaultPathModelName",
+        id: 1,
+        data: {},
         labelField: null,
         idField: null
     }
@@ -190,9 +218,17 @@ export function objectToString(object) {
   const iterableThis = Object.entries(object);
   let thisString = "{ ";
   for (const [key, value] of iterableThis) {
-    thisString += key + ": " + value;
+    thisString += key + ": " + formatValue(value) + ", ";
   }
-  thisString += " }";
+  thisString += "}";
 
   return thisString;
 };
+
+function formatValue(value) {
+  if (typeof value == "string") {
+    return '"' + value + '"';
+  }
+
+  return value;
+}

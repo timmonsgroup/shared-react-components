@@ -46,6 +46,7 @@ export const LABELFIELD = 'labelField';
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
   IDFIELD,
+  LABELFIELD,
   URL: 'url',
   DISABLED: 'disabled',
   HIDDEN: 'hidden',

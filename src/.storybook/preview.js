@@ -7,7 +7,9 @@ import theme from '../src/muiTheme';
 import { authContext } from '../src/hooks/useAuth';
 import {rest } from 'msw';
 import dynamicFormTestData1 from "../src/stories/dynamic-form-stories/dynamicFormTestData1";
-import { generateDynamicFormFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/condtional-validations/dynamicFormConditionalValidationFloatFieldTestData";
+import { generateDynamicFormFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormFloatFieldConditionalTestData";
+import { generateDynamicFormCheckboxFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormCheckboxFieldConditionalTestData";
+import { generateDynamicFormRequiredFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormRequiredFloatFieldConditionalTestData"
 
 initialize();
 
@@ -41,10 +43,14 @@ export const parameters = {
           rest.get(`http://localhost:6006/api/layout/get`, (request, response, context) => {
             const searchParams = request.url.searchParams;
             const testDataOptions = {};
-
             for (const [key, value] of searchParams) {
               if(key !== "objectType" && key !== "layoutKey") {
-                testDataOptions[key] = value;
+                if(!testDataOptions["url"]) {
+                  testDataOptions[key] = handleBooleanStrings(value);
+                } else {
+                  testDataOptions["url"] += "&" + key + "=" + value; 
+                }
+
               }
             }
 
@@ -55,9 +61,15 @@ export const parameters = {
               case 'fullFormDemo':
                 testData = dynamicFormTestData1;
                 break;
-              case 'floatConditionalValidation':
+              case 'floatConditional':
                 testData = generateDynamicFormFloatFieldConditionalTestData(testDataOptions)//floatFieldConditionalValidationTestData; //generateFloatTestData(testDataOptions)
-              }
+                break; 
+              case 'requiredFloatConditional':
+                testData = generateDynamicFormRequiredFloatFieldConditionalTestData(testDataOptions)
+                break;
+              case 'checkboxConditionalValidation':
+                testData = generateDynamicFormCheckboxFieldConditionalTestData(testDataOptions)
+            }
           
               return response(
                   context.json(testData)
@@ -66,3 +78,12 @@ export const parameters = {
       ]
     }
 };
+
+function handleBooleanStrings(value) {
+  if(value == "true") {
+    return true;
+  } else if (value == "false") {
+    return false;
+  }
+  return value;
+}
