@@ -1,5 +1,10 @@
 import { useLayout } from './useData.js';
-import { FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER, SPECIAL_ATTRS, IDFIELD, LABELFIELD } from '../constants.js';
+import {
+  FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
+  SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
+  TODAY_DEFAULT,
+  REQUIRED
+} from '../constants.js';
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation } from '../helpers/formHelpers.js';
@@ -18,8 +23,9 @@ const specialProps = Object.values(SPECIAL_ATTRS);
  * @param {string} url - optional if you are not using the standard pam endpoint
  * @returns [object, boolean] - parsedLayout, loading
  */
-export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions) => {
-  const [data, isLoading] = useLayout(type, key, url);
+export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions, loadedLayout = null) => {
+  // Passing loadedLayout will skip the fetch and use the passed in layout
+  const [data, isLoading] = useLayout(type, key, url, loadedLayout);
   const [parsedLayout, setParsedLayout] = useState(null);
   const [isParsing, setIsParsing] = useState(true);
 
@@ -105,14 +111,15 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
   const fetchData = async (fieldId, url) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
     const specialFieldProps = fields.get(fieldId).specialProps;
-    const mappedId = specialFieldProps?.[IDFIELD];
-    const mappedLabel = specialFieldProps?.[LABELFIELD];
+    const mappedId = specialFieldProps?.[ID_FIELD];
+    const mappedLabel = specialFieldProps?.[LABEL_FIELD];
     const things = await axios.get(fetchUrl).then(res => {
       const { data } = res || {};
       if (options?.choiceFormatter && typeof options.choiceFormatter === 'function') {
-        return options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
+        const parsedOptions = options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
+        return parsedOptions;
       } else if (data?.length) {
-        return data.map((d) => ({ id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
+        return data.map((d) => ({ ...d, id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
       }
     }
     ).catch(error => {
@@ -183,7 +190,6 @@ export const parseField = (field, asyncFieldsMap) => {
 
   const { label, type, model, hidden = false, conditions = [], linkFormat } = field;
   const name = model.name || `unknown${model.id}`;
-  const required = !!field.required;
   const readOnly = !!field.readOnly;
   const disabled = !!field.disabled;
 
@@ -194,13 +200,15 @@ export const parseField = (field, asyncFieldsMap) => {
     type,
     hidden,
     specialProps: {},
+    [DEFAULT_VALUE]: field[DEFAULT_VALUE],
     render: {
       type: type,
       label,
       name,
       hidden,
-      required,
+      [REQUIRED]: !!field[REQUIRED],
       disabled,
+      iconHelperText: field.iconHelperText,
       helperText: field.helperText,
       requiredErrorText: field.requiredErrorText,
       readOnly,
@@ -239,12 +247,17 @@ export const parseField = (field, asyncFieldsMap) => {
 
   if (field.possibleChoices) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({
+      ...item,
       label: item.name,
       id: item.id,
     })) : [];
 
     parsedField.render.choices = choices;
   } else if (field.url) {
+    if (type !== FIELDS.CHOICE && type !== FIELDS.OBJECT) {
+      console.warn(`Field type ${type} does not support async choices`);
+    }
+
     asyncFieldsMap.set(field.path, field.url);
   }
 
@@ -318,7 +331,13 @@ export function getFieldValue(field, formData, isNested = false) {
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
   // const inData = isNested && data ? data[name] : getObject(data || {}, field.path);
-  const inData = formData[name];
+  let inData = formData[name];
+
+  // If the config specifies a default value, use that value ONLY if the data is undefined.
+  if (inData === undefined && field[DEFAULT_VALUE]) {
+    inData = field[DEFAULT_VALUE];
+  }
+
   let value = null;
 
   switch (field.type) {
@@ -337,7 +356,11 @@ export function getFieldValue(field, formData, isNested = false) {
       break;
     }
 
-    case FIELDS.DATE:{
+    case FIELDS.DATE: {
+      if (inData) {
+        const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(inData);
+        inData = theDate.toDateString();
+      }
       value = inData || null;
       break;
     }
@@ -356,7 +379,7 @@ export function getFieldValue(field, formData, isNested = false) {
           value = getSelectValue(render.multiple || false, inData) || '';
         }
       } else {
-        value = inData || render.multiple ? [] :'';
+        value = inData || render.multiple ? [] : '';
       }
       break;
     }

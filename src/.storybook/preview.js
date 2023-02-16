@@ -10,8 +10,10 @@ import dynamicFormTestData1 from "../src/stories/dynamic-form-stories/dynamicFor
 import { generateDynamicFormFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormFloatFieldConditionalTestData";
 import { generateDynamicFormCheckboxFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormCheckboxFieldConditionalTestData";
 import { generateDynamicFormRequiredFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormRequiredFloatFieldConditionalTestData"
+import { SnackbarProvider } from 'notistack';
 
 initialize();
+
 
 const ThemeProviderFn = (storyFn) => {
   // Creating a fake auth context so useAuth will work in certain stories
@@ -28,7 +30,9 @@ const ThemeProviderFn = (storyFn) => {
   return (
   <LocalizationProvider dateAdapter={AdapterDateFns}>
     <authContext.Provider value={auth}>
-      <ThemeProvider theme={theme}>{storyFn()}</ThemeProvider>
+        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <ThemeProvider theme={theme}>{storyFn()}</ThemeProvider>
+        </SnackbarProvider>
     </authContext.Provider>
   </LocalizationProvider>);
 };

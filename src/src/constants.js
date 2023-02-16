@@ -39,24 +39,37 @@ export const FIELD_TYPES = Object.freeze({
   NONE: 999
 });
 
+export const GRID_ACTION_TYPE = Object.freeze({
+  ADD: 'add',
+  EDIT: 'edit',
+  DELETE: 'delete',
+  VIEW: 'view',
+  CUSTOM: 'custom'
+});
+
 export const REQUIRED = 'required';
-export const IDFIELD = 'idField';
-export const LABELFIELD = 'labelField';
+export const ID_FIELD = 'idField';
+export const LABEL_FIELD = 'labelField';
+export const DEFAULT_VALUE = 'defaultValue';
+export const TODAY_DEFAULT = 'today';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
-  IDFIELD,
-  LABELFIELD,
+  LABEL_FIELD,
+  ID_FIELD,
+  READ_ONLY: 'readOnly',
   URL: 'url',
+  RENDER_PROPERTY_ID: 'renderPropertyId',
   DISABLED: 'disabled',
   HIDDEN: 'hidden',
   HELPER: 'helperText',
-  REQTEXT: 'requiredErrorText',
+  ICON_HELPER: 'iconHelperText',
+  REQ_TEXT: 'requiredErrorText',
 });
 
 export const SPECIAL_ATTRS = Object.freeze({
-  IDFIELD,
-  LABELFIELD
+  ID_FIELD,
+  LABEL_FIELD
 });
 
 export const VALIDATIONS = Object.freeze({

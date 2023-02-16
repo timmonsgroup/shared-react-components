@@ -2,6 +2,7 @@ import React from 'react';
 import { HashRouter as Router } from 'react-router-dom';
 
 import Grid from './PamLayoutGrid';
+import { GRID_ACTION_TYPE } from '../constants';
 
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -157,103 +158,103 @@ const data = [
  * This is copied from the response for a layout.
  */
 const layout = {
-	"data": {
-		"bulkList": "/api/joinRequest/all"
-	},
-	"grid": {
-		"sort": {
-			"field": "createdOn",
-			"order": "asc"
-		},
-		"idColumn": "streamID"
-	},
-	"id": 12,
-	"modelId": 30,
-	"enabled": true,
-	"name": "Test Layout",
-	"editable": false,
-	"layoutKey": "list",
-	"type": 2,
-	"sections": [{
-		"editable": true,
-		"enabled": true,
-		"name": "Test Layout",
-		"order": 20,
-		"layout": [{
-			"label": "ID",
-			"path": "id",
-			"type": 2,
-			"model": {
-				"id": 1,
-				"modelid": 1,
-				"type": 2,
-				"name": "id"
-			},
-			"required": false,
-			"disabled": false,
-			"flex": 1
-		}, {
-			"label": "Name",
-			"path": "name",
-			"type": 0,
-			"model": {
-				"id": 2,
-				"modelid": 1,
-				"type": 0,
-				"name": "name"
-			},
-			"required": false,
-			"disabled": false,
-			"flex": 1
-		}, {
-			"label": "Type",
-			"path": "type",
-			"type": 7,
-      "possibleChoices": [
+  'data': {
+    'bulkList': '/api/joinRequest/all'
+  },
+  'grid': {
+    'sort': {
+      'field': 'createdOn',
+      'order': 'asc'
+    },
+    'idColumn': 'streamID'
+  },
+  'id': 12,
+  'modelId': 30,
+  'enabled': true,
+  'name': 'Test Layout',
+  'editable': false,
+  'layoutKey': 'list',
+  'type': 2,
+  'sections': [{
+    'editable': true,
+    'enabled': true,
+    'name': 'Test Layout',
+    'order': 20,
+    'layout': [{
+      'label': 'ID',
+      'path': 'id',
+      'type': 2,
+      'model': {
+        'id': 1,
+        'modelid': 1,
+        'type': 2,
+        'name': 'id'
+      },
+      'required': false,
+      'disabled': false,
+      'flex': 1
+    }, {
+      'label': 'Name',
+      'path': 'name',
+      'type': 0,
+      'model': {
+        'id': 2,
+        'modelid': 1,
+        'type': 0,
+        'name': 'name'
+      },
+      'required': false,
+      'disabled': false,
+      'flex': 1
+    }, {
+      'label': 'Type',
+      'path': 'type',
+      'type': 7,
+      'possibleChoices': [
         {
-          "id": 1,
-          "name": "Type1"
+          'id': 1,
+          'name': 'Type1'
         },
         {
-          "id": 2,
-          "name": "Type2"
+          'id': 2,
+          'name': 'Type2'
         }
       ],
-			"model": {
-				"id": 3,
-				"modelid": 1,
-				"type": 7,
-				"name": "type"
-			},
-			"required": false,
-			"disabled": false,
-			"flex": 2
-		}, {
-			"label": "Status",
-			"path": "status",
-			"type": 7,
-      "possibleChoices": [
+      'model': {
+        'id': 3,
+        'modelid': 1,
+        'type': 7,
+        'name': 'type'
+      },
+      'required': false,
+      'disabled': false,
+      'flex': 2
+    }, {
+      'label': 'Status',
+      'path': 'status',
+      'type': 7,
+      'possibleChoices': [
         {
-          "id": 1,
-          "name": "Active"
+          'id': 1,
+          'name': 'Active'
         },
         {
-          "id": 2,
-          "name": "Inactive"
+          'id': 2,
+          'name': 'Inactive'
         }
       ],
-			"model": {
-				"id": 3,
-				"modelid": 1,
-				"type": 7,
-				"name": "type"
-			},
-			"required": false,
-			"disabled": false,
-      "hidden": true,
-			"flex": 2
-		}]
-	}]
+      'model': {
+        'id': 3,
+        'modelid': 1,
+        'type': 7,
+        'name': 'type'
+      },
+      'required': false,
+      'disabled': false,
+      'hidden': true,
+      'flex': 2
+    }]
+  }]
 };
 
 /**
@@ -270,6 +271,7 @@ export const WithDataAndActions = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 WithDataAndActions.args = {
   data: data,
+  useTypeVariant: true,
   layout: layout,
   actions: [
     {
@@ -278,6 +280,7 @@ WithDataAndActions.args = {
       actionList: [
         {
           label: 'Delete',
+          type: GRID_ACTION_TYPE.DELETE,
           order: 0,
           clickHandler: (row) => {
             console.log('Delete', row);
@@ -285,6 +288,7 @@ WithDataAndActions.args = {
         },
         {
           label: 'Edit',
+          type: GRID_ACTION_TYPE.EDIT,
           order: 1,
           clickHandler: (row) => {
             console.log('Edit', row);
@@ -298,6 +302,8 @@ WithDataAndActions.args = {
       actionList: [
         {
           label: 'View',
+          type: GRID_ACTION_TYPE.VIEW,
+          cssClass: 'i-are-view',
           order: 0,
           clickHandler: (row) => {
             console.log('View', row);
@@ -334,4 +340,3 @@ AutoHeight.args = {
   layout: layout,
   autoHeight: true, // This is just a flag and the implementation of the component just needs to say autoHeight
 };
-

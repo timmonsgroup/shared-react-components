@@ -2,6 +2,16 @@ import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import GenericForm from './GenericForm';
 import { HashRouter as Router } from 'react-router-dom';
 
+export const choiceFormatter = (fieldId, res, otherOptions) => {
+  console.log('choiceFormatter', fieldId, res, otherOptions);
+  const { mappedId } = otherOptions || {};
+  return res?.data?.data?.map((opt) => {
+    console.log('opt', opt)
+    // const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+    return { id: opt['ID State'], label: `${opt['State']} - ${opt['Year']}`, ...opt }
+  })
+}
+
 <Meta title="Form/GenericForm" component={GenericForm} />
 
 
@@ -9,108 +19,113 @@ import { HashRouter as Router } from 'react-router-dom';
 
 A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
 
-export const layout = {
-  "data": {
-    "bulkList": "/api/joinRequest/all"
+export const layout = {layout:{
+  'data': {
+    'create': '/api/grantApplication/new'
   },
-  "grid": {
-    "sort": {
-      "field": "createdOn",
-      "order": "asc"
-    },
-    "idColumn": "streamID"
-  },
-  "id": 12,
-  "modelId": 30,
-  "enabled": true,
-  "name": "Test Layout",
-  "editable": false,
-  "layoutKey": "list",
-  "type": 2,
-  "sections": [{
-    "editable": true,
-    "enabled": true,
-    "name": "Test Layout",
-    "order": 20,
-    "layout": [{
-      "label": "ID",
-      "path": "id",
-      "type": 2,
-      "model": {
-        "id": 1,
-        "modelid": 1,
-        "type": 2,
-        "name": "id"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Name",
-      "path": "name",
-      "type": 0,
-      "model": {
-        "id": 2,
-        "modelid": 1,
-        "type": 0,
-        "name": "name"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Type",
-      "path": "type",
-      "type": 7,
-      "possibleChoices": [
+  'id': 2,
+  'modelId': 10,
+  'enabled': true,
+  'name': 'FD Grant Application',
+  'editable': true,
+  'layoutKey': 'new_fd',
+  'type': 1,
+  'sections': [
+    {
+      'editable': true,
+      'enabled': true,
+      'name': 'FD Grant Application',
+      'order': 10,
+      'layout': [
         {
-          "id": 1,
-          "name": "Type1"
+          'label': 'Fire Department',
+          'path': 'fireDepartment',
+          'type': 10,
+          'model': {
+            'id': 5,
+            'modelid': 10,
+            'type': 2,
+            'name': 'fireDepartment',
+            'data': {}
+          },
+          'iconHelperText': 'I hate tooltips',
+          'helperText': 'Please select the Fire Department you are applying for funding on behalf of.',
+          'required': true,
+          'disabled': false,
+          // 'url': 'https://datausa.io/api/data?drilldowns=State&measures=dep'
+          'possibleChoices': [
+            {"name":"BATTENS FD (Coffee County)","id":7403,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Broomtown VFD (Cherokee County)","id":7404,"createdBy":null,"lastModifiedBy":null,"fdid":"1234","state":null,"fireDepartmentType":{"id":1,"name":"Volunteer"},"region":null},{"name":"Cedar Bluff VFD (Cherokee County)","id":7405,"createdBy":null,"lastModifiedBy":null,"fdid":"5678","state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Centre VFD (Cherokee County)","id":7406,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":1,"name":"Volunteer"},"region":null},{"name":"Cloudland VFD (Cherokee County)","id":7407,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"DUNCANVILLE VFD (Bibb County)","id":7408,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Ellisville VFD (Calhoun County)","id":7409,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"FULLERS CROSSROADS FD (Crenshaw County)","id":7410,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Gaylesville VFD (Cherokee County)","id":7411,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Leesburg VFD (Cherokee County)","id":7412,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"McCords Crossroads VFD (Cherokee County)","id":7413,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Mt. Weisner VFD (Calhoun County)","id":7414,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Sand Rock VFD (Cherokee County)","id":7415,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Spring Creek VFD (Cherokee County)","id":7416,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null},{"name":"Spring Garden VFD (Calhoun County)","id":7417,"createdBy":null,"lastModifiedBy":null,"fdid":null,"state":null,"fireDepartmentType":{"id":0,"name":"Unknown"},"region":null}
+            ]
         },
         {
-          "id": 2,
-          "name": "Type2"
-        }
-      ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 2
-    }, {
-      "label": "Status",
-      "path": "status",
-      "type": 7,
-      "possibleChoices": [
-        {
-          "id": 1,
-          "name": "Active"
+          'label': 'Department Type',
+          'path': 'fdType',
+          'type': 0,
+          'model': {
+            'id': 8,
+            'modelid': 10,
+            'type': 0,
+            'name': 'fdType',
+            'data': {}
+          },
+          'iconHelperText': 'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
+          'required': false,
+          'readOnly': true,
+          'conditions': [
+            {
+              'then': {
+                'renderPropertyId': 'fireDepartmentType.name'
+              },
+              'when': 'fireDepartment',
+              'isValid': true
+            }
+          ]
         },
         {
-          "id": 2,
-          "name": "Inactive"
+          'label': 'Department ID',
+          'path': 'departmentId',
+          'type': 0,
+          'model': {
+            'id': 7,
+            'modelid': 10,
+            'type': 0,
+            'name': 'departmentId',
+            'data': {}
+          },
+          'required': false,
+          'readOnly': true,
+          'conditions': [
+            {
+              'then': {
+                'renderPropertyId': 'id'
+              },
+              'when': 'fireDepartment',
+              'isValid': true
+            }
+          ]
+        },
+        {
+          'label': 'Date Application Received',
+          'path': 'dateApplicationReceived',
+          'type': 5,
+          'readOnly': true,
+          'defaultValue': 'today',
+          'iconHelperText': 'TIP The date the application was received by the Wildfire Suite.',
+          'helperText': 'The date the application was received by the Wildfire Suite.',
+          'model': {
+            'id': 6,
+            'modelid': 10,
+            'type': 5,
+            'name': 'dateApplicationReceived',
+            'data': {}
+          },
+          'required': true,
+          'disabled': false
         }
-      ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "hidden": false,
-      "flex": 2
-    }]
-  }]
-};
-
-
-const domainUrl = "";
+      ]
+    }
+  ]
+}}
 
 ## No Data
 
@@ -129,6 +144,7 @@ When there is no data the columns will still be rendered but the data will say n
         unitLabel="Organization Access Request"
         formatSubmitMessage={() => 'Request submitted.'}
         helpText={() => null}
+        asyncOptions={{}}
         submitUrl={`/api/organization/joinRequest`}
       />
     </Router>

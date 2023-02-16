@@ -11,6 +11,7 @@ import Button from './Button';
 import LoadingSpinner from './LoadingSpinner';
 import ContainerWithCard from './ContainerWithCard';
 import AnyField from './AnyField';
+import AcUnitIcon from '@mui/icons-material/AcUnit';
 
 // Custom hooks
 import { useDynamicForm } from '../hooks';
@@ -39,12 +40,13 @@ import axios from 'axios';
  * @param {boolean} props.suppressErrorToast - Whether or not to suppress the success toast
  * @param {function} props.formatSubmitMessage - A function to format the success toaster message
  * @param {function} props.formatSubmitError - A function to format the error message (sends the error as a parameter and true if it came from the server)
+ * @param {object} props.asyncOptions - The options for the async select fields
  * @returns
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
-  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess,
-  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions
+  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false,
+  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions, cancelColor = 'tertiary', submitColor = 'primary', editColor = 'primary'
 }) => {
   const [modifying, setModifying] = useState(false);
   const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
@@ -110,17 +112,18 @@ const GenericForm = ({
     }
 
     const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
+    const sectOpts = twoColumn ? { alternatingCols } : {};
 
     return (
       <>
-        <SubHeader
+        <SubHeader data-src-form-subheader="genericForm"
           title={headerTitle}
           rightRender={
             () =>
               <Stack spacing={2} direction="row" justifyContent="flex-end">
-                <Button color="tertiary" href={cancelUrl} label="Cancel" />
-                {isEdit && <Button color="primary" onClick={() => reset()} label={'Reset'} />}
-                <Button onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
+                <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl} label="Cancel" />
+                {isEdit && <Button color={editColor} onClick={() => reset()} label={'Reset'} />}
+                <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
               </Stack>
           }
         />
@@ -133,8 +136,8 @@ const GenericForm = ({
             </CardContent>
             <hr />
             <CardContent>
-              <form>
-                {sections.map((section, index) => theSection(section, control, index))}
+              <form data-src-form="genericForm">
+                {sections.map((section, index) => theSection(section, control, index, sectOpts))}
               </form>
             </CardContent>
           </Card>
@@ -157,6 +160,9 @@ GenericForm.propTypes = {
     key: PropTypes.string,
     url: PropTypes.string,
   }),
+  twoColumn: PropTypes.bool,
+  alternatingCols: PropTypes.bool,
+  onSuccess: PropTypes.func,
   suppressSuccessToast: PropTypes.bool,
   submitUrl: PropTypes.string.isRequired,
   formatPayload: PropTypes.func.isRequired,
@@ -169,16 +175,33 @@ const renderFormSection = (section, control, index) => {
     <div key={index}>
       {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
       {section.fields.map((field, fIndex) => (
-        <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+        <AnyField
+          sx={{ marginTop: fIndex ? '16px' : null }}
+          layout={field.render}
+          control={control}
+          key={field?.render?.name}
+          options={{icon: {iconComponent: AcUnitIcon}}}
+        />
       ))}
     </div>
   );
 }
 
 const renderTwoColumnSection = (section, control, index) => {
-  const nextCol = Math.ceil(section.fields.length / 2);
-  const leftCol = section.fields.slice(0, nextCol);
-  const rightCol = section.fields.slice(nextCol);
+  // create two columns of fields
+  let leftCol = [];
+  let rightCol = [];
+  section.fields.forEach((field, fIndex) => {
+    if (fIndex % 2 === 0) {
+      leftCol.push(field);
+    } else {
+      rightCol.push(field);
+    }
+  });
+
+  // const nextCol = Math.ceil(section.fields.length / 2);
+  // let leftCol = section.fields.slice(0, nextCol);
+  // let rightCol = section.fields.slice(nextCol);
 
   return (
     <div key={index}>
@@ -188,12 +211,24 @@ const renderTwoColumnSection = (section, control, index) => {
       >
         <Grid item xs={6} key={`${index}-left`}>
           {leftCol.map((field, fIndex) => (
-            <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={`${index}-left-${field?.render?.name}`}/>
+            <AnyField
+              sx={{ marginTop: fIndex ? '16px' : null }}
+              layout={field.render}
+              control={control}
+              key={`${index}-left-${field?.render?.name}`}
+              // options={{icon: {iconComponent: AcUnitIcon}}}
+            />
           ))}
         </Grid>
         <Grid item xs={6} key={`${index}-right`}>
           {rightCol.map((field, fIndex) => (
-            <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={`${index}-right-${field?.render?.name}`}/>
+            <AnyField
+              sx={{ marginTop: fIndex ? '16px' : null }}
+              layout={field.render}
+              control={control}
+              // options={{icon: {iconComponent: AcUnitIcon}}}
+              key={`${index}-right-${field?.render?.name}`}
+            />
           ))}
         </Grid>
       </Grid>
