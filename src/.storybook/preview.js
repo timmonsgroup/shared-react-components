@@ -6,7 +6,7 @@ import { initialize, mswDecorator } from 'msw-storybook-addon';
 import theme from '../src/muiTheme';
 import { authContext } from '../src/hooks/useAuth';
 import {rest } from 'msw';
-import dynamicFormTestData1 from "../src/stories/dynamic-form-stories/dynamicFormTestData1";
+import generateExampleDynamicFormTestData from "../src/stories/dynamic-form-stories/test-data/generateExampleDynamicFormTestData";
 import { generateDynamicFormFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormFloatFieldConditionalTestData";
 import { generateDynamicFormCheckboxFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormCheckboxFieldConditionalTestData";
 import { generateDynamicFormRequiredFloatFieldConditionalTestData } from "../src/stories/dynamic-form-stories/test-data/generateDynamicFormRequiredFloatFieldConditionalTestData"
@@ -63,7 +63,7 @@ export const parameters = {
 
             switch(objectType) {
               case 'fullFormDemo':
-                testData = dynamicFormTestData1;
+                testData = generateExampleDynamicFormTestData();
                 break;
               case 'floatConditional':
                 testData = generateDynamicFormFloatFieldConditionalTestData(testDataOptions)//floatFieldConditionalValidationTestData; //generateFloatTestData(testDataOptions)

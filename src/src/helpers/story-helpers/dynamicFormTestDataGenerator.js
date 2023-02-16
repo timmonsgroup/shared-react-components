@@ -37,7 +37,7 @@ export function dynamicFormTestDataGenerator(fieldList) {
             field.required = options.required;
             field.disabled = options.disabled;
             field.idField = options.idField;
-            field.readOnly = true;
+            field.readOnly = options.readOnly;
             
             section.layout.push(field);
         }

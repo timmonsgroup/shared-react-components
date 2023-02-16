@@ -3,7 +3,7 @@
     DynamicFormStoryTemplate as Template,
   } from '../../helpers/story-helpers/dynamicFormStoryHelpers';
 
-  import dynamicFormTestData1 from "./dynamicFormTestData1";
+  import generateExampleDynamicFormTestData from "./test-data/generateExampleDynamicFormTestData";
   
   export default generateDynamicFormStoryDefaultExport({title: "Example Dynamic Form",});
   
@@ -13,7 +13,9 @@
 
   export const dynamicForm = Template.bind({});
 
+  const exampleDynamicFormTestData = generateExampleDynamicFormTestData();
+
   dynamicForm.args = {
     dynamicFormTestData: "fullFormDemo",
-    configurationObject: dynamicFormTestData1
+    configurationObject: exampleDynamicFormTestData
   }

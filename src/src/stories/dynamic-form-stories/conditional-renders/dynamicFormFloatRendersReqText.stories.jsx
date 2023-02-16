@@ -4,7 +4,7 @@ import {
     objectToString
   } from '../../../helpers/story-helpers/dynamicFormStoryHelpers';
   
-  export default generateDynamicFormStoryDefaultExport({title: "conditionals/renders/Required Text"});
+  export default generateDynamicFormStoryDefaultExport({title: "conditionals/renders/Required Error Text"});
   
   
   // ----------- Configure General AnyField Stories -----------

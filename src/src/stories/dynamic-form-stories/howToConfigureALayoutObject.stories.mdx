@@ -2,6 +2,8 @@ import { Meta } from '@storybook/addon-docs';
 
 <Meta title="form/Dynamic Form/How to configure a layout object" />
 
+# How to Configure a Layout Object
+
 `useDynamicForm` is fed a layout object to generate the fields for a form and build the connections between them.
 
 Here is a limited example of one of these layout objects:
@@ -70,11 +72,11 @@ set of supported field types and their number codes for reference:
   - LINK: 100,
   - NONE: 999
 
-- `hidden` - this does not currently seem to be implemented.
+- `hidden` - A boolean. If true, the field's element's hidden attribute is set to true.
 
 - `linkFormat` - this does not currently seem to be implemented.
 
-- `readOnly` - this does not currently seem to be implemented.
+- `readOnly` - A boolean. If true, tthe field becomes read only.
 
 - `helperText` - This displays the set string under the label when a field is a checkbox field (see the multiple and checkbox properties)
 
@@ -97,7 +99,7 @@ then `possibleChoices` must be set to null or the selection field will not query
           ]
 ```
 
-- `path` - This value is a unique identifier for the field. It is used to set the key this field is stored under in the parsed section's field map. 
+- `path` - This value is a unique identifier for the field. It is used to set the key this field is stored under in the parsed section's field map. This and model.name seem to need to be the same value for conditions to find the field. 
 
 - `model` - This object is used to set special properties and validations. It also sets the name for the field. Model is an object with the following shape: 
 ```
@@ -105,7 +107,7 @@ then `possibleChoices` must be set to null or the selection field will not query
 
   name: This sets the field's htmlFor and id attributes on the element when it is a text renderer, the htmlFor and name attributes on the element when it is a date picker, 
   the key for the `AnyField` React component it generates,  and serves as another identifier for the field when managed by the dynValues object in useDynamic form
-  and when used to identify a field in the updatedFields array in finishWatch in useDynamicForm.
+  and when used to identify a field in the updatedFields array in finishWatch in useDynamicForm. This and path seem to need to be the same value for conditions to find the field.
 
   id: Used to build model.name when no `model.name` has been set
     
@@ -173,5 +175,6 @@ If you want to make sure there is at least 1 character in the input field, use t
   - 'maxLength'
   - 'minLength'
 
+  `isValid`: A boolean. If set to true, the `then` configuration is triggered whenever the `when` field has a valid value. This currently has issues with selection fields.
 }
 ```

@@ -69,6 +69,11 @@ export const standardAnyFieldArgTypeConfiguration = {
     table: {
       disable: true
     }
+  },
+  options: {
+    table: {
+      disable: true
+    }
   }
 };
 
