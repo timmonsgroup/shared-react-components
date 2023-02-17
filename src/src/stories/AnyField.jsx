@@ -97,7 +97,6 @@ const renderType = (layout, fieldOptions = {}) => {
   if (layout.iconHelperText) {
     fieldOptions.icon = fieldOptions.icon || {};
     fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
-    // fieldOptions.icon.beforeLabel = true;
   }
 
   const { id, type, label, options } = layout;
@@ -324,7 +323,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
           {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
-            {choices?.map((item, index) => (
+            {choices?.map((item) => (
               <FormControlLabel
                 key={item.id}
                 control={<Checkbox

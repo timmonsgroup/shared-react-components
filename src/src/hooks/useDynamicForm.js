@@ -218,7 +218,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         // and out validation appearance will be out of sync with the schema
         flushSync(() => {
           for (const field in resetFields) {
-            console.log('flush resetting field', field)
             resetField(field);
           }
         });
@@ -305,7 +304,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
             affectedFields.forEach((loadOut, fieldId) => {
               // If the field has a remoteUrl, we need to fetch the data
               const layout = loadOut?.layout;
-              if (layout?.has('url')) {
+              const isHidden = layout?.get(CONDITIONAL_RENDER.HIDDEN);
+              if (!isHidden && layout?.has('url')) {
                 hasAsync = true;
                 const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
                 // Note the ID_FIELD and LABEL_FIELD are here different from the useFormLayout hook
@@ -315,7 +315,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
               // If the field has a condtionall dependent renderProperty we need to parse it out
               const renderId = layout?.get(CONDITIONAL_RENDER.RENDER_PROPERTY_ID);
-              if (renderId) {
+              if (!isHidden && renderId) {
                 // Get the choices for the triggering field so we can find the matching selected value
                 const { render: { choices } } = parsedLayout.fields.get(triggerField.id);
                 const triggerChoice = choices?.find(c => c.id === formValue);
@@ -328,6 +328,11 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
                     setValue(fieldId, renderValue);
                   }
                 }
+              }
+
+              if (isHidden) {
+                // If the field is hidden, we need to reset it
+                setValue(fieldId, null);
               }
 
               areUpdating[fieldId] = true;
@@ -363,20 +368,15 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           }
         };
 
-        console.log('nullChangeValue? ', nullChangeValue, 'touchedFields', touchedFields)
-
         // Determine any fields that need to be reset
         touchedFields.forEach((value, fieldId) => {
-          console.log('touched fieldId', fieldId, 'value', value, ' HAS? ', value.has(formValue))
           // If this field is not affected by the new value, it needs to be reset (probably)
           // We check if the field is already being updated because we don't want to reset a field that is being updated
           // This would happen with a field that has a remoteUrl that updates on EVERY triggerfield change.
           if (!value.has(formValue)) {
-            console.log('FIRST Resetting field', fieldId)
             addReset(fieldId);
           } else if (value.has('anyValue') && nullChangeValue) {
             // We need to reset any fields that may have been triggered by an "anyValue" trigger and allow it to be reset when the triggerfield is null
-            console.log('SECONDResetting field', fieldId)
             addReset(fieldId);
           }
         });

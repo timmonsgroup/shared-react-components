@@ -34,6 +34,8 @@ import axios from 'axios';
  * @param {string} props.unitLabel - The label for the unit
  * @param {string} props.helpText - The help text for the form
  * @param {string} props.submitUrl - The url to submit the form to
+ * @param {object} props.alternatingCols - Whether or not to alternate the columns
+ * @param {object} props.iconOptions - The options for the icons
  * @param {function} props.formatPayload - A function to format the payload before submitting
  * @param {function} props.onSuccess - A function to call when the form is successfully submitted
  * @param {boolean} props.suppressSuccessToast - Whether or not to suppress the success toast
@@ -45,7 +47,7 @@ import axios from 'axios';
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
-  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false,
+  domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false, iconOptions = {},
   suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions, cancelColor = 'tertiary', submitColor = 'primary', editColor = 'primary'
 }) => {
   const [modifying, setModifying] = useState(false);
@@ -69,7 +71,7 @@ const GenericForm = ({
           enqueueSnackbar(successMsg, { variant: 'success' });
         }
         // If we have an onSuccess callback, call it otherwise navigate to the successUrl
-        if (onSuccess){
+        if (onSuccess) {
           onSuccess(result);
         } else {
           nav(successUrl || cancelUrl);
@@ -78,13 +80,13 @@ const GenericForm = ({
         }
       } else {
         setModifying(false);
-        if(!suppressErrorToast) {
+        if (!suppressErrorToast) {
           const errorMsg = formatSubmitError ? formatSubmitError(result) : `Error ${edit ? 'updating' : 'creating'} ${unitLabel}`;
           enqueueSnackbar(errorMsg, { variant: 'error' });
         }
       }
     } catch (error) {
-      if(!suppressErrorToast) {
+      if (!suppressErrorToast) {
         // If we have a nice server error use it.
         const serverError = error?.response?.data?.error;
         // Sending a true flag to formatSubmitError indicates that the error came from the server
@@ -113,6 +115,7 @@ const GenericForm = ({
 
     const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
     const sectOpts = twoColumn ? { alternatingCols } : {};
+    sectOpts.iconOptions = iconOptions;
 
     return (
       <>
@@ -170,7 +173,7 @@ GenericForm.propTypes = {
   unitLabel: PropTypes.string,
 }
 
-const renderFormSection = (section, control, index) => {
+const renderFormSection = (section, control, index, options) => {
   return (
     <div key={index}>
       {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
@@ -180,28 +183,30 @@ const renderFormSection = (section, control, index) => {
           layout={field.render}
           control={control}
           key={field?.render?.name}
-          options={{icon: {iconComponent: AcUnitIcon}}}
+          options={{ icon: options?.iconOptions }}
         />
       ))}
     </div>
   );
 }
 
-const renderTwoColumnSection = (section, control, index) => {
+const renderTwoColumnSection = (section, control, index, options) => {
   // create two columns of fields
   let leftCol = [];
   let rightCol = [];
-  section.fields.forEach((field, fIndex) => {
-    if (fIndex % 2 === 0) {
-      leftCol.push(field);
-    } else {
-      rightCol.push(field);
-    }
-  });
-
-  // const nextCol = Math.ceil(section.fields.length / 2);
-  // let leftCol = section.fields.slice(0, nextCol);
-  // let rightCol = section.fields.slice(nextCol);
+  if (options?.alternatingCols) {
+    section.fields.forEach((field, fIndex) => {
+      if (fIndex % 2 === 0) {
+        leftCol.push(field);
+      } else {
+        rightCol.push(field);
+      }
+    });
+  } else {
+    const nextCol = Math.ceil(section.fields.length / 2);
+    leftCol = section.fields.slice(0, nextCol);
+    rightCol = section.fields.slice(nextCol);
+  }
 
   return (
     <div key={index}>
@@ -216,7 +221,7 @@ const renderTwoColumnSection = (section, control, index) => {
               layout={field.render}
               control={control}
               key={`${index}-left-${field?.render?.name}`}
-              // options={{icon: {iconComponent: AcUnitIcon}}}
+              options={{ icon: options?.iconOptions }}
             />
           ))}
         </Grid>
@@ -226,7 +231,7 @@ const renderTwoColumnSection = (section, control, index) => {
               sx={{ marginTop: fIndex ? '16px' : null }}
               layout={field.render}
               control={control}
-              // options={{icon: {iconComponent: AcUnitIcon}}}
+              options={{ icon: options?.iconOptions }}
               key={`${index}-right-${field?.render?.name}`}
             />
           ))}
