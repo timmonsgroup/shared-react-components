@@ -356,10 +356,10 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
           <Link to={`${link}`}>
             {params.value.name || 'No Name'}
           </Link>
-        )
+        );
       }
       return muiGridColumn.nullValue;
-    }
+    };
   }
 
   if (path) {
