@@ -97,7 +97,6 @@ const renderType = (layout, fieldOptions = {}) => {
   if (layout.iconHelperText) {
     fieldOptions.icon = fieldOptions.icon || {};
     fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
-    // fieldOptions.icon.beforeLabel = true;
   }
 
   const { id, type, label, options } = layout;
@@ -109,6 +108,7 @@ const renderType = (layout, fieldOptions = {}) => {
     case FIELD_TYPES.LONG_TEXT:
     case FIELD_TYPES.INT:
     case FIELD_TYPES.LINK:
+    case FIELD_TYPES.CURRENCY:
     case FIELD_TYPES.FLOAT: {
       return textRenderer(layout, fieldOptions);
     }
@@ -136,7 +136,7 @@ const renderType = (layout, fieldOptions = {}) => {
       return renderRadio;
     }
     default:
-      return <TextField />;
+      return textRenderer(layout, fieldOptions);
   }
 }
 
@@ -146,11 +146,13 @@ const renderType = (layout, fieldOptions = {}) => {
  * @param {FieldOptions} fieldOptions Various options for the field
  * @returns {function} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText }, fieldOptions) => {
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText, type }, fieldOptions) => {
   const inputAttrs = {
     'data-src-field': name,
     readOnly: readOnly,
   }
+
+  const isNumber = type === FIELD_TYPES.CURRENCY || type === FIELD_TYPES.INT || type === FIELD_TYPES.FLOAT;
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
@@ -158,6 +160,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
       <TextField sx={{ width: '100%' }}
         inputProps={inputAttrs}
         disabled={disabled}
+        type={isNumber ? 'number' : 'text'}
         id={id || name}
         error={!!error}
         onChange={onChange}
@@ -324,7 +327,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
           {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
-            {choices?.map((item, index) => (
+            {choices?.map((item) => (
               <FormControlLabel
                 key={item.id}
                 control={<Checkbox

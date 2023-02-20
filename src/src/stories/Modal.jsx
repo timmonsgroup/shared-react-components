@@ -7,9 +7,23 @@ import { Close } from '@mui/icons-material';
 /**
  * Wrapper of the Mui Dialog component
  * Prevent closing by clicking outside of the dialog by NOT passing in a handleClose prop
+ * @param {*} props
+ * @param {string} props.title - the title of the dialog
+ * @param {string} props.okLabel - the label for the OK button
+ * @param {string} props.cancelLabel - the label for the Cancel button
+ * @param {boolean} props.open - whether the dialog is open or not
+ * @param {boolean} props.showX - whether to show the X in the top right corner
+ * @param {boolean} props.hideActions - whether to hide the actions (OK and Cancel buttons)
+ * @param {boolean} props.hideCancel - whether to hide the Cancel button
+ * @param {boolean} props.hideOk - whether to hide the OK button
+ * @param {function} props.onOk - the function to call when the OK button is clicked
+ * @param {function} props.onCancel - the function to call when the Cancel button is clicked
+ * @param {function} props.handleClose - the function to call when the dialog is closed
+ * @param {string} props.okColor - the color of the OK button
+ * @param {string} props.cancelColor - the color of the Cancel button
  * @returns
  */
-const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open, showX, children, hideActions, hideCancel, hideOk, ...props }) => {
+const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open, showX, children, hideActions, hideCancel, hideOk, okColor = 'primary', cancelColor = 'regressive', ...props }) => {
   const titleRender = () => {
     if (showX) {
       return (
@@ -46,8 +60,8 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
       <DialogContent>{children}</DialogContent>
       {hideActions ? null : (
         <DialogActions>
-          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={'regressive'}></ShowHidden>
-          <ShowHidden hide={hideOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} />
+          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={cancelColor}></ShowHidden>
+          <ShowHidden hide={hideOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} color={okColor} />
         </DialogActions>
       )
       }
@@ -68,6 +82,8 @@ Modal.propTypes = {
   hideActions: PropTypes.bool,
   hideCancel: PropTypes.bool,
   hideOk: PropTypes.bool,
+  okColor: PropTypes.string,
+  cancelColor: PropTypes.string,
   // Mui Dialog props (...props)
   // by defining them here, they will be consumed by Storybook for use in the controls area
   fullWidth: PropTypes.bool,

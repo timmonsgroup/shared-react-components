@@ -3,16 +3,19 @@ import GenericForm from './GenericForm';
 import { HashRouter as Router } from 'react-router-dom';
 
 export const choiceFormatter = (fieldId, res, otherOptions) => {
-  console.log('choiceFormatter', fieldId, res, otherOptions);
   const { mappedId } = otherOptions || {};
   return res?.data?.data?.map((opt) => {
-    console.log('opt', opt)
     // const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
     return { id: opt['ID State'], label: `${opt['State']} - ${opt['Year']}`, ...opt }
   })
 }
 
 <Meta title="Form/GenericForm" component={GenericForm} />
+
+export const formatPayload = (payload) => {
+  window.alert('formatPayload' + JSON.stringify(payload))
+  return payload;
+}
 
 
 # GenericForm
@@ -94,10 +97,12 @@ export const layout = {layout:{
           },
           'required': false,
           'readOnly': true,
+          'hidden': true,
           'conditions': [
             {
               'then': {
-                'renderPropertyId': 'id'
+                'renderPropertyId': 'id',
+                'hidden': false
               },
               'when': 'fireDepartment',
               'isValid': true
@@ -121,6 +126,22 @@ export const layout = {layout:{
           },
           'required': true,
           'disabled': false
+        },
+        {
+          'label': 'Funding',
+          'path': 'fedFunding',
+          'type': 4,
+          'iconHelperText': 'Currency is strange.',
+          'helperText': 'I are current.',
+          'model': {
+            'id': 8,
+            'modelid': 10,
+            'type': 4,
+            'name': 'fedFunding',
+            'data': {}
+          },
+          'required': true,
+          'disabled': false
         }
       ]
     }
@@ -139,6 +160,9 @@ When there is no data the columns will still be rendered but the data will say n
         domainUrl={""}
         successUrl="/"
         cancelUrl="/"
+        formatPayload={formatPayload}
+        alternatingCols={false}
+        iconOptions={{color:'secondary', style:{fontSize: 20, top: 2, position: 'relative'}}}
         twoColumn={true}
         headerTitle="Request Access"
         unitLabel="Organization Access Request"

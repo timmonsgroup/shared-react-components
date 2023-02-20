@@ -79,7 +79,6 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
         const layout = new Map();
         const validationProps = new Map();
         triggeredValidations.forEach((validation) => {
-
           // loop through validation object
           Object.keys(validation).forEach((key) => {
             // Setting any dynamic rendering layout like "required" or "disabled" that must be visually represented
