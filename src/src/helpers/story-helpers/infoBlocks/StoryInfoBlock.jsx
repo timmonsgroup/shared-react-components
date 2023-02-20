@@ -3,7 +3,6 @@ import DynamicFormConditionalStoryInfoBlock from "./DynamicFormConditionalStoryI
 
 const infoBlocks = {
     AnyFieldUrlSelection: AnyFieldUrlSelectionStoryInfoBlock,
-    DynamicFormConditional: DynamicFormConditionalStoryInfoBlock
 };
 
 export function StoryInfoBlock({infoBlockName, options}) {
