@@ -126,6 +126,22 @@ export const layout = {layout:{
           },
           'required': true,
           'disabled': false
+        },
+        {
+          'label': 'Funding',
+          'path': 'fedFunding',
+          'type': 4,
+          'iconHelperText': 'Currency is strange.',
+          'helperText': 'I are current.',
+          'model': {
+            'id': 8,
+            'modelid': 10,
+            'type': 4,
+            'name': 'fedFunding',
+            'data': {}
+          },
+          'required': true,
+          'disabled': false
         }
       ]
     }
@@ -145,9 +161,9 @@ When there is no data the columns will still be rendered but the data will say n
         successUrl="/"
         cancelUrl="/"
         formatPayload={formatPayload}
+        alternatingCols={false}
         iconOptions={{color:'secondary', style:{fontSize: 20, top: 2, position: 'relative'}}}
         twoColumn={true}
-        alternatingCols={false}
         headerTitle="Request Access"
         unitLabel="Organization Access Request"
         formatSubmitMessage={() => 'Request submitted.'}
