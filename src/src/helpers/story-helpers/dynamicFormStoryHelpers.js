@@ -6,16 +6,13 @@ import AnyField from '../../stories/AnyField';
 import React from 'react';
 
 export function generateDynamicFormStoryDefaultExport(options) {
-    let storyTitle = "form/Dynamic Form";
-    storyTitle += options?.title ? `/${options.title}` : "";
-
     return ({
-      title: storyTitle,
+      title: `form/Dynamic Form` + options?.title ? `/${options?.title}` : ''
     });
   }
 
   const choiceFormatter = (fieldId, response, options) => {
-    const { data } = response;
+    const { data } = response || {};
 
     const choicesData = data.facts;
 
