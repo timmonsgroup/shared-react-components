@@ -21,6 +21,7 @@ import { objectReducer } from '../helpers';
  * @param {string} layoutOptions.type - object type for standard get layout endpoint
  * @param {string} layoutOptions.key - layout key for standard get layout endpoint
  * @param {string} layoutOptions.url - url if you are not using the standard endpoint (optional)
+ * @param {object} layoutOptions.layout - a layout object to use to build the dynamic form instead of pulling from an url
  * @param {object} incomingValues - object of the defaut or initial values for the form (optional)
  * @param {string} urlDomain - domain to use for the url (optional)
  * @param {function} setLoading - function to set the loading state of the form for async conditional items (optional)

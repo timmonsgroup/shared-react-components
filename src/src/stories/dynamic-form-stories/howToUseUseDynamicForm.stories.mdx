@@ -17,3 +17,20 @@ useDynamicForm(layoutOptions = \{\}, incomingValues = \{\}, urlDomain, setLoadin
 
 [To be completed]
  - Explain each accepted parameter and how that affects useDynamicForm. Especially layoutOptions
+
+ layoutOptions is expected to have 4 optional keys:
+
+By default, useDynamicForm will try to pull the object for setting up the dynamic form from this url: 
+`/api/layout/get?objectType=${type}&layoutKey=${key}`
+
+layoutOptions.type
+This sets the object type in the default query.
+
+layoutOptions.key
+This sets the layout key in the default query
+
+layoutOptions.url
+useDynamicForm will pull the object for setting up the dynamic form from this url instead if this is set.
+
+layoutOptions.layout
+useDynamicForm will set up its dynamic form based on this object instead of pulling an object from an url if this is set.
