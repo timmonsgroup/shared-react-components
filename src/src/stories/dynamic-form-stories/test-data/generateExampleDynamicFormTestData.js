@@ -1,4 +1,4 @@
-import { dynamicFormTestDataGenerator } from "../../../helpers/story-helpers/dynamicFormTestDataGenerator";
+import { generateDynamicFormTestData } from "../../../helpers/story-helpers/dynamicFormTestDataGenerator";
 import { FIELD_TYPES } from "../../../constants";
 
 export default function generateExampleDynamicFormTestData() {
@@ -27,6 +27,6 @@ export default function generateExampleDynamicFormTestData() {
 
     ];
 
-    const testData = dynamicFormTestDataGenerator(fieldList);
+    const testData = generateDynamicFormTestData(fieldList);
     return testData;
 }
