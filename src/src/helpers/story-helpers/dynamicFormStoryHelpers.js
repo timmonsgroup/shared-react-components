@@ -7,7 +7,7 @@ import React from 'react';
 
 export function generateDynamicFormStoryDefaultExport(options) {
     return ({
-      title: `form/Dynamic Form` + options?.title ? `/${options?.title}` : ''
+      title: 'form/Dynamic Form' + (options?.title ? `/${options?.title}` : '')
     });
   }
 
