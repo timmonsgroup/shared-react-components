@@ -99,13 +99,25 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
   useEffect(() => {
     const cacheId = url;
     let mounted = true;
+    let timeRef = null;
 
     if (useDefault) {
+      // Emulate a request endpoint
+      timeRef = setTimeout(() => {
+        if (!mounted) {
+          return;
+        }
         maybeFakeError();
 
         setData(defaultValue);
         setLoading(false);
+      }, 100);
+      
+      // Add a cleanup function for the timeout
+      return () => {
+        timeRef && clearTimeout(timeRef);
         mounted = false;
+      }
     } else if (CACHE[cacheId] !== undefined) {
       setData(CACHE[cacheId]);
       setLoading(false);
