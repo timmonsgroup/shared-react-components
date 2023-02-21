@@ -8,43 +8,38 @@ import {generateDefaultSection, generateDefaultFieldLayout} from "./dynamicFormS
 //      options: an options object. Currently allows the selection fields to be configured to be checkbox fields0
 // }
 
-export function generateDynamicFormTestData(fieldList) {
+export function dynamicFormTestDataGenerator(fieldList) {
     const testData = {sections: []};
     const section = generateDefaultSection();
-
+    
     // This tracks how many of each field type have been generated so far to manage naming fields properly
     const fieldTypeCounter = generateFieldTypeCounter(); 
 
-    fieldList.forEach(({type, quantity = 1, options = {}}, index) => {
+    fieldList.forEach(({type, quantity, options = {}}, index) => {
         const typeNameString = getTypeNameString(type);
 
         for(let i = 1; i <= quantity; i++){
             fieldTypeCounter[type]++;
 
-            const defaultName = 'section1' + typeNameString + fieldTypeCounter[type] + 'name';
+            const field = generateDefaultFieldLayout();
+            const defaultNamingBase = "section1" + typeNameString + fieldTypeCounter[type];
             const label = getFieldLabel(type, fieldTypeCounter[type], options);
 
-            const baseField = generateDefaultFieldLayout();
-
-            const newField = {
-                ...baseField,
-                type: type,
-                path: defaultName,
-                label: label,
-                checkbox: options.checkbox,
-                multiple: options.multiple,
-                possibleChoices: options.url ? null : options.possibleChoices ?? defaultPossibleChoices,
-                url: options.url,
-                conditions: options.conditions,
-                required: options.required,
-                disabled: options.disabled,
-                idField: options.idField,
-                readOnly: options.readOnly,
-            };
-
-            newField.model.name = defaultName;
-
-            section.layout.push(newField);
+            field.type = type;
+            field.path = defaultNamingBase + "name";
+            field.model.name = defaultNamingBase + "name";
+            field.label = label;
+            field.checkbox = options.checkbox;
+            field.multiple = options.checkbox;
+            field.possibleChoices = options.url ? null : options.possibleChoices ?? defaultPossibleChoices;
+            field.url = options.url;
+            field.conditions = options.conditions;
+            field.required = options.required;
+            field.disabled = options.disabled;
+            field.idField = options.idField;
+            field.readOnly = options.readOnly;
+            
+            section.layout.push(field);
         }
     });
 

@@ -3,14 +3,101 @@ import { Typography } from '@mui/material';
 import ContainerWithCard from '../../stories/ContainerWithCard';
 import LineLoader from '../../stories/LineLoader';
 import AnyField from '../../stories/AnyField';
-import React from 'react';
+import React, { useState } from 'react'
+import { StoryInfoBlock } from './infoBlocks/StoryInfoBlock';
+import Button from "../../stories/Button";
 
 const dynamicFormArgTypeConfiguration = {
-  testDataOptions: {
+  infoBlock: {
     table: {
       disable: true,
     },
   },
+  dynamicFormTestData: {
+    table: {
+      disable: true,
+    },
+  },
+  maxValue: {
+    table: {
+      disable: true,
+    },
+  },
+  minLength: {
+    table: {
+      disable: true,
+    },
+  },
+  maxLength: {
+    table: {
+      disable: true,
+    },
+  },
+  integerDigits: {
+    table: {
+      disable: true,
+    },
+  },
+  fractionalDigits: {
+    table: {
+      disable: true,
+    },
+  },
+  required: {
+    table: {
+      disable: true,
+    },
+  },
+  idField: {
+    table: {
+      disable: true,
+    },
+  },
+  url: {
+    table: {
+      disable: true,
+    },
+  },
+  disabled: {
+    table: {
+      disable: true,
+    },
+  },
+  hidden: {
+    table: {
+      disable: true,
+    },
+  },
+  helper: {
+    table: {
+      disable: true,
+    },
+  },
+  reqText: {
+    table: {
+      disable: true,
+    },
+  },
+  infoBlockOptions: {
+    table: {
+      disable: true
+    },
+  },
+  labelField: {
+    table: {
+      disable: true
+    },
+  },
+  useDefaultChoiceFormatter:  {
+    table: {
+      disable: true
+    },
+  },
+  validationStory: {
+    table: {
+      disable: true
+    }
+  }
 }
 
 export function generateDynamicFormStoryDefaultExport(options) {
@@ -20,6 +107,7 @@ export function generateDynamicFormStoryDefaultExport(options) {
 
     return ({
       title: storyTitle,
+    //   component: DynamicFormDemonstration,
       argTypes: argTypeConfiguration,
     });
   }
@@ -37,8 +125,30 @@ export function generateDynamicFormStoryDefaultExport(options) {
   }
 
 export const DynamicFormStoryTemplate = ( args ) => {
+  const notQueryParamArgs = [
+    "dynamicFormTestData",
+    "infoBlock",
+    "infoBlockOptions",
+    "validationStory",
+    "useDefaultChoiceFormatter",
+    "url"
+  ];
 
-  const { sections, layoutLoading, control } = useDynamicForm({layout: args.configurationObject }, null, null, null, { customChoiceFormatter });
+  const iterableArgs = Object.entries(args);
+  let queryParameterString = "1";
+  for (const [key, value] of iterableArgs){
+    if(!notQueryParamArgs.includes(key)) { 
+      queryParameterString += "&" + key + "=" + value;
+    }
+  }
+  
+  if (args.url) {
+    queryParameterString += "&url=" + args.url;
+  }
+
+  const choiceFormatter = args.useDefaultChoiceFormatter ? null : customChoiceFormatter;
+
+  const { sections, layoutLoading, control, trigger } = useDynamicForm({type: args.dynamicFormTestData, key: queryParameterString}, null, null, null, { choiceFormatter });
 
   if (layoutLoading) {
     return (
@@ -51,6 +161,8 @@ export const DynamicFormStoryTemplate = ( args ) => {
     return (
       <>
         {sections.map((section, index) => renderFormSection(section, control, index))}
+        {args.validationStory && <Button sx={{ marginTop: '16px' }} onClick={() => trigger()} label="Trigger Validation" />}
+        <StoryInfoBlock infoBlockName={args.infoBlock} options={args.infoBlockOptions} />
       </>
     );
   }
@@ -100,4 +212,23 @@ export function generateDefaultFieldLayout() {
         idField: null
     }
   };
+}
+
+export function objectToString(object) {
+  const iterableThis = Object.entries(object);
+  let thisString = "{ ";
+  for (const [key, value] of iterableThis) {
+    thisString += key + ": " + formatValue(value) + ", ";
+  }
+  thisString += "}";
+
+  return thisString;
+};
+
+function formatValue(value) {
+  if (typeof value == "string") {
+    return '"' + value + '"';
+  }
+
+  return value;
 }

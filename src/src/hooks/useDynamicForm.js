@@ -349,7 +349,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
         // Check for any "onChange" fields
         if (triggerField.hasOnChange) {
-          if (formValue !== null && formValue !== undefined && formValue !== '') {
+          if (formValue !== null && formValue !== undefined && formValue !== "") {
             updateLoop('anyValue');
           } else {
             nullChangeValue = true;
