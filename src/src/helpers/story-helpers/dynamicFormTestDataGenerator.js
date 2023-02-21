@@ -21,7 +21,7 @@ export function generateDynamicFormTestData(fieldList) {
         for(let i = 1; i <= quantity; i++){
             fieldTypeCounter[type]++;
 
-            const defaultName = 'section1' + typeNameString + fieldTypeCounter[type] + 'name';
+            const defaultName = `section1${typeNameString}${fieldTypeCounter[type]}name`;
             const label = getFieldLabel(type, fieldTypeCounter[type], options);
 
             const baseField = generateDefaultFieldLayout();
@@ -58,7 +58,7 @@ function getFieldLabel(type, fieldTypeCount, options = {}) {
     const { checkbox } = options;
     const typeNameString = getTypeNameString(type);
 
-    let label = typeNameString + " FIELD " + fieldTypeCount;
+    let label = `${typeNameString} FIELD ${fieldTypeCount}`;
 
     if (type == FIELD_TYPES.CHOICE || type == FIELD_TYPES.OBJECT) {
         label += " (";
