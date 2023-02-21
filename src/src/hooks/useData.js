@@ -101,16 +101,11 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
     let mounted = true;
     let timeRef = null;
 
-    if (useDefault && CACHE[cacheId] === undefined) {
+    if (useDefault) {
       // Emulate a request endpoint
       timeRef = setTimeout(() => {
-        if (!mounted) {
-          return;
-        }
-
         maybeFakeError();
 
-        CACHE[cacheId] = defaultValue;
         setData(defaultValue);
         setLoading(false);
       }, 100);
