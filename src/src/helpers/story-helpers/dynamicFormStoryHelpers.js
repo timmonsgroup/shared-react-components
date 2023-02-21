@@ -5,22 +5,12 @@ import LineLoader from '../../stories/LineLoader';
 import AnyField from '../../stories/AnyField';
 import React from 'react';
 
-const dynamicFormArgTypeConfiguration = {
-  testDataOptions: {
-    table: {
-      disable: true,
-    },
-  },
-}
-
 export function generateDynamicFormStoryDefaultExport(options) {
     let storyTitle = "form/Dynamic Form";
     storyTitle += options?.title ? `/${options.title}` : "";
-    const argTypeConfiguration = dynamicFormArgTypeConfiguration
 
     return ({
       title: storyTitle,
-      argTypes: argTypeConfiguration,
     });
   }
 

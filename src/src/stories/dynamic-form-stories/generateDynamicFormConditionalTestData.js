@@ -1,7 +1,7 @@
-import { generateDynamicFormTestData } from "../../../helpers/story-helpers/dynamicFormTestDataGenerator";
-import { FIELD_TYPES } from "../../../constants";
+import { generateDynamicFormTestData } from "../../helpers/story-helpers/dynamicFormTestDataGenerator";
+import { FIELD_TYPES } from "../../constants";
 
-export function generateDynamicFormFloatConditionalTestData(testDataOptions) {
+export function generateDynamicFormConditionalTestData(testDataOptions) {
     
     const conditions = [ 
         {when: "section1TEXT1name", isValid: true, then: testDataOptions.conditionalThen,},

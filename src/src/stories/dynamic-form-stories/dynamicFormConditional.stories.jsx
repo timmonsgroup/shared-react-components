@@ -2,7 +2,7 @@ import {
     generateDynamicFormStoryDefaultExport,
     DynamicFormStoryTemplate as Template,
   } from '../../helpers/story-helpers/dynamicFormStoryHelpers';
-import { generateDynamicFormFloatConditionalTestData } from './test-data/generateDynamicFormFloatConditionalTestData';
+import { generateDynamicFormConditionalTestData } from './generateDynamicFormConditionalTestData';
 import { FIELD_TYPES } from "../../constants";
   
   export default generateDynamicFormStoryDefaultExport({title: "Conditionals"});
@@ -18,7 +18,7 @@ import { FIELD_TYPES } from "../../constants";
     touchedField: { type: FIELD_TYPES.FLOAT, options: {} }
   }
 
-  const conditionalDisableTestData = generateDynamicFormFloatConditionalTestData(conditionalDisableTestDataOptions);
+  const conditionalDisableTestData = generateDynamicFormConditionalTestData(conditionalDisableTestDataOptions);
 
   disable.args = {
     configurationObject: conditionalDisableTestData
@@ -32,7 +32,7 @@ import { FIELD_TYPES } from "../../constants";
     touchedField: {type: FIELD_TYPES.CHOICE, options: { multiple: true, checkbox: true}, conditions: [] }
   }
 
-  const conditionalUrlTestData = generateDynamicFormFloatConditionalTestData(conditionalUrlTestDataOptions);
+  const conditionalUrlTestData = generateDynamicFormConditionalTestData(conditionalUrlTestDataOptions);
 
   url.args = {
     configurationObject: conditionalUrlTestData
