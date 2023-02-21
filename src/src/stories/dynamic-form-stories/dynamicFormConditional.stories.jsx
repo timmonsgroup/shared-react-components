@@ -14,7 +14,7 @@ import { FIELD_TYPES } from "../../constants";
   export const disable = Template.bind({});
 
   const conditionalDisableTestDataOptions = {
-    conditionalThen: {disable: true},
+    conditionalThen: {disabled: true},
     touchedField: { type: FIELD_TYPES.FLOAT, options: {} }
   }
 

@@ -24,7 +24,7 @@ export function generateDynamicFormStoryDefaultExport(options) {
     });
   }
 
-  const customChoiceFormatter = (fieldId, response, options) => {
+  const choiceFormatter = (fieldId, response, options) => {
     const { data } = response;
 
     const choicesData = data.facts;
@@ -38,7 +38,7 @@ export function generateDynamicFormStoryDefaultExport(options) {
 
 export const DynamicFormStoryTemplate = ( args ) => {
 
-  const { sections, layoutLoading, control } = useDynamicForm({layout: args.configurationObject }, null, null, null, { customChoiceFormatter });
+  const { sections, layoutLoading, control } = useDynamicForm({layout: args.configurationObject }, null, null, null, { choiceFormatter });
 
   if (layoutLoading) {
     return (
