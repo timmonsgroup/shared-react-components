@@ -1,10 +1,10 @@
 /**
  * Deeply clone an object.
- * @param {*} target
- * @param {*} source
- * @returns
+ * @param {object} target
+ * @param {object} source
+ * @returns {object}
  */
-export const mergeDeep = (target, source) => {
+export function mergeDeep(target, source) {
   if (typeof target !== 'object') {
     target = {};
   }
@@ -32,14 +32,13 @@ export const mergeDeep = (target, source) => {
  * @example
  * const obj = { a: { b: { c: 1 } } };
  * const result = objectReducer(obj, 'a.b.c');
- * // result === 1
  *
- * @param {*} obj - object to search
- * @param {*} path - path to value
- * @param {*} separator - separator for path (default: '.')
- * @returns value at path
+ * @param {object} obj - object to search
+ * @param {string} path - path to value
+ * @param {string} separator - separator for path (default: '.')
+ * @returns {any} value at path
  */
-export const objectReducer = (obj, path, separator = '.') => {
+export function objectReducer(obj, path, separator = '.') {
   return path.split(separator).reduce((r, k) => r?.[k], obj);
 }
 
@@ -59,7 +58,7 @@ export const objectReducer = (obj, path, separator = '.') => {
  * // result === -1
  * @param {*} valueA
  * @param {*} valueB
- * @returns
+ * @returns {number} - 0 if equal, -1 if valueA < valueB, 1 if valueA > valueB
  */
 export function caseless(valueA, valueB) {
   if (valueA === valueB) {
@@ -88,7 +87,7 @@ export function caseless(valueA, valueB) {
  * // result === 0
  * @param valueA
  * @param valueB
- * @returns
+ * @returns {number} - 0 if equal, -1 if valueA < valueB, 1 if valueA > valueB
  */
 export function floatCompare(valueA, valueB) {
   const nA = parseFloat(valueA);
@@ -114,7 +113,7 @@ export function floatCompare(valueA, valueB) {
  * // result === [{ label: 'a' }, { label: 'b' }]
  * @param items
  * @param prop
- * @returns array
+ * @returns {Array} - sorted array
  */
 export function sortOn(items, prop = 'label', isNumber = false) {
   if (!items || items.length < 2) {
@@ -132,8 +131,25 @@ export function sortOn(items, prop = 'label', isNumber = false) {
   return [...items].sort((a, b) => caseless(a[prop], b[prop]));
 }
 
-export const createZoomOption = (label, value, extent) => ({ label, value, extent });
-export const zoomableOption = (item, labelProp = 'label', valueProp = 'id') => {
+/**
+ * Create a zoom option object
+ * @param {*} label
+ * @param {*} value
+ * @param {*} extent
+ * @returns {object} - zoom option object
+ */
+export function createZoomOption(label, value, extent) {
+  return { label, value, extent }
+};
+
+/**
+ * Create a zoom option object from a zoomable item
+ * @param {*} item
+ * @param {*} labelProp
+ * @param {*} valueProp
+ * @returns {object} - zoom option object
+ */
+export function zoomableOption(item, labelProp = 'label', valueProp = 'id') {
   return createZoomOption(item[labelProp], item[valueProp], item.fields?.extent);
 };
 
@@ -164,9 +180,9 @@ export const getSectionChoices = (layout, sectionName, modelName) => {
  * Simple layout process method to convert the layout object into a format that the layout builder can use.
  * If you are using GenericForm you should be using the useFormLayout and parseFormLayout methods instead.
  * @param {object} layout - The layout object to process
- * @returns
+ * @return {object} - The processed layout object
  */
-export const processLayout = (layout) => {
+export function processLayout(layout) {
   if (!layout || !layout.sections) {
     return layout;
   }
@@ -191,7 +207,12 @@ export const processLayout = (layout) => {
   return sections;
 }
 
-export const processGenericLayout = (layout) => {
+/**
+ * Process a layout object
+ * @param {object} layout
+ * @returns {object} - The processed layout object
+ */
+export function processGenericLayout(layout) {
   if (!layout || !layout.sections || layout.isGeneric) {
     return layout;
   }
@@ -304,14 +325,20 @@ export const hasAnyPermissions = (permissions, acl) => {
   return false;
 }
 
+/**
+ * Number with zero padding
+ * @param {number} num Number to pad
+ * @param {number} size amount of padding
+ * @returns {string} The padded number
+ */
 export function zeroPad(num, size = 3) {
   return num.toString().padStart(size, '0');
 }
 
 /**
  * Return a date string from either an ag grid cell object or string
- * @param inc : string | ag grid cell params
- * @returns string
+ * @param {string | object} inc - The date string or ag grid cell object
+ * @returns {string} The date as a string
  */
 export function dateFormatter(inc) {
   if (inc instanceof Date) {
@@ -326,6 +353,11 @@ export function dateFormatter(inc) {
   return dateToString(date);
 }
 
+/**
+ * Convert a date to a string with zero padding
+ * @param {Date} date
+ * @returns {string} The date as a string
+ */
 export function dateToString(date) {
   if (!date) {
     return '';
@@ -334,11 +366,21 @@ export function dateToString(date) {
   return `${zeroPad(date.getMonth() + 1, 2)}/${zeroPad(date.getDate(), 2)}/${date.getFullYear()}`;
 }
 
-export const headerColor = (theme) => {
+/**
+ * Get the color for the header text
+ * @param {object} theme
+ * @returns {string} The color for the header text
+ */
+export function headerColor (theme) {
   return theme.palette.text.header;
 }
 
-export const specialColor = (theme) => {
+/**
+ * Get the color for the special text
+ * @param {object} theme
+ * @returns {string} The color for the special text
+ */
+export function specialColor (theme) {
   return theme.palette.text.special;
 }
 
@@ -346,11 +388,11 @@ export const specialColor = (theme) => {
  * Useful when you want/need to share an RGBA color in more than one place with different opacity levels.
  * If you want to show a color on a map with opacity 0.6 but want the legend value to use the same color
  * but with opacity 1.0.
- * @param color : string | an rgba color
- * @param opacity : number | the opacity to convert to
- * @returns string | an rgba color with it's opacity modified
+ * @param {string} color an rgba color
+ * @param {number} opacity the opacity to convert to
+ * @returns {string} An rgba color with it's opacity modified
  */
-export const modifyColorOpacity = (color, opacity) => {
+export function modifyColorOpacity(color, opacity) {
   const opac = opacity || 1;
   if (!color || color === undefined)
     return color;
@@ -365,8 +407,8 @@ export const modifyColorOpacity = (color, opacity) => {
  * Method to capitalize the first letter of a string
  * @example capitalizeFirstLetter('hello') => 'Hello'
  * @example capitalizeFirstLetter('Hello') => 'Hello'
- * @param {*} string
- * @returns
+ * @param {string} string
+ * @returns {string} The capitalized string
  */
 export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -375,8 +417,8 @@ export function capitalizeFirstLetter(string) {
 /**
  * Return a currency string from either an ag grid cell object or string
  * @example currencyFormatter(1234.56) => '$1,234.56'
- * @param inc  | ag grid cell params
- * @returns string
+ * @param {object|string} inc - ag grid cell params
+ * @returns {string} a currency string
  */
 export function currencyFormatter(inc) {
   if (!inc || (typeof inc === 'object' && !inc.value)) {
@@ -390,8 +432,9 @@ export function currencyFormatter(inc) {
 
 /**
  * Return a currency string from either an ag grid cell object or string
- * @param inc  | ag grid cell params
- * @returns string
+ * @param {object|string} inc - ag grid cell params
+ * @param {number} decimalPlaces - number of decimal places to round to
+ * @returns {string}
  */
 export function floatFormatter(inc, decimalPlaces) {
   if (!inc || (typeof inc === 'object' && !inc.value)) {
@@ -408,7 +451,7 @@ export function floatFormatter(inc, decimalPlaces) {
  * @param {Array} value - Array to process
  * @param {string} prop - Display property (also used for sorting)
  * @param {string} delim - String to place between each value
- * @returns
+ * @returns {array}
  */
 export function arrayToDisplay(value, prop = 'name', delim = ', ') {
   return value ? sortOn(value, prop).map((reg) => reg[prop]).join(delim) : null;
@@ -421,7 +464,7 @@ export function arrayToDisplay(value, prop = 'name', delim = ', ') {
  * @param {boolean} sameTab - open in same tab
  * @param {string} displayProp - display property for sorthing and link text
  * @param {string} idProp - id to use with slug to generate url
- * @returns Object or null
+ * @returns {object}
  */
 export function arrayToUrls(value, slug, skipIds = [], sameTab = true, displayProp = 'name', idProp = 'id') {
   if (!value) {
