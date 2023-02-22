@@ -6,10 +6,10 @@ import axiosRetry  from 'axios-retry';
 const CACHE = {};
 
 /**
- * Layout fetching hook that assumes the default pam layout endpoint
- * @param {string} type - object type for standard PAM get layout endpoint
- * @param {string} key - layout key for standard PAM get layout endpoint
- * @param {string} url - optional if you are not using the standard pam endpoint
+ * Layout fetching hook that assumes the default layout endpoint
+ * @param {string} type - object type for standard get layout endpoint
+ * @param {string} key - layout key for standard get layout endpoint
+ * @param {string} url - optional if you are not using the standard endpoint
  * @param {object} existingLayout - optional if you already have the layout and do not want to fetch it
  * @returns [object, boolean] - layout, loading
  */
@@ -101,20 +101,18 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
     let mounted = true;
     let timeRef = null;
 
-    if (useDefault && CACHE[cacheId] === undefined) {
+    if (useDefault) {
       // Emulate a request endpoint
       timeRef = setTimeout(() => {
         if (!mounted) {
           return;
         }
-
         maybeFakeError();
 
-        CACHE[cacheId] = defaultValue;
         setData(defaultValue);
         setLoading(false);
       }, 100);
-
+      
       // Add a cleanup function for the timeout
       return () => {
         timeRef && clearTimeout(timeRef);

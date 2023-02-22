@@ -1,9 +1,9 @@
 import { ThemeProvider } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { addDecorator } from '@storybook/react';
 import theme from '../src/muiTheme';
 import { authContext } from '../src/hooks/useAuth';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { SnackbarProvider } from 'notistack';
 
 const ThemeProviderFn = (storyFn) => {

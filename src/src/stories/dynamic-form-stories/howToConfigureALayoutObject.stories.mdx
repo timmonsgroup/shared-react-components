@@ -1,0 +1,180 @@
+import { Meta } from '@storybook/addon-docs';
+
+<Meta title="form/Dynamic Form/How to configure a layout object" />
+
+# How to Configure a Layout Object
+
+`useDynamicForm` is fed a layout object to generate the fields for a form and build the connections between them.
+
+Here is a limited example of one of these layout objects:
+
+```
+{
+  "sections": [
+    {
+      "layout": [
+        {
+          "label": "CHOICE FIELD 3 (URL CHECKBOX)",
+          "type": 7,
+          "hidden": false,
+          "conditions": [
+            {
+              "when": "section1TEXT1path",
+              "is": "bingo",
+              "then": {
+                "url": "https://dog-api.kinduff.com/api/facts?number=2"
+              }
+            }
+          ],
+          "linkFormat": {},
+          "readOnly": true,
+          "helperText": "default helper text",
+          "requiredErrorText": "I'm required!",
+          "multiple": true,
+          "checkbox": true,
+          "possibleChoices": null,
+          "url": "https://dog-api.kinduff.com/api/facts?number=5",
+          "path": "section1CHOICE3path",
+          "model": {
+            "name": "section1CHOICE3path",
+            "modelId": 1,
+            "modelData": {},
+            "labelField": null,
+            "idField": null
+          }
+        },
+      ],
+      "editable": true,
+      "enabled": true,
+      "name": "default section name"
+    }
+  ]
+}
+```
+
+The section properties `editable`, `enabled` and `name` don't seem to be currently hooked up to do anything. The `name` property likely needs to be changed to `title`. The layout property is what you need to be most
+concerned with.
+
+`sections.layout` is an array of objects representing individual fields. This is what each of the properties of the field objects do:
+
+- `label` - This sets the label on the field. The configured text should sit over the input element.
+
+- `type` - The type property is how you set what type of field this field is. Various numbers correspond to different types of fields. Here is the current (as of 2/15/22)
+set of supported field types and their number codes for reference:
+
+  - TEXT: 0,
+  - LONG_TEXT: 1,
+  - INT: 2,
+  - FLOAT: 3,
+  - DATE: 5,
+  - CHOICE: 7,
+  - OBJECT: 10,
+  - LINK: 100,
+  - NONE: 999
+
+- `hidden` - A boolean. If true, the field's element's hidden attribute is set to true.
+
+- `linkFormat` - this does not currently seem to be implemented.
+
+- `readOnly` - A boolean. If true, tthe field becomes read only.
+
+- `helperText` - This displays the set string under the label when a field is a checkbox field (see the multiple and checkbox properties)
+
+- `requiredErrorText` -This displays the set string when this field is required and the field fails its required validation
+
+- `possibleChoices` - An array of objects representing options for a selection field. Each object has the shape ```{ name: The text that appears for that option, id: the value that is submitted for this selection}```
+This property is only useful if the field's type is either CHOICE(7) or OBJECT(10). If the selection field is configured to populate its options with data from an external source,
+then `possibleChoices` must be set to null or the selection field will not query the external source. Here's an example possible choices value:
+
+```
+          [
+            {
+              "name": "default Choice 1",
+              "id": 1
+            },
+            {
+              "name": "default Choice 2",
+              "id": 2
+            }
+          ]
+```
+
+- `path` - This value is a unique identifier for the field. It is used to set the key this field is stored under in the parsed section's field map. This and model.name seem to need to be the same value for conditions to find the field. 
+
+- `model` - This object is used to set special properties and validations. It also sets the name for the field. Model is an object with the following shape: 
+```
+{
+
+  name: This sets the field's htmlFor and id attributes on the element when it is a text renderer, the htmlFor and name attributes on the element when it is a date picker, 
+  the key for the `AnyField` React component it generates,  and serves as another identifier for the field when managed by the dynValues object in useDynamic form
+  and when used to identify a field in the updatedFields array in finishWatch in useDynamicForm. This and path seem to need to be the same value for conditions to find the field.
+
+  id: Used to build model.name when no `model.name` has been set
+    
+  data: an object used to set special props on the field and validations. The same validations are set if the validation properties are set on the broader field object as well.
+  The following are the special properties than can be currently set:
+    
+    data.labelField: this is used to configure the default choice formatter when populating a selection field with data from an external source. Assuming the requested data
+    is returned as an array, whatever string is set on this property will be used to find a property with a key with a matching name on each of the retrieved elements.
+    Whatever property it finds will be used to set the label on each of the selection field's options.
+
+    data.idField: this is used to configure the default choice formatter when populating a selection field with data from an external source. Assuming the requested data
+    is returned as an array, whatever string is set on this property will be used to find a property with a key with a matching name on each of the retrieved elements.
+    Whatever property it finds will be used to set the id on each of the selection field's options.  
+}
+```
+
+- `required` - A boolean. If set to true, the field's required attribute will be set to true and a required validation will be set up for the field.
+
+- `disabled` - A boolean. The field element's disabled attribute will be set to match this value.
+
+- `multiple` - A boolean. If both this and `checkbox` are set to true and the `type` is set to OBJECT(10) or CHOICE(7), then the field will display as a checkbox field.
+
+- `checkbox` - A boolean. If both this and `multiple` are set to true and the `type` is set to OBJECT(10) or CHOICE(7), then the field will display as a checkbox field.
+
+- `url` - If this property is set and `possibleChoices` is null, then the field will make a request to the set url and populate its selection results with the data that is returned.
+This only works if the field's type is set to either OBJECT(10) or CHOICE(7). A custom choice formatter may need to be set to format the retrieved data correctly for the selection field to use it.
+
+- `integerDigits` - If this property is set and the field type is set to FLOAT(3), then a validation will be set up to make sure there are no more integer digits than the set value in the input field.
+
+- `fractionalDigits` - If this property is set and the field type is set to FLOAT(3), then a validation will be set up to make sure there are no more decimal digits than the set value in the input field.
+
+- `maxValue` - If this property is set and the field type is set to FLOAT(3), then a validation will be set up to make sure that value in the input field is not greater than the set value.
+
+- `minLength` - If this property is set then a validation will be set up to ensure that there are atleast as many characters in the input field as the set value. The set value must be greater than 1.
+If you want to make sure there is at least 1 character in the input field, use the `required` property.
+
+- `maxLength` - If this property is set then a validation will be set up to ensure that the input field does not contain a greater number of characters than the set value.
+
+- `conditions` - This is an array of condition objects that will set up the field's dynamic relationships with other fields. Condtion objects have the following shape: 
+```
+{
+  `when`: The path/model.name of the field this field is going to react to. The field's path and model.name seem to currently need to be the same value for the conditional to catch it.
+
+  `is`: When the field set on the `when` property  has the value this property is set to, this field responds to it.
+
+  `then`: This field changes its validation and/or rendering based on how this property is set when the field in `when` has its value set to the value in `is`.
+  This field should be an object with keys that match the values in the `CONDITIONAL_RENDER` constant or the `VALIDATIONS` constant. The values of these properties
+  will be set on the field when the condition is met. Here are the current (as of 2/15/23) values in the `CONDITIONAL_RENDER` and `VALIDATIONS` constants for reference:
+
+  CONDITIONAL_RENDER
+  - 'url',
+  - 'disabled'
+  - 'hidden'
+  - 'helperText'
+  - 'requiredErrorText'
+  - 'required'
+  - 'idField'
+  - 'labelField'
+
+  VALIDATIONS
+  - 'required'
+  - 'integerDigits'
+  - 'fractionalDigits'
+  - 'maxValue'
+  - 'maxLength'
+  - 'minLength'
+
+  `isValid`: A boolean. If set to true, the `then` configuration is triggered whenever the `when` field has a valid value. This currently has issues with selection fields.
+}
+```

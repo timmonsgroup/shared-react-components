@@ -55,6 +55,7 @@ export const TODAY_DEFAULT = 'today';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
+  LABEL_FIELD,
   ID_FIELD,
   READ_ONLY: 'readOnly',
   URL: 'url',

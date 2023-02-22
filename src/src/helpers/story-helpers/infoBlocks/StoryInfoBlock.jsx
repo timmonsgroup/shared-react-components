@@ -1,7 +1,7 @@
 import AnyFieldUrlSelectionStoryInfoBlock from "./AnyFieldUrlSelectionStoryInfoBlock";
 
 const infoBlocks = {
-    AnyFieldUrlSelection: AnyFieldUrlSelectionStoryInfoBlock
+    AnyFieldUrlSelection: AnyFieldUrlSelectionStoryInfoBlock,
 };
 
 export function StoryInfoBlock({infoBlockName, options}) {

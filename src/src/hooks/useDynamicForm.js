@@ -18,10 +18,11 @@ import { objectReducer } from '../helpers';
 
 /**
  * useDynamicForm is a hook that handles the fields and validations for a dynamic form.
- * @param {string} type - object type for standard PAM get layout endpoint
- * @param {string} key - layout key for standard PAM get layout endpoint
+ * @param {string} layoutOptions.type - object type for standard get layout endpoint
+ * @param {string} layoutOptions.key - layout key for standard get layout endpoint
+ * @param {string} layoutOptions.url - url if you are not using the standard endpoint (optional)
+ * @param {object} layoutOptions.layout - a layout object to use to build the dynamic form instead of pulling from an url
  * @param {object} incomingValues - object of the defaut or initial values for the form (optional)
- * @param {string} url - url if you are not using the standard pam endpoint (optional)
  * @param {string} urlDomain - domain to use for the url (optional)
  * @param {function} setLoading - function to set the loading state of the form for async conditional items (optional)
  * @param {object} asyncOptions - options for async operations (optional)
@@ -240,7 +241,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           const { data } = res || {};
           clearErrors(fieldId);
           // If there is a valid choice formatter, use it
-          if (asyncOptions?.choiceFormatter && typeof asyncOptions.choiceFormatter === 'function') {
+          if (asyncOptions?.choiceFormatter && typeof asyncOptions?.choiceFormatter === 'function') {
             // pass along extra options to the choice formatter
             return asyncOptions.choiceFormatter(fieldId, res, { triggerFieldId, mappedId, mappedLabel });
           } else
@@ -345,7 +346,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
         // Check for any "onChange" fields
         if (triggerField.hasOnChange) {
-          if (formValue !== null && formValue !== undefined) {
+          if (formValue !== null && formValue !== undefined && formValue !== '') {
             updateLoop('anyValue');
           } else {
             nullChangeValue = true;
