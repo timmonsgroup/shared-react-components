@@ -11,7 +11,6 @@ import Button from './Button';
 import LoadingSpinner from './LoadingSpinner';
 import ContainerWithCard from './ContainerWithCard';
 import AnyField from './AnyField';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
 
 // Custom hooks
 import { useDynamicForm } from '../hooks';
@@ -132,18 +131,30 @@ const GenericForm = ({
         />
         <LoadingSpinner isActive={modifying} />
         <Container sx={{ position: 'relative', marginTop: '16px' }} maxWidth={false}>
-          <Card sx={{ position: 'relative' }}>
-            <CardContent sx={{ paddingBottom: '0px' }}>
-              {formTitle && <Typography variant="sectionHeader">{formTitle}</Typography>}
-              {helpText && helpText()}
-            </CardContent>
-            <hr />
-            <CardContent>
-              <form data-src-form="genericForm">
-                {sections.map((section, index) => theSection(section, control, index, sectOpts))}
-              </form>
-            </CardContent>
-          </Card>
+          <form data-src-form="genericForm">
+            {sections.map((section, index) => {
+              const sx = { position: 'relative' };
+              if (index) {
+                sx.marginTop = '16px';
+              }
+              return (
+                <Card key={index} sx={sx}>
+                  {index === 0 && formTitle && helpText &&
+                    <>
+                      <CardContent sx={{ paddingBottom: '0px' }}>
+                        {formTitle && <Typography variant="sectionHeader">{formTitle}</Typography>}
+                        {helpText && helpText()}
+                      </CardContent>
+                      <hr />
+                    </>
+                  }
+                  <CardContent>
+                    {theSection(section, control, index, sectOpts)}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </form>
         </Container>
       </>
     );
@@ -176,7 +187,7 @@ GenericForm.propTypes = {
 const renderFormSection = (section, control, index, options) => {
   return (
     <div key={index}>
-      {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
+      {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
       {section.fields.map((field, fIndex) => (
         <AnyField
           sx={{ marginTop: fIndex ? '16px' : null }}
@@ -210,6 +221,7 @@ const renderTwoColumnSection = (section, control, index, options) => {
 
   return (
     <div key={index}>
+      {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
       <Grid
         container
         spacing={{ xs: 1, sm: 2, md: 4 }}

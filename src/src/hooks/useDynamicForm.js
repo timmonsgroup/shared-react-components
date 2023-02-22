@@ -54,7 +54,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
   const useFormObject = useForm({
     mode: 'onBlur',
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(validationSchema),
+    shouldUnregister: true
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
@@ -114,7 +115,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     const renderSections = [];
     parsedLayout.sections.forEach(section => {
       const formSection = {
-        name: section.name,
+        name: section.name || section.title,
         fields: []
       };
 
@@ -329,11 +330,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
                     setValue(fieldId, renderValue);
                   }
                 }
-              }
-
-              if (isHidden) {
-                // If the field is hidden, we need to reset it
-                setValue(fieldId, null);
               }
 
               areUpdating[fieldId] = true;

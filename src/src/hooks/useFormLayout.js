@@ -159,6 +159,7 @@ export const parseSection = (section, fieldMap, triggerFieldMap, asyncFieldsMap)
 
   const parsedSection = {
     name: section.name,
+    title: section.title,
     editable,
     enabled,
     fields: [],
