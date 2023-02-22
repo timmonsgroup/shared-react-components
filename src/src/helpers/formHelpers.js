@@ -4,6 +4,13 @@ import {
   string, array, date, number, object
 } from 'yup';
 
+/**
+ *
+ * @param {string} label
+ * @param {boolean} isRequired
+ * @param {string} reqMessage
+ * @returns {YupSchema}
+ */
 export function yupString(label, isRequired = true, reqMessage) {
   const schema = string().label(label || 'This field');
   return isRequired ? schema.required(reqMessage) : schema;
