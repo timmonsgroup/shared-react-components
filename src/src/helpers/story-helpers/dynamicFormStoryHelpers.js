@@ -11,16 +11,12 @@ export function generateDynamicFormStoryDefaultExport(options) {
     });
   }
 
-  const choiceFormatter = (fieldId, response, options) => {
-    const { data } = response || {};
+  const choiceFormatter = (fieldId, response) => {
+    const {data: {facts} = {}} = response || {};
 
-    const choicesData = data.facts;
-
-    const formattedChoices = choicesData.map((choiceData, index) => {
-      return { id: index, label: choiceData};
-      })
+    const formattedChoices = facts?.map((label, id) => ({id, label}));
     
-    return formattedChoices;
+    return formattedChoices || [];
   }
 
 export const DynamicFormStoryTemplate = ( args ) => {

@@ -58,24 +58,18 @@ function getFieldLabel(type, fieldTypeCount, options = {}) {
     const { checkbox } = options;
     const typeNameString = getTypeNameString(type);
 
-    let label = `${typeNameString} FIELD ${fieldTypeCount}`;
-
+    let label = '';
     if (type == FIELD_TYPES.CHOICE || type == FIELD_TYPES.OBJECT) {
-        label += " (";
+        const parts = options?.url ? ['URL'] : [];
 
-        if (options.url) {
-            label += "URL ";
-        }
-        
         if (checkbox) {
-            label += " CHECKBOX)";
+            parts.push('CHECKBOX');
+        } else {
+            parts.push('TYPE AHEAD');
         }
-        else {
-            label += " TYPE AHEAD)";
-        }
+        label = ` (${parts.join(' ')})`;
     }
-
-    return label;
+    return `${typeNameString} FIELD ${fieldTypeCount}${label}`;
 }
 
 function getTypeNameString(type) {
@@ -87,7 +81,7 @@ function getTypeNameString(type) {
 
 // We need to initialize each element in the field type counter so we can increment them. Otherwise we try to increment NaN.
 function generateFieldTypeCounter() {
-    const fieldTypeCounter = [];
+    const fieldTypeCounter = {};
     const fieldTypeValues = Object.values(FIELD_TYPES);
 
     fieldTypeValues.forEach((type) => fieldTypeCounter[type] = 0);
