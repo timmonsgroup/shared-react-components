@@ -62,11 +62,16 @@ import { Box } from '@mui/material';
  * @returns
  */
 const AnyField = ({ control, rules, layout, options, ...props }) => {
+  if (layout.hidden) {
+    return null;
+  }
+
   const renderState = renderType(layout, options);
 
   return (
     <Box {...props}>
       <Controller
+        shouldUnregister={true}
         control={control}
         rules={rules}
         name={layout.name}
@@ -90,10 +95,6 @@ AnyField.propTypes = {
  * @returns  {function} the renderer function
  */
 const renderType = (layout, fieldOptions = {}) => {
-  if (layout.hidden) {
-    return () => null;
-  }
-
   if (layout.iconHelperText) {
     fieldOptions.icon = fieldOptions.icon || {};
     fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
