@@ -5,7 +5,7 @@
 
 #### Storybook ####
 * Dynamic Form Stories
-    *dynamicFormStoryHelpers
+    * dynamicFormStoryHelpers
         * This provides a set of helper functions to help create stories that demonstrate the use of the useDynamicForm hook.
         * Provides a standard, modifiable default export for useDynamicForm stories.
         * Provides a standard template for useDynamicForm stories.
