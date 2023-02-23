@@ -59,7 +59,7 @@ import { Box } from '@mui/material';
  * @param {object} props.layout - the layout object
  * @param {boolean} props.disabled - whether the field is disabled
  * @param {FieldOptions} props.options - various options for the fields
- * @returns
+ * @returns {React.ReactElement | null} - the rendered AnyField
  */
 const AnyField = ({ control, rules, layout, options, ...props }) => {
   if (layout.hidden) {

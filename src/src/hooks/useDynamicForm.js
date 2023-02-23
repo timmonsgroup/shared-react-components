@@ -17,6 +17,13 @@ import {
 import { objectReducer } from '../helpers';
 
 /**
+ * @typedef {Object} UseDynamicFormReturn
+ * @property {Array<object>} sections - Array of the sections of the form.
+ * @property {boolean} layoutLoading - the layout object
+ * @property {UseFormReturn} ...rest - all the properties of useFom
+ *
+
+/**
  * useDynamicForm is a hook that handles the fields and validations for a dynamic form.
  * @param {string} layoutOptions.type - object type for standard get layout endpoint
  * @param {string} layoutOptions.key - layout key for standard get layout endpoint
@@ -24,9 +31,9 @@ import { objectReducer } from '../helpers';
  * @param {object} layoutOptions.layout - a layout object to use to build the dynamic form instead of pulling from an url
  * @param {object} incomingValues - object of the defaut or initial values for the form (optional)
  * @param {string} urlDomain - domain to use for the url (optional)
- * @param {function} setLoading - function to set the loading state of the form for async conditional items (optional)
- * @param {object} asyncOptions - options for async operations (optional)
- * @returns {...useForm, array, boolean} - all the properties of useFom, and array of the sections, a loading boolean
+ * @param {function?} setLoading - function to set the loading state of the form for async conditional items (optional)
+ * @param {object?} asyncOptions - options for async operations (optional)
+ * @returns {UseDynamicFormReturn} - all the properties of useFom, an array of the sections, a loading boolean
  */
 export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomain, setLoading, asyncOptions) => {
   const [parsedLayout, layoutLoading] = useFormLayout(layoutOptions?.type, layoutOptions?.key, layoutOptions?.url, urlDomain, asyncOptions, layoutOptions?.layout);
@@ -417,5 +424,5 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     ...useFormObject,
     sections,
     layoutLoading,
-  }
-}
+  };
+};

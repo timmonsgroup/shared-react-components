@@ -25,7 +25,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {object} props.fieldOptions.icon.color - the color of the icon
  * @param {object} props.fieldOptions.icon.beforeLabel - whether to display the icon before the label
  * @param {object} props.fieldOptions.icon.iconComponent - a component to use instead of the default InfoIcon
- * @returns
+ * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
 const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, asFormInput = false, fieldOptions = {} }) => {
   const sx = {
