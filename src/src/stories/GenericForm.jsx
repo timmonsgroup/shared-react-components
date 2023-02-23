@@ -20,6 +20,8 @@ import { useSnackbar } from 'notistack';
 import axios from 'axios';
 
 /**
+ * The generic form component
+ * @function GenericForm
  * @param {object} props
  * @param {string} props.formTitle - The title of the form
  * @param {string} props.headerTitle - The title of the header
@@ -42,7 +44,7 @@ import axios from 'axios';
  * @param {function} props.formatSubmitMessage - A function to format the success toaster message
  * @param {function} props.formatSubmitError - A function to format the error message (sends the error as a parameter and true if it came from the server)
  * @param {object} props.asyncOptions - The options for the async select fields
- * @returns {React.ReactElement}
+ * @returns {React.ReactElement} - The component
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,

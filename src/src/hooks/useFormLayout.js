@@ -262,6 +262,7 @@ export function parseField(field, asyncFieldsMap) {
       hidden,
       [REQUIRED]: !!field[REQUIRED],
       disabled,
+      placeholder: field.placeholder,
       iconHelperText: field.iconHelperText,
       helperText: field.helperText,
       requiredErrorText: field.requiredErrorText,

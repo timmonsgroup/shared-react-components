@@ -1,5 +1,5 @@
 //Third party bits
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useForm } from 'react-hook-form';
@@ -41,6 +41,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
   const [parsedLayout, layoutLoading] = useFormLayout(layoutOptions?.type, layoutOptions?.key, layoutOptions?.url, urlDomain, asyncOptions, layoutOptions?.layout);
 
   const [sections, setSections] = useState([]);
+  const processedSections = useRef([]);
   const [hasWatches, setHasWatches] = useState(false);
   const [validations, setValidations] = useState({});
 
@@ -74,6 +75,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     if (layoutLoading) {
       return;
     }
+    //Wipe out the sections HMR can cause the sections to be duplicated if we don't do this
+    processedSections.current = [];
 
     // Will hold the validation schema for the form
     const dynValid = {};
@@ -127,10 +130,14 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         name: section.name || section.title,
         fields: []
       };
-
+      let visibleCount = 0;
       section.fields.forEach((fieldPath) => {
         const field = parsedLayout.fields.get(fieldPath) || {};
         const { render } = field || {};
+        if (!render.hidden)  {
+          visibleCount++;
+        }
+
         formSection.fields.push({ render: { ...render } });
 
         // TODO: Nuke this when defaultValue is implemented
@@ -140,7 +147,12 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           setValue(render.name, render.choices[0]);
         }
       });
-      renderSections.push(formSection);
+
+      processedSections.current.push(formSection);
+
+      if (visibleCount > 0){
+        renderSections.push(formSection);
+      }
     });
 
     setSections(renderSections);
@@ -168,7 +180,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         const revalidates = {};
 
         // Loop through the fields that need to be updated
-        const layoutSections = sections.map(section => {
+        const layoutSections = processedSections.current.map(section => {
+          let visibleCount = 0;
           updatedFields.forEach(field => {
             const fieldObject = parsedLayout.fields.get(field.id);
             const fndField = section.fields.find(x => x.render.name === fieldObject.id);
@@ -207,13 +220,18 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               if (fndField.render.disabled) {
                 resetFields[fieldObject.id] = true;
               }
+
+              if (!render.hidden) {
+                visibleCount++;
+              }
             }
           });
-          return section;
+
+          return {...section, visibleCount};
         });
 
         // Update the sections
-        setSections(layoutSections);
+        setSections(layoutSections.filter(section => section.visibleCount > 0));
 
         // This will trigger the useMemo to update the validation schema
         // That hook will then trigger the useEffect to revalidate the form
@@ -334,7 +352,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
                 if (triggerChoice) {
                   // If the renderId is a dot notation, we need to dig into the object
                   // Otherwise, we can just use the value
-                  const renderValue = objectReducer(triggerChoice, renderId);
+                  const renderValue = objectReducer(triggerChoice, renderId) || '';
                   if (renderValue !== undefined && renderValue !== null) {
                     setValue(fieldId, renderValue);
                   }
