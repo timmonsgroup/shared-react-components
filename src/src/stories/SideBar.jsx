@@ -36,7 +36,7 @@ SideBarButton.propTypes = {
 /**
  * Wrapper of the Mui Drawer component
  * Sets some base properties
- * @returns
+ * @returns {object}
  */
 const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, aboutThisSideBarLabel, onAbtThisClick, onSideBarToggle, sx }, ref) => {
   const [checked, setChecked] = React.useState(initiallyOpen || false);

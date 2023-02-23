@@ -73,7 +73,7 @@ export const useConfig = (config_key) => {
  * @param {*} url
  * @param {*} defaultValue
  * @param {*} isDev
- * @returns
+ * @returns {object}
  */
 export const useStaleData = (url, defaultValue = [], isDev, clearCache, forceError) => {
   const [data, setData] = useState(defaultValue);

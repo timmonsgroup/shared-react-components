@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
  * Exposes open state and setter along with functions set the state.
  * @param {*} modalClosed function to call when the modal is closed
  * @param {*} debugId string to use for debugging. If not provided the debug method will log
- * @returns
+ * @returns {object}
  */
 const useIsModal = (modalClosed, debugId) => {
   const [open, setOpen] = useState(true);

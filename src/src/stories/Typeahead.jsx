@@ -15,7 +15,7 @@ import { object } from 'yup';
  * labelSX is styling for the label
  * textFieldSX is styling for the text field this is another MUI wrapper contains an input and the dropdown icon
  * inputLabelSX is styling for the input inside the textField
- * @returns
+ * @returns {object}
  * @param {object} props
  */
 const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, disabled, renderSX, labelSX, inputSX, textFieldSX, ...props }, ref) => {
@@ -49,7 +49,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, di
   /**
    * Helper method to get the option object can either be an object or just the value of the id
    * @param {*} option
-   * @returns
+   * @returns {object}
    */
   const getOpObj = (option) => {
     if (!option.id && !option.value) {

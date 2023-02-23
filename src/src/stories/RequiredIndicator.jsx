@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 /**
  * Simple component to render an asterisk if the prop is true
  * @param {*} isRequired boolean to indicate if the field is required
- * @returns
+ * @returns {object}
  */
 const RequiredIndicator = ({ isRequired }) => {
   if (isRequired) {

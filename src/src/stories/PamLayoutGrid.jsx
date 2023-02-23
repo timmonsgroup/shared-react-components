@@ -107,7 +107,7 @@ const baseColumnConfig = (layoutColumn, nullValue) => {
  * It is used to render the cell as 'N/A' if the date is null or undefined
  * @param {Date|String} value
  * @param {String} defaultValue
- * @returns
+ * @returns {object}
  */
 const getDateOrDefault = (value, defaultValue) => {
 
@@ -193,7 +193,7 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
  * @param {Object} props.actions - The actions to render
  * @param {Object} props.params - The params from the grid
  * @param {Object} props.themeGroup - The theme group to use for the grid actions
- * @returns
+ * @returns {object}
  */
 const GridActions = ({actions, params, themeGroup}) => {
   const theme = useTheme();

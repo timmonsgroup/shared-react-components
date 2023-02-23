@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
  * Helper function to get a value from localStorage.
  * @param {*} key
  * @param {*} defaultValue
- * @returns
+ * @returns {object}
  */
 export const getStorage = (key, defaultValue) => {
   const stored = localStorage.getItem(key);
@@ -23,7 +23,7 @@ export const getStorage = (key, defaultValue) => {
  * A hook to use localStorage as a model for state.
  * @param {string} key
  * @param {any} defaultValue
- * @returns
+ * @returns {object}
  */
 export const useLocalStorage = (key, defaultValue) => {
   const [value, setValue] = useState(() => getStorage(key, defaultValue));

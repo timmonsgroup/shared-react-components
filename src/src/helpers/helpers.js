@@ -2,7 +2,7 @@
  * Deeply clone an object.
  * @param {*} target
  * @param {*} source
- * @returns
+ * @returns {object}
  */
 export const mergeDeep = (target, source) => {
   if (typeof target !== 'object') {
@@ -31,7 +31,7 @@ export const mergeDeep = (target, source) => {
  * Cases, we don't need no stinking cases.
  * @param {*} valueA
  * @param {*} valueB
- * @returns
+ * @returns {object}
  */
 export function caseless(valueA, valueB) {
   if (valueA === valueB) {
@@ -54,7 +54,7 @@ export function caseless(valueA, valueB) {
  * Used to correctly handle sorting floats
  * @param valueA
  * @param valueB
- * @returns
+ * @returns {object}
  */
 export function floatCompare(valueA, valueB) {
   const nA = parseFloat(valueA);
@@ -128,7 +128,7 @@ export const getSectionChoices = (layout, sectionName, modelName) => {
  * Simple layout process method to convert the layout object into a format that the layout builder can use.
  * If you are using GenericForm you should be using the useFormLayout and parseFormLayout methods instead.
  * @param {object} layout - The layout object to process
- * @returns
+ * @returns {object}
  */
 export const processLayout = (layout) => {
   if (!layout || !layout.sections) {
@@ -364,7 +364,7 @@ export function floatFormatter(inc, decimalPlaces) {
  * @param {Array} value - Array to process
  * @param {string} prop - Display property (also used for sorting)
  * @param {string} delim - String to place between each value
- * @returns
+ * @returns {object}
  */
 export function arrayToDisplay(value, prop = 'name', delim = ', ') {
   return value ? sortOn(value, prop).map((reg) => reg[prop]).join(delim) : null;

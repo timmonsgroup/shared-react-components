@@ -7,7 +7,7 @@ import { Close } from '@mui/icons-material';
 /**
  * Wrapper of the Mui Dialog component
  * Prevent closing by clicking outside of the dialog by NOT passing in a handleClose prop
- * @returns
+ * @returns {object}
  */
 const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open, showX, children, hideActions, hideCancel, hideOk, ...props }) => {
   const titleRender = () => {

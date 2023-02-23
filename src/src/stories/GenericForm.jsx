@@ -39,7 +39,7 @@ import axios from 'axios';
  * @param {boolean} props.suppressErrorToast - Whether or not to suppress the success toast
  * @param {function} props.formatSubmitMessage - A function to format the success toaster message
  * @param {function} props.formatSubmitError - A function to format the error message (sends the error as a parameter and true if it came from the server)
- * @returns
+ * @returns {object}
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,

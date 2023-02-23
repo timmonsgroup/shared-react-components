@@ -311,7 +311,7 @@ export function getSelectValue(multiple = false, inData) {
  * @param {*} field - the field object should be in the syntax of the form builder (parseField)
  * @param {*} formData - the data from the database. This should be ALL the form values.
  * @param {*} isNested - not yet implemented, but will be used to parse nested (cluster) fields.
- * @returns
+ * @returns {object}
  */
 // eslint-disable-next-line no-unused-vars
 export function getFieldValue(field, formData, isNested = false) {
