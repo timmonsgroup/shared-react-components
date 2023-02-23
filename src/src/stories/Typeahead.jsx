@@ -31,7 +31,7 @@ import FormErrorMessage from './FormErrorMessage';
  * @param {object} props.textFieldProps - props to pass to the text field
  * @param {object} props.textFieldProps.inputLabelProps - props to pass to the input label
  * @param {object} props.textFieldProps.inputProps - props to pass to the input
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, error,
   disabled, renderSX, labelSX, inputSX, textFieldSX, iconHelperText, helperText, fieldOptions, ...props
@@ -65,8 +65,8 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
 
   /**
    * Helper method to get the option object can either be an object or just the value of the id
-   * @param {*} option
-   * @returns
+   * @param {object} option
+   * @returns {object} the option object
    */
   const getOpObj = (option) => {
     if (!option.id && !option.value) {

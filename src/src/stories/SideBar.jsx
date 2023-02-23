@@ -36,7 +36,7 @@ SideBarButton.propTypes = {
 /**
  * Wrapper of the Mui Drawer component
  * Sets some base properties
- * @returns
+ * @returns {React.ReactElement}
  */
 const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, aboutThisSideBarLabel, onAbtThisClick, onSideBarToggle, sx }, ref) => {
   const [checked, setChecked] = React.useState(initiallyOpen || false);
@@ -63,7 +63,7 @@ const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, about
   const dw = drawerWidth || 421;
   const titleBoxWidth = drawerWidth - 38;
   const bg = sx?.backgroundColor || '#F1F1F1';
-  
+
   return (
     <>
       <SideBarButton onToggleSideBar={handleSideBarClick} isOpen={checked} dw={dw}></SideBarButton>
@@ -96,14 +96,14 @@ const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, about
           </Box>
         </Box>
 
-        <Box className="sidebar-content" 
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            justifyContent: 'space-between', 
-            marginLeft:'16px', 
-            marginRight: '15px', 
-            backgroundColor:'#fff', 
+        <Box className="sidebar-content"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            marginLeft:'16px',
+            marginRight: '15px',
+            backgroundColor:'#fff',
           }}>
           <div>
             <Box sx={{ width: `${dw}px` }}>

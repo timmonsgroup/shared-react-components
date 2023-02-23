@@ -7,7 +7,7 @@ import { Close } from '@mui/icons-material';
 /**
  * Wrapper of the Mui Dialog component
  * Prevent closing by clicking outside of the dialog by NOT passing in a handleClose prop
- * @param {*} props
+ * @param {object} props
  * @param {string} props.title - the title of the dialog
  * @param {string} props.okLabel - the label for the OK button
  * @param {string} props.cancelLabel - the label for the Cancel button
@@ -21,7 +21,7 @@ import { Close } from '@mui/icons-material';
  * @param {function} props.handleClose - the function to call when the dialog is closed
  * @param {string} props.okColor - the color of the OK button
  * @param {string} props.cancelColor - the color of the Cancel button
- * @returns
+ * @returns {React.ReactElement}
  */
 const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open, showX, children, hideActions, hideCancel, hideOk, okColor = 'primary', cancelColor = 'regressive', ...props }) => {
   const titleRender = () => {

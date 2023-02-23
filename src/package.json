@@ -9,7 +9,8 @@
   "scripts": {
     "start": "start-storybook -p 6006 -s public",
     "test": "react-scripts test",
-    "build-storybook": "build-storybook -o ../storybook-dist"
+    "build-storybook": "build-storybook -o ../storybook-dist",
+    "documentation": "jsdoc -c jsdoc.conf.json -r ./src/ -d ../storybook-dist/docs/"
   },
   "eslintConfig": {
     "extends": [

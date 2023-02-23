@@ -17,13 +17,13 @@ const defaultSX = {
   minHeight: '500px',
   minWidth: '700px',
   flexGrow: 1
-}
+};
 
 /**
  * This is the base config for a column that is used by the MUIGrid component
  * It takes a column from the layout and converts it into a config that can be used by the MUIGrid component
  * @param {Object} column - The column from the layout
- * return {Object} - The column config for the MUIGrid component
+ * @returns {Object} - The column config for the MUIGrid component
  * @see https://mui.com/components/data-grid/columns/
  */
 const baseColumnConfig = (layoutColumn, nullValue) => {
@@ -107,7 +107,7 @@ const baseColumnConfig = (layoutColumn, nullValue) => {
  * It is used to render the cell as 'N/A' if the date is null or undefined
  * @param {Date|String} value
  * @param {String} defaultValue
- * @returns
+ * @returns {object}
  */
 const getDateOrDefault = (value, defaultValue) => {
 
@@ -149,7 +149,7 @@ const addDateFormatting = (muiGridColumn) => {
   muiGridColumn.type = 'date';
   muiGridColumn.valueGetter = ({ value }) => getDateOrDefault(value, null); // Value GETTER needs to return null for the date to be displayed as N/A and for the filter to work
   muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, muiGridColumn.nullValue);
-}
+};
 
 /**
  * This provides a name value or a default value if the name is null or undefined
@@ -197,7 +197,7 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
  * @param {Object} props.params - The params from the grid
  * @param {Object} props.themeGroup - The theme group to use for the grid actions
  * @param {Boolean} props.useTypeVariant - If true then use the type to determine the variant
- * @returns
+ * @returns {React.ReactElement}
  */
 const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
   const theme = useTheme();

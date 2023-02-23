@@ -77,7 +77,7 @@ export const useConfig = (config_key) => {
  * @param {boolean} useDefault - flag to use the default value
  * @param {boolean} clearCache - flag to clear the cache
  * @param {boolean} forceError - flag to force an error
- * @returns
+ * @returns {Array<object|boolean>} data, loading
  */
 export const useStaleData = (url, defaultValue = [], useDefault, clearCache, forceError) => {
   const [data, setData] = useState(defaultValue);
@@ -112,7 +112,7 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
         setData(defaultValue);
         setLoading(false);
       }, 100);
-      
+
       // Add a cleanup function for the timeout
       return () => {
         timeRef && clearTimeout(timeRef);

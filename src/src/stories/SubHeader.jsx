@@ -7,8 +7,8 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
  * if a titleRenderr is passed in, it will be used to render the title
  * otherwise, the title will be rendered as an h3
  * if neither then no header will be rendered
- * @param {*} param0
- * @returns
+ * @param {object} props
+ * @returns {React.ReactElement}
  */
 const SubHeader = ({ title, titleRender, rightRender, color = 'accent' }) => {
   const renderTitle = () => {

@@ -21,13 +21,15 @@
     "clean:helpers": "rimraf dist/helpers/*",
     "clean:stories": "rimraf dist/stories/*",
     "clean:root": "rimraf dist/*.js",
-    "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
+    "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index && npm run build:tsd",
     "build:package-localdev": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
     "build:helpers": "set NODE_ENV=production&&babel src/src/helpers --out-dir dist/helpers --copy-files",
     "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js src/src/muiTheme.js --out-dir dist --copy-files",
-    "build-storybook": "cd src && npm run build-storybook"
+    "build-storybook": "cd src && npm run build-storybook",
+    "documentation": "cd src && npm run documentation",
+    "build:tsd": "jsdoc -t node_modules/tsd-jsdoc/dist -r ./src/src/ -d ./dist"
   },
   "eslintConfig": {
     "extends": [
@@ -89,8 +91,10 @@
     "eslint": "^8.28.0",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "jsdoc": "^4.0.2",
     "prop-types": "^15.8.1",
     "rimraf": "^3.0.2",
+    "tsd-jsdoc": "^2.5.0",
     "webpack": "^5.75.0"
   }
 }

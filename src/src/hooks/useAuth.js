@@ -350,7 +350,7 @@ const useProvideAuth = (props, whitelist) => {
   /**
    * Parse the tokens from the url and dispatch the appropriate actions
    * @param {*} tokenData
-   * @returns
+   * @returns {object}
    */
   const parseTokenAndUpdateState = async (tokenData, maybeUser) => {
     // Check to see if we have a token
@@ -598,7 +598,7 @@ const setActiveBearerToken = (bearerToken) => {
  * Reducer hook method for the auth state
  * @param {*} nextState
  * @param {*} action
- * @returns
+ * @returns {object}
  */
 const authReducer = (nextState, action) => {
   switch (action.type) {

@@ -14,6 +14,8 @@ phases:
     build:
         commands:
             - /usr/local/bin/npm run build-storybook
+            - dstatus=`/usr/local/bin/npm run documentation` || echo "doc thing failed"
+            - echo "done"
 artifacts:
     base-directory: storybook-dist
     files:
