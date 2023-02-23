@@ -7,8 +7,7 @@ import {
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
-import { createFieldValidation } from '../helpers/formHelpers.js';
-import { sortOn } from '../helpers/helpers.js';
+import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
 import axios from 'axios';
 
 const validationTypes = Object.values(VALIDATIONS);
@@ -21,9 +20,9 @@ const specialProps = Object.values(SPECIAL_ATTRS);
  * @param {string} type - object type for standard PAM get layout endpoint
  * @param {string} key - layout key for standard PAM get layout endpoint
  * @param {string} url - optional if you are not using the standard pam endpoint
- * @returns [object, boolean] - parsedLayout, loading
+ * @returns {array} - first element is the parsedLayout object second is loading boolean
  */
-export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOptions, loadedLayout = null) => {
+export function useFormLayout(type, key, url = null, urlDomain = null, asyncOptions, loadedLayout = null) {
   // Passing loadedLayout will skip the fetch and use the passed in layout
   const [data, isLoading] = useLayout(type, key, url, loadedLayout);
   const [parsedLayout, setParsedLayout] = useState(null);
@@ -46,15 +45,24 @@ export const useFormLayout = (type, key, url = null, urlDomain = null, asyncOpti
 
 /**
  * @typedef {Object} ParsedFormLayout
- * @property {Array} sections - array of parsed sections
+ * @property {Array<ParsedSection>} sections - array of parsed sections
  * @property {Map<String, Object>} fields - map of fieldId to field object
  * @property {Map<String, Object>} triggerFields - map of fieldId to field object
  */
 
 /**
+ * @typedef {Object} ParsedSection
+ * @property {string} name - section name (title and name are both used for backwards compatibility)
+ * @property {string} title - section title
+ * @property {Array<ParsedField>} fields - array of field objects
+ * @property {boolean} editable - if the section is editable
+ * @property {Array} enabled - if the section is enabled
+ */
+
+/**
  * Will parse the layout data into React Hook Form friendly format
- * @param {*} layout assumed to be in the standard PAM layout format
- * @returns @return {ParsedFormLayout} - parsed layout
+ * @param {object} layout assumed to be in the standard PAM layout format
+ * @returns {ParsedFormLayout} - parsed layout
  */
 export const parseFormLayout = async (layout, urlDomain, options) => {
   if (!layout) {
@@ -151,7 +159,16 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
   return { sections, fields, triggerFields };
 }
 
-export const parseSection = (section, fieldMap, triggerFieldMap, asyncFieldsMap) => {
+
+/**
+ * Parse a section
+ * @param {object} section
+ * @param {Map<string, ParsedField>} fieldMap - map of fieldId to field object
+ * @param {Map<string, object>} triggerFieldMap - map of triggerFieldId to field object
+ * @param {Map<string, string>} asyncFieldsMap
+ * @returns {ParsedSection} - parsed section
+ */
+export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap) {
   if (!section) {
     return {};
   }
@@ -182,8 +199,45 @@ export const parseSection = (section, fieldMap, triggerFieldMap, asyncFieldsMap)
   return parsedSection;
 };
 
+/**
+ * @typedef {object} ParsedField
+ * @property {string} id - field id
+ * @property {string} label - field label
+ * @property {string} type - field type
+ * @property {boolean} hidden - if the field is hidden
+ * @property {Array} conditions - if the field is hidden
+ * @property {object} specialProps - special props for the field
+ * @property {object} [defaultValue] - default value for the field
+ * @property {FieldRenderProps} render - render props for the field
+ */
+
+/**
+ * @typedef {object} FieldRenderProps
+ * @property {string} type - field type
+ * @property {string} label - field label
+ * @property {string} name - field name
+ * @property {boolean} hidden - if the field is hidden
+ * @property {boolean} [required] - if the field is required
+ * @property {boolean} disabled - if the field is disabled
+ * @property {string} iconHelperText - icon helper text
+ * @property {string} helperText - helper text
+ * @property {string} requiredErrorText - required error text
+ * @property {boolean} readOnly - if the field is read only
+ * @property {boolean} [multiple] - if the field is multiple
+ * @property {string} [placeholder] - placeholder text
+ * @property {object} linkFormat - link format
+ * @property {Array<object>} [choices] - choices for the field
+ * @property {YupSchema} validations - validations for the field
+ */
+
 // TODO: Create a more unified model to play nice with PamLayoutGrid
-export const parseField = (field, asyncFieldsMap) => {
+/**
+ * Parse a field
+ * @param {object} field - field object
+ * @param {Map<string, string>} asyncFieldsMap - map of async fields
+ * @returns {ParsedField} parsed field
+ */
+export function parseField(field, asyncFieldsMap) {
   if (!field) {
     return {};
   }
@@ -214,7 +268,7 @@ export const parseField = (field, asyncFieldsMap) => {
       readOnly,
       linkFormat,
     }
-  }
+  };
 
   const { data = {} } = model || {};
 
@@ -272,7 +326,12 @@ export const parseField = (field, asyncFieldsMap) => {
   return parsedField;
 }
 
-const parseValidation = (validationMap, data) => {
+/**
+ * Parse validation
+ * @param {Map<string, YupSchema>} validationMap
+ * @param {object} data
+ */
+function parseValidation(validationMap, data) {
   Object.keys(data).forEach((key) => {
     if (validationTypes.includes(key)) {
       validationMap.set(key, data[key]);
@@ -280,6 +339,27 @@ const parseValidation = (validationMap, data) => {
   });
 }
 
+/**
+ * @typedef {object} TriggerCondition
+ * @property {string} when - trigger field id
+ * @property {string} is - value to trigger on
+ * @property {object} then - conditions
+ * @property {boolean} isValid - if the field is valid
+ */
+
+/**
+ * @typedef {object} TriggerField
+ * @property {string} id - field id
+ * @property {Map<string, string>} fieldValues - map of field values
+ * @property {Map<string, string>} touches - map of fields that trigger field could influence
+ */
+
+/**
+ * Parse conditions and add them to the triggerFieldMap
+ * @param {string} fieldId - field id
+ * @param {Map<string, TriggerField>} triggerFields - map of trigger fields
+ * @param {Array<TriggerCondition>} conditions - conditions
+ */
 const parseConditions = (fieldId, triggerFields, conditions) => {
   if (conditions?.length) {
     conditions.forEach((condition) => {
@@ -308,14 +388,6 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
       triggerFields.set(triggerId, trigField);
     });
   }
-}
-
-export function getSelectValue(multiple = false, inData) {
-  if (multiple) {
-    return sortOn((inData)).map((con) => con?.id.toString());
-  }
-
-  return (inData)?.id?.toString() || '';
 }
 
 /**
@@ -409,6 +481,13 @@ export function getFieldValue(field, formData, isNested = false) {
   return { value, name };
 }
 
+
+/**
+ * This is a helper method to convert the data from the form into the format that the API expects.
+ * @param {object} field
+ * @param {Object|string|array|number} value
+ * @returns {Object|string|array|number}
+ */
 export function processFieldValue(field, value) {
   let apiValue = value;
   switch (field.type) {
@@ -465,13 +544,4 @@ export function processFieldValue(field, value) {
   }
 
   return apiValue;
-}
-
-/**
- * Covert multiselect form input into an api ready array
- * @param selections
- * @returns array of {id: number} objects
- */
-export function multiToPayload(selections) {
-  return Array.isArray(selections) ? selections.map((id) => ({ id: parseInt(id, 10) })) : [];
 }

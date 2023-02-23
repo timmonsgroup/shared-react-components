@@ -20,11 +20,13 @@ import { objectReducer } from '../helpers';
  * @typedef {Object} UseDynamicFormReturn
  * @property {Array<object>} sections - Array of the sections of the form.
  * @property {boolean} layoutLoading - the layout object
- * @property {UseFormReturn} ...rest - all the properties of useFom
+ * @property {UseFormReturn} ...rest - all the properties of useForm
  *
+ */
 
 /**
  * useDynamicForm is a hook that handles the fields and validations for a dynamic form.
+ * @function useDynamicForm
  * @param {string} layoutOptions.type - object type for standard get layout endpoint
  * @param {string} layoutOptions.key - layout key for standard get layout endpoint
  * @param {string} layoutOptions.url - url if you are not using the standard endpoint (optional)

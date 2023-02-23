@@ -7,15 +7,14 @@ import {
 import IIcon from '@mui/icons-material/InfoOutlined';
 
 /**
- * @typedef {Object} IconProps
+ * @typedef {Object} IconProps - any additional props to pass to the icon component
  */
 
 /**
  * InfoIcon is a wrapper around the MUI InfoOutlined icon (default) that displays a tooltip when clicked
- * @param {object & IconProps} props
+ * @param {object<IconProps>} props
  * @param {React.ElementType} props.iconComponent - the component to use for the icon instead of the default InfoOutlined
  * @param {string} props.infoText - the text to display in the tooltip
- *
  * @returns {React.ReactElement} an icon that displays a tooltip when clicked
  */
 const InfoIcon = ({ iconComponent, infoText, ...props }) => {
@@ -65,8 +64,7 @@ const InfoIcon = ({ iconComponent, infoText, ...props }) => {
 
 InfoIcon.propTypes = {
   iconComponent: PropTypes.elementType,
-  infoText: PropTypes.string,
-  other: PropTypes.any
+  infoText: PropTypes.string
 };
 
 export default InfoIcon;

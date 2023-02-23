@@ -98,6 +98,12 @@ ProvideAuth.propTypes = {
 
 // Hook for child components to get the auth object ...
 // ... and re-render when it changes.
+/**
+ * This hook provides the auth state and methods to its consumers
+ * It is used to manage the auth state and provide the auth state to its consumers
+ * @function useAuth
+ * @returns {object} The auth object
+ */
 export const useAuth = () => {
   // The context object will contain anything returned by useProvideAuth
   const context = useContext(authContext);
@@ -782,6 +788,7 @@ const getBootTokenFromSession = async () => {
  * This function will attempt to get the bootUser from session storage
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
+ * @function
  */
 const getBootUserFromSession = async () => {
   try {

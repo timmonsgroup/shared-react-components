@@ -4,7 +4,7 @@ import { getStorage, useLocalStorage } from './useLocalStorage.js';
 import useIsModal from './useIsModal.js';
 import {
   useFormLayout, parseFormLayout, parseSection,
-  parseField, getSelectValue, getFieldValue, processFieldValue, multiToPayload
+  parseField, getFieldValue, processFieldValue
 } from './useFormLayout.js';
 import { useDynamicForm } from './useDynamicForm.js';
 import { useToggle } from './useToggle.js';
@@ -31,8 +31,8 @@ export {
 
   // useFormLayout exports
   useFormLayout, parseFormLayout, parseSection,
-  parseField, getSelectValue, getFieldValue, processFieldValue, multiToPayload,
+  parseField, getFieldValue, processFieldValue,
 
   // useDynamicForm exports
   useDynamicForm
-}
+};

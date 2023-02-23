@@ -58,7 +58,7 @@ const GenericForm = ({
     const payload = formatPayload(data);
 
     addOrUpdate(payload, isEdit, successUrl, cancelUrl);
-  }
+  };
 
   const addOrUpdate = async (orgData, edit, successUrl, cancelUrl) => {
     setModifying(true);
@@ -101,7 +101,7 @@ const GenericForm = ({
   // so we need to manually check for this
   const preSubmit = (evt) => {
     handleSubmit(onSubmit)(evt);
-  }
+  };
 
   const rendered = () => {
     if (layoutLoading) {
@@ -158,10 +158,10 @@ const GenericForm = ({
         </Container>
       </>
     );
-  }
+  };
 
   return rendered();
-}
+};
 
 GenericForm.propTypes = {
   formTitle: PropTypes.string,
@@ -199,7 +199,7 @@ const renderFormSection = (section, control, index, options) => {
       ))}
     </div>
   );
-}
+};
 
 const renderTwoColumnSection = (section, control, index, options) => {
   // create two columns of fields
@@ -250,8 +250,8 @@ const renderTwoColumnSection = (section, control, index, options) => {
         </Grid>
       </Grid>
     </div>
-  )
-}
+  );
+};
 
 // example of choiceFormatter function
 // const choiceFormatter = (fieldId, res, otherOptions) => {
