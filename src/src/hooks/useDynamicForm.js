@@ -181,7 +181,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
         // Loop through the fields that need to be updated
         const layoutSections = processedSections.current.map(section => {
-          let visibleCount = 0;
           updatedFields.forEach(field => {
             const fieldObject = parsedLayout.fields.get(field.id);
             const fndField = section.fields.find(x => x.render.name === fieldObject.id);
@@ -220,18 +219,23 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               if (fndField.render.disabled) {
                 resetFields[fieldObject.id] = true;
               }
-
-              if (!render.hidden) {
-                visibleCount++;
-              }
             }
           });
 
-          return {...section, visibleCount};
+          let hasVisible = false;
+          // loop through the fields and break if we find a visible field
+          for (const field of section.fields) {
+            if (!field.render.hidden) {
+              hasVisible = true;
+              break;
+            }
+          }
+
+          return {...section, hasVisible};
         });
 
         // Update the sections
-        setSections(layoutSections.filter(section => section.visibleCount > 0));
+        setSections(layoutSections.filter(section => section.hasVisible));
 
         // This will trigger the useMemo to update the validation schema
         // That hook will then trigger the useEffect to revalidate the form
