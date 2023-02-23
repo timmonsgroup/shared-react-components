@@ -59,7 +59,7 @@ import { Box } from '@mui/material';
  * @param {object} props.layout - the layout object
  * @param {boolean} props.disabled - whether the field is disabled
  * @param {FieldOptions} props.options - various options for the fields
- * @returns
+ * @returns {React.ReactElement | null} - the rendered AnyField
  */
 const AnyField = ({ control, rules, layout, options, ...props }) => {
   if (layout.hidden) {
@@ -197,7 +197,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {FieldOptions} fieldOptions Various options for the field
  * @returns {function} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText }, fieldOptions) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, placeholder }, fieldOptions) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -210,6 +210,9 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
           // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
           params.inputProps['data-src-field'] = name;
           params.inputProps.readOnly = readOnly;
+          if (placeholder) {
+            params.inputProps.placeholder = placeholder;
+          }
           return (
             <>
               <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />

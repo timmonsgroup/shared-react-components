@@ -20,6 +20,8 @@ import { useSnackbar } from 'notistack';
 import axios from 'axios';
 
 /**
+ * The generic form component
+ * @function GenericForm
  * @param {object} props
  * @param {string} props.formTitle - The title of the form
  * @param {string} props.headerTitle - The title of the header
@@ -42,7 +44,7 @@ import axios from 'axios';
  * @param {function} props.formatSubmitMessage - A function to format the success toaster message
  * @param {function} props.formatSubmitError - A function to format the error message (sends the error as a parameter and true if it came from the server)
  * @param {object} props.asyncOptions - The options for the async select fields
- * @returns {React.ReactElement}
+ * @returns {React.ReactElement} - The component
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
@@ -58,7 +60,7 @@ const GenericForm = ({
     const payload = formatPayload(data);
 
     addOrUpdate(payload, isEdit, successUrl, cancelUrl);
-  }
+  };
 
   const addOrUpdate = async (orgData, edit, successUrl, cancelUrl) => {
     setModifying(true);
@@ -101,7 +103,7 @@ const GenericForm = ({
   // so we need to manually check for this
   const preSubmit = (evt) => {
     handleSubmit(onSubmit)(evt);
-  }
+  };
 
   const rendered = () => {
     if (layoutLoading) {
@@ -158,10 +160,10 @@ const GenericForm = ({
         </Container>
       </>
     );
-  }
+  };
 
   return rendered();
-}
+};
 
 GenericForm.propTypes = {
   formTitle: PropTypes.string,
@@ -199,7 +201,7 @@ const renderFormSection = (section, control, index, options) => {
       ))}
     </div>
   );
-}
+};
 
 const renderTwoColumnSection = (section, control, index, options) => {
   // create two columns of fields
@@ -250,8 +252,8 @@ const renderTwoColumnSection = (section, control, index, options) => {
         </Grid>
       </Grid>
     </div>
-  )
-}
+  );
+};
 
 // example of choiceFormatter function
 // const choiceFormatter = (fieldId, res, otherOptions) => {

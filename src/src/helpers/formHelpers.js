@@ -5,17 +5,24 @@ import {
 } from 'yup';
 
 /**
- *
+ * Create a yup schema for a string field
  * @param {string} label
  * @param {boolean} isRequired
  * @param {string} reqMessage
- * @returns {YupSchema}
+ * @returns {YupSchema} - yup schema for the field
  */
 export function yupString(label, isRequired = true, reqMessage) {
   const schema = string().label(label || 'This field');
   return isRequired ? schema.required(reqMessage) : schema;
 }
-
+/**
+ * Create a yup schema for a date field
+ * @param {*} label
+ * @param {*} isRequired
+ * @param {*} msg
+ * @param {*} reqMessage
+ * @returns {YupSchema} - yup schema for a date field
+ */
 export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
   // If you can't figure out why date validation is not working remove the "typeError(msg)" this will spit out more detail
   const schema = date()
@@ -30,27 +37,57 @@ export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
   return isRequired ? schema.required(reqMessage) : schema;
 }
 
+/**
+ * Test the value to see if it is a valid date
+ * @param {string} value
+ * @returns {boolean} - true if the value is a valid date
+ */
 export function validDateFormat(value) {
   return new RegExp(/^\d{2}\/\d{2}\/\d{4}$/).test(value);
 }
 
 /**
  * Covert multiselect form input into an api ready array
- * @param selections
- * @returns array of {id: number} objects
+ * @param {Array<object>} selections - array of selected items
+ * @returns {Array<{id: number}>} - array of selected items with id
  */
 export function multiToPayload(selections) {
   return Array.isArray(selections) ? selections.map((id) => ({ id: parseInt(id, 10) })) : [];
 }
 
+/**
+ * Create a yup schema for a typeahead field
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {string} reqMessage - message to display if the field is required
+ * @returns {YupSchema} - yup schema for the field
+ */
 export function yupTypeAhead(label, isRequired = true, reqMessage) {
   return yupString(label, isRequired, reqMessage).nullable();
 }
 
+/**
+ * Create a yup schema for a string field that ensures the value is trimmed
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {string} trimMsg - message to display if the field is not trimmed
+ * @param {string} reqMessage - message to display if the field is required
+ * @returns {YupSchema} - yup schema for the field
+ */
 export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
   return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces').strict(true);
 }
 
+/**
+ * Create a yup schema for an integer field that checks max/min length
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {number} maxLength - max length of the field
+ * @param {string} msg - message to display if the field is not an integer
+ * @param {string} reqMessage - message to display if the field is required
+ * @param {number} minLength - min length of the field
+ * @returns {YupSchema}
+ */
 export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
   let schema = number().integer().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -62,6 +99,20 @@ export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, min
 
   return isRequired ? schema.required(reqMessage) : schema;
 }
+
+/**
+ * Create a yup schema for a float field that checks max/min length
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {number} int - max number of integers
+ * @param {number} frac - max number of decimals
+ * @param {number} maxLength - max length of the field
+ * @param {string} msg - message to display if the field is not in the correct format
+ * @param {string} maxValue - max value of the field
+ * @param {string} reqMessage - message to display if the field is required
+ * @param {number} minLength - min length of the field
+ * @returns {YupSchema}
+ */
 export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength) {
   let formatMessage = isNaN(parseInt(int)) && isNaN(parseInt(frac)) ? 'Invalid number format' : msg;
   let schema = number().nullable().label(label)
@@ -89,6 +140,16 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
   return isRequired ? schema.required(reqMessage) : schema;
 }
 
+/**
+ * Create a yup schema for a currency field that checks max/min length
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {number} maxLength - max length of the field
+ * @param {string} msg - message to display if the field is not formatted correctly
+ * @param {string} reqMessage - message to display if the field is required
+ * @param {number} minLength - min length of the field
+ * @returns {YupSchema} - yup schema for a currency field
+ */
 export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
   let schema = number().nullable().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -104,7 +165,15 @@ export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage
   return isRequired ? schema.required(reqMessage) : schema;
 }
 
-const addMinLength = (schema, label, minLength) => {
+
+/**
+ * Add a min length test to a yup schema
+ * @param {YupSchema} schema
+ * @param {string} label
+ * @param {number} minLength
+ * @returns {YupSchema} - yup schema with a min length test
+ */
+function addMinLength(schema, label, minLength) {
   const pMin = parseInt(minLength);
   if (!isNaN(pMin)) {
     return schema.test('minLength', `${label} cannot be less than ${pMin} characters`, (value, context) => (
@@ -112,9 +181,16 @@ const addMinLength = (schema, label, minLength) => {
     ));
   }
   return schema;
-};
+}
 
-const addMaxLength = (schema, label, maxLength) => {
+/**
+ * Add a max length test to a yup schema
+ * @param {YupSchema} schema
+ * @param {string} label
+ * @param {number} maxLength
+ * @returns {YupSchema} - yup schema with a max length test
+ */
+function addMaxLength(schema, label, maxLength) {
   const pMax = parseInt(maxLength);
   if (!isNaN(pMax)) {
     return schema.test('maxLength', `${label} cannot be more than ${pMax} characters`, (value, context) => (
@@ -122,8 +198,18 @@ const addMaxLength = (schema, label, maxLength) => {
     ));
   }
   return schema;
-};
+}
 
+/**
+ * Trim a string and check max/min and remove any leading or trailing spaces
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {number} maxLength - max length of the field
+ * @param {string} msg - message to display if the field is not formatted correctly
+ * @param {string} reqMessage - message to display if the field is required
+ * @param {number} minLength - min length of the field
+ * @returns {YupSchema} - yup schema for a string field
+ */
 export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
   let schema = yupTrimString(label, isRequired, msg, reqMessage);
   // Check for and add tests max/min Length if needed
@@ -132,12 +218,25 @@ export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMe
   return schema;
 }
 
+/**
+ * Create a yup schema for a multiselect field
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {string} reqMessage - message to display if the field is required
+ * @returns {YupSchema} - yup schema for a string field
+ */
 export function yupMultiselect(label, isRequired = true, reqMessage) {
   const message = reqMessage || 'Please select at least one item';
   const schema = array().label(label || 'This field');
   return isRequired ? schema.required(message).min(1, message) : schema;
 }
 
+/**
+ * Extract the id of the selected item from the data
+ * @param {boolean} multiple - is the field a multiselect
+ * @param {object} inData - data to be extracted and formatted
+ * @returns {string} - string of the id of the selected item or array of ids of selected items
+ */
 export function getSelectValue(multiple, inData) {
   if (multiple) {
     return sortOn((inData)).map((con) => con?.id.toString());
@@ -146,12 +245,24 @@ export function getSelectValue(multiple, inData) {
   return (inData)?.id?.toString() || '';
 }
 
+/**
+ * Create a yup schema for a generic or custom object field
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {string} reqMessage - message to display if the field is required
+ * @returns {YupSchema} - yup schema for an object field
+ */
 export function yupObject(label, isRequired = false, reqMessage) {
   // Need nullable to avoid type error on 'object' even if required
   const schema = object().label(label).nullable();
   return isRequired ? schema.required(reqMessage) : schema;
 }
 
+/**
+ * Return whether or not the value is a valid currency format
+ * @param {string} value
+ * @returns {boolean} - true if the value is a valid currency format
+ */
 export function validCurrencyFormat(value) {
   return new RegExp(/^-?\d+\.?\d{0,2}$/).test(value);
 }
@@ -163,7 +274,7 @@ export function validCurrencyFormat(value) {
  * @param {number} value
  * @param {number} i - number of digits before decimal
  * @param {number} f - number of digits after decimal
- * @returns boolean
+ * @returns {boolean} - true if the value is a valid double format
  */
 export function validDoubleFormat(value, i = 4, f = 4) {
   const pInt = parseInt(i);
@@ -177,7 +288,15 @@ export function validDoubleFormat(value, i = 4, f = 4) {
   return re;
 }
 
-export const createFieldValidation = (type, label, validationMap, field) => {
+/**
+ * Create a yup schema for a given field type
+ * @param {number} type
+ * @param {string} label
+ * @param {Map} validationMap
+ * @param {object} field
+ * @returns {YupSchema} - yup schema for a field
+ */
+export function createFieldValidation (type, label, validationMap, field) {
   let validation = null;
   const required = validationMap.get(VALIDATIONS.REQUIRED);
   const maxLength = validationMap.get(VALIDATIONS.MAX_LENGTH);
