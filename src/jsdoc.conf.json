@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": [
+      "src/src"
+    ],
+    "exclude": [
+      "node_modules/",
+      "**/node_modules/"
+    ],
+    "excludePattern": "(^|\\/|\\\\)_|node_modules"
+  }
+}
