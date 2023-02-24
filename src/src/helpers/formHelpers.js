@@ -141,7 +141,7 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
  * @param {string} label - label for the field
  * @param {string|number} maxValue - the max value the field can be
  * @param {boolean} isInt - should the test be for an integer or a float
- * @returns
+ * @returns {YupSchema}
  */
 const addMaxValue = (schema, label, maxValue, isInt) => {
   // Check if maxValue is a number
@@ -170,7 +170,7 @@ const addMaxValue = (schema, label, maxValue, isInt) => {
  * @param {string} label - label for the field
  * @param {string|number} minValue - the max value the field can be
  * @param {boolean} isInt - should the test be for an integer or a float
- * @returns
+ * @returns {YupSchema}
  */
 const addMinValue = (schema, label, minValue, isInt) => {
   // Check if minValue is a number
