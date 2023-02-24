@@ -2,7 +2,7 @@ import { useLayout } from './useData.js';
 import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
-  TODAY_DEFAULT,
+  TODAY_DEFAULT, MAX_VALUE, MIN_VALUE, MAX_LENGTH, MIN_LENGTH,
   REQUIRED
 } from '../constants.js';
 import { useEffect, useState } from 'react';
@@ -61,6 +61,7 @@ export function useFormLayout(type, key, url = null, urlDomain = null, asyncOpti
 
 /**
  * Will parse the layout data into React Hook Form friendly format
+ * @function parseFormLayout
  * @param {object} layout assumed to be in the standard PAM layout format
  * @returns {ParsedFormLayout} - parsed layout
  */
@@ -83,25 +84,27 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
   // Create validations for each field that has conditional validations
   triggerFields.forEach((trigField) => {
     trigField.fieldValues.forEach((fieldValues) => {
-      fieldValues.forEach((triggeredValidations, aFI) => {
+      fieldValues.forEach((triggeredUpdates, aFI) => {
         const layout = new Map();
         const validationProps = new Map();
-        triggeredValidations.forEach((validation) => {
+        const field = fields.get(aFI);
+        // Parse the validation props from the base field first
+        parseValidation(validationProps, field.render, field.id === 'moMoney');
+        triggeredUpdates.forEach((property) => {
           // loop through validation object
-          Object.keys(validation).forEach((key) => {
+          Object.keys(property).forEach((key) => {
             // Setting any dynamic rendering layout like "required" or "disabled" that must be visually represented
             if (conditionalRenderProps.includes(key)) {
-              layout.set(key, validation[key]);
+              layout.set(key, property[key]);
             }
 
             // Setting the actual validation props
             if (validationTypes.includes(key)) {
-              validationProps.set(key, validation[key]);
+              // Any validation props in here will override the base field validation props
+              validationProps.set(key, property[key]);
             }
           });
         });
-
-        const field = fields.get(aFI);
 
         const { type, label } = field;
         const mergedField = { ...field };
@@ -255,11 +258,17 @@ export function parseField(field, asyncFieldsMap) {
     hidden,
     specialProps: {},
     [DEFAULT_VALUE]: field[DEFAULT_VALUE],
+    // Note any validation that are needed for a trigger field should be added here
+    // The triggerfield logic will parse the base field first then the trigger field (which allows for overrides via "then")
     render: {
       type: type,
       label,
       name,
       hidden,
+      [MAX_VALUE]: field[MAX_VALUE],
+      [MIN_VALUE]: field[MIN_VALUE],
+      [MAX_LENGTH]: field[MAX_LENGTH],
+      [MIN_LENGTH]: field[MIN_LENGTH],
       [REQUIRED]: !!field[REQUIRED],
       disabled,
       placeholder: field.placeholder,

@@ -279,20 +279,50 @@ export const layout = {layout:{
           'disabled': false
         },
         {
-          'label': 'Funding',
-          'path': 'fedFunding',
+          'label': 'Integer Field',
+          'path': 'intTest',
+          'type': 2,
+          'iconHelperText': 'Interger is intTest.',
+          'helperText': 'I are current.',
+          'placeholder': 'I was once a float like you',
+          'minValue': 1.01,
+          'maxValue': 100,
+          'model': {
+            'id': 8,
+            'modelid': 10,
+            'type': 2,
+            'name': 'intTest',
+            'data': {}
+          },
+          'required': true,
+          'disabled': false
+        },
+        {
+          'label': 'More Money',
+          'path': 'moMoney',
           'type': 4,
-          'iconHelperText': 'Currency is strange.',
+          'iconHelperText': 'Currency is moMoney.',
           'helperText': 'I are current.',
           'placeholder': 'I don\'t know you',
           'minValue': 0.01,
+          'hidden': true,
           'model': {
             'id': 8,
             'modelid': 10,
             'type': 4,
-            'name': 'fedFunding',
+            'name': 'moMoney',
             'data': {}
           },
+          'conditions': [
+            {
+              'then': {
+                'hidden': false,
+                'minValue': 1.01
+              },
+              'when': 'fireDepartment',
+              'isValid': true
+            }
+          ],
           'required': true,
           'disabled': false
         }

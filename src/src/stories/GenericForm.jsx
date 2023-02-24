@@ -150,9 +150,7 @@ const GenericForm = ({
                       <hr />
                     </>
                   }
-                  <CardContent>
-                    {theSection(section, control, index, sectOpts)}
-                  </CardContent>
+                  {theSection(section, control, index, sectOpts)}
                 </Card>
               );
             })}
@@ -205,6 +203,10 @@ const renderFormSection = (section, control, index, options) => {
 
 const renderTwoColumnSection = (section, control, index, options) => {
   // create two columns of fields
+  if (section.visible === false) {
+    return null;
+  }
+
   let leftCol = [];
   let rightCol = [];
   if (options?.alternatingCols) {
@@ -222,7 +224,7 @@ const renderTwoColumnSection = (section, control, index, options) => {
   }
 
   return (
-    <div key={index}>
+    <CardContent key={index}>
       {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
       <Grid
         container
@@ -251,7 +253,7 @@ const renderTwoColumnSection = (section, control, index, options) => {
           ))}
         </Grid>
       </Grid>
-    </div>
+    </CardContent>
   );
 };
 
