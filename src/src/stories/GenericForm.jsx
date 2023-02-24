@@ -44,12 +44,17 @@ import axios from 'axios';
  * @param {function} props.formatSubmitMessage - A function to format the success toaster message
  * @param {function} props.formatSubmitError - A function to format the error message (sends the error as a parameter and true if it came from the server)
  * @param {object} props.asyncOptions - The options for the async select fields
+ * @param {boolean} props.hideEmptySections - Whether or not to render sections that have no visible fields
+ * @param {string} props.cancelColor - The color of the cancel button
+ * @param {string} props.submitColor - The color of the submit button
+ * @param {string} props.editColor - The color of the edit button
  * @returns {React.ReactElement} - The component
  */
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
   domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false, iconOptions = {},
-  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions, cancelColor = 'tertiary', submitColor = 'primary', editColor = 'primary'
+  suppressSuccessToast, suppressErrorToast, formatSubmitMessage, formatSubmitError, asyncOptions, cancelColor = 'tertiary',
+  submitColor = 'primary', editColor = 'primary', hideEmptySections = true
 }) => {
   const [modifying, setModifying] = useState(false);
   const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
@@ -117,6 +122,7 @@ const GenericForm = ({
     const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
     const sectOpts = twoColumn ? { alternatingCols } : {};
     sectOpts.iconOptions = iconOptions;
+    sectOpts.hideEmptySections = hideEmptySections;
 
     return (
       <>
@@ -173,6 +179,7 @@ GenericForm.propTypes = {
     type: PropTypes.string,
     key: PropTypes.string,
     url: PropTypes.string,
+    layout: PropTypes.object,
   }),
   twoColumn: PropTypes.bool,
   alternatingCols: PropTypes.bool,
@@ -182,11 +189,25 @@ GenericForm.propTypes = {
   formatPayload: PropTypes.func.isRequired,
   domainUrl: PropTypes.string,
   unitLabel: PropTypes.string,
-}
+  helpText: PropTypes.func,
+  headerTitle: PropTypes.string,
+  iconOptions: PropTypes.object,
+  submitColor: PropTypes.string,
+  editColor: PropTypes.string,
+  cancelColor: PropTypes.string,
+  hideEmptySections: PropTypes.bool,
+  formatSubmitMessage: PropTypes.func,
+  formatSubmitError: PropTypes.func,
+  suppressErrorToast: PropTypes.bool
+};
 
 const renderFormSection = (section, control, index, options) => {
+  if (section.visible === false && options?.hideEmptySections) {
+    return null;
+  }
+
   return (
-    <div key={index}>
+    <CardContent key={index}>
       {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
       {section.fields.map((field, fIndex) => (
         <AnyField
@@ -197,13 +218,13 @@ const renderFormSection = (section, control, index, options) => {
           options={{ icon: options?.iconOptions }}
         />
       ))}
-    </div>
+    </CardContent>
   );
 };
 
 const renderTwoColumnSection = (section, control, index, options) => {
   // create two columns of fields
-  if (section.visible === false) {
+  if (section.visible === false && options?.hideEmptySections) {
     return null;
   }
 
