@@ -57,6 +57,7 @@ export function useFormLayout(type, key, url = null, urlDomain = null, asyncOpti
  * @property {Array<ParsedField>} fields - array of field objects
  * @property {boolean} editable - if the section is editable
  * @property {Array} enabled - if the section is enabled
+ * @property {number} order - order of the section
  */
 
 /**
@@ -89,7 +90,9 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
         const validationProps = new Map();
         const field = fields.get(aFI);
         // Parse the validation props from the base field first
-        parseValidation(validationProps, field.render, field.id === 'moMoney');
+        parseValidation(validationProps, field.modelData);
+        parseValidation(validationProps, field.render);
+
         triggeredUpdates.forEach((property) => {
           // loop through validation object
           Object.keys(property).forEach((key) => {
@@ -160,8 +163,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
   }
 
   return { sections, fields, triggerFields };
-}
-
+};
 
 /**
  * Parse a section
@@ -176,10 +178,10 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
     return {};
   }
   const { layout, editable, enabled } = section;
-
   const parsedSection = {
     name: section.name,
     title: section.title,
+    order: section.order,
     editable,
     enabled,
     fields: [],
@@ -258,6 +260,7 @@ export function parseField(field, asyncFieldsMap) {
     hidden,
     specialProps: {},
     [DEFAULT_VALUE]: field[DEFAULT_VALUE],
+    modelData: model.data,
     // Note any validation that are needed for a trigger field should be added here
     // The triggerfield logic will parse the base field first then the trigger field (which allows for overrides via "then")
     render: {
@@ -341,9 +344,12 @@ export function parseField(field, asyncFieldsMap) {
  * @param {Map<string, YupSchema>} validationMap
  * @param {object} data
  */
-function parseValidation(validationMap, data) {
+function parseValidation(validationMap, data, debug = false) {
   Object.keys(data).forEach((key) => {
-    if (validationTypes.includes(key)) {
+    if (debug) {
+      console.log('~parseValidation~', key, data[key]);
+    }
+    if (validationTypes.includes(key) && data[key] !== undefined) {
       validationMap.set(key, data[key]);
     }
   });

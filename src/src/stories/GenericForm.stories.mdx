@@ -304,20 +304,20 @@ export const layout = {layout:{
           'iconHelperText': 'Currency is moMoney.',
           'helperText': 'I are current.',
           'placeholder': 'I don\'t know you',
-          'minValue': 0.01,
           'hidden': true,
           'model': {
+            'data': {
+              'minValue': 2.01
+            },
             'id': 8,
             'modelid': 10,
             'type': 4,
-            'name': 'moMoney',
-            'data': {}
+            'name': 'moMoney'
           },
           'conditions': [
             {
               'then': {
-                'hidden': false,
-                'minValue': 1.01
+                'hidden': false
               },
               'when': 'fireDepartment',
               'isValid': true
