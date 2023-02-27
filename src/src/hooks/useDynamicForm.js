@@ -41,7 +41,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
   const [parsedLayout, layoutLoading] = useFormLayout(layoutOptions?.type, layoutOptions?.key, layoutOptions?.url, urlDomain, asyncOptions, layoutOptions?.layout);
 
   const [sections, setSections] = useState([]);
-  const processedSections = useRef([]);
   const [hasWatches, setHasWatches] = useState(false);
   const [validations, setValidations] = useState({});
 
@@ -75,8 +74,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     if (layoutLoading) {
       return;
     }
-    //Wipe out the sections HMR can cause the sections to be duplicated if we don't do this
-    processedSections.current = [];
 
     // Will hold the validation schema for the form
     const dynValid = {};
@@ -128,7 +125,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     parsedLayout.sections.forEach(section => {
       const formSection = {
         name: section.name || section.title,
-        fields: []
+        fields: [],
+        visible: false
       };
       let visibleCount = 0;
       section.fields.forEach((fieldPath) => {
@@ -148,11 +146,8 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         }
       });
 
-      processedSections.current.push(formSection);
-
-      if (visibleCount > 0){
-        renderSections.push(formSection);
-      }
+      formSection.visible = visibleCount > 0;
+      renderSections.push(formSection);
     });
 
     setSections(renderSections);
@@ -180,8 +175,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         const revalidates = {};
 
         // Loop through the fields that need to be updated
-        const layoutSections = processedSections.current.map(section => {
-          let visibleCount = 0;
+        const layoutSections = sections.map(section => {
           updatedFields.forEach(field => {
             const fieldObject = parsedLayout.fields.get(field.id);
             const fndField = section.fields.find(x => x.render.name === fieldObject.id);
@@ -220,18 +214,25 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
               if (fndField.render.disabled) {
                 resetFields[fieldObject.id] = true;
               }
-
-              if (!render.hidden) {
-                visibleCount++;
-              }
             }
           });
 
-          return {...section, visibleCount};
+          let hasVisible = false;
+          // loop through the fields and break if we find a visible field
+          for (const field of section.fields) {
+            if (!field.render.hidden) {
+              hasVisible = true;
+              break;
+            }
+          }
+
+          section.visible = hasVisible;
+
+          return section;
         });
 
         // Update the sections
-        setSections(layoutSections.filter(section => section.visibleCount > 0));
+        setSections(layoutSections);
 
         // This will trigger the useMemo to update the validation schema
         // That hook will then trigger the useEffect to revalidate the form

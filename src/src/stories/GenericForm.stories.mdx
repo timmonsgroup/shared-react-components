@@ -260,57 +260,6 @@ export const layout = {layout:{
 ]
         },
         {
-          'label': 'Department Type',
-          'path': 'fdType',
-          'type': 0,
-          'model': {
-            'id': 8,
-            'modelid': 10,
-            'type': 0,
-            'name': 'fdType',
-            'data': {}
-          },
-          'iconHelperText': 'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
-          'required': false,
-          'placeholder': 'Woo woo wee woo',
-          'readOnly': true,
-          'conditions': [
-            {
-              'then': {
-                'renderPropertyId': 'fireDepartmentType.name'
-              },
-              'when': 'fireDepartment',
-              'isValid': true
-            }
-          ]
-        },
-        {
-          'label': 'Department ID',
-          'path': 'departmentId',
-          'type': 0,
-          'model': {
-            'id': 7,
-            'modelid': 10,
-            'type': 0,
-            'name': 'departmentId',
-            'data': {}
-          },
-          'required': false,
-          'readOnly': true,
-          'placeholder': 'But why?',
-          'hidden': true,
-          'conditions': [
-            {
-              'then': {
-                'renderPropertyId': 'fdid',
-                'hidden': false
-              },
-              'when': 'fireDepartment',
-              'isValid': true
-            }
-          ]
-        },
-        {
           'label': 'Date Application Received',
           'path': 'dateApplicationReceived',
           'type': 5,
@@ -330,19 +279,50 @@ export const layout = {layout:{
           'disabled': false
         },
         {
-          'label': 'Funding',
-          'path': 'fedFunding',
-          'type': 4,
-          'iconHelperText': 'Currency is strange.',
+          'label': 'Integer Field',
+          'path': 'intTest',
+          'type': 2,
+          'iconHelperText': 'Interger is intTest.',
           'helperText': 'I are current.',
-          'placeholder': 'I don\'t know you',
+          'placeholder': 'I was once a float like you',
+          'minValue': 1.01,
+          'maxValue': 100,
           'model': {
             'id': 8,
             'modelid': 10,
-            'type': 4,
-            'name': 'fedFunding',
+            'type': 2,
+            'name': 'intTest',
             'data': {}
           },
+          'required': true,
+          'disabled': false
+        },
+        {
+          'label': 'More Money',
+          'path': 'moMoney',
+          'type': 4,
+          'iconHelperText': 'Currency is moMoney.',
+          'helperText': 'I are current.',
+          'placeholder': 'I don\'t know you',
+          'hidden': true,
+          'model': {
+            'data': {
+              'minValue': 2.01
+            },
+            'id': 8,
+            'modelid': 10,
+            'type': 4,
+            'name': 'moMoney'
+          },
+          'conditions': [
+            {
+              'then': {
+                'hidden': false
+              },
+              'when': 'fireDepartment',
+              'isValid': true
+            }
+          ],
           'required': true,
           'disabled': false
         }
@@ -373,6 +353,32 @@ export const layout = {layout:{
             {
               'then': {
                 'renderPropertyId': 'fireDepartmentType.name',
+                'hidden': false
+              },
+              'when': 'fireDepartment',
+              'isValid': true
+            }
+          ]
+        },
+        {
+          'label': 'Department ID',
+          'path': 'departmentId',
+          'type': 0,
+          'model': {
+            'id': 7,
+            'modelid': 10,
+            'type': 0,
+            'name': 'departmentId',
+            'data': {}
+          },
+          'required': false,
+          'readOnly': true,
+          'placeholder': 'But why?',
+          'hidden': true,
+          'conditions': [
+            {
+              'then': {
+                'renderPropertyId': 'fdid',
                 'hidden': false
               },
               'when': 'fireDepartment',
