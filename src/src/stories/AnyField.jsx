@@ -154,6 +154,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   }
 
   const isNumber = type === FIELD_TYPES.CURRENCY || type === FIELD_TYPES.INT || type === FIELD_TYPES.FLOAT;
+  const prefix = readOnly ? '' : 'Enter';
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
@@ -169,7 +170,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
         value={value}
         multiline={isMultiLine}
         minRows={isMultiLine ? 3 : 1}
-        placeholder={placeholder || `Enter ${label}`}
+        placeholder={placeholder || `${prefix} ${label}`}
         variant="outlined"
       />
       {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
