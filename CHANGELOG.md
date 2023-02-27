@@ -1,5 +1,48 @@
 # Change Log #
 
+## Release 0.7.0 - 2/??/23 ##
+---
+
+#### Storybook ####
+* Dynamic Form Stories
+    * dynamicFormStoryHelpers
+        * This provides a set of helper functions to help create stories that demonstrate the use of the useDynamicForm hook.
+        * Provides a standard, modifiable default export for useDynamicForm stories.
+        * Provides a standard template for useDynamicForm stories.
+        * Provides functions to generate a base section and base field layout to build on top of to create dynamic form configurations.
+    * dynamicFormTestDataGenerator
+        * This provides a function that can take a collection of objects representing requested fields to be included in the test form and generates a layout object that can be used to configure a dynamic form.
+        * The collection of objects it takes in have the shape of: 
+        {
+          type: why type of field should be created,
+          quantity: how many fields of the requested type should be created,
+          options: some options the caller can set to affect how the fields are setup. Options can have the following properties: 
+          {
+            checkbox: if this and options.multiple are set and the field is a choice field or an object field, the field will be rendered as a checkbox selection field,
+            multiple: if this and options.checkbox are set and the field is a choice field or an object field, the field will be rendered as a checkbox selection field,
+            url: if the field is an object field or a choice field, it will populate its options with data from this provided url,
+            possibleChoices: if the field is an object field or a choice field and options.url isn't set, this will set the options for the field,
+            conditions: this is an array of condition objects that will set up interactions between this field and other fields,
+            required: if this is set to true, the field will be required,
+            disabled: if this is set to true, the field will be disabled,
+            idField: if this is set and the form is using the default choice formatter, then the choice formatter will look for a property with a key that matches the value set for idField on the data its using to setup it options. It will set the id property on the options to match property it finds,
+            readOnly: if this is set to true, the field will be read only
+          }
+        }
+      * dynamicForm.stories
+          * Story that demonstrates a large dynamic form built that has one of each possible anyField type in it.
+      * dynamicFormConditional.stories
+          * A story that demonstrates how a field be disabled based on the value of another field.
+          * A story that demonstrates how a selection field can change the source data for its options based on the value of another field.
+      * generateDynamicFormConditionalTestData
+          * A function to prepare the collection of objects used to generate the test data used for the dynamicFormConditional stories.
+
+* Documentation
+    * How to configure a layout object
+        * Documentation that explains how to create a layout object that's used to build a dynamic form. Explains what properties you can set on it and what the properties do.
+    * How to use `useDynamicForm`
+        * Documentation on how to use the `useDynamicForm` hook to build a dynamic form. 
+        * This documentation is currently incomplete
 
 ## Release 0.6.1 - 2/03/23 ##
 ---
