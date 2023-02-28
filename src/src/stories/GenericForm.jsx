@@ -68,6 +68,11 @@ const GenericForm = ({
   };
 
   const addOrUpdate = async (orgData, edit, successUrl, cancelUrl) => {
+    if (!submitUrl) {
+      console.log('No submit url provided. Data to submit:', orgData);
+      return;
+    }
+
     setModifying(true);
     try {
       const result = await axios.post(submitUrl, orgData);
@@ -145,9 +150,10 @@ const GenericForm = ({
               if (index) {
                 sx.marginTop = '16px';
               }
+              const hasTopText = formTitle || helpText;
               return (
                 <Card key={index} sx={sx}>
-                  {index === 0 && formTitle && helpText &&
+                  {index === 0 && hasTopText &&
                     <>
                       <CardContent sx={{ paddingBottom: '0px' }}>
                         {formTitle && <Typography variant="sectionHeader">{formTitle}</Typography>}
@@ -185,7 +191,7 @@ GenericForm.propTypes = {
   alternatingCols: PropTypes.bool,
   onSuccess: PropTypes.func,
   suppressSuccessToast: PropTypes.bool,
-  submitUrl: PropTypes.string.isRequired,
+  submitUrl: PropTypes.string,
   formatPayload: PropTypes.func.isRequired,
   domainUrl: PropTypes.string,
   unitLabel: PropTypes.string,

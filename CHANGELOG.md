@@ -58,21 +58,21 @@ Documentation via JSDocs is now available in a rough form. This will be updated 
         * False if all fields in the section are hidden.
     * By default the entire object is spread into the mapped options for a field populated via url.
     * New conditional logic to hydrate a readOnly field based on the the result of a triggerField's value (assuming object)
-    * Example:
-    ```JSON
-        id: 'myReadOnlyField',
-        'conditions': [
-        {
-          'then': {
-            'renderPropertyId': 'fireDepartmentType.name',
-            'hidden': false
-          },
-          'when': 'fireDepartment',
-          'isValid': true
-        }
-      ]
-    ```
-    Assuming the `fireDepartment` field's value is an object field, this will cause the `fireDepartmentType.name` value to be rendered into a readOnly `myReadOnlyField` field if the `fireDepartment` field is not null.
+        * Example:
+            ```JSON
+                id: 'myReadOnlyField',
+                'conditions': [
+                {
+                  'then': {
+                    'renderPropertyId': 'fireDepartmentType.name',
+                    'hidden': false
+                  },
+                  'when': 'fireDepartment',
+                  'isValid': true
+                }
+              ]
+            ```
+        * Assuming the `fireDepartment` field's value is an object, this will cause the `fireDepartmentType.name` value to * be rendered into a readOnly `myReadOnlyField` field if the `fireDepartment` field is not null.
 
 #### Components ####
 * Anyfield
@@ -105,8 +105,13 @@ Documentation via JSDocs is now available in a rough form. This will be updated 
     * Updates to pass iconOptions to the AnyField component.
     * `alternatingCols` property has been added.
         * This property will cause the form to render with alternating columns.
+        * The default rendering is 1 2 3 in the left column and 4 5 6 in the right.
+        * If alternatingCols is set to true, the columns will be rendered as 1 3 5 in the left column and 2 3 6 in the right.
 
 #### Storybook ####
+* Generic Form Story
+    * There is an interactive story that allows you to modify the layout object and see the form update.
+    * There is also a DOCs tab with more information and the option of getting the raw source code.
 * Dynamic Form Stories
     * dynamicFormStoryHelpers
         * This provides a set of helper functions to help create stories that demonstrate the use of the useDynamicForm hook.

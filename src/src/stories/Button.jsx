@@ -3,9 +3,19 @@ import PropTypes from 'prop-types';
 import { Button as MUIButton} from '@mui/material';
 
 /**
- * Primary UI component for user interaction
+ * A button component that extends the base material-ui button
+ * All props are passed to the base button
+ * @param {object} props
+ * @param {string} props.backgroundColor - the background color of the button
+ * @param {string} props.variant - the variant of the button
+ * @param {string} props.size - the size of the button
+ * @param {string} props.color - the color of the button
+ * @param {string} props.label - the label of the button
+ * @param {string} props.children - the children of the button
+ * @param {function} props.onClick - the onClick handler of the button
+ * @returns {React.ReactElement}
  */
-const Button = ({ primary, backgroundColor, variant, color, size, label, children, ...props }) => {
+const Button = ({ backgroundColor, variant, color, size, label, children, ...props }) => {
   return (
     <MUIButton
       variant={variant}

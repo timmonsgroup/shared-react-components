@@ -7,12 +7,8 @@ import {
 import IIcon from '@mui/icons-material/InfoOutlined';
 
 /**
- * @typedef {Object} IconProps - any additional props to pass to the icon component
- */
-
-/**
  * InfoIcon is a wrapper around the MUI InfoOutlined icon (default) that displays a tooltip when clicked
- * @param {object<IconProps>} props
+ * @param {object} props - any additional props are passed directly to the icon component
  * @param {React.ElementType} props.iconComponent - the component to use for the icon instead of the default InfoOutlined
  * @param {string} props.infoText - the text to display in the tooltip
  * @returns {React.ReactElement} an icon that displays a tooltip when clicked
