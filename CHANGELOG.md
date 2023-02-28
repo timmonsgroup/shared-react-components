@@ -97,6 +97,25 @@ Documentation via JSDocs is now available in a rough form. This will be updated 
         * This will cause the action renderer to attempt to use the type variant of the action button (These are MUI button variants).
         * The are custome variants that can be defined in your muiTheme.
         * There is boilerplate provided in our muiTheme.
+    * Actions can add the property `actionProps` to the action object.
+        * This will be spread into the action button as props.
+        * This allows for more flexibility in the action button.
+        ```javascript
+        actionList: [
+        {
+          label: 'Delete',
+          type: GRID_ACTION_TYPE.DELETE,
+          order: 0,
+          clickHandler: (row) => {
+            console.log('Delete', row);
+          },
+          actionProps: {
+            variant: 'contained',
+            color: 'tertiary',
+            'data-testid': 'delete-button'
+          }
+        }]
+        ```
 * GenericForm
     * Adds the new properties to control button colors.
         * `cancelColor`, `submitColor`, and `editColor`

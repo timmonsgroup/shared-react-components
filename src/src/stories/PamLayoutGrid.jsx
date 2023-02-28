@@ -69,10 +69,10 @@ const baseColumnConfig = (layoutColumn, nullValue) => {
           }
 
           return val_ != null ? val_.toString().toLowerCase().includes(filterItem.value.toLowerCase()) : false;
-        }
+        };
       },
       InputComponent: GridFilterInputValue
-    }
+    };
     retCol.filterOperators = [filterOperator];
   }
 
@@ -99,8 +99,7 @@ const baseColumnConfig = (layoutColumn, nullValue) => {
   retCol.nullValue = layoutColumn.nullValue || nullValue;
 
   return retCol;
-
-}
+};
 
 /**
  * This function provides a date value or a default value if the date is null or undefined
@@ -185,7 +184,7 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
   muiGridColumn.type = 'singleSelect';
   muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name } });
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
-}
+};
 
 //jsdoc for action type
 
@@ -199,7 +198,7 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
  * @param {Boolean} props.useTypeVariant - If true then use the type to determine the variant
  * @returns {React.ReactElement}
  */
-const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
+const GridActions = ({ actions, params, themeGroup, useTypeVariant }) => {
   const theme = useTheme();
 
   const { gridActionItem } = theme;
@@ -242,6 +241,8 @@ const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
           cssClass = `${cssClass} action-${type}`;
         }
 
+        const extraProps = action.actionProps || {};
+
         return (
           <Button
             key={index}
@@ -251,6 +252,7 @@ const GridActions = ({actions, params, themeGroup, useTypeVariant}) => {
             size="small"
             sx={gAI}
             variant={variant}
+            {...extraProps}
           >
             {action.label}
           </Button>
@@ -265,7 +267,7 @@ GridActions.propTypes = {
   params: PropTypes.object.isRequired,
   themeGroup: PropTypes.object,
   useTypeVariant: PropTypes.bool,
-}
+};
 
 
 /**
@@ -275,6 +277,7 @@ GridActions.propTypes = {
  * @property {string} cssClass - The css class to add to the action
  * @property {number} order - The order to display the action
  * @property {function} clickHandler - The click handler for the action
+ * @property {object} actionProps - Any extra props to pass to the action component
  */
 
 /**
@@ -303,11 +306,12 @@ const addActionButtonFormatting = (muiGridColumn, actionData, themeGroup, action
     return (
       <Actions actions={actions} params={params} themeGroup={themeGroup} useTypeVariant={useTypeVariant} />
     );
-  }
-}
+  };
+};
 
 /**
  * Returns a base action object
+ * @function
  * @param {Object} action - the action
  * @param {string} action.label - the label for the action
  * @param {ActionItem[]} action.actionList - the list of actions
@@ -324,8 +328,9 @@ const getBaseAction = (action) => {
     },
     type: 99, // TODO need to check with BO/NG if there is a better way to manage these type IDs
     width: action?.width || 200,
-  }
-}
+    actionProps: action?.actionProps || {},
+  };
+};
 
 /**
  * This takes a mui column and adds formatting to it to handle object reference fields
@@ -400,9 +405,8 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
     }
 
     return compareValue;
-  }
-
-}
+  };
+};
 
 /**
  * This takes a mui column and adds formatting to it to handle external link fields
@@ -424,8 +428,8 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
       </a>);
     }
     return muiGridColumn.nullValue;
-  }
-}
+  };
+};
 
 /**
  * This function takes a layout column and returns a mui column
@@ -454,7 +458,7 @@ const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nu
   }
 
   return ret;
-}
+};
 
 
 /**

@@ -284,6 +284,11 @@ WithDataAndActions.args = {
           order: 0,
           clickHandler: (row) => {
             console.log('Delete', row);
+          },
+          actionProps: {
+            variant: 'contained',
+            color: 'tertiary',
+            'data-testid': 'delete-button'
           }
         },
         {
