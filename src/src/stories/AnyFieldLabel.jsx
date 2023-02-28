@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import InfoIcon from './InfoIcon';
+import TooltipIcon from './TooltipIcon';
 
 import {
   InputLabel, Box, FormLabel
@@ -24,7 +24,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {object} props.fieldOptions.icon.gap - the gap between the label and the icon
  * @param {object} props.fieldOptions.icon.color - the color of the icon
  * @param {object} props.fieldOptions.icon.beforeLabel - whether to display the icon before the label
- * @param {object} props.fieldOptions.icon.iconComponent - a component to use instead of the default InfoIcon
+ * @param {object} props.fieldOptions.icon.iconComponent - a component to use instead of the default MUI InfoIcon
  * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
 const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, asFormInput = false, fieldOptions = {} }) => {
@@ -52,7 +52,7 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, as
   return (
     <Box sx={sx}>
       {labelComponent}
-      {iconText && <InfoIcon infoText={iconText} {...iconProps} />}
+      {iconText && <TooltipIcon infoText={iconText} {...iconProps} />}
     </Box>
   );
 };

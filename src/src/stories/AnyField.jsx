@@ -52,7 +52,7 @@ import { Box } from '@mui/material';
 
 /**
  * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
- *
+ * @component
  * @param {object} props
  * @param {object} props.control - the react-hook-form control object
  * @param {object} props.rules - the react-hook-form rules object (this is not used if using form level validation)

@@ -5,7 +5,7 @@ import Button from './Button';
 import ContainerWithCard from './ContainerWithCard';
 import GenericForm from './GenericForm';
 import FormErrorMessage from './FormErrorMessage';
-import InfoIcon from './InfoIcon';
+import TooltipIcon from './TooltipIcon';
 import LineLoader from './LineLoader';
 import LoadingSpinner from './LoadingSpinner';
 import Modal from './Modal';
@@ -19,6 +19,6 @@ import SideBar from './SideBar';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,
-  LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, InfoIcon,
+  LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon,
   RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
 };

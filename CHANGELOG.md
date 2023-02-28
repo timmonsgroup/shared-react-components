@@ -13,7 +13,7 @@
 * AnyFieldLabel - A component that renders a label, required asterisk, and optionally an Icon for a field.
     * This component is used by the AnyField component to render a label for a field.
     * This component is also exported for use in other components that need to render a label for a field.
-* InfoIcon - A component that renders an info icon with an optional tooltip.
+* TooltipIcon - A component that renders an info icon with an optional tooltip.
     * This component is used by the AnyFieldLabel component to render an info icon for a field.
     * This component is also exported for use in other components that need to render an info icon.
     * A custom component can be provided to the component via the `iconComponent` property.

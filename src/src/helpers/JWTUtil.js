@@ -3,21 +3,21 @@
   This is a collection of utility functions for working with JWT tokens
 */
 
-const decodeBase64Token = (tokenBase64String) => {
+export const decodeBase64Token = (tokenBase64String) => {
   try {
     const token = JSON.parse(atob(tokenBase64String));
     return token;
   } catch (err) {
     return null;
   }
-}
+};
 
-const decodeTokenToJWT = (token) => {
+export const decodeTokenToJWT = (token) => {
   const jwt = JSON.parse(atob(token.split('.')[1]));
   return jwt;
-}
+};
 
-const parseTokens = (tokensB64) => {
+export const parseTokens = (tokensB64) => {
   const token = decodeBase64Token(tokensB64) || {};
   const {id_token, access_token} = token;
   const idToken = decodeTokenToJWT(id_token || access_token) || {};
@@ -56,11 +56,4 @@ const parseTokens = (tokensB64) => {
     },
     refresh_token: token.refresh_token
   };
-}
-
-
-module.exports = {
-  decodeBase64Token,
-  decodeTokenToJWT,
-  parseTokens
 };
