@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.7.0-beta.14",
+  "version": "0.7.0-beta.15",
   "private": false,
   "eslintIgnore": [
     "node_modules",
@@ -11,7 +11,7 @@
     "types"
   ],
   "types": "./types/index.d.ts",
-  "type":"module",
+  "type": "module",
   "exports": {
     ".": "./dist/index.js",
     "./hooks": "./dist/hooks/index.js",
