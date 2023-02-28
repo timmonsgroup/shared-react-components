@@ -11,6 +11,7 @@
     "types"
   ],
   "types": "./types/index.d.ts",
+  "type":"module",
   "exports": {
     ".": "./dist/index.js",
     "./hooks": "./dist/hooks/index.js",
@@ -87,6 +88,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@tsconfig/node16": "^1.0.3",
     "babel-plugin-add-import-extension": "^1.6.0",
     "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-proptypes-require": "^1.0.0",
@@ -97,6 +99,7 @@
     "prop-types": "^15.8.1",
     "rimraf": "^3.0.2",
     "tsd-jsdoc": "^2.5.0",
+    "typescript": "^4.9.5",
     "webpack": "^5.75.0"
   }
 }
