@@ -9,7 +9,7 @@
   "files": [
     "dist"
   ],
-  "types": "dist/types.d.ts",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./hooks": "./dist/hooks/index.js",
@@ -23,14 +23,14 @@
     "clean:stories": "rimraf dist/stories/*",
     "clean:root": "rimraf dist/*.js",
     "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index && npm run build:tsd",
-    "build:package-localdev": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
+    "build:package-localdev": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index && npm run build:tsd",
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
     "build:helpers": "set NODE_ENV=production&&babel src/src/helpers --out-dir dist/helpers --copy-files",
     "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js src/src/muiTheme.js --out-dir dist --copy-files",
     "build-storybook": "cd src && npm run build-storybook",
     "documentation": "cd src && npm run documentation",
-    "build:tsd": "jsdoc -t node_modules/tsd-jsdoc/dist -r ./src/src/ -d ./dist"
+    "build:tsd": "rimraf types && npx -p typescript tsc src/src/index.js --declaration --allowJs --emitDeclarationOnly --outDir types"
   },
   "eslintConfig": {
     "extends": [
