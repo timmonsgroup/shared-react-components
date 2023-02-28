@@ -1,6 +1,6 @@
 # Change Log #
 
-## Release 0.7.0 - 2/??/23 ##
+## Release 0.7.1 - 2/28/2023 ##
 
 ### Fixes ###
 * Snackbar provider was not correctly setup and was causing some stories to fail.
