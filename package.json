@@ -32,7 +32,7 @@
     "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js src/src/muiTheme.js --out-dir dist --copy-files",
     "build-storybook": "cd src && npm run build-storybook",
     "documentation": "cd src && npm run documentation",
-    "build:tsd": "rimraf types && npx -p typescript tsc src/src/index.js --declaration --allowJs --emitDeclarationOnly --outDir types"
+    "build:tsd": "rimraf types && npx -p typescript tsc src/src/index.js --declaration --allowJs --jsx preserve --emitDeclarationOnly --outDir types"
   },
   "eslintConfig": {
     "extends": [

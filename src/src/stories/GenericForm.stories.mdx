@@ -1,6 +1,14 @@
-import { Meta, Story, Canvas } from '@storybook/addon-docs';
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
 import GenericForm from './GenericForm';
 import { HashRouter as Router } from 'react-router-dom';
+import { layout } from '../helpers/story-helpers/FormLayoutPreset';
+
+<Meta title="Form/GenericForm" component={GenericForm} />
+
+export const formatPayload = (payload) => {
+  window.alert('formatPayload: ' + JSON.stringify(payload));
+  return payload;
+};
 
 export const choiceFormatter = (fieldId, res, otherOptions) => {
   const { mappedId } = otherOptions || {};
@@ -13,380 +21,94 @@ export const choiceFormatter = (fieldId, res, otherOptions) => {
     };
   });
 };
+export const availColors = [
+  'primary',
+  'secondary',
+  'tertiary',
+  'accent',
+  'grayscale',
+  'success',
+  'warning',
+  'info',
+  'regressive',
+  'toggleBackground',
+];
 
-<Meta title="Form/GenericForm" component={GenericForm} />
+export const formArgs = {
+  formTitle: {
+    control: 'text',
+    description:
+      'The title of the form, this is only rendered on the first section',
+  },
+  defaultValues: { control: 'object' },
+  layoutOptions: {
+    control: 'object',
+    description: 'An object containing the layout options',
+  },
+  twoColumn: {
+    control: 'boolean',
+    description: 'If true, the form will be displayed in two columns',
+  },
+  alternatingCols: {
+    control: 'boolean',
+    description: 'If true, the form will be displayed in alternating columns',
+  },
+  formatPayload: {
+    control: 'function',
+    description:'A function that will be called when the form is submitted. The function will be passed the payload as an argument and should return the payload.',
+  },
+  submitUrl: {
+    actions: 'clicked',
+    description: 'The url to submit the form to'
+  },
+  unitLabel: { control: 'text' },
+  helpText: { control: 'text' },
+  headerTitle: { control: 'text' },
+  iconOptions: {
+    control: 'object',
+    description: 'An object containing the icon options',
+  },
+  submitColor: { control: 'select', options: availColors },
+  cancelColor: { control: 'select', options: availColors },
+  editColor: { control: 'select', options: availColors },
+  hideEmptySections: { control: 'boolean' },
+};
 
-export const formatPayload = (payload) => {
-  window.alert('formatPayload' + JSON.stringify(payload));
-  return payload;
+export const Template = (args) => {
+  return (
+    <Router>
+      <GenericForm {...args} />;
+    </Router>
+  );
+};
+
+export const defaultProps = {
+  layoutOptions: layout,
+  alternatingCols: false,
+  twoColumn: true,
+  formatPayload,
+  headerTitle: 'I am a header title',
+  formTitle:'Generic Form',
+  hideEmptySections: true,
+  submitUrl: null,
+  submitColor: 'primary',
+  cancelColor: 'tertiary',
+  editColor: 'primary',
+  iconOptions: {
+    color: 'secondary',
+    style: { fontSize: 20, top: 2, position: 'relative' },
+  },
 };
 
 # GenericForm
 
-A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
+A `GenericForm` component incorporates a PAM style form layout to render.
 
-export const layout = {layout:{
-  'data': {
-    'create': '/api/grantApplication/new'
-  },
-  'id': 2,
-  'modelId': 10,
-  'enabled': true,
-  'name': 'FD Grant Application',
-  'editable': true,
-  'layoutKey': 'new_fd',
-  'type': 1,
-  'sections': [
-    {
-      'name': 'Fire Department',
-      'editable': true,
-      'enabled': true,
-      'name': 'I am ONE',
-      'order': 10,
-      'layout': [
-        {
-          'label': 'Fire Department',
-          'path': 'fireDepartment',
-          'type': 10,
-          'model': {
-            'id': 5,
-            'modelid': 10,
-            'type': 2,
-            'name': 'fireDepartment',
-            'data': {}
-          },
-          'placeholder': 'The typeahead will populate this field',
-          'iconHelperText': 'I hate tooltips',
-          'helperText': 'Please select the Fire Department you are applying for funding on behalf of.',
-          'required': true,
-          'disabled': false,
-          // 'url': 'https://datausa.io/api/data?drilldowns=State&measures=dep'
-          'possibleChoices': [
-  {
-    "name": "BATTENS FD (Coffee County)",
-    "id": 7403,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Broomtown VFD (Cherokee County)",
-    "id": 7404,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": "1234",
-    "state": null,
-    "fireDepartmentType": {
-      "id": 1,
-      "name": "Volunteer"
-    },
-    "region": null
-  },
-  {
-    "name": "Cedar Bluff VFD (Cherokee County)",
-    "id": 7405,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": "5678",
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Centre VFD (Cherokee County)",
-    "id": 7406,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 1,
-      "name": "Volunteer"
-    },
-    "region": null
-  },
-  {
-    "name": "Cloudland VFD (Cherokee County)",
-    "id": 7407,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "DUNCANVILLE VFD (Bibb County)",
-    "id": 7408,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Ellisville VFD (Calhoun County)",
-    "id": 7409,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "FULLERS CROSSROADS FD (Crenshaw County)",
-    "id": 7410,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Gaylesville VFD (Cherokee County)",
-    "id": 7411,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Leesburg VFD (Cherokee County)",
-    "id": 7412,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "McCords Crossroads VFD (Cherokee County)",
-    "id": 7413,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Mt. Weisner VFD (Calhoun County)",
-    "id": 7414,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Sand Rock VFD (Cherokee County)",
-    "id": 7415,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Spring Creek VFD (Cherokee County)",
-    "id": 7416,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  },
-  {
-    "name": "Spring Garden VFD (Calhoun County)",
-    "id": 7417,
-    "createdBy": null,
-    "lastModifiedBy": null,
-    "fdid": null,
-    "state": null,
-    "fireDepartmentType": {
-      "id": 0,
-      "name": "Unknown"
-    },
-    "region": null
-  }
-]
-        },
-        {
-          'label': 'Date Application Received',
-          'path': 'dateApplicationReceived',
-          'type': 5,
-          'readOnly': false,
-          'placeholder': 'This here is a date',
-          'defaultValue': 'today',
-          'iconHelperText': 'TIP The date the application was received by the Wildfire Suite.',
-          'helperText': 'The date the application was received by the Wildfire Suite.',
-          'model': {
-            'id': 6,
-            'modelid': 10,
-            'type': 5,
-            'name': 'dateApplicationReceived',
-            'data': {}
-          },
-          'required': true,
-          'disabled': false
-        },
-        {
-          'label': 'Funding',
-          'path': 'fedFunding',
-          'type': 4,
-          'iconHelperText': 'Currency is strange.',
-          'helperText': 'I are current.',
-          'placeholder': 'I don\'t know you',
-          'minValue': 0.01,
-          'model': {
-            'id': 8,
-            'modelid': 10,
-            'type': 4,
-            'name': 'fedFunding',
-            'data': {}
-          },
-          'required': true,
-          'disabled': false
-        }
-      ]
-    },
-    {
-      'name': 'Section Two',
-      'editable': true,
-      'enabled': true,
-      'order': 10,
-      layout:[
-        {
-          'label': 'Department Type 2',
-          'path': 'fdType2',
-          'type': 0,
-          'model': {
-            'id': 8,
-            'modelid': 10,
-            'type': 0,
-            'name': 'fdType2',
-            'data': {}
-          },
-          'iconHelperText': 'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
-          'required': false,
-          'readOnly': true,
-          'hidden': true,
-          'conditions': [
-            {
-              'then': {
-                'renderPropertyId': 'fireDepartmentType.name',
-                'hidden': false
-              },
-              'when': 'fireDepartment',
-              'isValid': true
-            }
-          ]
-        },
-        {
-          'label': 'Department ID',
-          'path': 'departmentId',
-          'type': 0,
-          'model': {
-            'id': 7,
-            'modelid': 10,
-            'type': 0,
-            'name': 'departmentId',
-            'data': {}
-          },
-          'required': false,
-          'readOnly': true,
-          'placeholder': 'But why?',
-          'hidden': true,
-          'conditions': [
-            {
-              'then': {
-                'renderPropertyId': 'fdid',
-                'hidden': false
-              },
-              'when': 'fireDepartment',
-              'isValid': true
-            }
-          ]
-        },
-      ]
-    }
-   ]
-}};
-
-## No Data
-
-When there is no data the columns will still be rendered but the data will say no rows. This can show wehn you have a data source that has no results.
+## Multi Section With Conditionals
+This example shows how to use the `GenericForm` component to render a multi section form with conditional fields.
 
 <Canvas>
-  <Story name="No Data">
-    <Router>
-      <GenericForm
-        layoutOptions={layout}
-        domainUrl={''}
-        successUrl="/"
-        cancelUrl="/"
-        formatPayload={formatPayload}
-        alternatingCols={false}
-        iconOptions={{
-          color: 'secondary',
-          style: { fontSize: 20, top: 2, position: 'relative' },
-        }}
-        twoColumn={true}
-        headerTitle="Request Access"
-        unitLabel="Organization Access Request"
-        formatSubmitMessage={() => 'Request submitted.'}
-        helpText={() => null}
-        asyncOptions={{}}
-        submitUrl={`/api/organization/joinRequest`}
-      />
-    </Router>
+  <Story name="Multi Section With Conditionals" argTypes={formArgs} args={defaultProps}>
+    {Template.bind({})}
   </Story>
 </Canvas>

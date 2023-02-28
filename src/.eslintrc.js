@@ -2,27 +2,25 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es2021: true,
+    es2021: true
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:react-hooks/recommended'],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:react-hooks/recommended', 'plugin:storybook/recommended'],
   parserOptions: {
     ecmaFeatures: {
-      jsx: true,
+      jsx: true
     },
     ecmaVersion: 'latest',
-    sourceType: 'module',
+    sourceType: 'module'
   },
   plugins: ['react'],
   rules: {
-    quotes: [
-      'warn',
-      'single',
-      {
-        avoidEscape: true,
-        allowTemplateLiterals: true,
-      },
-    ],
-    'indent': ['warn', 2, { 'SwitchCase': 1 }],
+    quotes: ['warn', 'single', {
+      avoidEscape: true,
+      allowTemplateLiterals: true
+    }],
+    'indent': ['warn', 2, {
+      'SwitchCase': 1
+    }],
     'jsx-quotes': ['warn', 'prefer-double'],
     'react/prop-types': 'warn',
     'no-unused-vars': 'warn',
@@ -31,5 +29,5 @@ module.exports = {
     'no-empty': 'off',
     'no-extra-semi': 'warn',
     'semi': ["warn", "always"]
-  },
+  }
 };

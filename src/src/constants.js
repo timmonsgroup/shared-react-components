@@ -52,6 +52,10 @@ export const ID_FIELD = 'idField';
 export const LABEL_FIELD = 'labelField';
 export const DEFAULT_VALUE = 'defaultValue';
 export const TODAY_DEFAULT = 'today';
+export const MAX_VALUE = 'maxValue';
+export const MIN_VALUE = 'minValue';
+export const MAX_LENGTH = 'maxLength';
+export const MIN_LENGTH = 'minLength';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
@@ -76,8 +80,8 @@ export const VALIDATIONS = Object.freeze({
   REQUIRED,
   INTEGER_DIGITS: 'integerDigits',
   FRACTIONAL_DIGITS: 'fractionalDigits',
-  MAX_VALUE: 'maxValue',
-  MIN_VALUE: 'minValue',
-  MAX_LENGTH: 'maxLength',
-  MIN_LENGTH: 'minLength'
+  MAX_VALUE,
+  MIN_VALUE,
+  MAX_LENGTH,
+  MIN_LENGTH
 });
