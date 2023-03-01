@@ -150,6 +150,23 @@ const addDateFormatting = (muiGridColumn) => {
   muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, muiGridColumn.nullValue);
 };
 
+const currencyFormatter = (value) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+};
+
+const addCurrencyFormatting = (muiGridColumn) => {
+  muiGridColumn.type = 'number';
+  muiGridColumn.valueFormatter = ({ value }) => {
+    if (value == null) return muiGridColumn.nullValue;
+    return currencyFormatter(value);
+  };
+};
+
 /**
  * This provides a name value or a default value if the name is null or undefined
  * It is used to render the cell as 'N/A' if the object or name is null or undefined
@@ -445,8 +462,9 @@ const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nu
     case 1: // Long Text // These two fields dont need any special formatting
     case 2: // Integer
     case 3: // Float
-    case 4: // Currency
       break;
+    case 4: // Currency
+      addCurrencyFormatting(ret); break;
     case 5: addDateFormatting(ret); break; // Date
     case 6: // Flag
       break;

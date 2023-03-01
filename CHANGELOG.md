@@ -1,5 +1,25 @@
 # Change Log #
 
+## Release 0.7.2 - 3/01/2023 ##
+### New Functionality ###
+#### Components ####
+* `PamLayoutGrid`
+    * Currency column support has been added.
+        * Assuming your column definition is correct (`type: 4`  i.e  `FIELD_TYPES.CURRENCY` from constants) the grid will now render currency in USD format with a $ and two decimals.
+        * ```json
+            {
+                'label': 'More Money',
+                'path': 'moMoney',
+                'type': 4,
+                'model': {
+                    'id': 8,
+                    'modelid': 10,
+                    'type': 4,
+                    'name': 'moMoney',
+                }
+            }
+            ```
+
 ## Release 0.7.1 - 2/28/2023 ##
 
 ### Fixes ###
