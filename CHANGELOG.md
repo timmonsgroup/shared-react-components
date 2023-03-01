@@ -1,5 +1,17 @@
 # Change Log #
 
+## Release 0.7.3 - 3/01/2023 ##
+### New Functionality ###
+#### Components ####
+* `PamLayoutGrid`
+    * Columns can now completely override the base column definition if they provide an `columnOverride` method.
+    * This will bypass any default column definitions and allow the column to define its own column definition.
+
+#### Helpers ####
+* `currencyFormatter` - now available as a helper function.
+    * This function will take a number and return a string formatted as a currency value.
+    * This function is used by the `PamLayoutGrid` component to format currency values.
+
 ## Release 0.7.2 - 3/01/2023 ##
 ### New Functionality ###
 #### Components ####

@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { dateFormatter, processLayout, processGenericLayout } from '../helpers/helpers.js';
+import { dateFormatter, processLayout, processGenericLayout, currencyFormatter } from '../helpers/helpers.js';
 
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
@@ -22,7 +22,7 @@ const defaultSX = {
 /**
  * This is the base config for a column that is used by the MUIGrid component
  * It takes a column from the layout and converts it into a config that can be used by the MUIGrid component
- * @param {Object} column - The column from the layout
+ * @param {LayoutColumn} column - The column from the layout
  * @returns {Object} - The column config for the MUIGrid component
  * @see https://mui.com/components/data-grid/columns/
  */
@@ -148,15 +148,6 @@ const addDateFormatting = (muiGridColumn) => {
   muiGridColumn.type = 'date';
   muiGridColumn.valueGetter = ({ value }) => getDateOrDefault(value, null); // Value GETTER needs to return null for the date to be displayed as N/A and for the filter to work
   muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, muiGridColumn.nullValue);
-};
-
-const currencyFormatter = (value) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(value);
 };
 
 const addCurrencyFormatting = (muiGridColumn) => {
@@ -449,6 +440,17 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
 };
 
 /**
+ * @typedef {Object} LayoutColumn
+ * @property {string} path - The path to the data for the column
+ * @property {number} type - The type of the column
+ * @property {string} width - The width of the column
+ * @property {string} [minWidth] - The value to display if the column is null
+ * @property {number} [flex]  - The flex value for the column
+ * @property {string} [nullValue] - The value to display if the column is null
+ * @property {function} [columnOverride] - A function that takes a layout column and returns a mui column
+ */
+
+/**
  * This function takes a layout column and returns a mui column
  * It will determine the type of column and add formatting to the mui column
  * @param {LayoutColumn} column
@@ -456,6 +458,11 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
  */
 const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nullValue, useTypeVariant) => {
   let ret = baseColumnConfig(column, nullValue);
+
+  if (column.columnOverride && typeof column.columnOverride === 'function') {
+    console.log('columnOverride', column.columnOverride)
+    return column.columnOverride(column, ret);
+  }
 
   switch (column.type) {
     case 0: // Short Text
