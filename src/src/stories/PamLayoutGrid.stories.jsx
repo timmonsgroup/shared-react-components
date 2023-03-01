@@ -35,7 +35,7 @@ const data = [
     lastUpdatedBy: { id: 1, name: 'Last Updated By 1' },
     activeOn: '2021-01-01',
     sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
-    moMoney: 1000,
+    moMoney: 1000
   },
   {
     id: '2',
