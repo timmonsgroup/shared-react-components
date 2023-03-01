@@ -18,6 +18,7 @@ import { useDynamicForm } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
+import { useConfigForm } from '../hooks/useConfigForm';
 
 /**
  * The generic form component
@@ -57,7 +58,9 @@ const GenericForm = ({
   submitColor = 'primary', editColor = 'primary', hideEmptySections = true
 }) => {
   const [modifying, setModifying] = useState(false);
-  const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
+  const { sections, layoutLoading, control, reset, processing, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
+  // const things = useConfigForm(layoutOptions.layout);
+  // console.log('things', things);
   const nav = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -142,7 +145,7 @@ const GenericForm = ({
               </Stack>
           }
         />
-        <LoadingSpinner isActive={modifying} />
+        <LoadingSpinner isActive={modifying || processing} />
         <Container sx={{ position: 'relative', marginTop: '16px' }} maxWidth={false}>
           <form data-src-form="genericForm">
             {sections.map((section, index) => {

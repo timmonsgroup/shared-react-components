@@ -467,7 +467,11 @@ export function getFieldValue(field, formData, isNested = false) {
           value = getSelectValue(render.multiple || false, inData) || '';
         }
       } else {
-        value = inData || render.multiple ? [] : '';
+        if (!inData && render.multiple) {
+          value = [];
+        } else {
+          value = inData || '';
+        }
       }
       break;
     }
