@@ -35,6 +35,7 @@ const data = [
     lastUpdatedBy: { id: 1, name: 'Last Updated By 1' },
     activeOn: '2021-01-01',
     sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
+    moMoney: 1000,
   },
   {
     id: '2',
@@ -180,80 +181,93 @@ const layout = {
     'enabled': true,
     'name': 'Test Layout',
     'order': 20,
-    'layout': [{
-      'label': 'ID',
-      'path': 'id',
-      'type': 2,
-      'model': {
-        'id': 1,
-        'modelid': 1,
+    'layout': [
+      {
+        'label': 'ID',
+        'path': 'id',
         'type': 2,
-        'name': 'id'
-      },
-      'required': false,
-      'disabled': false,
-      'flex': 1
-    }, {
-      'label': 'Name',
-      'path': 'name',
-      'type': 0,
-      'model': {
-        'id': 2,
-        'modelid': 1,
+        'model': {
+          'id': 1,
+          'modelid': 1,
+          'type': 2,
+          'name': 'id'
+        },
+        'required': false,
+        'disabled': false,
+        'flex': 1
+      }, {
+        'label': 'Name',
+        'path': 'name',
         'type': 0,
-        'name': 'name'
-      },
-      'required': false,
-      'disabled': false,
-      'flex': 1
-    }, {
-      'label': 'Type',
-      'path': 'type',
-      'type': 7,
-      'possibleChoices': [
-        {
-          'id': 1,
-          'name': 'Type1'
-        },
-        {
+        'model': {
           'id': 2,
-          'name': 'Type2'
-        }
-      ],
-      'model': {
-        'id': 3,
-        'modelid': 1,
-        'type': 7,
-        'name': 'type'
-      },
-      'required': false,
-      'disabled': false,
-      'flex': 2
-    }, {
-      'label': 'Status',
-      'path': 'status',
-      'type': 7,
-      'possibleChoices': [
-        {
-          'id': 1,
-          'name': 'Active'
+          'modelid': 1,
+          'type': 0,
+          'name': 'name'
         },
-        {
-          'id': 2,
-          'name': 'Inactive'
-        }
-      ],
-      'model': {
-        'id': 3,
-        'modelid': 1,
+        'required': false,
+        'disabled': false,
+        'flex': 1
+      }, {
+        'label': 'Type',
+        'path': 'type',
         'type': 7,
-        'name': 'type'
+        'possibleChoices': [
+          {
+            'id': 1,
+            'name': 'Type1'
+          },
+          {
+            'id': 2,
+            'name': 'Type2'
+          }
+        ],
+        'model': {
+          'id': 3,
+          'modelid': 1,
+          'type': 7,
+          'name': 'type'
+        },
+        'required': false,
+        'disabled': false,
+        'flex': 2
+      }, {
+        'label': 'Status',
+        'path': 'status',
+        'type': 7,
+        'possibleChoices': [
+          {
+            'id': 1,
+            'name': 'Active'
+          },
+          {
+            'id': 2,
+            'name': 'Inactive'
+          }
+        ],
+        'model': {
+          'id': 3,
+          'modelid': 1,
+          'type': 7,
+          'name': 'type'
+        },
+        'required': false,
+        'disabled': false,
+        'hidden': true,
+        'flex': 2
       },
-      'required': false,
-      'disabled': false,
-      'hidden': true,
-      'flex': 2
-    }]
+      {
+        'label': 'More Money',
+        'path': 'moMoney',
+        'type': 4,
+        'model': {
+          'id': 8,
+          'modelid': 10,
+          'type': 4,
+          'name': 'moMoney',
+        }
+      },
+    ]
   }]
 };
 
@@ -320,6 +334,7 @@ WithDataAndActions.args = {
 };
 
 export const WithDataAndToolbar = Template.bind({});
+console.log('WithDataAndToolbar', WithDataAndToolbar);
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 WithDataAndToolbar.args = {
   data: data,
