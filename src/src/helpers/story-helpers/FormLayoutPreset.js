@@ -243,6 +243,32 @@ export const layout = {
             ],
           },
           {
+            label: 'Another Field',
+            path: 'anotherField',
+            type: 10,
+            model: {
+              id: 5,
+              modelid: 10,
+              type: 2,
+              name: 'anotherField',
+              data: {}
+            },
+            placeholder: 'The typeahead will populate this field',
+            iconHelperText: 'Please select the Fire Department you are applying for funding on behalf of.',
+            helperText: 'When you select one of the options magic might happen',
+            required: true,
+            conditions: [
+              {
+                when: 'fireDepartment',
+                isValid: true,
+                then: {
+                  url: 'https://dog-api.kinduff.com/api/facts?number=5'
+                }
+              }
+            ],
+            disabled: false
+          },
+          {
             label: 'Date Application Received',
             path: 'dateApplicationReceived',
             type: 5,
@@ -308,6 +334,36 @@ export const layout = {
                 },
                 when: 'fireDepartment',
                 isValid: true,
+              },
+            ],
+            required: true,
+            disabled: false,
+          },
+          {
+            label: 'More Money Child',
+            path: 'moMoneyChild',
+            type: 4,
+            helperText: 'I are child.',
+            placeholder: 'A child of moMoney',
+            hidden: true,
+            model: {
+              data: {
+                minValue: 1.01,
+              },
+              id: 8,
+              modelid: 10,
+              type: 4,
+              name: 'moMoneyChild',
+            },
+            minValue: 2.01,
+            conditions: [
+              {
+                then: {
+                  hidden: false,
+                  minValue: 3.01,
+                },
+                when: 'moMoney',
+                is: '100',
               },
             ],
             required: true,

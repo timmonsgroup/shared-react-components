@@ -419,7 +419,7 @@ export function getFieldValue(field, formData, isNested = false) {
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
   // const inData = isNested && data ? data[name] : getObject(data || {}, field.path);
-  let inData = formData[name];
+  let inData = formData?.[name];
 
   // If the config specifies a default value, use that value ONLY if the data is undefined.
   if (inData === undefined && field[DEFAULT_VALUE]) {

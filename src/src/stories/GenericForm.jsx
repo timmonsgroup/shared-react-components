@@ -18,7 +18,6 @@ import { useDynamicForm } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
-import { useConfigForm } from '../hooks/useConfigForm';
 
 /**
  * The generic form component

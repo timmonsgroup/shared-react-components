@@ -460,7 +460,6 @@ const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nu
   let ret = baseColumnConfig(column, nullValue);
 
   if (column.columnOverride && typeof column.columnOverride === 'function') {
-    console.log('columnOverride', column.columnOverride)
     return column.columnOverride(column, ret);
   }
 

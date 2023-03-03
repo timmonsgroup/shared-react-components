@@ -1,12 +1,11 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
-import GenericForm from './GenericForm';
 import { ConfigForm } from './DynamicForm';
 import { HashRouter as Router } from 'react-router-dom';
 import { NestedThing } from './DynamicForm';
 import { Paper, Grid } from '@mui/material';
 import { layout } from '../helpers/story-helpers/FormLayoutPreset';
 
-<Meta title="Form/GenericForm" component={GenericForm} />
+<Meta title="Form/ConfigForm" component={ConfigForm} />
 
 export const formatPayload = (payload) => {
   window.alert('formatPayload: ' + JSON.stringify(payload));
@@ -92,36 +91,50 @@ export const formArgs = {
 export const Template = (args) => {
   return (
     <Router>
-      <GenericForm {...args} />;
+      <div>
+        <Grid id="top-row" container spacing={24}>
+          <Grid item xs={4}>
+            <Paper>Grid cell 1, 1</Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper>Grid cell 2, 1</Paper>
+          </Grid>
+        </Grid>
+        <Grid id="bottom-row" container spacing={24}>
+          <Grid item xs={4}>
+            <Paper>Grid cell 1, 2</Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper>Grid cell 2, 2</Paper>
+          </Grid>
+        </Grid>
+      </div>
+      <ConfigForm
+        formLayout={args.layoutOptions.layout} parseOptions={{choiceFormatter: choiceFormatter2}}
+        data={{
+          moMoney: 100,
+          fireDepartment: '7409',
+          anotherField: 1
+        }}
+      >
+        <p> Am I A GAME? </p>
+        <NestedThing />
+      </ConfigForm>
     </Router>
   );
 };
 
 export const defaultProps = {
   layoutOptions: layout,
-  alternatingCols: false,
-  twoColumn: true,
-  formatPayload,
-  headerTitle: 'I am a header title',
-  formTitle: 'Generic Form',
-  hideEmptySections: true,
-  submitUrl: null,
-  submitColor: 'primary',
-  cancelColor: 'tertiary',
-  editColor: 'primary',
-  iconOptions: {
-    color: 'secondary',
-    style: { fontSize: 20, top: 2, position: 'relative' },
-  },
 };
 
-# GenericForm
+# ConfigForm
 
-A `GenericForm` component incorporates a PAM style form layout to render.
+A `ConfigForm` component incorporates a PAM style form layout to render.
 
 ## Multi Section With Conditionals
 
-This example shows how to use the `GenericForm` component to render a multi section form with conditional fields.
+This example shows how to use the `ConfigForm` component to render a multi section form with conditional fields.
 
 <Canvas>
   <Story

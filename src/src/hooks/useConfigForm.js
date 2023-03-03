@@ -1,16 +1,12 @@
 //Third party bits
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { flushSync } from 'react-dom';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { object } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-// Third party components
-import { Card, CardContent, Container, Grid, Stack, Typography } from '@mui/material';
-
 // Internal bits
-import { getFieldValue, parseFormLayout, useFormLayout } from './useFormLayout';
+import { getFieldValue } from './useFormLayout';
 import axios from 'axios';
 import {
   ID_FIELD,
@@ -18,107 +14,6 @@ import {
   CONDITIONAL_RENDER
 } from '../constants';
 import { objectReducer } from '../helpers';
-import AnyField from '../stories/AnyField';
-// export const ContextFormWrapper = ({ children, formLayout, data, onSubmit }) => {
-//   return <FormProvider {...methods} >
-//     {children}
-//   </FormProvider>
-// }
-
-export const ConfigForm = ({ formLayout, data, children }) => {
-  const [parsed, setParsed] = useState(null);
-
-  useEffect(() => {
-    const parseIt = async () => {
-      const parsed = await parseFormLayout(formLayout, data);
-      setParsed(parsed);
-    };
-    parseIt();
-  }, [formLayout]);
-
-  if (parsed) {
-    console.log('parsed', parsed);
-
-    return (
-      <div>
-        <h1>Config Form</h1>
-        <p>Form Layout</p>
-        <DynamicForm layout={parsed} data={data}>
-          {children}
-        </DynamicForm>
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      <h1>Processing</h1>
-      <p>Still waiting</p>
-    </div>
-  );
-};
-
-export const DynamicForm = ({ layout, data, onSubmit, children }) => {
-  console.log('DynamicForm', layout);
-  const {useFormObject, sections} = useConfigForm(layout, data);
-
-  return (
-    <FormProvider {...useFormObject} sections={sections}>
-      {children}
-      {/* <ConfigForm formLayout={layout} data={data} onSubmit={onSubmit} /> */}
-    </FormProvider>
-  );
-};
-
-export const NestedThing = ({ children }) => {
-  const allThings = useFormContext();
-  console.log('NestedThing', allThings);
-  const { register, watch, setValue, getValues, sections, control } = allThings;
-  const watchFields = watch();
-
-  useEffect(() => {
-    console.log('watchFields', watchFields);
-    console.log('getValues', getValues());
-  }, [watchFields]);
-
-  return (
-    <form data-src-form="genericForm">
-      {sections.map((section, index) => {
-        const sx = { position: 'relative' };
-        if (index) {
-          sx.marginTop = '16px';
-        }
-        // const hasTopText = formTitle || helpText;
-        return (
-          <Card key={index} sx={sx}>
-            {renderFormSection(section, control, index, {})}
-          </Card>
-        );
-      })}
-    </form>
-  );
-};
-
-const renderFormSection = (section, control, index, options) => {
-  if (section.visible === false && options?.hideEmptySections) {
-    return null;
-  }
-
-  return (
-    <CardContent key={index}>
-      {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
-      {section.fields.map((field, fIndex) => (
-        <AnyField
-          sx={{ marginTop: fIndex ? '16px' : null }}
-          layout={field.render}
-          control={control}
-          key={field?.render?.name}
-          options={{ icon: options?.iconOptions }}
-        />
-      ))}
-    </CardContent>
-  );
-};
 
 export const processDynamicFormLayout = (formLayout, data) => {
   // Will hold the validation schema for the form
@@ -135,12 +30,8 @@ export const processDynamicFormLayout = (formLayout, data) => {
         const field = formLayout.fields.get(fieldId);
         // Get the value from the incoming values correctly formatted
         // If it does not exist the returned value will be the correct default format
-        // const { name:eN, value:eV } = getFieldValue(field, {});
         const { name, value } = getFieldValue(field, data || {});
-        // defaultValues[eN] = eV;
-        // realValues[name] = value;
         defaultValues[name] = value;
-
 
         // Update the validation schema for this field
         // Do not add validations for read only fields
@@ -166,43 +57,40 @@ export const processDynamicFormLayout = (formLayout, data) => {
 
 /**
  * Method to check for and setup conditional rendering
- * @param {*} triggerFields
- * @param {*} fields
- * @param {*} fieldId
- * @param {*} formValues
- * @param {*} type
- * @param {*} options
+ * @param {Map<string, object>} triggerFields - Map of fields that trigger conditional rendering
+ * @param {Map<string, object>} fields - Map of all fields
+ * @param {string} triggerId - ID of the field to check
+ * @param {any} formValue - Value of the field to check
+ * @param {object} options - Options for the conditional rendering
  * @returns
  */
-const checkConditionalRender = (triggerFields, fields, fieldId, formValues, type, options) => {
-  const triggerField = triggerFields.get(fieldId);
-  if (!triggerField || type !== 'change') {
-    return;
+const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) => {
+  const updatedFields = [];
+
+  // This is a hack to handle the fact that the form values maybe strings or numbers
+  // TODO: Add check for field type and coerce for correct check
+  let usedFormValue = formValue;
+  let hasIt = triggerField.fieldValues.has(formValue);
+
+  // Check again with the string version of the value
+  if (!hasIt) {
+    hasIt = triggerField.fieldValues.has(formValue.toString());
+    if (hasIt) {
+      usedFormValue = formValue.toString();
+    }
   }
 
-  let formValue = formValues[fieldId];
-
-  // Conditional async rendering
-  // Flag to indicate if any fields triggered async rendering
-  // let hasAsync = false;
-  // Object where eached key is the field path and value is a promise that resolves to the choices
-  // const asyncLoaders = {};
-  // Object where each key is the field path and value an array of the choices
-  // const loadedChoices = {};
-
-  const conditional = {
-    hasAsync: false,
-    asyncLoaders: {},
-    loadedChoices: {},
-    hasRenderValue: false,
-    isUpdating: false,
-  };
-
-  if (triggerField.fieldValues.has(formValue)) {
+  if (hasIt) {
     // Get the fields that need to be updated
-    let affectedFields = triggerField.fieldValues.get(formValue) || [];
+    let affectedFields = triggerField.fieldValues.get(usedFormValue) || [];
 
     affectedFields.forEach((loadOut, fieldId) => {
+      const conditional = {
+        hasAsync: false,
+        loadedChoices: {},
+        hasRenderValue: false,
+        isUpdating: false,
+      };
       // If the field has a remoteUrl, we need to fetch the data
       const layout = loadOut?.layout;
       const isHidden = layout?.get(CONDITIONAL_RENDER.HIDDEN);
@@ -211,7 +99,7 @@ const checkConditionalRender = (triggerFields, fields, fieldId, formValues, type
         const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
         // Note the ID_FIELD and LABEL_FIELD are here different from the useFormLayout hook
         // These are the values on this field's CONDITIONAL layout, not the default layout
-        conditional.asyncLoaders[fieldId] = () => fetchChoices(fieldId, remoteUrl, {
+        conditional.asyncLoader = () => fetchChoices(fieldId, remoteUrl, {
           mappedId: layout?.get(ID_FIELD),
           mappedLabel: layout?.get(LABEL_FIELD),
           triggerFieldId: fieldId,
@@ -239,11 +127,423 @@ const checkConditionalRender = (triggerFields, fields, fieldId, formValues, type
       }
 
       conditional.isUpdating = true;
-      // updatedFields.push({ id: fieldId, type: 'update', ...loadOut });
+      conditional.loadOut = loadOut;
+      updatedFields.push({ id: fieldId, conditional });
     });
   }
 
-  return conditional;
+  return updatedFields;
+};
+
+/**
+ * Creates a section object for the form
+ * @param {object} section - section object from the form layout
+ * @param {Map<string, Field>} fieldMap -
+ * @returns
+ */
+const createRenderSection = (section, fieldMap) => {
+  const formSection = {
+    name: section.name || section.title,
+    fields: [],
+    visible: false
+  };
+  let visibleCount = 0;
+  section.fields.forEach((fieldPath) => {
+    const field = fieldMap.get(fieldPath) || {};
+    const { render } = field || {};
+    if (!render.hidden) {
+      visibleCount++;
+    }
+
+    formSection.fields.push({ render: { ...render } });
+  });
+
+  formSection.visible = visibleCount > 0;
+  return formSection;
+};
+
+/**
+ * Any properties returned here may be applied to the FormContext for use in child components
+ * @example
+ * const { useFormObject, formProcessing, sections } = useConfigForm(formLayout, data, options);
+ * <FormProvider {...useFormObject} sections={sections} formProcessing={formProcessing}>
+ * @param {object} formLayout - Form layout object
+ * @param {object} data - Data to pre-populate the form with
+ * @param {object} options - any other options needed for the form
+ * @returns {object} - Object containing the useFormObject, formProcessing, and sections
+ */
+export const useConfigForm = (formLayout, data, options) => {
+  const { defaultValues, watchFields, validations: dynamicValidations } = processDynamicFormLayout(formLayout, data);
+  const [sections, setSections] = useState([]);
+  const [validations, setValidations] = useState({});
+  const [formProcessing, setFormProcessing] = useState(true);
+  const [readyForWatches, setReadyForWatches] = useState(false);
+
+  // update the validation schema hookForm uses when the validation state changes
+  const validationSchema = useMemo(
+    () => {
+      return object({ ...validations });
+    },
+    [validations]
+  );
+
+  const useFormObject = useForm({
+    mode: 'onBlur',
+    defaultValues: defaultValues,
+    resolver: yupResolver(validationSchema),
+    shouldUnregister: true
+  });
+
+  // Form object will contain all the properties of useForm (React Hook Form)
+  const { formState, watch, trigger, reset, resetField, setError, clearErrors, getValues } = useFormObject;
+
+  useEffect(() => {
+    if (!formProcessing) {
+      setFormProcessing(true);
+    }
+
+    initTheForm({
+      formLayout,
+      setSections,
+      validations: dynamicValidations,
+      setValidations,
+      isResetting: false,
+      watchFields,
+      setFormProcessing,
+      setReadyForWatches,
+      defaultValues,
+      options: { ...options, setError, clearErrors }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formLayout]);
+
+  // If the schema changes and the form has been submitted, revalidate
+  useEffect(() => {
+    if (formState.isSubmitted) {
+      trigger();
+    }
+    // We do not want formState.isSubmitted to be a dependency here, the trigger happens on form submit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validationSchema]);
+
+  const forceReset = () => {
+    // Yes we do need to reset the form
+    reset(defaultValues);
+
+    // Then set the formProcessing to true so it will re-render
+    if (!formProcessing) {
+      setFormProcessing(true);
+    }
+
+    // Then re-run the initTheForm function otherwise the triggers won't run because watch is dumb
+    initTheForm({
+      formLayout,
+      sections,
+      setSections,
+      validations: dynamicValidations,
+      setValidations,
+      isResetting: true,
+      watchFields,
+      setFormProcessing,
+      setReadyForWatches,
+      defaultValues,
+      options
+    });
+  };
+
+
+  // If we have any watchFields, watch them and update the form
+  useEffect(() => {
+    let subscription = null;
+    if (readyForWatches && !subscription) {
+      subscription = watch((formValues, { name, type }) => {
+        let watched = watchFields.includes(name);
+
+        if (!watched || type !== 'change') {
+          return;
+        }
+
+        const finishSetup = ({ renderSections, resetFields, dynValid }) => {
+          // This will reset any fields that were disabled
+          // We grab the "empty" value from the field and set it as the default value
+          const resetValues = {};
+          for (const field in resetFields) {
+            // debugger;
+            const fieldToReset = formLayout.fields.get(field);
+            const { value } = getFieldValue(fieldToReset, {});
+            resetValues[field] = value;
+            resetField(field, { defaultValue: value });
+          }
+
+          setSections(renderSections);
+
+          // This will trigger the useMemo to update the validation schema
+          // That hook will then trigger the useEffect to revalidate the form
+          setValidations((prevValues) => {
+            return {
+              ...prevValues,
+              ...dynValid,
+            };
+          });
+
+          setFormProcessing(false);
+        };
+
+        // Note we pass the reactive sections here AND NOT the formLayout.sections
+        renderTheSections({
+          sections,
+          fields: formLayout.fields,
+          triggerFields: formLayout.triggerFields,
+          values: formValues,
+          watchFields,
+          options,
+          fromWatch: true,
+          finishSetup
+        });
+      });
+    }
+
+    return () => {
+      // TODO: Look into termination of any triggerfield async
+      subscription?.unsubscribe();
+    };
+  }, [readyForWatches, watchFields]);
+
+
+  return {
+    useFormObject,
+    sections,
+    formProcessing,
+    forceReset,
+  };
+};
+
+const initTheForm = ({ formLayout, setSections, validations, setValidations, isResetting, watchFields, setFormProcessing, setReadyForWatches, defaultValues, options }) => {
+  // Finish setting up the form
+  // This is done in a separate function so we can await any async calls
+  const finishSetup = ({ renderSections, dynValid }) => {
+    setSections(renderSections);
+
+    //If we have any dynamic validations, set them
+    if (Object.keys(validations).length > 0) {
+      setValidations(() => {
+        return {
+          ...validations,
+          ...dynValid,
+        };
+      });
+    }
+
+    setFormProcessing(false);
+    if (watchFields.length > 0 && !isResetting) {
+      setReadyForWatches(true);
+    }
+  };
+
+  renderTheSections({
+    sections: formLayout.sections,
+    fields: formLayout.fields,
+    triggerFields: formLayout.triggerFields,
+    values: defaultValues,
+    watchFields,
+    options,
+    fromWatch: false,
+    finishSetup
+  });
+};
+
+const renderTheSections = ({ sections, fields, triggerFields, values, watchFields, finishSetup, options, fromWatch }) => {
+  let renderSections = fromWatch ? sections : [];
+  if (!fromWatch) {
+    sections.forEach(section => {
+      renderSections.push(createRenderSection(section, fields));
+    });
+  }
+
+  const areUpdating = {};
+  const updatedFields = [];
+  const asyncLoaders = {};
+  const loadedChoices = {};
+  const dynValid = {};
+  const resetFields = {};
+  let hasAsync = false;
+
+  const updateConditional = (fieldId, conditional) => {
+    if (conditional.isUpdating) {
+      areUpdating[fieldId] = true;
+      if (conditional.hasAsync && conditional.asyncLoader) {
+        hasAsync = true;
+        asyncLoaders[fieldId] = conditional.asyncLoader;
+      }
+      updatedFields.push({ id: fieldId, type: 'update', ...conditional.loadOut });
+    }
+  };
+
+  // Loop through all the triggerFields and see if the initial values have caused any fields to be updated
+  watchFields.forEach((fieldId) => {
+    // If somehow watching a field that is not in the formLayout, skip it
+    const triggerField = triggerFields.get(fieldId);
+    if (!triggerField) {
+      return;
+    }
+
+    // Get the starting value of the field
+    const formValue = values[fieldId];
+
+    // Loop through all the fields that are dependent on this triggerField
+    const updated = getUpdatedFields(triggerField, fields, fieldId, formValue, options);
+    updated.forEach(({ id, conditional }) => {
+      updateConditional(id, conditional);
+    });
+
+    // A flag to determine if this "onChange" field has a null value. If it does, we need to handle resets for affected fields heavy handedly
+    let nullChangeValue = false;
+
+    // Check for any "onChange" fields
+    // We have to run a separate loop because conditions could be met for a specific value AND for "anyValue" (i.e. not null)
+    if (triggerField.hasOnChange) {
+      // If the value is null, we need to handle the reset of the affected fields
+      if (formValue !== null && formValue !== undefined && formValue !== '') {
+        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, 'anyValue', options);
+        anyUpdates.forEach(({ id, conditional }) => {
+          updateConditional(id, conditional);
+        });
+      } else {
+        // Not needed for initial render
+        nullChangeValue = true;
+      }
+    }
+
+    // If this update is from a watch, we need to handle the reset of the affected fields
+    if (fromWatch) {
+      // touches is a map of all the fields affected by this triggerfield
+      // fieldId is the key and the value is a map of the field values from this triggerfield that affect it
+      const touchedFields = triggerField.touches;
+
+      // Add a reset to the updatedFields array
+      const addReset = (fieldId) => {
+        if (!areUpdating[fieldId]) {
+          areUpdating[fieldId] = true;
+          updatedFields.push({ id: fieldId, type: 'reset' });
+        }
+      };
+
+      // Determine any fields that need to be reset
+      touchedFields.forEach((value, fieldId) => {
+        // If this field is not affected by the new value, it needs to be reset (probably)
+        // We check if the field is already being updated because we don't want to reset a field that is being updated
+        // This would happen with a field that has a remoteUrl that updates on EVERY triggerfield change.
+        if (!value.has(formValue)) {
+          addReset(fieldId);
+        } else if (value.has('anyValue') && nullChangeValue) {
+          // We need to reset any fields that may have been triggered by an "anyValue" trigger and allow it to be reset when the triggerfield is null
+          addReset(fieldId);
+        }
+      });
+    }
+  });
+
+  const hasUpdates = Object.keys(areUpdating).length > 0;
+  if (hasUpdates) {
+    // If any of the affected fields have async needs, we need to wait for them to resolve
+    if (hasAsync) {
+      // Create an array of promise so we can await all.
+      const optTypes = Object.keys(asyncLoaders).map((fId) => (
+        // return Promise that stores the loadedChoices into the correct model
+        asyncLoaders[fId]().then((loaded) => {
+          loadedChoices[fId] = loaded;
+        })
+      ));
+
+      // If we have choice loading promises, wait for them all to finish
+      if (optTypes.length) {
+        // if (setLoading) {
+        //   setLoading(true);
+        // }
+
+        Promise.all(optTypes).finally(() => {
+          renderSections = processConditionalUpdate(renderSections, fields, updatedFields, loadedChoices, dynValid, resetFields);
+          if (finishSetup && typeof finishSetup === 'function') {
+            finishSetup({ renderSections, dynValid, resetFields });
+          }
+          // if (setLoading) {
+          //   setLoading(false);
+          // }
+        });
+      }
+    } else {
+      renderSections = processConditionalUpdate(renderSections, fields, updatedFields, null, dynValid, resetFields);
+      finishSetup({ renderSections, dynValid, resetFields });
+    }
+  } else {
+    finishSetup({ renderSections, dynValid, resetFields });
+  }
+};
+
+const processConditionalUpdate = (sections, fields, updatedFields, asyncThings = {}, dynValid = {}, resetFields = {}) => {
+  const revalidates = {};
+
+  // Loop through the fields that need to be updated
+  const layoutSections = sections.map(section => {
+    updatedFields.forEach(field => {
+      const fieldObject = fields.get(field.id);
+      // Check if the field is in this section
+      const sectionField = section.fields.find(x => x.render.name === fieldObject.id);
+      if (sectionField) {
+        revalidates[fieldObject.id] = true;
+        let { render } = sectionField;
+        // If the  type of update is ...update find the new validations and render bits
+        if (field.type === 'update') {
+          if (!fieldObject.render?.readOnly) {
+            dynValid[fieldObject.id] = field.validation;
+          }
+          const updatedLayout = Object.fromEntries(field.layout);
+          //Check for aysnc things
+          const choices = asyncThings ? asyncThings[field.id] : null;
+          // TODO: possibly handle more than just choices
+          const asyncRender = choices ? { choices } : {};
+          render = { ...render, ...updatedLayout, ...asyncRender };
+        } else {
+          //TODO: Is it possible that reset fields would need to be async?
+          if (!fieldObject.render?.readOnly) {
+            dynValid[fieldObject.id] = fieldObject.validations;
+          }
+
+          if (fieldObject.render?.hidden || fieldObject.render?.disabled) {
+            // New logic actually reset the field value
+            // Hope past Nathan just missed something and this is not a bad idea
+            resetFields[fieldObject.id] = true;
+          }
+
+          // If the type of update is ...reset, find the original validations and render bits
+          // Note that for render properties in the original layout to override the dynamic properties they MUST exist on the original layout even if
+          // null or empty. This is important for fields that use the "choices" property.
+          render = { ...render, ...fieldObject.render };
+        }
+
+        sectionField.render = render;
+
+        if (sectionField.render.disabled) {
+          resetFields[fieldObject.id] = true;
+        }
+      }
+    });
+
+    let hasVisible = false;
+    // loop through the fields and break if we find a visible field
+    for (const field of section.fields) {
+      if (!field.render.hidden) {
+        hasVisible = true;
+        break;
+      }
+    }
+
+    section.visible = hasVisible;
+
+    return section;
+  });
+
+  return layoutSections;
 };
 
 /**
@@ -297,97 +597,4 @@ export const fetchChoices = async (fieldId, url, { clearErrors, setError, urlDom
     }
   });
   return things || [];
-};
-
-/**
- * Creates a section object for the form
- * @param {object} section - section object from the form layout
- * @param {Map<string, Field>} fieldMap -
- * @returns
- */
-const createRenderSection = (section, fieldMap) => {
-  const formSection = {
-    name: section.name || section.title,
-    fields: [],
-    visible: false
-  };
-  let visibleCount = 0;
-  section.fields.forEach((fieldPath) => {
-    const field = fieldMap.get(fieldPath) || {};
-    const { render } = field || {};
-    if (!render.hidden) {
-      visibleCount++;
-    }
-
-    formSection.fields.push({ render: { ...render } });
-  });
-
-  formSection.visible = visibleCount > 0;
-  return formSection;
-};
-
-
-export const useConfigForm = (formLayout, data) => {
-  console.log('useConfigForm', formLayout)
-  const { defaultValues, watchFields, validations: dynamicValidations } = processDynamicFormLayout(formLayout, data);
-  const [sections, setSections] = useState([]);
-  const [validations, setValidations] = useState({});
-
-  console.log('defaultValues', defaultValues)
-
-  // update the validation schema hookForm uses when the validation state changes
-  const validationSchema = useMemo(
-    () => {
-      return object({ ...validations });
-    },
-    [validations]
-  );
-
-  const useFormObject = useForm({
-    mode: 'onBlur',
-    defaultValues: defaultValues,
-    resolver: yupResolver(validationSchema),
-    shouldUnregister: true
-  });
-
-  // Form object will contain all the properties of useForm (React Hook Form)
-  const { formState, watch, trigger, setValue, reset, resetField, setError, clearErrors } = useFormObject;
-
-  useEffect(() => {
-    const renderSections = [];
-    formLayout.sections.forEach(section => {
-      renderSections.push(createRenderSection(section, formLayout.fields));
-    });
-
-    formLayout.fields.forEach((field) => {
-      checkConditionalRender(formLayout.triggerFields, formLayout.fields, field.id, { watch, setValue, setError, clearErrors });
-    });
-
-    setSections(renderSections);
-
-    //If we have any dynamic validations, set them
-    if (Object.keys(dynamicValidations).length > 0) {
-      console.log('dynamicValidations', dynamicValidations)
-      setValidations(() => {
-        return {
-          ...dynamicValidations,
-        };
-      });
-    }
-    // reset(realValues);
-  }, [formLayout]);
-
-  // If the schema changes and the form has been submitted, revalidate
-  useEffect(() => {
-    if (formState.isSubmitted) {
-      trigger();
-    }
-    // We do not want formState.isSubmitted to be a dependency here, the trigger happens on form submit
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [validationSchema]);
-
-  return {
-    useFormObject,
-    sections
-  };
 };
