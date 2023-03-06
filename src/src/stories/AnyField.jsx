@@ -58,23 +58,27 @@ import { Box } from '@mui/material';
  * @param {object} props.rules - the react-hook-form rules object (this is not used if using form level validation)
  * @param {object} props.layout - the layout object
  * @param {boolean} props.disabled - whether the field is disabled
+ * @param {string} props.nestedName - the name of the field if it is nested
+ * @param {boolean} props.isNested - whether the field is nested
  * @param {FieldOptions} props.options - various options for the fields
  * @returns {React.ReactElement | null} - the rendered AnyField
  */
-const AnyField = ({ control, rules, layout, options, ...props }) => {
+const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...props }) => {
   if (layout.hidden) {
     return null;
   }
 
   const renderState = renderType(layout, options);
+  const shouldUnregister = !isNested;
+  const name = (isNested && nestedName) ? nestedName : layout.name;
 
   return (
     <Box {...props}>
       <Controller
-        shouldUnregister={true}
+        shouldUnregister={shouldUnregister}
         control={control}
         rules={rules}
-        name={layout.name}
+        name={name}
         render={renderState}
       />
     </Box>
@@ -86,7 +90,9 @@ AnyField.propTypes = {
   rules: PropTypes.object,
   layout: PropTypes.object.isRequired,
   options: PropTypes.object,
-}
+  isNested: PropTypes.bool,
+  nestedName: PropTypes.string,
+};
 
 /**
  * Return the correct renderer for the given type

@@ -12,6 +12,7 @@ import { getFieldValue, parseFormLayout } from '../../hooks/useFormLayout';
 import AnyField from '../AnyField';
 import { useConfigForm } from '../../hooks/useConfigForm';
 import Button from '../Button';
+import DynamicField from '../DynamicField';
 
 /**
  * Wrapper a configurable form waits for the form layout to be parsed and then renders the form
@@ -71,8 +72,23 @@ export const DynamicForm = ({ layout, data, urlDomain, children, options }) => {
 
 export const NestedThing = ({ children }) => {
   const allThings = useFormContext();
-  const { register, watch, setValue, getValues, reset, sections, control, formProcessing, forceReset } = allThings;
+  const { register, watch, setValue, getValues, reset, sections, control, formProcessing, forceReset, handleSubmit } = allThings;
   // const watchFields = watch();
+
+  // onSubmit is not called if the form is invalid
+  // so we need to manually check for this
+  const preSubmit = (evt) => {
+    const themValues = getValues();
+    console.log('preSubmit', themValues);
+    handleSubmit(onSubmit)(evt);
+  };
+
+  const onSubmit = async (data) => {
+    console.log('submitting', data);
+    // const payload = formatPayload(data);
+
+    // addOrUpdate(payload, isEdit, successUrl, cancelUrl);
+  };
 
   if (formProcessing) {
     return (
@@ -101,6 +117,7 @@ export const NestedThing = ({ children }) => {
   return (
     <form data-src-form="genericForm">
       <Button onClick={() => forceReset()}>Reset</Button>
+      <Button data-src-form-button="submit" onClick={preSubmit}>Save</Button>
       {sections.map((section, index) => {
         const sx = { position: 'relative' };
         if (index) {
@@ -126,9 +143,9 @@ const renderFormSection = (section, control, index, options) => {
     <CardContent key={index}>
       {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
       {section.fields.map((field, fIndex) => (
-        <AnyField
+        <DynamicField
+          field={field}
           sx={{ marginTop: fIndex ? '16px' : null }}
-          layout={field.render}
           control={control}
           key={field?.render?.name}
           options={{ icon: options?.iconOptions }}

@@ -155,7 +155,13 @@ const createRenderSection = (section, fieldMap) => {
       visibleCount++;
     }
 
-    formSection.fields.push({ render: { ...render } });
+    // const copy = { ...render };
+    // if (field.subFields) {
+    //   console.log('COPY !!! field.subFields', field.subFields);
+    //   copy.subFields = field.subFields;
+    // }
+
+    formSection.fields.push({ render: { ...render }, subFields: field.subFields });
   });
 
   formSection.visible = visibleCount > 0;

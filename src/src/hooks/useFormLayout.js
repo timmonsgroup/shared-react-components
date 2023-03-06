@@ -328,6 +328,25 @@ export function parseField(field, asyncFieldsMap) {
     asyncFieldsMap.set(field.path, field.url);
   }
 
+  if (type === FIELDS.CLUSTER) {
+    parsedField.render.addLabel = field.addLabel;
+    parsedField.render.removeLabel = field.removeLabel;
+    const subFields = field.layout?.map((subF) => {
+      const subField = parseField(subF, asyncFieldsMap);
+      // TODO: Add subfield validation support
+      // Validations have been created and should exist in the subField.validations object
+      // Now we just need to figure out how it should be added to the parent field / overall validation schema
+      // if (subF.model) {
+      //   const subName = subF.model?.name || 'unknownSub';
+      //   if (subValid) {
+      //     subFieldValidations[subName] = subValid;
+      //   }
+      // }
+      return subField;
+    });
+    parsedField.subFields = subFields;
+  }
+
   const validations = new Map();
   parseValidation(validations, field);
   parseValidation(validations, data);
@@ -475,7 +494,6 @@ export function getFieldValue(field, formData, isNested = false) {
       }
       break;
     }
-
     case FIELDS.CLUSTER: {
       const clusterData = [];
       if (Array.isArray(inData) && inData.length) {
