@@ -1,5 +1,5 @@
 //Third party bits
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useLayoutEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { object } from 'yup';
@@ -11,7 +11,8 @@ import axios from 'axios';
 import {
   ID_FIELD,
   LABEL_FIELD,
-  CONDITIONAL_RENDER
+  CONDITIONAL_RENDER,
+  DEFAULT_VALUE
 } from '../constants';
 import { objectReducer } from '../helpers';
 
@@ -155,13 +156,7 @@ const createRenderSection = (section, fieldMap) => {
       visibleCount++;
     }
 
-    // const copy = { ...render };
-    // if (field.subFields) {
-    //   console.log('COPY !!! field.subFields', field.subFields);
-    //   copy.subFields = field.subFields;
-    // }
-
-    formSection.fields.push({ render: { ...render }, subFields: field.subFields });
+    formSection.fields.push({ render: { ...render }, subFields: field.subFields, type: field.type, [DEFAULT_VALUE]: field[DEFAULT_VALUE] });
   });
 
   formSection.visible = visibleCount > 0;
@@ -203,7 +198,7 @@ export const useConfigForm = (formLayout, data, options) => {
   // Form object will contain all the properties of useForm (React Hook Form)
   const { formState, watch, trigger, reset, resetField, setError, clearErrors, getValues } = useFormObject;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!formProcessing) {
       setFormProcessing(true);
     }
@@ -259,7 +254,7 @@ export const useConfigForm = (formLayout, data, options) => {
 
 
   // If we have any watchFields, watch them and update the form
-  useEffect(() => {
+  useLayoutEffect(() => {
     let subscription = null;
     if (readyForWatches && !subscription) {
       subscription = watch((formValues, { name, type }) => {

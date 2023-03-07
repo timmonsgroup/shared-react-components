@@ -25,7 +25,7 @@ export const choiceFormatter = (fieldId, res, otherOptions) => {
 };
 
 export const choiceFormatter2 = (fieldId, response, options) => {
-  console.log('choiceFormatter', fieldId, response, options);
+  // console.log('choiceFormatter', fieldId, response, options);
   const { data } = response || {};
   const choiceDataList = data.facts;
   const formattedChoices = choiceDataList.map((choiceDataItem, index) => {
@@ -114,7 +114,11 @@ export const Template = (args) => {
         data={{
           moMoney: 100,
           fireDepartment: '7409',
-          anotherField: 1
+          anotherField: 1,
+          amCluster:[
+            {bob: 68},
+            {bob: 39},
+          ]
         }}
       >
         <p> Am I A GAME? </p>

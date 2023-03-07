@@ -213,6 +213,8 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
  * @property {Array} conditions - if the field is hidden
  * @property {object} specialProps - special props for the field
  * @property {object} [defaultValue] - default value for the field
+ * @property {object} [modelData] - model data for the field (found on the model.data)
+ * @property {Array<ParsedField>} [subFields] - subFields for the field if its type is FIELD_TYPES.CLUSTER (i.e. 100)
  * @property {FieldRenderProps} render - render props for the field
  */
 
@@ -328,22 +330,15 @@ export function parseField(field, asyncFieldsMap) {
     asyncFieldsMap.set(field.path, field.url);
   }
 
+  // Special case for cluster fields
   if (type === FIELDS.CLUSTER) {
+    // Allow for custom labels
     parsedField.render.addLabel = field.addLabel;
     parsedField.render.removeLabel = field.removeLabel;
-    const subFields = field.layout?.map((subF) => {
-      const subField = parseField(subF, asyncFieldsMap);
-      // TODO: Add subfield validation support
-      // Validations have been created and should exist in the subField.validations object
-      // Now we just need to figure out how it should be added to the parent field / overall validation schema
-      // if (subF.model) {
-      //   const subName = subF.model?.name || 'unknownSub';
-      //   if (subValid) {
-      //     subFieldValidations[subName] = subValid;
-      //   }
-      // }
-      return subField;
-    });
+
+    // Loop through the sub fields and parse them
+    // This will also populate the validations property for each sub field
+    const subFields = field.layout?.map((subF) => parseField(subF, asyncFieldsMap));
     parsedField.subFields = subFields;
   }
 
@@ -366,7 +361,7 @@ export function parseField(field, asyncFieldsMap) {
 function parseValidation(validationMap, data, debug = false) {
   Object.keys(data).forEach((key) => {
     if (debug) {
-      console.log('~parseValidation~', key, data[key]);
+      console.debug('~parseValidation~', key, data[key]);
     }
     if (validationTypes.includes(key) && data[key] !== undefined) {
       validationMap.set(key, data[key]);
@@ -428,13 +423,15 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.
  * If the data is null or missing will set as need to avoid "uncontrolled" vs "controlled" MUI errors.
- * @param {*} field - the field object should be in the syntax of the form builder (parseField)
- * @param {*} formData - the data from the database. This should be ALL the form values.
- * @param {*} isNested - not yet implemented, but will be used to parse nested (cluster) fields.
+ * @param {ParsedField} field - the field object should be in the syntax of the form builder (parseField)
+ * @param {object} formData - the data from the database. This should be ALL the form values.
  * @returns {object}
  */
 // eslint-disable-next-line no-unused-vars
-export function getFieldValue(field, formData, isNested = false) {
+export function getFieldValue(field, formData) {
+  // if the type is missing check the render object
+  let {type} = field || field?.render || {};
+
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
   // const inData = isNested && data ? data[name] : getObject(data || {}, field.path);
@@ -447,7 +444,7 @@ export function getFieldValue(field, formData, isNested = false) {
 
   let value = null;
 
-  switch (field.type) {
+  switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT:
     case FIELDS.INT:
@@ -499,8 +496,9 @@ export function getFieldValue(field, formData, isNested = false) {
       if (Array.isArray(inData) && inData.length) {
         inData.forEach((nug) => {
           const lineData = {};
-          if (Array.isArray(field.layout) && field.layout.length) {
-            field.layout.forEach((subF) => {
+          const {subFields} = field || [];
+          if (Array.isArray(subFields) && subFields.length) {
+            subFields.forEach((subF) => {
               const { name: fName, value: fValue } = getFieldValue(subF, nug, true);
               lineData[fName] = fValue;
             });

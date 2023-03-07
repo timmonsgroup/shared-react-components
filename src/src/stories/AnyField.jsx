@@ -69,6 +69,8 @@ const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...pr
   }
 
   const renderState = renderType(layout, options);
+  // Per react-hook-form docs, we should not unregister fields in a field Array at this level
+  // It is done via the useFieldArray hook in ClusterField component
   const shouldUnregister = !isNested;
   const name = (isNested && nestedName) ? nestedName : layout.name;
 
