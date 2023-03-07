@@ -73,7 +73,7 @@ const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) =
   let hasIt = triggerField.fieldValues.has(formValue);
 
   // Check again with the string version of the value
-  if (!hasIt) {
+  if (!hasIt && formValue !== undefined && formValue !== null) {
     hasIt = triggerField.fieldValues.has(formValue.toString());
     if (hasIt) {
       usedFormValue = formValue.toString();

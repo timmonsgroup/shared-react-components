@@ -431,24 +431,20 @@ export function createFieldValidation(type, label, validationMap, field) {
     // }
 
     // TODO: Yes clusterfield I know you are here, but I don't know what to do with you yet
-    // case FIELDS.CLUSTER: {
-    //   dynField.render.is = 'ClusterField';
-    //   // Loop through and process fields tied to the cluster.
-    //   const subFieldValidations = {};
-    //   const subFields = field.layout?.map((subF) => {
-    //     const { field: subField, validation: subValid } = getStructure(subF);
-    //     if (subF.model) {
-    //       const subName = subF.model?.name || 'unknownSub';
-    //       if (subValid) {
-    //         subFieldValidations[subName] = subValid;
-    //       }
-    //     }
-    //     return subField;
-    //   });
-    //   dynField.render.fields = subFields;
-    //   validation = array().of(object().shape(subFieldValidations).strict());
-    //   break;
-    // }
+    case FIELDS.CLUSTER: {
+      console.log('Create cluster validations', field)
+      const subFieldValidations = {};
+      // Loop through and extract the validations for each subfield
+      field.subFields?.forEach((subF) => {
+        subFieldValidations[subF.render?.name] = subF.validations;
+      });
+      // Create the validation for the cluster field which is an array of objects
+      validation = array().of(object().shape(subFieldValidations).strict());
+      if (required) {
+        validation = validation.min(1, reqMessage);
+      }
+      break;
+    }
 
     default:
       break;
