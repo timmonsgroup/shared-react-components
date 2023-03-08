@@ -465,8 +465,7 @@ const useProvideAuth = (props, whitelist) => {
   /**
    * Called to reset the state of the auth object
    */
-  const logout_internal = async (debug) => {
-    // console.log('logout_internal: ', debug);
+  const logout_internal = async () => {
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
@@ -872,18 +871,15 @@ const clearRefreshTokenInSession = () => {
  */
 const clearSubjectCookie = async () => {
   let domain = window.location.hostname.split('.').slice(1).join('.');
-  let deleted = false;
   try {
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
       await window.cookieStore.delete('sub', { domain });
-      deleted = true;
     } else {
       // Set or replace the cookie so that sub is set to the subject
       const oldValue = document.cookie.split(';');
       const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
       document.cookie = newValue.join(';');
-      deleted = true;
     }
   } catch (ex) {
     console.debug('Error clearing refreshToken cookie', ex);

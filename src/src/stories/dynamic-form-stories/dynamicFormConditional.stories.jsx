@@ -4,14 +4,14 @@ import {
 } from '../../helpers/story-helpers/dynamicFormStoryHelpers';
 import { generateDynamicFormConditionalTestData } from './generateDynamicFormConditionalTestData';
 import { FIELD_TYPES } from '../../constants';
-  
-export default generateDynamicFormStoryDefaultExport({title: 'Conditionals'});
-  
-  
-// ----------- Configure Dynamic Form Conditional Stories -----------
-  
 
-export const disable = Template.bind({});
+export default generateDynamicFormStoryDefaultExport({title: 'Conditionals'});
+
+
+// ----------- Configure Dynamic Form Conditional Stories -----------
+
+
+export const Disable = Template.bind({});
 
 const conditionalDisableTestDataOptions = {
   conditionalThen: {disabled: true},
@@ -20,12 +20,12 @@ const conditionalDisableTestDataOptions = {
 
 const conditionalDisableTestData = generateDynamicFormConditionalTestData(conditionalDisableTestDataOptions);
 
-disable.args = {
+Disable.args = {
   configurationObject: conditionalDisableTestData
 };
 
 
-export const url = Template.bind({});
+export const Url = Template.bind({});
 
 const conditionalUrlTestDataOptions = {
   conditionalThen: {url: 'https://dog-api.kinduff.com/api/facts?number=2'},
@@ -34,6 +34,6 @@ const conditionalUrlTestDataOptions = {
 
 const conditionalUrlTestData = generateDynamicFormConditionalTestData(conditionalUrlTestDataOptions);
 
-url.args = {
+Url.args = {
   configurationObject: conditionalUrlTestData
 };

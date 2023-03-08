@@ -4,14 +4,14 @@ import {
 } from '../../helpers/story-helpers/dynamicFormStoryHelpers';
 import { generateDynamicFormTestData } from '../../helpers/story-helpers/dynamicFormTestDataGenerator';
 import { FIELD_TYPES } from '../../constants';
-  
-export default generateDynamicFormStoryDefaultExport();
-  
-  
-// ----------- Configure General AnyField Stories -----------
-  
 
-export const exampleDynamicForm = Template.bind({});
+export default generateDynamicFormStoryDefaultExport();
+
+
+// ----------- Configure General AnyField Stories -----------
+
+
+export const ExampleDynamicForm = Template.bind({});
 
 const url = 'https://dog-api.kinduff.com/api/facts?number=5';
 const conditionUrl = 'https://dog-api.kinduff.com/api/facts?number=2';
@@ -39,6 +39,6 @@ const fieldList = [
 
 const testData = generateDynamicFormTestData(fieldList);
 
-exampleDynamicForm.args = {
+ExampleDynamicForm.args = {
   configurationObject: testData
 };

@@ -13,9 +13,9 @@ export function generateDynamicFormTestData(fieldList) {
   const section = generateDefaultSection();
 
   // This tracks how many of each field type have been generated so far to manage naming fields properly
-  const fieldTypeCounter = generateFieldTypeCounter(); 
+  const fieldTypeCounter = generateFieldTypeCounter();
 
-  fieldList.forEach(({type, quantity = 1, options = {}}, index) => {
+  fieldList.forEach(({type, quantity = 1, options = {}}) => {
     const typeNameString = getTypeNameString(type);
 
     for(let i = 1; i <= quantity; i++){

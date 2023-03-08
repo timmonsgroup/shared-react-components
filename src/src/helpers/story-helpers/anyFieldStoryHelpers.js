@@ -222,11 +222,11 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.path = testSectionLayout.id ?? 'defaultId';
 
   // Validations
-  testSectionLayout.integerDigits = args.integerDigits; 
-  testSectionLayout.fractionalDigits = args.fractionalDigits; 
-  testSectionLayout.maxValue = args.maxValue; 
-  testSectionLayout.maxLength = args.maxLength; 
-  testSectionLayout.minLength = args.minLength; 
+  testSectionLayout.integerDigits = args.integerDigits;
+  testSectionLayout.fractionalDigits = args.fractionalDigits;
+  testSectionLayout.maxValue = args.maxValue;
+  testSectionLayout.maxLength = args.maxLength;
+  testSectionLayout.minLength = args.minLength;
 
   testSectionLayout.model = {};
   testSectionLayout.model.name = args.modelName ?? 'defaultModelName';
@@ -239,7 +239,7 @@ export async function loadArgsAndGetField(args) {
   testSection.enabled = args.enabled ?? true;
   testSection.name = args.sectionName ?? 'default section name';
 
-  const choiceFormatter = (fieldId, response, options) => {
+  const choiceFormatter = (fieldId, response) => {
     const { data } = response;
 
     const choicesData = data.facts;
@@ -247,7 +247,7 @@ export async function loadArgsAndGetField(args) {
     const formattedChoices = choicesData.map((choiceData, index) => {
       return { id: index, label: choiceData};
     });
-    
+
     return formattedChoices;
   };
 
