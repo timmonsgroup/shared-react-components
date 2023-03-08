@@ -281,6 +281,7 @@ export function parseField(field, asyncFieldsMap) {
       helperText: field.helperText,
       requiredErrorText: field.requiredErrorText,
       readOnly,
+      solitary: field.solitary,
       linkFormat,
     }
   };

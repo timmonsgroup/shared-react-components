@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // MUI components
-import { Divider, FormHelperText } from '@mui/material';
+import { Divider, FormHelperText, Box } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
@@ -171,12 +171,12 @@ export const ClusterField = ({ control, field, renderAddButton, renderRemoveButt
 
   return (
     <>
-      <Grid {...props}>
+      <Box {...props}>
         <AnyFieldLabel htmlFor={layout.name} label={layout.label} required={!!layout.required} disabled={layout.disabled} iconText={layout.iconHelperText} error={!!error} />
         {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
         {layout?.helperText && <FormHelperText error={false}>{layout?.helperText}</FormHelperText>}
         {fields.map((cluster, index) => {
-          return (<Grid container spacing={2} xs={12} sx={{ display: 'flex' }} key={cluster.id}>
+          return (<Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={cluster.id}>
             {subFields.map((subField) => {
               return (
                 <Grid xs={6} key={`${cluster.id}-${subField.render?.name}`}>
@@ -189,10 +189,8 @@ export const ClusterField = ({ control, field, renderAddButton, renderRemoveButt
             </Grid>
           </Grid>);
         })}
-      </Grid>
-      <Grid xs={12}>
-        {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues) })}
-      </Grid>
+      </Box>
+      {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues) })}
     </>
   );
 };

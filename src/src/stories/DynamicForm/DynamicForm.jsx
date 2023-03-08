@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import { FormProvider, useFormContext } from 'react-hook-form';
 
 // Third party components
-import { Card, CardContent, Container, Grid, Stack, Typography } from '@mui/material';
+import { Card, CardContent, Container, Stack, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 
 // Internal bits
 import { getFieldValue, parseFormLayout } from '../../hooks/useFormLayout';
@@ -166,36 +167,50 @@ const renderTwoColumnSection = (section, control, index, options) => {
     rightCol = section.fields.slice(nextCol);
   }
 
+  const rows = [];
+  const cols = 3;
+  let col = 1;
+  let row = 1;
+
+  //Create the rows
+  section.fields.forEach((field, fIndex) => {
+    console.log('field', field.render);
+    if (field.render.solitary) {
+      rows.push([field]);
+      row = rows.length;
+      col = 1;
+      return;
+    }
+
+    if (rows[row] === undefined) {
+      rows[row] = [];
+    }
+    rows[row].push(field);
+    col++;
+
+    if (col > cols) {
+      col = 1;
+      row++;
+    }
+  });
+
   return (
     <CardContent key={index}>
       {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
-      <Grid
-        container
-        spacing={{ xs: 1, sm: 2, md: 4 }}
-      >
-        <Grid item xs={6} key={`${index}-left`}>
-          {leftCol.map((field, fIndex) => (
-            <DynamicField
-              field={field}
-              sx={{ marginTop: fIndex ? '16px' : null }}
-              control={control}
-              key={`${index}-left-${field?.render?.name}`}
-              options={options.fieldOptions || {}}
-            />
+      {rows.map((row, rIndex) => (
+        <Grid container spacing={{ xs: 1, sm: 2, md: 4 }} key={`${index}-row-${rIndex}`}>
+          {row.map((field, fIndex) => (
+            <Grid xs={12/row.length} key={`${index}-field-${fIndex}`}>
+              <DynamicField
+                field={field}
+                control={control}
+                key={`${index}-left-${field?.render?.name}`}
+                options={options.fieldOptions || {}}
+              />
+            </Grid>
           ))}
         </Grid>
-        <Grid item xs={6} key={`${index}-right`}>
-          {rightCol.map((field, fIndex) => (
-            <DynamicField
-              field={field}
-              sx={{ marginTop: fIndex ? '16px' : null }}
-              control={control}
-              key={`${index}-right-${field?.render?.name}`}
-              options={options.fieldOptions || {}}
-            />
-          ))}
-        </Grid>
-      </Grid>
+      ))}
     </CardContent>
   );
 };
