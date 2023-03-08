@@ -33,14 +33,14 @@ export const TypeAheadUrlChoiceField = Template.bind({});
 export const TypeAheadUrlObjectField = Template.bind({});
 
 TypeAheadChoiceField.args = {
-  label: "Type Ahead Choice Field",
+  label: 'Type Ahead Choice Field',
   ...standardSelectionAnyFieldArgs,
   ...standardTypeAheadAnyFieldArgs,
   type: 7,
 };
 
 TypeAheadObjectField.args = {
-  label: "Type Ahead Object Field",
+  label: 'Type Ahead Object Field',
   ...standardSelectionAnyFieldArgs,
   ...standardTypeAheadAnyFieldArgs,
   type: 10,

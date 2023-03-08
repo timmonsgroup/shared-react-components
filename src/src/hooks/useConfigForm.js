@@ -1,5 +1,5 @@
 //Third party bits
-import React, { useEffect, useMemo, useState, useLayoutEffect } from 'react';
+import { useEffect, useMemo, useState, useLayoutEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { object } from 'yup';
@@ -196,7 +196,7 @@ export const useConfigForm = (formLayout, data, options) => {
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
-  const { formState, watch, trigger, reset, resetField, setError, clearErrors, getValues } = useFormObject;
+  const { formState, watch, trigger, reset, resetField, setError, clearErrors } = useFormObject;
 
   useLayoutEffect(() => {
     if (!formProcessing) {
@@ -308,6 +308,7 @@ export const useConfigForm = (formLayout, data, options) => {
       // TODO: Look into termination of any triggerfield async
       subscription?.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readyForWatches, watchFields]);
 
 

@@ -432,7 +432,7 @@ export function createFieldValidation(type, label, validationMap, field) {
 
     // TODO: Yes clusterfield I know you are here, but I don't know what to do with you yet
     case FIELDS.CLUSTER: {
-      console.log('Create cluster validations', field)
+      console.log('Create cluster validations', field);
       const subFieldValidations = {};
       // Loop through and extract the validations for each subfield
       field.subFields?.forEach((subF) => {

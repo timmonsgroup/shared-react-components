@@ -19,7 +19,7 @@ export const useLayout = (type, key, url = null, existingLayout = null) => {
   const [data, isLoading] = useStaleData(fetchUrl, existingLayout || {}, existingLayout !== null);
 
   return [data, isLoading];
-}
+};
 
 /**
  * Hook to fetch WMS DescribeLayer response by url or cache
@@ -45,7 +45,7 @@ export const useMapConfig = (map_key) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
   return [mapConfig, mapConfigLoading];
-}
+};
 
 export const useConfig = (config_key) => {
 
@@ -67,7 +67,7 @@ export const useConfig = (config_key) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
   return [config, configLoading];
-}
+};
 
 /**
  * Hook that will fetch data from a url and cache it
@@ -117,7 +117,7 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
       return () => {
         timeRef && clearTimeout(timeRef);
         mounted = false;
-      }
+      };
     } else if (CACHE[cacheId] !== undefined) {
       setData(CACHE[cacheId]);
       setLoading(false);
@@ -149,13 +149,13 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
       return () => {
         controller.abort();
         mounted = false;
-      }
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [data, isLoading];
-}
+};
 
 /**
  * Hook to use Axios get request without caching
@@ -189,7 +189,7 @@ export const useGet = (url, defaultValue = null) => {
           setLoading(false);
         }
       });
-    }
+    };
 
     getData();
 
@@ -197,11 +197,11 @@ export const useGet = (url, defaultValue = null) => {
     return () => {
       controller.abort();
       mounted = false;
-    }
+    };
   }, [url]);
 
   return [data, isLoading, setData];
-}
+};
 
 /**
  * Hook to use axios-retry to retry a request if it fails with a 504 error

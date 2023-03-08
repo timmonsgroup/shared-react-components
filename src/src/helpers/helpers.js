@@ -25,7 +25,7 @@ export function mergeDeep(target, source) {
     }
   });
   return target;
-};
+}
 
 /**
  * Given an object and a path, return the value at that path.
@@ -139,8 +139,8 @@ export function sortOn(items, prop = 'label', isNumber = false) {
  * @returns {object} - zoom option object
  */
 export function createZoomOption(label, value, extent) {
-  return { label, value, extent }
-};
+  return { label, value, extent };
+}
 
 /**
  * Create a zoom option object from a zoomable item
@@ -151,7 +151,7 @@ export function createZoomOption(label, value, extent) {
  */
 export function zoomableOption(item, labelProp = 'label', valueProp = 'id') {
   return createZoomOption(item[labelProp], item[valueProp], item.fields?.extent);
-};
+}
 
 export function zoomablesOptions(zoomables, labelProp = 'label', valueProp = 'id') {
   return sortOn(zoomables, 'label').map((item) => zoomableOption(item, labelProp, valueProp));
@@ -174,7 +174,7 @@ export const getSectionChoices = (layout, sectionName, modelName) => {
   })) : [];
 
   return choices;
-}
+};
 
 /**
  * Simple layout process method to convert the layout object into a format that the layout builder can use.
@@ -225,7 +225,7 @@ export function processGenericLayout(layout) {
   const layoutTypes = {
     1: 'Form',
     2: 'Grid',
-  }
+  };
 
   const data = {};
 
@@ -241,11 +241,11 @@ export function processGenericLayout(layout) {
     sections: sections,
     title: layout.name,
     id: layout.id,
-    type: layoutTypes[layout.type] || "Unknown Layout Type: " + layout.type,
+    type: layoutTypes[layout.type] || 'Unknown Layout Type: ' + layout.type,
     editable: layout.editable,
     data,
     isGeneric: true,
-  }
+  };
 
   return newLayout;
 }
@@ -289,11 +289,11 @@ function getStructure(field) {
   }
 
   if (field.width) {
-    dynField.width = field.width
+    dynField.width = field.width;
   }
 
   if (field.flex) {
-    dynField.flex = field.flex
+    dynField.flex = field.flex;
   }
 
   if (field.nullValue) {
@@ -305,7 +305,7 @@ function getStructure(field) {
 
 export const hasPermission = (permission, acl) => {
   return acl?.includes(permission) || false;
-}
+};
 
 export const hasAllPermissions = (permissions, acl) => {
   for (let perm of permissions) {
@@ -315,7 +315,7 @@ export const hasAllPermissions = (permissions, acl) => {
   }
 
   return true;
-}
+};
 
 export const hasAnyPermissions = (permissions, acl) => {
   for (let perm of permissions)
@@ -323,7 +323,7 @@ export const hasAnyPermissions = (permissions, acl) => {
       return true;
 
   return false;
-}
+};
 
 /**
  * Number with zero padding

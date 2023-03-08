@@ -269,7 +269,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         // and out validation appearance will be out of sync with the schema
         flushSync(() => {
           for (const field in resetFields) {
-            console.log('resetting field', field)
             setValue(field, startValues.current[field]);
           }
         });
@@ -300,7 +299,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
             return data?.map((opt) => {
               const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
               const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
-              return { id, label }
+              return { id, label };
             });
         }
         ).catch(error => {
@@ -474,7 +473,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
       // reset(resetValues.current);
       // reset(startValues.current);
       setTimeout(() => {
-        console.log('finishedSetup AGAIN AGINA', resetValues.current)
+        console.log('finishedSetup AGAIN AGINA', resetValues.current);
         reset(resetValues.current);
       }, 100);
     }

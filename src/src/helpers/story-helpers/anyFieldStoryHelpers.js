@@ -7,7 +7,7 @@ import { object } from 'yup';
 
 import { getFieldValue, parseFormLayout } from '../../hooks';
 import AnyField from '../../stories/AnyField';
-import Button from "../../stories/Button";
+import Button from '../../stories/Button';
 import { StoryInfoBlock } from './infoBlocks/StoryInfoBlock';
 
 
@@ -118,25 +118,25 @@ export const standardAnyFieldArgs = {
 
 export const standardSelectionAnyFieldArgs = {
   ...standardAnyFieldArgs,
-  requiredErrorText: "Selection required",
+  requiredErrorText: 'Selection required',
   possibleChoices: [
     {
-      name: "default Choice 1",
+      name: 'default Choice 1',
       id: 1
     },
     {
-      name: "default Choice 2",
+      name: 'default Choice 2',
       id: 2
     }
   ],
-}
+};
 
 export const urlSelectionAnyFieldArgs = {
   ...standardAnyFieldArgs,
-  requiredErrorText: "Selection required",
+  requiredErrorText: 'Selection required',
   url: 'https://dog-api.kinduff.com/api/facts?number=5',
   possibleChoices: null,
-  infoBlock: "AnyFieldUrlSelection",
+  infoBlock: 'AnyFieldUrlSelection',
   infoBlockOptions: {url: 'https://dog-api.kinduff.com/api/facts?number=5'},
   disablePossibleChoices: true
 };
@@ -147,8 +147,8 @@ export const urlSelectionAnyFieldArgs = {
 
 
 export function generateAnyFieldStoryDefaultExport(options) {
-  let storyTitle = "form/AnyField";
-  storyTitle += options?.title ? `/${options.title}` : "";
+  let storyTitle = 'form/AnyField';
+  storyTitle += options?.title ? `/${options.title}` : '';
   const argTypeConfiguration = options?.argTypes ?? standardAnyFieldArgTypeConfiguration;
 
   return ({
@@ -189,7 +189,7 @@ export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
       <StoryInfoBlock infoBlockName={args.infoBlock} options={args.infoBlockOptions} />
     </>
   );
-}
+};
 
 // Copy Default Layout
 // Load arg selections into default layout
@@ -222,11 +222,11 @@ export async function loadArgsAndGetField(args) {
   testSectionLayout.path = testSectionLayout.id ?? 'defaultId';
 
   // Validations
-  testSectionLayout.integerDigits = args.integerDigits 
-  testSectionLayout.fractionalDigits = args.fractionalDigits 
-  testSectionLayout.maxValue = args.maxValue 
-  testSectionLayout.maxLength = args.maxLength 
-  testSectionLayout.minLength = args.minLength 
+  testSectionLayout.integerDigits = args.integerDigits; 
+  testSectionLayout.fractionalDigits = args.fractionalDigits; 
+  testSectionLayout.maxValue = args.maxValue; 
+  testSectionLayout.maxLength = args.maxLength; 
+  testSectionLayout.minLength = args.minLength; 
 
   testSectionLayout.model = {};
   testSectionLayout.model.name = args.modelName ?? 'defaultModelName';
@@ -246,14 +246,14 @@ export async function loadArgsAndGetField(args) {
 
     const formattedChoices = choicesData.map((choiceData, index) => {
       return { id: index, label: choiceData};
-      })
+    });
     
     return formattedChoices;
-  }
+  };
 
   const parsedLayout = await parseFormLayout(testLayout, null, { choiceFormatter });
   const fieldId = parsedLayout.sections[0].fields[0];
   const field = parsedLayout.fields.get(fieldId);
 
   return field;
-};
+}

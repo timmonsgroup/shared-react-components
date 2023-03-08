@@ -11,7 +11,7 @@ const Template = (args) => {
     <SideBar {...args} >
       <div>Some content</div>
     </SideBar>
-  )
+  );
 };
 
 

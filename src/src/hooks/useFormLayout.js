@@ -34,7 +34,7 @@ export function useFormLayout(type, key, url = null, urlDomain = null, asyncOpti
         const parsed = await parseFormLayout(data, urlDomain, asyncOptions);
         setParsedLayout(parsed);
         setIsParsing(false);
-      }
+      };
       waitForParse();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,7 +141,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
       }
     });
     return things;
-  }
+  };
 
   if (asyncFields.size > 0) {
     const asyncLoaders = {};
@@ -202,7 +202,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
   }
 
   return parsedSection;
-};
+}
 
 /**
  * @typedef {object} ParsedField
@@ -418,7 +418,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
       triggerFields.set(triggerId, trigField);
     });
   }
-}
+};
 
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.

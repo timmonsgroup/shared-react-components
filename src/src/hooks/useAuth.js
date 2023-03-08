@@ -50,7 +50,7 @@ const STALE_CHECK_STATES = {
   STALE_CHECK_REQUESTED: 'STALE_CHECK_REQUESTED',
   STALE_CHECK_COMPLETE: 'STALE_CHECK_COMPLETE',
   STALE_CHECK_IN_PROGRESS: 'STALE_CHECK_IN_PROGRESS',
-}
+};
 
 // Valid states that allow logins to occur
 // If the auth state is not in this list, we will not allow logins
@@ -294,7 +294,7 @@ const useProvideAuth = (props, whitelist) => {
     } else {
       logout_internal('refresh else');
     }
-  }
+  };
 
   /*
   * A Token has an expiration time
@@ -337,7 +337,7 @@ const useProvideAuth = (props, whitelist) => {
     let expiresAt = decodedToken.exp;
     let currentTime = Math.floor(Date.now() / 1000);
     return expiresAt - currentTime;
-  }
+  };
 
   /**
    * This function will schedule a stale check in the future
@@ -351,7 +351,7 @@ const useProvideAuth = (props, whitelist) => {
     staleCheckTimeoutTracker = setTimeout(() => {
       dispatch({ type: ACTIONS.SET_STALE_CHECK_STATE, staleCheckState: STALE_CHECK_STATES.STALE_CHECK_REQUESTED });
     }, timeInSeconds * 1000);
-  }
+  };
 
   /**
    * Parse the tokens from the url and dispatch the appropriate actions
@@ -432,7 +432,7 @@ const useProvideAuth = (props, whitelist) => {
     dispatch({
       type: ACTIONS.SET_STALE_CHECK_STATE,
       staleCheckState: STALE_CHECK_STATES.NEW_SESSION,
-    })
+    });
 
     // Now we need to get the permissions for the user
     if (!maybeUser || !maybeUser?.permissions) {
@@ -481,7 +481,7 @@ const useProvideAuth = (props, whitelist) => {
   const logout_internal_soft = async () => {
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.TOKEN_STALE });
-  }
+  };
 
   /**
    * Attempt to refresh the token
@@ -594,11 +594,11 @@ let activeBearerToken = null;
 
 const getActiveBearerToken = () => {
   return activeBearerToken;
-}
+};
 
 const setActiveBearerToken = (bearerToken) => {
   activeBearerToken = bearerToken;
-}
+};
 
 /**
  * Reducer hook method for the auth state
@@ -676,19 +676,19 @@ const authReducer = (nextState, action) => {
       return {
         ...nextState,
         state: AUTH_STATES.REFRESHING_TOKEN,
-      }
+      };
     }
     case ACTIONS.SET_STALE_CHECK_STATE: {
       return {
         ...nextState,
         staleCheckState: action.staleCheckState,
-      }
+      };
     }
     case ACTIONS.SET_LAST_REQUEST_TIME: {
       return {
         ...nextState,
         lastRequestTime: action.time,
-      }
+      };
     }
     case ACTIONS.BEGIN_LOGOUT:
       return {
@@ -765,7 +765,7 @@ const getSubjectFromCookie = async () => {
   }
 
   return subject;
-}
+};
 
 /**
  * This function will attempt to get the boot token from session storage
@@ -839,13 +839,13 @@ const setSubjectInCookie = (subject) => {
       domain = domain.split('.').slice(1).join('.');
 
 
-      let cookie = { name: 'sub', value: subject, sameSite: 'lax' }
+      let cookie = { name: 'sub', value: subject, sameSite: 'lax' };
 
       if (domain && domain !== 'localhost') {
         cookie.domain = domain;
       }
 
-      window.cookieStore.set(cookie)
+      window.cookieStore.set(cookie);
     } else {
       // Set or replace the cookie so that sub is set to the subject
       const oldValue = document.cookie.split(';');
@@ -856,7 +856,7 @@ const setSubjectInCookie = (subject) => {
   } catch (ex) {
     console.debug('Error setting refreshToken cookie', ex);
   }
-}
+};
 
 /**
  * This function will clear the refresh token from session storage
@@ -893,4 +893,4 @@ const clearSubjectCookie = async () => {
   // So we will set it to an empty string
   // Setting to special string so the application can check it if logged itself out of it if another app did it
   setSubjectInCookie(APP_ID);
-}
+};

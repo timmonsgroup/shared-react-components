@@ -28,6 +28,6 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     'no-empty': 'off',
     'no-extra-semi': 'warn',
-    'semi': ["warn", "always"]
+    'semi': ['warn', 'always']
   }
 };

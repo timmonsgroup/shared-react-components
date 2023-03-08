@@ -41,8 +41,8 @@ export const parseTokens = (tokensB64) => {
   return {
     token,
     accessToken,
-    isExpired: () => { console.log(accessToken.exp); return accessToken.exp < (Date.now() / 1000)},
-    timeToExpired: () => { return accessToken.exp - (Date.now() / 1000)}, // This should return the time in seconds until the token expires, we can use this to refresh the token
+    isExpired: () => { console.log(accessToken.exp); return accessToken.exp < (Date.now() / 1000);},
+    timeToExpired: () => { return accessToken.exp - (Date.now() / 1000);}, // This should return the time in seconds until the token expires, we can use this to refresh the token
     idToken: idToken,
     user: {
       authenticated: true,
