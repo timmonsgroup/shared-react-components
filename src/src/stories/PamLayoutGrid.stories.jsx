@@ -334,7 +334,6 @@ WithDataAndActions.args = {
 };
 
 export const WithDataAndToolbar = Template.bind({});
-console.log('WithDataAndToolbar', WithDataAndToolbar);
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 WithDataAndToolbar.args = {
   data: data,

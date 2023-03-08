@@ -1,7 +1,7 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
 import { ConfigForm } from './DynamicForm';
 import { HashRouter as Router } from 'react-router-dom';
-import { NestedThing } from './DynamicForm';
+import { FormSections } from './DynamicForm';
 import { Paper, Grid } from '@mui/material';
 import { layout } from '../helpers/story-helpers/FormLayoutPreset';
 
@@ -32,7 +32,7 @@ export const choiceFormatter2 = (fieldId, response, options) => {
       return { id: index, label: choiceDataItem };
   });
 
-  return formattedChoices;
+return formattedChoices;
 }
 
 export const availColors = [
@@ -67,24 +67,16 @@ export const formArgs = {
     control: 'boolean',
     description: 'If true, the form will be displayed in alternating columns',
   },
-  formatPayload: {
-    control: 'function',
-    description:'A function that will be called when the form is submitted. The function will be passed the payload as an argument and should return the payload.',
-  },
-  submitUrl: {
-    actions: 'clicked',
-    description: 'The url to submit the form to'
-  },
-  unitLabel: { control: 'text' },
+  // unitLabel: { control: 'text' },
   helpText: { control: 'text' },
   headerTitle: { control: 'text' },
-  iconOptions: {
+  fieldOptions: {
     control: 'object',
     description: 'An object containing the icon options',
   },
-  submitColor: { control: 'select', options: availColors },
-  cancelColor: { control: 'select', options: availColors },
-  editColor: { control: 'select', options: availColors },
+  // submitColor: { control: 'select', options: availColors },
+  // cancelColor: { control: 'select', options: availColors },
+  // editColor: { control: 'select', options: availColors },
   hideEmptySections: { control: 'boolean' },
 };
 
@@ -110,26 +102,31 @@ export const Template = (args) => {
         </Grid>
       </div>
       <ConfigForm
-        formLayout={args.layoutOptions.layout} parseOptions={{choiceFormatter: choiceFormatter2}}
+        formLayout={args.formLayout}
+        parseOptions={{ choiceFormatter: choiceFormatter2 }}
         data={{
           moMoney: 100,
           fireDepartment: '7409',
           anotherField: 1,
-          amCluster:[
-            {bob: 68},
-            {bob: 39},
-          ]
+          amCluster: [{ bob: 68 }, { bob: 39 }],
         }}
       >
         <p> Am I A GAME? </p>
-        <NestedThing />
+        <FormSections {...args}/>
       </ConfigForm>
     </Router>
   );
 };
 
 export const defaultProps = {
-  layoutOptions: layout,
+  formLayout: layout.layout,
+  fieldOptions: {
+    twoColCluster: true,
+    icon: {
+      color: 'secondary',
+      style: { fontSize: 20, top: 2, position: 'relative' },
+    }
+  }
 };
 
 # ConfigForm

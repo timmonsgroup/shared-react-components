@@ -1,2 +1,2 @@
-import { ConfigForm, NestedThing, DynamicForm } from './DynamicForm';
-export { ConfigForm, NestedThing, DynamicForm };
+import { ConfigForm, FormSections, DynamicForm } from './DynamicForm';
+export { ConfigForm, FormSections, DynamicForm };

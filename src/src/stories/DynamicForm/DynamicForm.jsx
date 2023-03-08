@@ -70,9 +70,18 @@ export const DynamicForm = ({ layout, data, urlDomain, children, options }) => {
   );
 };
 
-export const NestedThing = ({ children }) => {
+DynamicForm.propTypes = {
+  layout: PropTypes.object,
+  data: PropTypes.object,
+  urlDomain: PropTypes.string,
+  children: PropTypes.node,
+  options: PropTypes.object,
+};
+
+export const FormSections = ({ children, twoColumn, alternatingCols, fieldOptions, hideEmptySections }) => {
+  console.log('FormSections', children, twoColumn, alternatingCols, fieldOptions, hideEmptySections);
   const allThings = useFormContext();
-  const { register, watch, setValue, getValues, reset, sections, control, formProcessing, forceReset, handleSubmit } = allThings;
+  const { getValues, sections, control, formProcessing, forceReset, handleSubmit } = allThings;
   // const watchFields = watch();
 
   // onSubmit is not called if the form is invalid
@@ -109,10 +118,11 @@ export const NestedThing = ({ children }) => {
       </div>
     );
   }
-  // useEffect(() => {
-  //   console.log('watchFields', watchFields);
-  //   console.log('getValues', getValues());
-  // }, [watchFields]);
+
+  const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
+  const sectOpts = twoColumn ? { alternatingCols } : {};
+  sectOpts.fieldOptions = fieldOptions;
+  sectOpts.hideEmptySections = hideEmptySections;
 
   return (
     <form data-src-form="genericForm">
@@ -126,11 +136,67 @@ export const NestedThing = ({ children }) => {
         // const hasTopText = formTitle || helpText;
         return (
           <Card key={index} sx={sx}>
-            {renderFormSection(section, control, index, {})}
+            {theSection(section, control, index, sectOpts)}
           </Card>
         );
       })}
     </form>
+  );
+};
+
+const renderTwoColumnSection = (section, control, index, options) => {
+  // create two columns of fields
+  if (section.visible === false && options?.hideEmptySections) {
+    return null;
+  }
+
+  let leftCol = [];
+  let rightCol = [];
+  if (options?.alternatingCols) {
+    section.fields.forEach((field, fIndex) => {
+      if (fIndex % 2 === 0) {
+        leftCol.push(field);
+      } else {
+        rightCol.push(field);
+      }
+    });
+  } else {
+    const nextCol = Math.ceil(section.fields.length / 2);
+    leftCol = section.fields.slice(0, nextCol);
+    rightCol = section.fields.slice(nextCol);
+  }
+
+  return (
+    <CardContent key={index}>
+      {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
+      <Grid
+        container
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+      >
+        <Grid item xs={6} key={`${index}-left`}>
+          {leftCol.map((field, fIndex) => (
+            <DynamicField
+              field={field}
+              sx={{ marginTop: fIndex ? '16px' : null }}
+              control={control}
+              key={`${index}-left-${field?.render?.name}`}
+              options={options.fieldOptions || {}}
+            />
+          ))}
+        </Grid>
+        <Grid item xs={6} key={`${index}-right`}>
+          {rightCol.map((field, fIndex) => (
+            <DynamicField
+              field={field}
+              sx={{ marginTop: fIndex ? '16px' : null }}
+              control={control}
+              key={`${index}-right-${field?.render?.name}`}
+              options={options.fieldOptions || {}}
+            />
+          ))}
+        </Grid>
+      </Grid>
+    </CardContent>
   );
 };
 
@@ -148,9 +214,17 @@ const renderFormSection = (section, control, index, options) => {
           sx={{ marginTop: fIndex ? '16px' : null }}
           control={control}
           key={field?.render?.name}
-          options={{ icon: options?.iconOptions }}
+          options={options.fieldOptions || {}}
         />
       ))}
     </CardContent>
   );
+};
+
+FormSections.propTypes = {
+  children: PropTypes.node,
+  twoColumn: PropTypes.bool,
+  alternatingCols: PropTypes.bool,
+  fieldOptions: PropTypes.object,
+  hideEmptySections: PropTypes.bool,
 };

@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // MUI components
-import { Box, Divider, FormHelperText } from '@mui/material';
+import { Divider, FormHelperText } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
 import AnyField from './AnyField';
@@ -60,7 +61,7 @@ export default DynamicField;
  * @returns {React.ReactElement} - React element of the button and divider
  */
 const renderDefaultAddButton = ({ layout, onClick }) => {
-  const {addLabel} = layout || {};
+  const { addLabel } = layout || {};
 
   return (
     <Button onClick={onClick}>{addLabel || 'Add'}</Button>
@@ -105,6 +106,7 @@ const renderDefaultRemoveButton = ({ layout, onClick }) => {
  * @returns {React.ReactElement}
  */
 export const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...props }) => {
+  const columns = props?.twoColumnCluster === true ? 2 : 1;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
   const { formState: { errors }, trigger } = useFormContext();
 
@@ -168,20 +170,30 @@ export const ClusterField = ({ control, field, renderAddButton, renderRemoveButt
   };
 
   return (
-    <Box {...props}>
-      <AnyFieldLabel htmlFor={layout.name} label={layout.label} required={!!layout.required} disabled={layout.disabled} iconText={layout.iconHelperText} error={!!error} />
-      {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
-      {layout?.helperText && <FormHelperText error={false}>{layout?.helperText}</FormHelperText>}
-      {fields.map((cluster, index) => {
-        return (<React.Fragment key={cluster.id}>
-          {subFields.map((subField) => {
-            return (<AnyField key={`${cluster.id}-${subField.render?.name}`} isNested={true} nestedName={`${layout?.name}.${index}.${subField.render?.name}`} control={control} layout={subField.render} {...props} />);
-          })}
-          {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index) })}
-        </React.Fragment>);
-      })}
-      {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues) })}
-    </Box>
+    <>
+      <Grid {...props}>
+        <AnyFieldLabel htmlFor={layout.name} label={layout.label} required={!!layout.required} disabled={layout.disabled} iconText={layout.iconHelperText} error={!!error} />
+        {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
+        {layout?.helperText && <FormHelperText error={false}>{layout?.helperText}</FormHelperText>}
+        {fields.map((cluster, index) => {
+          return (<Grid container spacing={2} xs={12} sx={{ display: 'flex' }} key={cluster.id}>
+            {subFields.map((subField) => {
+              return (
+                <Grid xs={6} key={`${cluster.id}-${subField.render?.name}`}>
+                  <AnyField isNested={true} nestedName={`${layout?.name}.${index}.${subField.render?.name}`} control={control} layout={subField.render} {...props} />
+                </Grid>
+              );
+            })}
+            <Grid xs={12}>
+              {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index) })}
+            </Grid>
+          </Grid>);
+        })}
+      </Grid>
+      <Grid xs={12}>
+        {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues) })}
+      </Grid>
+    </>
   );
 };
 
