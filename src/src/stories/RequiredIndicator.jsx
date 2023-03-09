@@ -12,13 +12,13 @@ const RequiredIndicator = ({ isRequired }) => {
     return <Box component="span" sx={{color: 'red'}}>*</Box>;
   }
   return null;
-}
+};
 
 RequiredIndicator.propTypes = {
   isRequired: PropTypes.bool,
-}
+};
 
 RequiredIndicator.defaultProps = {
   isRequired: true,
-}
+};
 export default RequiredIndicator;

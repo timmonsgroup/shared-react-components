@@ -36,7 +36,7 @@ const FlexCard = ({ item, themeGroup, children, }) => {
         }
       </>
     );
-  }
+  };
 
   return (
     <Box sx={tg?.flexCard}>
@@ -46,7 +46,7 @@ const FlexCard = ({ item, themeGroup, children, }) => {
       {children}
     </Box>
   );
-}
+};
 
 FlexCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.shape({

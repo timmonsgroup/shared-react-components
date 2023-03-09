@@ -348,6 +348,7 @@ export const layout = {
             path: 'intTest',
             type: 2,
             solitary: true,
+            singleColumnSize: 6,
             iconHelperText: 'Interger is intTest.',
             helperText: 'I are current.',
             placeholder: 'I was once a float like you',

@@ -15,7 +15,7 @@ import { Button as MUIButton} from '@mui/material';
  * @param {function} props.onClick - the onClick handler of the button
  * @returns {React.ReactElement}
  */
-export const Button = ({ primary, backgroundColor, variant, color, size, label, children, ...props }) => {
+export const Button = ({ backgroundColor, variant, color, size, label, children, ...props }) => {
   return (
     <MUIButton
       variant={variant}
@@ -37,7 +37,6 @@ Button.propTypes = {
   color: PropTypes.string,
   label: PropTypes.string,
   onClick: PropTypes.func,
-
 };
 
 Button.defaultProps = {

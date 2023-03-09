@@ -250,7 +250,7 @@ export function parseField(field, asyncFieldsMap) {
   }
 
   const { label, type, model, hidden = false, conditions = [], linkFormat } = field;
-  const name = model.name || `unknown${model.id}`;
+  const name = model?.name || `unknown${model?.id || ''}`;
   const readOnly = !!field.readOnly;
   const disabled = !!field.disabled;
 
@@ -282,6 +282,7 @@ export function parseField(field, asyncFieldsMap) {
       requiredErrorText: field.requiredErrorText,
       readOnly,
       solitary: field.solitary,
+      singleColumnSize: field.singleColumnSize,
       linkFormat,
     }
   };

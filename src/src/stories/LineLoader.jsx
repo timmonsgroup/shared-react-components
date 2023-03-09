@@ -11,18 +11,18 @@ const LineLoader = ({ width, message, messageAlign, ...props }) => {
       <LinearProgress {...props} />
     </Box>
   );
-}
+};
 
 LineLoader.propTypes = {
   messageAlign: PropTypes.oneOf(['left', 'right', 'center']),
   message: PropTypes.string,
   width: PropTypes.string,
-}
+};
 
 LineLoader.defaultProps = {
   messageAlign: 'center',
   message: null,
   width: '100%',
-}
+};
 
 export default LineLoader;

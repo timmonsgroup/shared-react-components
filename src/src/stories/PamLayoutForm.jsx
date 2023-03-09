@@ -28,7 +28,7 @@ export const AnyField = ({ control, rules, layout, disabled, ...props }) => {
       />
     </Box>
   );
-}
+};
 
 const renderType = (layout, disabled) => {
   const { id, type, name, label, options } = layout;
@@ -104,7 +104,7 @@ const renderType = (layout, disabled) => {
             }}
             error={error}
           />
-        )
+        );
       };
       return renderTypeahead;
     }
@@ -127,59 +127,62 @@ const renderType = (layout, disabled) => {
     default:
       return <TextField />;
   }
-}
+};
 
 AnyField.propTypes = {
   control: PropTypes.object.isRequired,
   rules: PropTypes.object,
   layout: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
-}
-
-
+};
 
 const renderFormContent = (sections, control) => {
-    return (
-        <form>
-            {sections.map((field, index) => {
-                return createFormSection(field, control, index);
-            })}
-        </form>
-    );
-}
+  return (
+    <form>
+      {sections.map((field, index) => {
+        return createFormSection(field, control, index);
+      })}
+    </form>
+  );
+};
 
 const createFormSection = (section, control, index) => {
-    const nextCol = Math.ceil(section.fields.length / 2);
-    const left = section.fields.slice(0, nextCol);
-    const right = section.fields.slice(nextCol);
+  const nextCol = Math.ceil(section.fields.length / 2);
+  const left = section.fields.slice(0, nextCol);
+  const right = section.fields.slice(nextCol);
 
-    return (
-        <div key={index}>
-            <Grid
-                container
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-            >
-                <Grid item xs={6}>
-                    {left.map((field, index) => renderField(field, control, index))}
-                </Grid>
-                <Grid item xs={6}>
-                    {right.map((field, index) => renderField(field, control, index))}
-                </Grid>
-            </Grid>
-        </div>
-    )
-}
+  return (
+    <div key={index}>
+      <Grid
+        container
+        spacing={{ xs: 1, sm: 2, md: 4 }}
+      >
+        <Grid item xs={6}>
+          {left.map((field, index) => renderField(field, control, index))}
+        </Grid>
+        <Grid item xs={6}>
+          {right.map((field, index) => renderField(field, control, index))}
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
 
 const renderField = (field, control, index) => {
-    return (
-        <AnyField sx={{ marginTop: index ? '16px' : null }} key={index} layout={field.render} control={control} />
-    )
-}
+  return (
+    <AnyField sx={{ marginTop: index ? '16px' : null }} key={index} layout={field.render} control={control} />
+  );
+};
 
-const PamLayoutForm = ({layout, control, ...props}) => {
-    return <>
-        { renderFormContent(layout.sections, control) }
-    </>;
-}
+const PamLayoutForm = ({ layout, control }) => {
+  return <>
+    {renderFormContent(layout.sections, control)}
+  </>;
+};
+
+PamLayoutForm.propTypes = {
+  layout: PropTypes.object,
+  control: PropTypes.object.isRequired,
+};
 
 export default PamLayoutForm;

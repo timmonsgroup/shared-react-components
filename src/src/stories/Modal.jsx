@@ -46,7 +46,7 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
     }
 
     return <>{title}</>;
-  }
+  };
 
   return (
     <Dialog
@@ -67,7 +67,7 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
       }
     </Dialog>
   );
-}
+};
 
 Modal.propTypes = {
   open: PropTypes.bool.isRequired,
@@ -94,10 +94,10 @@ const ShowHidden = ({ hide, ...props }) => {
   return hide ? null :
     (
       <Button {...props} />
-    )
-}
+    );
+};
 ShowHidden.propTypes = {
   hide: PropTypes.bool
-}
+};
 
 export default Modal;

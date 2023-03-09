@@ -24,7 +24,7 @@ const SideBarButton = ({ isOpen, onToggleSideBar, dw }) => {
       <Typography color="#D16400" fontWeight="bold" variant="h6" marginLeft={2}>&gt;</Typography>
     </Box>
   );
-}
+};
 
 SideBarButton.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -52,13 +52,11 @@ const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, about
     const newChecked = !checked;
     setChecked(current => !current);
     onSideBarToggle(newChecked);
-  }
-
+  };
 
   const forceOpen = () => {
     setChecked(true);
   };
-
 
   const dw = drawerWidth || 421;
   const titleBoxWidth = drawerWidth - 38;
@@ -135,7 +133,7 @@ const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, about
         </Box>
       </Drawer>
     </>
-  )
+  );
 });
 SideBar.displayName = 'SideBar';
 

@@ -42,7 +42,7 @@ const baseColumnConfig = (layoutColumn, nullValue) => {
       let path = layoutColumn.path.split('.');
       //Only return the top level value
       return params.row[path[0]];
-    }
+    };
 
     // If the path includes a . then we need to dig down into the value so we will need to define a custom filterOperator
     // The input component will need to be a text field
@@ -121,7 +121,7 @@ const getDateOrDefault = (value, defaultValue) => {
   }
 
   return val;
-}
+};
 
 /**
  * This function provides a date value or a default value if the date is null or undefined.
@@ -136,7 +136,7 @@ const getDateOrDefaultFormatted = (value, defaultValue) => {
   const val = getDateOrDefault(value, null);
   if (val) return dateFormatter(val);
   return defaultValue;
-}
+};
 
 /**
  * This takes a mui column and adds formatting to it to handle date fields
@@ -176,7 +176,7 @@ const getValueNameOrDefault = (value, defaultValue) => {
   }
 
   return value.name || defaultValue;
-}
+};
 
 /**
  * This takes a mui column and adds formatting to it to handle single select fields.
@@ -190,13 +190,11 @@ const getValueNameOrDefault = (value, defaultValue) => {
 const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
   // single select
   muiGridColumn.type = 'singleSelect';
-  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name } });
+  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name }; });
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
 };
 
 //jsdoc for action type
-
-
 /**
  * This is our default renderer function for grid actions
  * @param {Object} props
@@ -256,7 +254,7 @@ const GridActions = ({ actions, params, themeGroup, useTypeVariant }) => {
             key={index}
             className={cssClass}
             // Pass in the row data to the action - up to the caller to unpack
-            onClick={() => { action.clickHandler(params.row) }}
+            onClick={() => { action.clickHandler(params.row); }}
             size="small"
             sx={gAI}
             variant={variant}
@@ -264,11 +262,11 @@ const GridActions = ({ actions, params, themeGroup, useTypeVariant }) => {
           >
             {action.label}
           </Button>
-        )
+        );
       })}
     </ButtonGroup>
   );
-}
+};
 
 GridActions.propTypes = {
   actions: PropTypes.array.isRequired,
@@ -276,7 +274,6 @@ GridActions.propTypes = {
   themeGroup: PropTypes.object,
   useTypeVariant: PropTypes.bool,
 };
-
 
 /**
  * @typedef {Object} ActionItem
@@ -396,7 +393,7 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
       if (value && typeof value === 'string') {
         return value;
       }
-    }
+    };
   } else {
     muiGridColumn.valueFormatter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
   }

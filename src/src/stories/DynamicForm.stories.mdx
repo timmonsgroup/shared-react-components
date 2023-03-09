@@ -1,7 +1,7 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
 import { ConfigForm } from './DynamicForm';
 import { HashRouter as Router } from 'react-router-dom';
-import { FormSections } from './DynamicForm';
+import { FormSections, GenericConfigForm } from './DynamicForm';
 import { Paper, Grid } from '@mui/material';
 import { layout } from '../helpers/story-helpers/FormLayoutPreset';
 
@@ -59,60 +59,46 @@ export const formArgs = {
     control: 'object',
     description: 'An object containing the layout options',
   },
-  twoColumn: {
-    control: 'boolean',
-    description: 'If true, the form will be displayed in two columns',
-  },
-  alternatingCols: {
-    control: 'boolean',
-    description: 'If true, the form will be displayed in alternating columns',
-  },
   // unitLabel: { control: 'text' },
   helpText: { control: 'text' },
   headerTitle: { control: 'text' },
+  columnCount: { control: 'number' },
   fieldOptions: {
     control: 'object',
     description: 'An object containing the icon options',
   },
-  // submitColor: { control: 'select', options: availColors },
-  // cancelColor: { control: 'select', options: availColors },
-  // editColor: { control: 'select', options: availColors },
+  submitColor: { control: 'select', options: availColors },
+  cancelColor: { control: 'select', options: availColors },
+  editColor: { control: 'select', options: availColors },
   hideEmptySections: { control: 'boolean' },
 };
 
 export const Template = (args) => {
+  const sectionProps = {
+    fieldOptions:args.fieldOptions,
+    formLayout: args.formLayout,
+    columnCount: args.columnCount,
+    formTitle: args.formTitle,
+    formDescription: args.formDescription
+  };
+
+  const data = {
+    moMoney: 100,
+    fireDepartment: '7409',
+    anotherField: 1,
+    amCluster: [{ bob: 68 }, { bob: 39 }],
+  }
+
   return (
     <Router>
-      <div>
-        <Grid id="top-row" container spacing={24}>
-          <Grid item xs={4}>
-            <Paper>Grid cell 1, 1</Paper>
-          </Grid>
-          <Grid item xs={4}>
-            <Paper>Grid cell 2, 1</Paper>
-          </Grid>
-        </Grid>
-        <Grid id="bottom-row" container spacing={24}>
-          <Grid item xs={4}>
-            <Paper>Grid cell 1, 2</Paper>
-          </Grid>
-          <Grid item xs={4}>
-            <Paper>Grid cell 2, 2</Paper>
-          </Grid>
-        </Grid>
-      </div>
       <ConfigForm
         formLayout={args.formLayout}
         parseOptions={{ choiceFormatter: choiceFormatter2 }}
-        data={{
-          moMoney: 100,
-          fireDepartment: '7409',
-          anotherField: 1,
-          amCluster: [{ bob: 68 }, { bob: 39 }],
-        }}
+        data={{}}
       >
-        <p> Am I A GAME? </p>
-        <FormSections {...args}/>
+        <GenericConfigForm {...args} sectionProps={sectionProps}>
+          <div>Where do I go</div>
+        </GenericConfigForm>
       </ConfigForm>
     </Router>
   );
@@ -120,6 +106,10 @@ export const Template = (args) => {
 
 export const defaultProps = {
   formLayout: layout.layout,
+  columnCount: 1,
+  formTitle: 'Form Title',
+  headerTitle: 'This Goes in the Header',
+  formDescription: 'Form Description is thing that we can do that will render in the first section',
   fieldOptions: {
     twoColCluster: true,
     icon: {

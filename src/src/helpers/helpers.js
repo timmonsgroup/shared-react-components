@@ -303,6 +303,14 @@ function getStructure(field) {
   return dynField;
 }
 
+export const functionOrDefault = (f, fdefault) => {
+  if (typeof f === 'function') {
+    return f;
+  }
+
+  return fdefault;
+};
+
 export const hasPermission = (permission, acl) => {
   return acl?.includes(permission) || false;
 };

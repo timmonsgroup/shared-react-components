@@ -4,7 +4,7 @@ export { default as Inspector } from './stories/components/inspector/Inspector';
 export {
   AnyField, AppBar, Button, ContainerWithCard, FormErrorMessage, GenericForm, LineLoader,
   LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, AnyFieldLabel, TooltipIcon,
-  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
+  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar, ConfigForm, FormSections, DynamicForm, GenericConfigForm
 } from './stories';
 
 export {
@@ -39,5 +39,8 @@ export {
   parseField, getFieldValue, processFieldValue,
 
   // useDynamicForm exports
-  useDynamicForm
+  useDynamicForm,
+
+  // useConfigForm exports
+  processDynamicFormLayout, useConfigForm, fetchChoices
 } from './hooks/index';

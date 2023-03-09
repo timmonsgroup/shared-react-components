@@ -61,7 +61,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
     // Things will get strange if we don't have a found option at this point and you dun goofed A A Ron
     const isEqual = foundOpt ? option?.id === foundOpt?.id || option?.value === foundOpt?.value : true;
     return isEqual;
-  }
+  };
 
   /**
    * Helper method to get the option object can either be an object or just the value of the id
@@ -120,7 +120,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
             {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
             <FormErrorMessage error={error} />
           </Box>
-        )
+        );
       }}
       // Forward the rest of the props to the Autocomplete component
       // https://material-ui.com/api/autocomplete/#props
@@ -149,6 +149,6 @@ Typeahead.propTypes = {
   textFieldSX: PropTypes.object,
   inputSX: PropTypes.object,
   textFieldProps: PropTypes.object,
-}
+};
 
 export default Typeahead;

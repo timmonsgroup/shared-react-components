@@ -25,7 +25,7 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
           <Link sx={alr} marginLeft="3px" key={index} href={url} target={target} rel="noopener noreferrer">
             {label}
           </Link>
-        )
+        );
       }
       return (
         <>
@@ -36,14 +36,14 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
         </>
       );
     });
-  }
+  };
 
   const renderDivider = (includeDivider) => {
     if (includeDivider) {
       return <Divider />;
     }
     return null;
-  }
+  };
 
   return (
     <React.Fragment>
@@ -53,7 +53,7 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
       </Box>
     </React.Fragment>
   );
-}
+};
 
 ActionLinksRow.propTypes = {
   links: PropTypes.arrayOf(PropTypes.shape({

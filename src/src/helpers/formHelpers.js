@@ -1,8 +1,12 @@
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
-import { sortOn } from './helpers.js';
+import { sortOn, functionOrDefault } from './helpers.js';
 import {
   string, array, date, number, object
 } from 'yup';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Create a yup schema for a string field
@@ -452,3 +456,98 @@ export function createFieldValidation(type, label, validationMap, field) {
 
   return validation;
 }
+
+/**
+ * @typedef {object} SubmitOptions
+ * @property {function} enqueueSnackbar - function to enqueue a snackbar
+ * @property {function} nav - function to navigate to a url
+ * @property {function} onSuccess - function to call on successful submit
+ * @property {function} formatSubmitError - function to format the error message
+ * @property {function} checkSuccess - function to check if the submit was successful
+ * @property {string} unitLabel - label for the unit being submitted
+ * @property {string} successUrl - url to navigate to on success
+ * @property {string} cancelUrl - url to navigate to on cancel
+ * @property {string} submitUrl - url to submit to
+ * @property {function} setModifying - function to set the modifying state
+ * @property {function} formatSubmitMessage - function to format the success message
+ * @property {boolean} suppressSuccessToast - true to suppress the success toast
+ * @property {boolean} suppressErrorToast - true to suppress the error toast *
+ */
+
+/**
+ *
+ * @param {object} formData - data to submit
+ * @param {boolean} isEdit - true if editing, false if creating
+ * @param {SubmitOptions} options - options object
+ * @returns
+ */
+export const attemptFormSubmit = async (formData, isEdit, {
+  enqueueSnackbar, nav, onSuccess, formatSubmitError, checkSuccess,
+  unitLabel = 'Item', successUrl, cancelUrl, submitUrl, setModifying,
+  formatSubmitMessage, suppressSuccessToast, suppressErrorToast
+}) => {
+  if (!submitUrl) {
+    console.log('No submit url provided. Data to submit:', formData);
+    return;
+  }
+
+  const successCheck = functionOrDefault(checkSuccess, (result) => result?.data?.streamID);
+  const modifier = functionOrDefault(setModifying, null);
+  const queueSnack = functionOrDefault(enqueueSnackbar, null);
+  let errorSnackMessage = null;
+  let successSnackMessage = null;
+  if (queueSnack) {
+    errorSnackMessage = functionOrDefault(formatSubmitError,
+      (result, { isEdit, unitLabel, isServerError }) => {
+        return isServerError && result?.response?.data?.error ? result?.response?.data?.error : `Error ${isEdit ? 'updating' : 'creating'} ${unitLabel}`;
+      }
+    );
+    successSnackMessage = functionOrDefault(formatSubmitMessage, (result, { isEdit, unitLabel }) => `${unitLabel} successfully ${isEdit ? 'updated' : 'created'}`);
+  }
+
+  if (modifier) {
+    modifier(true);
+  }
+
+  try {
+    const result = await axios.post(submitUrl, formData);
+    if (successCheck(result)) {
+      if (!suppressSuccessToast && queueSnack) {
+        queueSnack(successSnackMessage(result, { isEdit, unitLabel }), { variant: 'success' });
+      }
+      // If we have an onSuccess callback, call it otherwise navigate to the successUrl
+      if (onSuccess) {
+        onSuccess(result);
+      } else {
+        nav(successUrl || cancelUrl);
+        if (modifier) {
+          modifier(false);
+        }
+        nav(successUrl || cancelUrl);
+      }
+    } else {
+      setModifying(false);
+      if (!suppressErrorToast && queueSnack) {
+        queueSnack(errorSnackMessage(result, { isEdit, unitLabel }), { variant: 'error' });
+      }
+    }
+  } catch (error) {
+    if (!suppressErrorToast && queueSnack) {
+      // Sending a true flag to formatSubmitError indicates that the error came from the server
+      const errorMsg = errorSnackMessage(error, { isEdit, unitLabel, serverError: true });
+
+      queueSnack(errorMsg, { variant: 'error' });
+    }
+    if (modifier) {
+      modifier(false);
+    }
+  }
+};
+
+export const useFormSubmit = (props) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const { nav } = useNavigate();
+  const [modifying, setModifying] = useState(false);
+
+  return { modifying, setModifying, nav, enqueueSnackbar };
+};

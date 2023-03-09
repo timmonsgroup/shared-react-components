@@ -1,2 +1,2 @@
-import { ConfigForm, FormSections, DynamicForm } from './DynamicForm';
-export { ConfigForm, FormSections, DynamicForm };
+import { ConfigForm, FormSections, DynamicForm, GenericConfigForm } from './DynamicForm';
+export { ConfigForm, FormSections, DynamicForm, GenericConfigForm };

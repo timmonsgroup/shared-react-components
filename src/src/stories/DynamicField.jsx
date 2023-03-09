@@ -108,7 +108,8 @@ const renderDefaultRemoveButton = ({ layout, onClick }) => {
 export const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...props }) => {
   const columns = props?.twoColumnCluster === true ? 2 : 1;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
-  const { formState: { errors }, trigger } = useFormContext();
+  const { useFormObject } = useFormContext();
+  const { formState: { errors }, trigger } = useFormObject;
 
   // Find any errors for the cluster field
   const error = errors[field?.render?.name];

@@ -13,7 +13,7 @@ const ContainerWithCard = ({children, cardProps, cardContentProps, ...props}) =>
       </Card>
     </Container >
   );
-}
+};
 
 ContainerWithCard.propTypes = {
   children: PropTypes.node.isRequired,

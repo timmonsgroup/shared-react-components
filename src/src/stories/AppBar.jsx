@@ -21,7 +21,7 @@ const theTheme = {
       position: 'relative'
     },
   }
-}
+};
 
 /**
  * App Bar Component for the application
@@ -132,6 +132,7 @@ AppBar.propTypes = {
   logoUrl: PropTypes.string,
   userLinks: PropTypes.array,
   buttonVariant: PropTypes.string,
+  themeGroup: PropTypes.shape({}),
 };
 
 AppBar.defaultProps = {

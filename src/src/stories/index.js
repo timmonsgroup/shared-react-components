@@ -16,9 +16,10 @@ import RequiredIndicator from './RequiredIndicator';
 import SubHeader from './SubHeader';
 import Typeahead from './Typeahead';
 import SideBar from './SideBar';
+import { ConfigForm, FormSections, DynamicForm, GenericConfigForm } from './DynamicForm';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,
   LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon,
-  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
+  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar, ConfigForm, FormSections, DynamicForm, GenericConfigForm
 };

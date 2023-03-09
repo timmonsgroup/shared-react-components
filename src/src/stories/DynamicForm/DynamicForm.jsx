@@ -1,5 +1,5 @@
 //Third party bits
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { FormProvider, useFormContext } from 'react-hook-form';
@@ -9,11 +9,13 @@ import { Card, CardContent, Container, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // Internal bits
-import { getFieldValue, parseFormLayout } from '../../hooks/useFormLayout';
-import AnyField from '../AnyField';
+import { parseFormLayout } from '../../hooks/useFormLayout';
 import { useConfigForm } from '../../hooks/useConfigForm';
 import Button from '../Button';
 import DynamicField from '../DynamicField';
+import SubHeader from '../SubHeader';
+import LoadingSpinner from '../LoadingSpinner';
+import { functionOrDefault } from '../../helpers';
 
 /**
  * Wrapper a configurable form waits for the form layout to be parsed and then renders the form
@@ -25,7 +27,7 @@ import DynamicField from '../DynamicField';
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement}
  */
-export const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children }) => {
+export const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading }) => {
   const [parsed, setParsed] = useState(null);
 
   useEffect(() => {
@@ -45,12 +47,7 @@ export const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, chi
     );
   }
 
-  return (
-    <div>
-      <h1>Processing</h1>
-      <p>Still waiting</p>
-    </div>
-  );
+  return functionOrDefault(renderLoading, () => (<LoadingSpinner />))();
 };
 
 ConfigForm.propTypes = {
@@ -65,7 +62,7 @@ export const DynamicForm = ({ layout, data, urlDomain, children, options }) => {
   const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options });
 
   return (
-    <FormProvider {...useFormObject} {...rest}>
+    <FormProvider useFormObject={useFormObject} {...rest}>
       {children}
     </FormProvider>
   );
@@ -79,26 +76,77 @@ DynamicForm.propTypes = {
   options: PropTypes.object,
 };
 
-export const FormSections = ({ children, twoColumn, alternatingCols, fieldOptions, hideEmptySections }) => {
-  console.log('FormSections', children, twoColumn, alternatingCols, fieldOptions, hideEmptySections);
-  const allThings = useFormContext();
-  const { getValues, sections, control, formProcessing, forceReset, handleSubmit } = allThings;
-  // const watchFields = watch();
+/**
+ * A Generic Form with a header and buttons to submit and cancel
+ * @param {object} props
+ * @param {string} props.headerTitle - the title to display in the header
+ * @param {string} props.editColor - the color to use for the edit button
+ * @param {string} props.cancelColor - the color to use for the cancel button
+ * @param {string} props.cancelUrl - the url to redirect to when the cancel button is clicked
+ * @param {boolean} props.isEdit - whether or not the form is in edit mode
+ * @param {string} props.submitColor - the color to use for the submit button
+ * @param {object} props.sectionProps - the props to pass to the section
+ * @param {function} props.onSubmit - the function to call when the form is submitted
+ * @param {boolean} props.modifying - whether or not the form is currently being modified
+ * @param {object} props.children - the children to render
+ * @returns {React.ReactElement} - the rendered form
+ */
+export const GenericConfigForm = ({ headerTitle, editColor, cancelColor, cancelUrl, isEdit, submitColor, sectionProps, onSubmit, modifying, children }) => {
+  const { formProcessing, forceReset, useFormObject } = useFormContext();
+  const { handleSubmit } = useFormObject;
+
+  const submitForm = functionOrDefault(onSubmit, (data) => {
+    console.warn('no onSubmit provided. Data to submit: ', data);
+  });
 
   // onSubmit is not called if the form is invalid
   // so we need to manually check for this
   const preSubmit = (evt) => {
-    const themValues = getValues();
-    console.log('preSubmit', themValues);
-    handleSubmit(onSubmit)(evt);
+    // const themValues = getValues();
+    handleSubmit(submitForm)(evt);
   };
 
-  const onSubmit = async (data) => {
-    console.log('submitting', data);
-    // const payload = formatPayload(data);
+  return (
+    <>
+      <SubHeader data-src-form-subheader="genericForm"
+        title={headerTitle}
+        rightRender={
+          () =>
+            <Stack spacing={2} direction="row" justifyContent="flex-end">
+              <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl} label="Cancel" />
+              {isEdit &&
+                <Button data-src-form-button="reset" color={editColor} onClick={forceReset} label={'Reset'} />
+              }
+              <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
+            </Stack>
+        }
+      />
+      <LoadingSpinner isActive={formProcessing || modifying} />
+      <Container sx={{ position: 'relative', marginTop: '16px' }} maxWidth={false}>
+        <FormSections {...sectionProps}>
+          {children}
+        </FormSections>
+      </Container>
+    </>
+  );
+};
 
-    // addOrUpdate(payload, isEdit, successUrl, cancelUrl);
-  };
+GenericConfigForm.propTypes = {
+  headerTitle: PropTypes.string,
+  editColor: PropTypes.string,
+  cancelColor: PropTypes.string,
+  cancelUrl: PropTypes.string,
+  isEdit: PropTypes.bool,
+  submitColor: PropTypes.string,
+  sectionProps: PropTypes.object,
+  children: PropTypes.node,
+  onSubmit: PropTypes.func,
+  modifying: PropTypes.bool
+};
+
+export const FormSections = ({ children, formTitle, formDescription, renderFormDescription, columnCount = 1, fieldOptions, hideEmptySections = true }) => {
+  const { sections, formProcessing, useFormObject } = useFormContext();
+  const { control } = useFormObject;
 
   if (formProcessing) {
     return (
@@ -109,8 +157,6 @@ export const FormSections = ({ children, twoColumn, alternatingCols, fieldOption
     );
   }
 
-  console.log('sections', sections)
-
   if (!sections) {
     return (
       <div>
@@ -120,23 +166,27 @@ export const FormSections = ({ children, twoColumn, alternatingCols, fieldOption
     );
   }
 
-  const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
-  const sectOpts = twoColumn ? { alternatingCols } : {};
-  sectOpts.fieldOptions = fieldOptions;
-  sectOpts.hideEmptySections = hideEmptySections;
+  // const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
+  const theSection = renderTwoColumnSection;
+  const sectOpts = {
+    columnCount,
+    fieldOptions,
+    hideEmptySections,
+  };
 
   return (
     <form data-src-form="genericForm">
-      <Button onClick={() => forceReset()}>Reset</Button>
-      <Button data-src-form-button="submit" onClick={preSubmit}>Save</Button>
       {sections.map((section, index) => {
         const sx = { position: 'relative' };
         if (index) {
           sx.marginTop = '16px';
         }
-        // const hasTopText = formTitle || helpText;
+        const hasTopText = formTitle || formDescription;
         return (
           <Card key={index} sx={sx}>
+            {index === 0 && hasTopText &&
+              <FirstSectionTop formTitle={formTitle} formDescription={formDescription} renderFormDescription={renderFormDescription} />
+            }
             {theSection(section, control, index, sectOpts)}
           </Card>
         );
@@ -145,47 +195,80 @@ export const FormSections = ({ children, twoColumn, alternatingCols, fieldOption
   );
 };
 
+FormSections.propTypes = {
+  children: PropTypes.node,
+  formTitle: PropTypes.string,
+  formDescription: PropTypes.string,
+  alternatingCols: PropTypes.bool,
+  renderFormDescription: PropTypes.func,
+  fieldOptions: PropTypes.object,
+  hideEmptySections: PropTypes.bool,
+  columnCount: PropTypes.number,
+};
+
+const defaultFormDescription = (description) => {
+  return (
+    <Typography>
+      {description}
+    </Typography>
+  );
+};
+
+export const FirstSectionTop = ({ formTitle, formDescription, renderFormDescription }) => {
+  let theDescription = null;
+  if (formDescription) {
+    theDescription = (renderFormDescription && renderFormDescription instanceof Function) ? renderFormDescription : defaultFormDescription;
+  }
+
+  return (
+    <>
+      <CardContent sx={{ paddingBottom: '0px' }}>
+        {formTitle && <Typography variant="sectionHeader">{formTitle}</Typography>}
+        {theDescription && theDescription(formDescription)}
+      </CardContent>
+      <hr />
+    </>
+  );
+};
+
+FirstSectionTop.propTypes = {
+  formTitle: PropTypes.string,
+  formDescription: PropTypes.string,
+  renderFormDescription: PropTypes.func,
+};
+
+
 const renderTwoColumnSection = (section, control, index, options) => {
   // create two columns of fields
+  console.log()
   if (section.visible === false && options?.hideEmptySections) {
     return null;
   }
 
-  let leftCol = [];
-  let rightCol = [];
-  if (options?.alternatingCols) {
-    section.fields.forEach((field, fIndex) => {
-      if (fIndex % 2 === 0) {
-        leftCol.push(field);
-      } else {
-        rightCol.push(field);
-      }
-    });
-  } else {
-    const nextCol = Math.ceil(section.fields.length / 2);
-    leftCol = section.fields.slice(0, nextCol);
-    rightCol = section.fields.slice(nextCol);
-  }
-
   const rows = [];
-  const cols = 3;
+  const cols = options?.columnCount || 1;
   let col = 1;
   let row = 1;
 
   //Create the rows
   section.fields.forEach((field, fIndex) => {
-    console.log('field', field.render);
     if (field.render.solitary) {
-      rows.push([field]);
+      const rowObject = {
+        fields: [field],
+        solitary: true,
+        size: field.render.singleColumnSize || 12,
+        maxColumns: cols,
+      };
+      rows.push(rowObject);
       row = rows.length;
       col = 1;
       return;
     }
 
     if (rows[row] === undefined) {
-      rows[row] = [];
+      rows[row] = { fields: [], maxColumns: cols };
     }
-    rows[row].push(field);
+    rows[row].fields.push(field);
     col++;
 
     if (col > cols) {
@@ -197,49 +280,69 @@ const renderTwoColumnSection = (section, control, index, options) => {
   return (
     <CardContent key={index}>
       {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
-      {rows.map((row, rIndex) => (
-        <Grid container spacing={{ xs: 1, sm: 2, md: 4 }} key={`${index}-row-${rIndex}`}>
-          {row.map((field, fIndex) => (
-            <Grid xs={12/row.length} key={`${index}-field-${fIndex}`}>
-              <DynamicField
-                field={field}
-                control={control}
-                key={`${index}-left-${field?.render?.name}`}
-                options={options.fieldOptions || {}}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      ))}
+      {rows.map((rowItem, rIndex) => {
+        return (
+          <SectionRow row={rowItem} control={control} options={options} key={`${index}-row-${rIndex}`} />
+        );
+      })}
     </CardContent>
   );
 };
 
-const renderFormSection = (section, control, index, options) => {
-  if (section.visible === false && options?.hideEmptySections) {
-    return null;
+export const SectionRow = ({ row, control, options }) => {
+  const { fields, solitary, size, maxColumns } = row;
+  const colsAllowed = maxColumns || 1;
+  let colSize = 12 / fields.length;
+  if (solitary && !isNaN(size)) {
+    colSize = parseInt(size);
   }
 
+  const spacing = colsAllowed === 1 ? 2 : { xs: 1, sm: 2, md: 4 };
+
   return (
-    <CardContent key={index}>
-      {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
-      {section.fields.map((field, fIndex) => (
-        <DynamicField
-          field={field}
-          sx={{ marginTop: fIndex ? '16px' : null }}
-          control={control}
-          key={field?.render?.name}
-          options={options.fieldOptions || {}}
-        />
+    <Grid container spacing={spacing}>
+      {fields.map((field) => (
+        <Grid xs={colSize} key={`grid-item-${field?.render?.name}`}>
+          <DynamicField
+            field={field}
+            control={control}
+            options={options.fieldOptions || {}}
+          />
+        </Grid>
       ))}
-    </CardContent>
+    </Grid>
   );
 };
 
-FormSections.propTypes = {
-  children: PropTypes.node,
-  twoColumn: PropTypes.bool,
-  alternatingCols: PropTypes.bool,
-  fieldOptions: PropTypes.object,
-  hideEmptySections: PropTypes.bool,
+SectionRow.propTypes = {
+  row: PropTypes.shape({
+    fields: PropTypes.array,
+    solitary: PropTypes.bool,
+    size: PropTypes.number,
+    maxColumns: PropTypes.number,
+  }),
+  control: PropTypes.object,
+  options: PropTypes.object,
 };
+
+
+// const renderFormSection = (section, control, index, options) => {
+//   if (section.visible === false && options?.hideEmptySections) {
+//     return null;
+//   }
+
+//   return (
+//     <CardContent key={index}>
+//       {section.name && <Typography variant="sectionHeader">{section.name}</Typography>}
+//       {section.fields.map((field, fIndex) => (
+//         <DynamicField
+//           field={field}
+//           sx={{ marginTop: fIndex ? '16px' : null }}
+//           control={control}
+//           key={field?.render?.name}
+//           options={options.fieldOptions || {}}
+//         />
+//       ))}
+//     </CardContent>
+//   );
+// };

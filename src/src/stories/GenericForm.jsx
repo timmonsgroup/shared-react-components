@@ -123,7 +123,7 @@ const GenericForm = ({
         <ContainerWithCard>
           <LineLoader message="Loading..." />
         </ContainerWithCard>
-      )
+      );
     }
 
     const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;

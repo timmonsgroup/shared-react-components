@@ -85,7 +85,7 @@ const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...pr
       />
     </Box>
   );
-}
+};
 
 AnyField.propTypes = {
   control: PropTypes.object.isRequired,
@@ -147,7 +147,7 @@ const renderType = (layout, fieldOptions = {}) => {
     default:
       return textRenderer(layout, fieldOptions);
   }
-}
+};
 
 /**
  * This is a custom renderer for the MUI TextField component to work with react-hook-form
@@ -159,7 +159,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   const inputAttrs = {
     'data-src-field': name,
     readOnly: readOnly,
-  }
+  };
 
   const isNumber = type === FIELD_TYPES.CURRENCY || type === FIELD_TYPES.INT || type === FIELD_TYPES.FLOAT;
   const prefix = readOnly ? '' : 'Enter';
@@ -198,7 +198,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   };
 
   return TextFieldWrapped;
-}
+};
 
 /**
  * This is a custom renderer for the MUI DatePicker component to work with react-hook-form
@@ -227,7 +227,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
               <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
               <TextField sx={{ width: '100%' }} {...params} />
             </>
-          )}}
+          );}}
       />
       {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
       <FormErrorMessage error={error} />
@@ -245,7 +245,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
   };
 
   return DateField;
-}
+};
 
 /**
  * This is a custom renderer for our Typeahead component to work with react-hook-form
@@ -289,7 +289,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         }}
         error={error}
       />
-    )
+    );
   };
 
   WrappedTypeahead.propTypes = {
@@ -304,7 +304,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
   };
 
   return WrappedTypeahead;
-}
+};
 
 /**
  * This is a custom renderer for MUI Checkboxes to work with react-hook-form
@@ -323,7 +323,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
         ? ids?.filter((id) => id !== checkedId)
         : [...(ids ?? []), checkedId];
       return newIds;
-    }
+    };
 
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
@@ -358,7 +358,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
           </FormGroup>
         </FormControl>
       </>
-    )
+    );
   };
 
   Checkboxes.propTypes = {
@@ -366,6 +366,6 @@ const checkboxRenderer = (layout, fieldOptions) => {
     fieldState: PropTypes.object,
   };
   return Checkboxes;
-}
+};
 
 export default AnyField;

@@ -40,19 +40,19 @@ const LoadingSpinner = ({ isActive, variant, message, zIndex }) => {
       </Backdrop>
     </div>
   );
-}
+};
 
 LoadingSpinner.propTypes = {
   message: PropTypes.string,
   isActive: PropTypes.bool,
   variant: PropTypes.oneOf(['background', 'primary', 'accent', 'secondary', 'error', 'tertiary', 'success']),
   zIndex: PropTypes.number,
-}
+};
 
 LoadingSpinner.defaultProps = {
   message: null,
   isActive: false,
   variant: 'accent',
-}
+};
 
 export default LoadingSpinner;

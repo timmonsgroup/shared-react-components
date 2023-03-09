@@ -22,7 +22,7 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
       );
     }
     return (null);
-  }
+  };
 
   const renderLegend = (legendColor, legendLabel) => {
     if (!legendLabel || legendLabel === '') {
@@ -32,14 +32,14 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
     return (
       <Typography sx={cardHeader} color={color} gutterBottom>{legendLabel}</Typography>
     );
-  }
+  };
 
   const renderDivider = (includeDivider) => {
     if (includeDivider) {
       return <Divider />;
     }
     return null;
-  }
+  };
 
   // you must have a heading to have a header section!
   if (!heading || heading.length === 0) {
@@ -60,7 +60,7 @@ const HeadingFlexRow = ({ heading, toolTip, legendColor, legendLabel, includeDiv
       {renderDivider(showDivider)}
     </>
   );
-}
+};
 
 HeadingFlexRow.propTypes = {
   heading: PropTypes.string,

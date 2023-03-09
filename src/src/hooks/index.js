@@ -7,6 +7,7 @@ import {
   parseField, getFieldValue, processFieldValue
 } from './useFormLayout.js';
 import { useDynamicForm } from './useDynamicForm.js';
+import { processDynamicFormLayout, useConfigForm, fetchChoices } from './useConfigForm.js';
 import { useToggle } from './useToggle.js';
 import useQuery from './useQuery.js';
 
@@ -34,5 +35,8 @@ export {
   parseField, getFieldValue, processFieldValue,
 
   // useDynamicForm exports
-  useDynamicForm
+  useDynamicForm,
+
+  // useConfigForm exports
+  processDynamicFormLayout, useConfigForm, fetchChoices
 };
