@@ -19,6 +19,7 @@ import { functionOrDefault } from '../../helpers';
 
 /**
  * Wrapper a configurable form waits for the form layout to be parsed and then renders the form
+ * @function ConfigForm
  * @param {object} props
  * @param {object} props.formLayout - the layout of the form
  * @param {object} props.data - the data to populate the form with
@@ -60,6 +61,16 @@ ConfigForm.propTypes = {
   children: PropTypes.node,
 };
 
+/**
+ * Wraps any children in a FormProvider and sets up the useFormContext values
+ * @function DynamicForm
+ * @param {object} props - props object
+ * @param {object} props.layout - the layout object
+ * @param {object} props.data - the data to populate the form with
+ * @param {string} props.urlDomain - the domain to use for the API calls
+ * @param {object} props.children - the children to render
+ * @returns {React.ReactElement} - the wrapped children
+ */
 export const DynamicForm = ({ layout, data, urlDomain, children, options }) => {
   const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options });
 
@@ -80,6 +91,7 @@ DynamicForm.propTypes = {
 
 /**
  * A Generic Form with a header and buttons to submit and cancel
+ * @function GenericConfigForm
  * @param {object} props
  * @param {string} props.headerTitle - the title to display in the header
  * @param {string} props.resetColor - the color to use for the edit button

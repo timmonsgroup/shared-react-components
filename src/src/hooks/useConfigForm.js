@@ -16,12 +16,25 @@ import {
 } from '../constants';
 import { objectReducer } from '../helpers';
 
+/**
+ * @typedef {object} ProcessedDynamicFormLayout
+ * @property {object} defaultValues - The default values for the form
+ * @property {object} validations - The validation schema for the form
+ * @property {object} fieldsToWatch - The fields that need to be watched for changes
+ */
+
+/**
+ * @function processDynamicFormLayout
+ * @description This function will take the form layout and the data and return the default values and validation schema for the form
+ * @param {object} formLayout
+ * @param {object} data
+ * @returns {ProcessedDynamicFormLayout} - Object containing the default values, validation schema, and fields to watch for changes
+ */
 export const processDynamicFormLayout = (formLayout, data) => {
   // Will hold the validation schema for the form
   const validations = {};
   // Will hold the correctly formatted field values for the form
   const defaultValues = {};
-  // const realValues = {};
   // Will hold the fields that need to be watched for changes
   const fieldsToWatch = {};
 
@@ -50,7 +63,6 @@ export const processDynamicFormLayout = (formLayout, data) => {
 
   return {
     defaultValues,
-    // realValues,
     validations: validations,
     watchFields: Object.entries(fieldsToWatch).map(([key]) => key),
   };
@@ -58,12 +70,13 @@ export const processDynamicFormLayout = (formLayout, data) => {
 
 /**
  * Method to check for and setup conditional rendering
+ * @function
  * @param {Map<string, object>} triggerFields - Map of fields that trigger conditional rendering
  * @param {Map<string, object>} fields - Map of all fields
  * @param {string} triggerId - ID of the field to check
  * @param {any} formValue - Value of the field to check
  * @param {object} options - Options for the conditional rendering
- * @returns
+ * @returns {Array} - Array of fields that need to be updated
  */
 const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) => {
   const updatedFields = [];
@@ -138,9 +151,10 @@ const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) =
 
 /**
  * Creates a section object for the form
+ * @function createRenderSection
  * @param {object} section - section object from the form layout
  * @param {Map<string, Field>} fieldMap -
- * @returns
+ * @returns {object} - Form section object
  */
 const createRenderSection = (section, fieldMap) => {
   const formSection = {
@@ -168,6 +182,7 @@ const createRenderSection = (section, fieldMap) => {
  * @example
  * const { useFormObject, formProcessing, sections } = useConfigForm(formLayout, data, options);
  * <FormProvider {...useFormObject} sections={sections} formProcessing={formProcessing}>
+ * @function useConfigForm
  * @param {object} formLayout - Form layout object
  * @param {object} data - Data to pre-populate the form with
  * @param {object} options - any other options needed for the form
@@ -320,6 +335,21 @@ export const useConfigForm = (formLayout, data, options) => {
   };
 };
 
+/**
+ * Function to initialize the form
+ * @function initTheForm
+ * @param {object} props
+ * @param {object} props.formLayout - Form layout object
+ * @param {object} props.setSections - React hook to set the sections
+ * @param {object} props.validations - Dynamic validations
+ * @param {object} props.setValidations - React hook to set the validations
+ * @param {boolean} props.isResetting - Whether or not the form is resetting
+ * @param {array} props.watchFields - Array of fields to watch
+ * @param {object} props.setFormProcessing - React hook to set the formProcessing state
+ * @param {object} props.setReadyForWatches - React hook to set the readyForWatches state
+ * @param {object} props.defaultValues - Default values for the form
+ * @param {object} props.options - Options object
+ */
 const initTheForm = ({ formLayout, setSections, validations, setValidations, isResetting, watchFields, setFormProcessing, setReadyForWatches, defaultValues, options }) => {
   // Finish setting up the form
   // This is done in a separate function so we can await any async calls
@@ -354,6 +384,19 @@ const initTheForm = ({ formLayout, setSections, validations, setValidations, isR
   });
 };
 
+/**
+ * Renders the sections
+ * @function renderTheSections
+ * @param {object} props - Props object
+ * @param {array} props.sections - Array of sections
+ * @param {object} props.fields - Map of fields
+ * @param {object} props.triggerFields - Map of trigger fields
+ * @param {object} props.values - Form values
+ * @param {array} props.watchFields - Array of fields to watch
+ * @param {function} props.finishSetup - Function to finish setting up the form
+ * @param {object} props.options - Options object
+ * @param {boolean} props.fromWatch - Whether or not this is being called from a watch
+ */
 const renderTheSections = ({ sections, fields, triggerFields, values, watchFields, finishSetup, options, fromWatch }) => {
   let renderSections = fromWatch ? sections : [];
   if (!fromWatch) {
@@ -482,6 +525,17 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
   }
 };
 
+/**
+ * Process the updated fields and update the render sections
+ * @function processConditionalUpdate
+ * @param {array} sections - Array of all the sections in the form
+ * @param {Map<string, object>} fields - Map of all the fields in the form
+ * @param {Array<object>} updatedFields - Array of fields that need to be updated
+ * @param {*} asyncThings
+ * @param {*} dynValid
+ * @param {*} resetFields
+ * @returns {Array<object>}
+ */
 const processConditionalUpdate = (sections, fields, updatedFields, asyncThings = {}, dynValid = {}, resetFields = {}) => {
   const revalidates = {};
 
@@ -566,7 +620,7 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
  * @param {string} fieldId - id of the field that is being loaded
  * @param {string} url - url to load the data from
  * @param {FetchChoicesOptions} object - url to load the data from
- * @returns promise
+ * @returns {Promise<Array<object>>}
  */
 export const fetchChoices = async (fieldId, url, { clearErrors, setError, urlDomain, mappedId, mappedLabel, triggerFieldId, choiceFormatter }) => {
   const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;

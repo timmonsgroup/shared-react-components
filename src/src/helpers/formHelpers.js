@@ -475,11 +475,11 @@ export function createFieldValidation(type, label, validationMap, field) {
  */
 
 /**
- *
+ * Method to reduce the amount of boilerplate code needed to submit a form
  * @param {object} formData - data to submit
  * @param {boolean} isEdit - true if editing, false if creating
  * @param {SubmitOptions} options - options object
- * @returns
+ * @returns {Promise<void>} - promise that resolves when the submit is complete
  */
 export const attemptFormSubmit = async (formData, isEdit, {
   enqueueSnackbar, nav, onSuccess, formatSubmitError, checkSuccess,
