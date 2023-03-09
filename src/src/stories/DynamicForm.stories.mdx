@@ -94,11 +94,9 @@ export const Template = (args) => {
       <ConfigForm
         formLayout={args.formLayout}
         parseOptions={{ choiceFormatter: choiceFormatter2 }}
-        data={{}}
+        data={data}
       >
-        <GenericConfigForm {...args} sectionProps={sectionProps}>
-          <div>Where do I go</div>
-        </GenericConfigForm>
+        <GenericConfigForm {...args} sectionProps={sectionProps} />
       </ConfigForm>
     </Router>
   );

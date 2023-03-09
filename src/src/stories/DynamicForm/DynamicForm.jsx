@@ -1,5 +1,5 @@
 //Third party bits
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { FormProvider, useFormContext } from 'react-hook-form';
@@ -25,6 +25,7 @@ import { functionOrDefault } from '../../helpers';
  * @param {object} props.parseOptions - options to pass to the parser
  * @param {string} props.urlDomain - the domain to use for the API calls
  * @param {object} props.children - the children to render
+ * @param {function} props.renderLoading - the function to render while the form is loading
  * @returns {React.ReactElement}
  */
 export const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading }) => {
@@ -55,6 +56,7 @@ ConfigForm.propTypes = {
   data: PropTypes.object,
   urlDomain: PropTypes.string,
   parseOptions: PropTypes.object,
+  renderLoading: PropTypes.func,
   children: PropTypes.node,
 };
 
@@ -80,18 +82,24 @@ DynamicForm.propTypes = {
  * A Generic Form with a header and buttons to submit and cancel
  * @param {object} props
  * @param {string} props.headerTitle - the title to display in the header
- * @param {string} props.editColor - the color to use for the edit button
+ * @param {string} props.resetColor - the color to use for the edit button
  * @param {string} props.cancelColor - the color to use for the cancel button
  * @param {string} props.cancelUrl - the url to redirect to when the cancel button is clicked
  * @param {boolean} props.isEdit - whether or not the form is in edit mode
  * @param {string} props.submitColor - the color to use for the submit button
  * @param {object} props.sectionProps - the props to pass to the section
+ * @param {string} props.cancelLabel - the label to use for the cancel button
+ * @param {string} props.resetLabel - the label to use for the reset button
+ * @param {string} props.submitLabel - the label to use for the submit button
  * @param {function} props.onSubmit - the function to call when the form is submitted
  * @param {boolean} props.modifying - whether or not the form is currently being modified
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement} - the rendered form
  */
-export const GenericConfigForm = ({ headerTitle, editColor, cancelColor, cancelUrl, isEdit, submitColor, sectionProps, onSubmit, modifying, children }) => {
+export const GenericConfigForm = ({
+  headerTitle, resetColor, cancelColor, cancelUrl, isEdit, submitColor, sectionProps, onSubmit, modifying,
+  cancelLabel, resetLabel, submitLabel, children,
+}) => {
   const { formProcessing, forceReset, useFormObject } = useFormContext();
   const { handleSubmit } = useFormObject;
 
@@ -113,11 +121,11 @@ export const GenericConfigForm = ({ headerTitle, editColor, cancelColor, cancelU
         rightRender={
           () =>
             <Stack spacing={2} direction="row" justifyContent="flex-end">
-              <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl} label="Cancel" />
+              <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl} label={cancelLabel || 'Cancel'} />
               {isEdit &&
-                <Button data-src-form-button="reset" color={editColor} onClick={forceReset} label={'Reset'} />
+                <Button data-src-form-button="reset" color={resetColor} onClick={forceReset} label={resetLabel || 'Reset'} />
               }
-              <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit}>{isEdit ? 'Edit' : 'Save'}</Button>
+              <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit} label={submitLabel || 'Save'} />
             </Stack>
         }
       />
@@ -133,10 +141,13 @@ export const GenericConfigForm = ({ headerTitle, editColor, cancelColor, cancelU
 
 GenericConfigForm.propTypes = {
   headerTitle: PropTypes.string,
-  editColor: PropTypes.string,
+  resetColor: PropTypes.string,
   cancelColor: PropTypes.string,
   cancelUrl: PropTypes.string,
+  cancelLabel: PropTypes.string,
+  resetLabel: PropTypes.string,
   isEdit: PropTypes.bool,
+  submitLabel: PropTypes.string,
   submitColor: PropTypes.string,
   sectionProps: PropTypes.object,
   children: PropTypes.node,
