@@ -1,3 +1,4 @@
+/** @module AnyField */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
@@ -98,9 +99,10 @@ AnyField.propTypes = {
 
 /**
  * Return the correct renderer for the given type
+ * @function
  * @param {FieldLayout} layout - the layout object for the field
  * @param {FieldOptions} fieldOptions - various options for the fields
- * @returns  {function} the renderer function
+ * @returns {React.ReactElement} - the rendered field
  */
 const renderType = (layout, fieldOptions = {}) => {
   if (layout.iconHelperText) {
@@ -151,9 +153,10 @@ const renderType = (layout, fieldOptions = {}) => {
 
 /**
  * This is a custom renderer for the MUI TextField component to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the MUI TextField component
+ * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
 const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText, type }, fieldOptions) => {
   const inputAttrs = {
@@ -202,9 +205,10 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
 
 /**
  * This is a custom renderer for the MUI DatePicker component to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the MUI DatePicker component
+ * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
 const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, placeholder }, fieldOptions) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
@@ -249,9 +253,10 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
 
 /**
  * This is a custom renderer for our Typeahead component to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the Typeahead component
+ * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
 const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, iconHelperText }, fieldOptions) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
@@ -308,9 +313,10 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
 
 /**
  * This is a custom renderer for MUI Checkboxes to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the Typeahead component
+ * @returns {React.ReactElement} A custom renderer for the MUI Checkbox component
  */
 const checkboxRenderer = (layout, fieldOptions) => {
   const { label, disabled, choices = [], required, helperText, iconHelperText } = layout;

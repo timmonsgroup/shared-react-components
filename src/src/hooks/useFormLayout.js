@@ -1,3 +1,4 @@
+/** @module useFormLayout */
 import { useLayout } from './useData.js';
 import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
@@ -17,6 +18,7 @@ const specialProps = Object.values(SPECIAL_ATTRS);
 /**
  * Layout fetching hook that extends the useLayout hook to parse the layout data into a more usable format
  * The loading flag is tied to parsing being complete instead of the layout loading being complete
+ * @function
  * @param {string} type - object type for standard PAM get layout endpoint
  * @param {string} key - layout key for standard PAM get layout endpoint
  * @param {string} url - optional if you are not using the standard pam endpoint
@@ -121,6 +123,13 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
     });
   });
 
+  /**
+   * Fetch any async data for the fields
+   * @function
+   * @param {string} fieldId - id of the field
+   * @param {string} url - url to fetch data from
+   * @returns {Array<object>}
+   */
   const fetchData = async (fieldId, url) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
     const specialFieldProps = fields.get(fieldId).specialProps;
@@ -167,6 +176,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
 
 /**
  * Parse a section
+ * @function
  * @param {object} section
  * @param {Map<string, ParsedField>} fieldMap - map of fieldId to field object
  * @param {Map<string, object>} triggerFieldMap - map of triggerFieldId to field object
@@ -240,6 +250,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
 // TODO: Create a more unified model to play nice with PamLayoutGrid
 /**
  * Parse a field
+ * @function
  * @param {object} field - field object
  * @param {Map<string, string>} asyncFieldsMap - map of async fields
  * @returns {ParsedField} parsed field
@@ -357,6 +368,7 @@ export function parseField(field, asyncFieldsMap) {
 
 /**
  * Parse validation
+ * @function
  * @param {Map<string, YupSchema>} validationMap
  * @param {object} data
  */
@@ -388,6 +400,7 @@ function parseValidation(validationMap, data, debug = false) {
 
 /**
  * Parse conditions and add them to the triggerFieldMap
+ * @function
  * @param {string} fieldId - field id
  * @param {Map<string, TriggerField>} triggerFields - map of trigger fields
  * @param {Array<TriggerCondition>} conditions - conditions

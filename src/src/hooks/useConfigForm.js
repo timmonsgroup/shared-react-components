@@ -1,3 +1,4 @@
+/** @module useFormConfig */
 //Third party bits
 import { useEffect, useMemo, useState, useLayoutEffect } from 'react';
 

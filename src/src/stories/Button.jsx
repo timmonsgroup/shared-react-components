@@ -1,3 +1,4 @@
+/** @module Button */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button as MUIButton} from '@mui/material';
@@ -5,6 +6,7 @@ import { Button as MUIButton} from '@mui/material';
 /**
  * A button component that extends the base material-ui button
  * All props are passed to the base button
+ * @function
  * @param {object} props
  * @param {string} props.backgroundColor - the background color of the button
  * @param {string} props.variant - the variant of the button
