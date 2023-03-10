@@ -53,7 +53,7 @@ import { Box } from '@mui/material';
 
 /**
  * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
- * @component
+ * @function
  * @param {object} props
  * @param {object} props.control - the react-hook-form control object
  * @param {object} props.rules - the react-hook-form rules object (this is not used if using form level validation)
@@ -290,7 +290,12 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         }}
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
-          onChange(newValue?.id || null);
+          let nextValue = newValue?.id;
+          // Cause id of 0 is valid
+          if (nextValue === '' || nextValue === undefined) {
+            nextValue = null;
+          }
+          onChange(nextValue);
         }}
         error={error}
       />

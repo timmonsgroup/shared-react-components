@@ -51,16 +51,25 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
     /*
       There always must be a found option. In the event nothing matches one of our options
       we have to return true. This will "select" the placeholder / null option
+      We use isEmpty because value of 0 is a valid value
     */
-    if (value === '' || value === null || value === undefined) {
+    if (isEmpty(value)) {
       return true;
     }
 
     const foundOpt = getOpObj(value);
 
     // Things will get strange if we don't have a found option at this point and you dun goofed A A Ron
-    const isEqual = foundOpt ? option?.id === foundOpt?.id || option?.value === foundOpt?.value : true;
+    const isEqual = foundOpt ? (option?.id === foundOpt?.id || option?.value === foundOpt?.value) : true;
     return isEqual;
+  };
+
+  const isEmpty = (value) => {
+    if (value === '' || value === null || value === undefined) {
+      return true;
+    }
+
+    return false;
   };
 
   /**
@@ -69,7 +78,8 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
    * @returns {object} the option object
    */
   const getOpObj = (option) => {
-    if (!option.id && !option.value) {
+    // Allow a value of 0 to be passed in
+    if (isEmpty(option.id) && isEmpty(option.value)) {
       option = items.find(op => {
         const optValue = op?.id?.toString() || option?.value?.toString();
         return optValue === option?.toString();
@@ -115,6 +125,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
                 ...params.inputProps,
                 sx: inputSX || {},
                 autoComplete: 'new-password', // disable autocomplete and autofill
+                'aria-autocomplete': 'none',
               }}
             />
             {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
