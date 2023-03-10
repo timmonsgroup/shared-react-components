@@ -1,4 +1,4 @@
-/** @module DynamicField */
+/** @module ClusterField */
 // Third party
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -9,94 +9,12 @@ import { Divider, FormHelperText, Box } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
-import AnyField from '../AnyField';
-import Button from '../Button';
-import AnyFieldLabel from '../AnyFieldLabel';
+import AnyField from './AnyField';
+import Button from './Button';
+import AnyFieldLabel from './AnyFieldLabel';
 
 // Hooks, helpers, and constants
-import { FIELD_TYPES } from '../../constants';
-import { getFieldValue } from '../../hooks';
-
-/**
- * A Helper component to check if a field is a cluster field and render the appropriate component
- * @function
- * @param {object} props - props object
- * @param {object} props.control - react-hook-form control object
- * @param {object} props.field - field object
- * @returns {React.ReactElement}
- */
-const DynamicField = ({ control, field, ...props }) => {
-  const layout = field?.render || {};
-  const { type } = layout;
-
-  if (type === FIELD_TYPES.CLUSTER) {
-    return <ClusterField control={control} field={field} {...props} />;
-  }
-
-  return (
-    <AnyField layout={layout} control={control} {...props} />
-  );
-};
-
-DynamicField.propTypes = {
-  control: PropTypes.object,
-  field: PropTypes.shape({
-    render: PropTypes.object,
-  }),
-};
-export default DynamicField;
-
-/**
- * @typedef {object} RenderAddButtonProps
- * @property {object} layout - layout object
- * @property {string} layout.addLabel - label for the add button
- * @property {Function} append - append function from useFieldArray
- * @property {Function} trigger - trigger function from useFormContext
- * @property {object} initValues - initial values for the new batch of fields
- *
- */
-
-/**
- * A component to render a cluster of fields
- * @function
- * @param {RenderAddButtonProps} props - props object
- * @returns {React.ReactElement} - React element of the button and divider
- */
-const renderDefaultAddButton = ({ layout, onClick }) => {
-  const { addLabel } = layout || {};
-
-  return (
-    <Button onClick={onClick}>{addLabel || 'Add'}</Button>
-  );
-};
-
-
-/**
- * @typedef {object} RenderRemoveButtonProps
- * @property {object} layout - layout object
- * @property {string} layout.removeLabel - label for the remove button
- * @property {Function} remove - remove function from useFieldArray
- * @property {Function} trigger - trigger function from useFormContext
- * @property {number} index - index of the field
- * @property {Function} onClick - onClick function for the button
- */
-
-/**
- * The default remove button for the ClusterField component
- * @function
- * @param {RenderRemoveButtonProps} props
- * @returns {React.ReactElement} - React element of the button
- */
-const renderDefaultRemoveButton = ({ layout, onClick }) => {
-  const { removeLabel } = layout || {};
-  return (
-    <>
-      <Divider />
-      <Button onClick={onClick}>{removeLabel || 'Remove'}</Button>
-    </>
-  );
-};
-
+import { getFieldValue } from '../hooks';
 
 /**
  * ClusterField component will render a field that contains a list of subfields
@@ -109,7 +27,7 @@ const renderDefaultRemoveButton = ({ layout, onClick }) => {
  * @param {Function} props.renderRemoveButton - render function for the remove button
  * @returns {React.ReactElement}
  */
-export const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...props }) => {
+const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...props }) => {
   const columns = props?.twoColumnCluster === true ? 2 : 1;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
   const { useFormObject } = useFormContext();
@@ -200,7 +118,6 @@ export const ClusterField = ({ control, field, renderAddButton, renderRemoveButt
   );
 };
 
-
 ClusterField.propTypes = {
   control: PropTypes.object,
   field: PropTypes.shape({
@@ -211,3 +128,55 @@ ClusterField.propTypes = {
   renderAddButton: PropTypes.func,
   renderRemoveButton: PropTypes.func,
 };
+
+/**
+ * @typedef {object} RenderAddButtonProps
+ * @property {object} layout - layout object
+ * @property {string} layout.addLabel - label for the add button
+ * @property {Function} append - append function from useFieldArray
+ * @property {Function} trigger - trigger function from useFormContext
+ * @property {object} initValues - initial values for the new batch of fields
+ *
+ */
+
+/**
+ * A component to render a cluster of fields
+ * @function
+ * @param {RenderAddButtonProps} props - props object
+ * @returns {React.ReactElement} - React element of the button and divider
+ */
+const renderDefaultAddButton = ({ layout, onClick }) => {
+  const { addLabel } = layout || {};
+
+  return (
+    <Button onClick={onClick}>{addLabel || 'Add'}</Button>
+  );
+};
+
+/**
+ * @typedef {object} RenderRemoveButtonProps
+ * @property {object} layout - layout object
+ * @property {string} layout.removeLabel - label for the remove button
+ * @property {Function} remove - remove function from useFieldArray
+ * @property {Function} trigger - trigger function from useFormContext
+ * @property {number} index - index of the field
+ * @property {Function} onClick - onClick function for the button
+ */
+
+/**
+ * The default remove button for the ClusterField component
+ * @function
+ * @param {RenderRemoveButtonProps} props
+ * @returns {React.ReactElement} - React element of the button
+ */
+const renderDefaultRemoveButton = ({ layout, onClick }) => {
+  const { removeLabel } = layout || {};
+  return (
+    <>
+      <Divider />
+      <Button onClick={onClick}>{removeLabel || 'Remove'}</Button>
+    </>
+  );
+};
+
+export default ClusterField;

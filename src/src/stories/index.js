@@ -17,7 +17,8 @@ import SubHeader from './SubHeader';
 import Typeahead from './Typeahead';
 import SideBar from './SideBar';
 import { ConfigForm, FormSections, DynamicForm, GenericConfigForm } from './DynamicForm';
-import { DynamicField, ClusterField } from './DynamicField';
+import DynamicField from './DynamicField';
+import ClusterField from './ClusterField';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,

@@ -5,7 +5,7 @@ export {
   AnyField, AppBar, Button, ContainerWithCard, FormErrorMessage, GenericForm, LineLoader,
   LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, AnyFieldLabel, TooltipIcon,
   RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar, ConfigForm, FormSections, DynamicForm, GenericConfigForm,
-  DynamicField, Clusterfield
+  DynamicField, ClusterField
 } from './stories';
 
 export {

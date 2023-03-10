@@ -13,7 +13,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { parseFormLayout } from '../../hooks/useFormLayout';
 import { useConfigForm } from '../../hooks/useConfigForm';
 import Button from '../Button';
-import {DynamicField} from '../DynamicField';
+import DynamicField from '../DynamicField';
 import SubHeader from '../SubHeader';
 import LoadingSpinner from '../LoadingSpinner';
 import { functionOrDefault } from '../../helpers';
