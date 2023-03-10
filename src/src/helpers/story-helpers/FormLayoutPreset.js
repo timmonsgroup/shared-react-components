@@ -290,6 +290,39 @@ export const layout = {
             disabled: false,
           },
           {
+            'label': 'Planned Federal Project Investment',
+            'path': 'fedFundingItems', 'type': 120,
+            'model': {
+              'id': 19, 'modelid': 10, 'type': 120, 'name': 'fedFundingItems', 'data': {}
+            },
+            'required': false,
+            'disabled': false,
+            'conditions': [
+              {
+                'when': 'moMoney',
+                'is': 100,
+                'then': {
+                  'hidden': false, 'required': true
+                },
+              },
+            ],
+            'hidden': true,
+            'layout': [{
+              'label': 'Federal Funding Source', 'path': 'fedFundingSource', 'type': 7,
+              'model': {
+                'id': 20, 'modelid': 10, 'type': 7, 'name': 'fedFundingSource',
+                'data': {
+                  'configLookupReference': 'grant_application:fed_funding_source'
+                },
+                'possibleChoices': [
+                  { 'id': 0, 'name': '2023 - FS VFA' }, { 'id': 1, 'name': '2023 - DOI RFA' }, { 'id': 2, 'name': '2023 - BIL VFA' }, { 'id': 3, 'name': '2022 - FS VFA' }, { 'id': 5, 'name': '2022 - BIL VFA' }, { 'id': 6, 'name': '2021 - FS VFA' }, { 'id': 7, 'name': '2021 - DOI RFA' }, { 'id': 8, 'name': '2020 - FS VFA' }, { 'id': 9, 'name': '2020 - DOI RFA' }, { 'id': 10, 'name': '2019 - FS VFA' }, { 'id': 11, 'name': '2019 - DOI RFA' }
+                ]
+              },
+              'required': true, 'disabled': false,
+              'possibleChoices': [{ 'id': 0, 'name': '2023 - FS VFA' }, { 'id': 1, 'name': '2023 - DOI RFA' }, { 'id': 2, 'name': '2023 - BIL VFA' }, { 'id': 3, 'name': '2022 - FS VFA' }, { 'id': 5, 'name': '2022 - BIL VFA' }, { 'id': 6, 'name': '2021 - FS VFA' }, { 'id': 7, 'name': '2021 - DOI RFA' }, { 'id': 8, 'name': '2020 - FS VFA' }, { 'id': 9, 'name': '2020 - DOI RFA' }, { 'id': 10, 'name': '2019 - FS VFA' }, { 'id': 11, 'name': '2019 - DOI RFA' }], 'iconHelperText': "Funding source year is the federal fiscal year. NOTE: 'FS VFA' is funding from the regularly appropriated USDA Forest Service Consolidated Payments Grant (namely, Volunteer Fire Assistance in FY2019, Rural Fire Capacity for FY2020 & FY2021, and Volunteer Fire Capacity starting in FY2022). 'DOI RFA' is funding from the Department of Interior Rural Fire Assistance program, and 'BIL VFA' is funding from the Bipartisan Infrastructure Law program."
+            }, { 'label': 'Planned Grant Amount', 'path': 'fedFundingAmount', 'type': 4, 'model': { 'id': 21, 'modelid': 10, 'type': 4, 'name': 'fedFundingAmount', 'data': { 'minValue': 0.01 } }, 'required': true, 'disabled': false, 'iconHelperText': 'Please enter the planned federal investment for the selected federal funding source. This amount may be different than actual reimbursements.' }]
+          },
+          {
             label: 'Cluster Field',
             path: 'amCluster',
             type: 120,

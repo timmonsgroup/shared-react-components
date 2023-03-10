@@ -83,6 +83,7 @@
     "react-router-dom": "^6.4.1",
     "react-scripts": "^5.0.1",
     "webpack": "^5.74.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "better-docs": "^2.7.2"
   }
 }

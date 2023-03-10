@@ -13,7 +13,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { parseFormLayout } from '../../hooks/useFormLayout';
 import { useConfigForm } from '../../hooks/useConfigForm';
 import Button from '../Button';
-import DynamicField from '../DynamicField';
+import {DynamicField} from '../DynamicField';
 import SubHeader from '../SubHeader';
 import LoadingSpinner from '../LoadingSpinner';
 import { functionOrDefault } from '../../helpers';
@@ -28,9 +28,9 @@ import { functionOrDefault } from '../../helpers';
  * @param {string} props.urlDomain - the domain to use for the API calls
  * @param {object} props.children - the children to render
  * @param {function} props.renderLoading - the function to render while the form is loading
- * @returns {React.ReactElement}
+ * @returns {React.ReactElement} - the wrapped children
  */
-export const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading }) => {
+const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading }) => {
   const [parsed, setParsed] = useState(null);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ ConfigForm.propTypes = {
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement} - the wrapped children
  */
-export const DynamicForm = ({ layout, data, urlDomain, children, options }) => {
+const DynamicForm = ({ layout, data, urlDomain, children, options }) => {
   const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options });
 
   return (
@@ -109,7 +109,7 @@ DynamicForm.propTypes = {
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement} - the rendered form
  */
-export const GenericConfigForm = ({
+const GenericConfigForm = ({
   headerTitle, resetColor, cancelColor, cancelUrl, isEdit, submitColor, sectionProps, onSubmit, modifying,
   cancelLabel, resetLabel, submitLabel, children,
 }) => {
@@ -168,7 +168,7 @@ GenericConfigForm.propTypes = {
   modifying: PropTypes.bool
 };
 
-export const FormSections = ({ children, formTitle, formDescription, renderFormDescription, columnCount = 1, fieldOptions, hideEmptySections = true }) => {
+const FormSections = ({ children, formTitle, formDescription, renderFormDescription, columnCount = 1, fieldOptions, hideEmptySections = true }) => {
   const { sections, formProcessing, useFormObject } = useFormContext();
   const { control } = useFormObject;
 
@@ -238,7 +238,7 @@ const defaultFormDescription = (description) => {
   );
 };
 
-export const FirstSectionTop = ({ formTitle, formDescription, renderFormDescription }) => {
+const FirstSectionTop = ({ formTitle, formDescription, renderFormDescription }) => {
   let theDescription = null;
   if (formDescription) {
     theDescription = (renderFormDescription && renderFormDescription instanceof Function) ? renderFormDescription : defaultFormDescription;
@@ -313,7 +313,7 @@ const renderTwoColumnSection = (section, control, index, options) => {
   );
 };
 
-export const SectionRow = ({ row, control, options }) => {
+const SectionRow = ({ row, control, options }) => {
   const { fields, solitary, size, maxColumns } = row;
   const colsAllowed = maxColumns || 1;
   let colSize = 12 / fields.length;
@@ -347,6 +347,14 @@ SectionRow.propTypes = {
   }),
   control: PropTypes.object,
   options: PropTypes.object,
+};
+
+export {
+  FormSections,
+  DynamicForm,
+  FirstSectionTop,
+  ConfigForm,
+  GenericConfigForm
 };
 
 

@@ -1,3 +1,4 @@
+/** @module helpers */
 /**
  * Deeply clone an object.
  * @param {object} target

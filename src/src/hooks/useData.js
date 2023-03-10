@@ -1,3 +1,4 @@
+/** @module useData */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosRetry  from 'axios-retry';
@@ -47,8 +48,12 @@ export const useMapConfig = (map_key) => {
   return [mapConfig, mapConfigLoading];
 };
 
+/**
+ * Hook to fetch config by key or cache
+ * @param {string} config_key
+ * @returns {Array<object|boolean>} config, loading
+ */
 export const useConfig = (config_key) => {
-
   const url = `/api/app/config/get?configKey=${config_key}`;
   // If debug mode is enabled, we will use the fake data
   const defaultValue = {};
@@ -72,6 +77,7 @@ export const useConfig = (config_key) => {
 /**
  * Hook that will fetch data from a url and cache it
  * If the isDev flag is set to true, the first fetch will be faked and defaultValue will be returned and set in cache
+ * @function
  * @param {string} url - url to fetch data from
  * @param {any} defaultValue - default value to use if the cache is empty
  * @param {boolean} useDefault - flag to use the default value

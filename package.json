@@ -68,6 +68,9 @@
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6",
     "@mui/x-data-grid": "^5.17.6",
+    "@mui/x-date-pickers": "^5.0.15",
+    "notistack": "^2.0.8",
+    "date-fns": "^2.29.3",
     "axios": "^0.27.2",
     "axios-retry": "^3.3.1",
     "prop-types": "^15.8.1",
@@ -75,6 +78,7 @@
     "react-dom": "^17.0.0 || ^18.0.0",
     "react-hook-form": "^7.42.0",
     "react-router-dom": "^6.4.0",
+    "@hookform/resolvers": "^2.9.10",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -88,18 +92,19 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@tsconfig/node16": "^1.0.3",
+    "@types/node": "^18.14.6",
     "babel-plugin-add-import-extension": "^1.6.0",
     "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-proptypes-require": "^1.0.0",
+    "better-docs": "^2.7.2",
     "eslint": "^8.28.0",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "jsdoc": "^4.0.2",
+    "jsdoc": "^3.6.11",
     "prop-types": "^15.8.1",
     "rimraf": "^3.0.2",
     "tsd-jsdoc": "^2.5.0",
     "typescript": "^4.9.5",
-    "webpack": "^5.75.0",
-    "@types/node": "^18.14.6"
+    "webpack": "^5.75.0"
   }
 }

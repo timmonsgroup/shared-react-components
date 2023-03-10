@@ -11,7 +11,7 @@ import RequiredIndicator from './RequiredIndicator';
 
 /**
  * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
- * @component
+ * @function
  * @param {object} props
  * @param {string} props.htmlFor - the id to use for htmlFor
  * @param {string} props.error - the error message to display

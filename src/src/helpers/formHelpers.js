@@ -1,3 +1,4 @@
+/** @module formHelpers */
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
 import { sortOn, functionOrDefault } from './helpers.js';
 import {
@@ -145,6 +146,7 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
  * @param {string} label - label for the field
  * @param {string|number} maxValue - the max value the field can be
  * @param {boolean} isInt - should the test be for an integer or a float
+ * @function
  * @returns {YupSchema}
  */
 const addMaxValue = (schema, label, maxValue, isInt) => {
@@ -174,6 +176,7 @@ const addMaxValue = (schema, label, maxValue, isInt) => {
  * @param {string} label - label for the field
  * @param {string|number} minValue - the max value the field can be
  * @param {boolean} isInt - should the test be for an integer or a float
+ * @function
  * @returns {YupSchema}
  */
 const addMinValue = (schema, label, minValue, isInt) => {
@@ -443,7 +446,7 @@ export function createFieldValidation(type, label, validationMap, field) {
         subFieldValidations[subF.render?.name] = subF.validations;
       });
       // Create the validation for the cluster field which is an array of objects
-      validation = array().of(object().shape(subFieldValidations).strict());
+      validation = array().label(label).of(object().shape(subFieldValidations).strict());
       if (required) {
         validation = validation.min(1, reqMessage);
       }
@@ -476,6 +479,8 @@ export function createFieldValidation(type, label, validationMap, field) {
 
 /**
  * Method to reduce the amount of boilerplate code needed to submit a form
+ * @function
+ * @async
  * @param {object} formData - data to submit
  * @param {boolean} isEdit - true if editing, false if creating
  * @param {SubmitOptions} options - options object
@@ -544,7 +549,20 @@ export const attemptFormSubmit = async (formData, isEdit, {
   }
 };
 
-export const useFormSubmit = (props) => {
+/**
+ * @typedef {object} FormSubmitOptions
+ * @property {function} enqueueSnackbar - function to enqueue a snackbar
+ * @property {function} nav - function to navigate to a url
+ * @property {boolean} modifying - true if the form is currently being modified
+ * @property {function} setModifying - function to set the modifying state
+ */
+
+/**
+ * Helper to create hook bits for form submit
+ * @function
+ * @returns {FormSubmitOptions}
+ */
+export const useFormSubmit = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { nav } = useNavigate();
   const [modifying, setModifying] = useState(false);

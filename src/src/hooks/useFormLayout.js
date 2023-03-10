@@ -504,6 +504,7 @@ export function getFieldValue(field, formData) {
           value = inData || '';
         }
       }
+      console.log(name, 'CHOICE/OBJECT', value);
       break;
     }
     case FIELDS.CLUSTER: {

@@ -1,3 +1,4 @@
+/** @module DynamicField */
 // Third party
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -8,16 +9,17 @@ import { Divider, FormHelperText, Box } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
-import AnyField from './AnyField';
-import Button from './Button';
-import AnyFieldLabel from './AnyFieldLabel';
+import AnyField from '../AnyField';
+import Button from '../Button';
+import AnyFieldLabel from '../AnyFieldLabel';
 
 // Hooks, helpers, and constants
-import { FIELD_TYPES } from '../constants';
-import { getFieldValue } from '../hooks';
+import { FIELD_TYPES } from '../../constants';
+import { getFieldValue } from '../../hooks';
 
 /**
  * A Helper component to check if a field is a cluster field and render the appropriate component
+ * @function
  * @param {object} props - props object
  * @param {object} props.control - react-hook-form control object
  * @param {object} props.field - field object
@@ -42,7 +44,6 @@ DynamicField.propTypes = {
     render: PropTypes.object,
   }),
 };
-
 export default DynamicField;
 
 /**
@@ -57,6 +58,7 @@ export default DynamicField;
 
 /**
  * A component to render a cluster of fields
+ * @function
  * @param {RenderAddButtonProps} props - props object
  * @returns {React.ReactElement} - React element of the button and divider
  */
@@ -81,6 +83,7 @@ const renderDefaultAddButton = ({ layout, onClick }) => {
 
 /**
  * The default remove button for the ClusterField component
+ * @function
  * @param {RenderRemoveButtonProps} props
  * @returns {React.ReactElement} - React element of the button
  */
@@ -97,6 +100,7 @@ const renderDefaultRemoveButton = ({ layout, onClick }) => {
 
 /**
  * ClusterField component will render a field that contains a list of subfields
+ * @function
  * @param {object} props - props object
  * @param {object} props.control - react-hook-form control object
  * @param {object} props.field - field object
@@ -195,6 +199,7 @@ export const ClusterField = ({ control, field, renderAddButton, renderRemoveButt
     </>
   );
 };
+
 
 ClusterField.propTypes = {
   control: PropTypes.object,

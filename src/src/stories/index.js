@@ -17,9 +17,10 @@ import SubHeader from './SubHeader';
 import Typeahead from './Typeahead';
 import SideBar from './SideBar';
 import { ConfigForm, FormSections, DynamicForm, GenericConfigForm } from './DynamicForm';
+import { DynamicField, ClusterField } from './DynamicField';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,
-  LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon,
+  LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon, DynamicField, ClusterField,
   RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar, ConfigForm, FormSections, DynamicForm, GenericConfigForm
 };

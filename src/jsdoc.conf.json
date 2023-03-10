@@ -5,5 +5,14 @@
       "**/node_modules/"
     ],
     "excludePattern": "(^|\\/|\\\\)_|node_modules"
-  }
+  },
+  "tags": {
+    "allowUnknownTags": ["category", "subcategory"]
+  },
+  "opts": {
+    "template": "node_modules/better-docs"
+  },
+  "plugins": [
+    "node_modules/better-docs/category"
+  ]
 }
