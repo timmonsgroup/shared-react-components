@@ -1,4 +1,5 @@
-import React from 'react';
+/** @module PamLayoutGrid **/
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { ButtonGroup } from '@mui/material';
@@ -9,6 +10,8 @@ import { useTheme } from '@mui/material/styles';
 import Button from './Button';
 
 import { dateFormatter, processLayout, processGenericLayout, currencyFormatter } from '../helpers/helpers.js';
+
+const gridContext = React.createContext();
 
 // Default options for a somewhat sane initial render of the grid
 const defaultSX = {
@@ -22,6 +25,7 @@ const defaultSX = {
 /**
  * This is the base config for a column that is used by the MUIGrid component
  * It takes a column from the layout and converts it into a config that can be used by the MUIGrid component
+ * @function
  * @param {LayoutColumn} column - The column from the layout
  * @returns {Object} - The column config for the MUIGrid component
  * @see https://mui.com/components/data-grid/columns/
@@ -182,6 +186,7 @@ const getValueNameOrDefault = (value, defaultValue) => {
  * This takes a mui column and adds formatting to it to handle single select fields.
  * It extracts the possible values from the layout column and adds them to the column config as choices
  * The filter uses these choices to filter the data
+ * @function
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @param {Object} layoutColumn - The column from the layout
  * @see https://mui.com/components/data-grid/filtering/#value-getter
@@ -197,6 +202,7 @@ const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
 //jsdoc for action type
 /**
  * This is our default renderer function for grid actions
+ * @function
  * @param {Object} props
  * @param {ActionItem[]} props.actions - The actions to render
  * @param {Object} props.params - The params from the grid
@@ -275,6 +281,7 @@ GridActions.propTypes = {
   useTypeVariant: PropTypes.bool,
 };
 
+
 /**
  * @typedef {Object} ActionItem
  * @property {string} label - The label for the action
@@ -293,25 +300,40 @@ GridActions.propTypes = {
 
 /**
  * This takes a mui column and adds formatting to it to handle action button fields
+ * @function
  * @param {object} muiGridColumn - The column used by the MUIGrid component
  * @param {ActionData} actionData - The action data from the layout
- * @param {object} themeGroup - The theme group to use for the actions. This will override the default theme
- * @param {JSX} actionsComponent - If you want to use a custom component for the actions, pass it in here
  */
-const addActionButtonFormatting = (muiGridColumn, actionData, themeGroup, actionsComponent, useTypeVariant) => {
+const addActionButtonFormatting = (muiGridColumn, actionData) => {
   // Get actions
   const actions = actionData?.actionList || [];
   actions.sort((a, b) => a.order - b.order);
 
-  // Default to the GridActions component if no custom component is passed in
-  const Actions = actionsComponent || GridActions;
-
-  // Create a button group with buttons for each action
+  // Return the action wrapper component
+  // This allows us to use hooks inside the component
   muiGridColumn.renderCell = (params) => {
     return (
-      <Actions actions={actions} params={params} themeGroup={themeGroup} useTypeVariant={useTypeVariant} />
+      <ActionWrapper muiGridColumn={muiGridColumn} actions={actions} params={params} />
     );
   };
+};
+
+/**
+ * This is a wrapper call inside the renderCell function for the action column
+ * @function ActionWrapper
+ * @param {object} props
+ * @param {ActionItem[]} props.actions - The actions to render
+ * @param {object} props.params - The params from the grid
+ * @param {object} props.muiGridColumn - The column used by the MUIGrid component
+ * @returns {React.ReactElement}
+ */
+const ActionWrapper = (props) => {
+  const { actionsComponent, themeGroup, useTypeVariant } = useContext(gridContext);
+  // Default to the GridActions component if no custom component is passed in
+  const Actions = actionsComponent || GridActions;
+  return (
+    <Actions {...props} themeGroup={themeGroup} useTypeVariant={useTypeVariant} />
+  );
 };
 
 /**
@@ -340,6 +362,7 @@ const getBaseAction = (action) => {
 /**
  * This takes a mui column and adds formatting to it to handle object reference fields
  * It generates a link to the object reference
+ * @function
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @param {Object} linkFormat - The column from the layout - TODO: This isnt true as we destructured the linkFormat from the layout column
  */
@@ -416,25 +439,75 @@ const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
 /**
  * This takes a mui column and adds formatting to it to handle external link fields
  * It generates a link to the external link
+ * @function addExternalLinkFormatting
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @see https://mui.com/components/data-grid/rendering/#cell-renderers
  */
-const addExternalLinkFormatting = (muiGridColumn) => { // Link
+const addExternalLinkFormatting = (muiGridColumn) => {
   muiGridColumn.renderCell = (params) => {
-    if (typeof params.value === 'string') {
-      if (params && params.value) {
-        return (<a href={params.value} target="_blank" rel="noreferrer" >
-          {params.value}
-        </a>);
-      }
-    } else if (params.value && params.value.url) {
-      return (<a href={params.value.url} target="_blank" rel="noreferrer" >
-        {params.value?.label || params.value.url}
-      </a>);
-    }
-    return muiGridColumn.nullValue;
+    return <LinkCellWrapper muiGridColumn={muiGridColumn} params={params} />;
   };
 };
+
+/**
+ * This takes a mui column and adds formatting to it to handle external link fields
+ * @function LinkCellWrapper
+ * @param {object} props - The props
+ * @param {object} props.params - The params from the grid
+ * @param {object} props.muiGridColumn - The column used by the MUIGrid component
+ * @returns {React.ReactElement} - The link cell wrapper
+ */
+const LinkCellWrapper = ({params, muiGridColumn}) => {
+  const {themeGroup, linkComponent} = useContext(gridContext);
+  // Default to the Grid component if no custom component is passed in
+  const Link = linkComponent || GridLink;
+  return (
+    <Link params={params} themeGroup={themeGroup} muiGridColumn={muiGridColumn} />
+  );
+
+};
+LinkCellWrapper.propTypes = {
+  params: PropTypes.object,
+  muiGridColumn: PropTypes.object,
+};
+
+/**
+ * @typedef GridLinkParams
+ * @property {string | object} value - the value of the cell
+ * @property {string} value.url - the url of the cell
+ * @property {string} value.label - the label of the cell
+ */
+
+/**
+ * @function GridLink
+ * @param {object} props - The props
+ * @param {GridLinkParams} props.params - The params from the grid
+ * @param {object} props.muiGridColumn - The column used by the MUIGrid component
+ * @returns {React.ReactElement} - The link cell wrapper
+ */
+const GridLink = ({ params, muiGridColumn }) => {
+  if (typeof params.value === 'string') {
+    if (params && params.value) {
+      return (<a href={params.value} target="_blank" rel="noreferrer" >
+        {params.value}
+      </a>);
+    }
+  } else if (params.value && params.value.url) {
+    return (<a href={params.value.url} target="_blank" rel="noreferrer" >
+      {params.value?.label || params.value.url}
+    </a>);
+  }
+  return muiGridColumn.nullValue;
+};
+
+GridLink.propTypes = {
+  params: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+  muiGridColumn: PropTypes.object,
+};
+
 
 /**
  * @typedef {Object} LayoutColumn
@@ -453,7 +526,7 @@ const addExternalLinkFormatting = (muiGridColumn) => { // Link
  * @param {LayoutColumn} column
  * @returns {MuiGridColumn}
  */
-const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nullValue, useTypeVariant) => {
+const convertLayoutColumnToMuiColumn = (column, nullValue) => {
   let ret = baseColumnConfig(column, nullValue);
 
   if (column.columnOverride && typeof column.columnOverride === 'function') {
@@ -473,8 +546,8 @@ const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nu
       break;
     case 7: addSingleSelectFormatting(ret, column); break; // Single Select
     case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
-    case 99: addActionButtonFormatting(ret, column.render, themeGroup, actionsComponent, useTypeVariant); break; // Action Buttons
-    case 100: addExternalLinkFormatting(ret, themeGroup); break; // Link
+    case 99: addActionButtonFormatting(ret, column.render); break; // Action Buttons
+    case 100: addExternalLinkFormatting(ret); break; // Link
     default: console.error('Unknown column type', column.type); break;
   }
 
@@ -493,10 +566,18 @@ const convertLayoutColumnToMuiColumn = (column, themeGroup, actionsComponent, nu
  * @param {Array} props.actions - The actions column for the grid
  * @param {Object} props.themeGroup - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
  * @param {Object} props.actionsComponent - The component to use for the actions column
+ * @param {Object} props.linkComponent - The component to use for the link column
  * @param {Boolean} props.useTypeVariant - Whether to use the type variant for the grid
  */
 // eslint-disable-next-line
-const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, themeGroup, actionsComponent, useTypeVariant, ...props }) => {
+const PamLayoutGrid = ({
+  data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, themeGroup,
+  linkComponent, actionsComponent, useTypeVariant, ...props
+}) => {
+  // memo of shared values
+  const sharedValues = React.useMemo(() => {
+    return { themeGroup, actionsComponent, useTypeVariant, linkComponent };
+  }, [themeGroup, actionsComponent, useTypeVariant, linkComponent]);
 
   const theme = useTheme();
   // Extract the 'pamGrid' theme group from the theme
@@ -539,7 +620,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
 
 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
-  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, themeGroup, actionsComponent, nullValue, useTypeVariant)).filter(Boolean); // Remove any columns that are not defined
+  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, nullValue)).filter(Boolean); // Remove any columns that are not defined
 
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar ? {
@@ -597,7 +678,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
   }
 
   return (
-    <>
+    <gridContext.Provider value={sharedValues}>
       <MUIGrid
         rows={data}
         columns={renderColumns}
@@ -610,7 +691,7 @@ const PamLayoutGrid = ({ data, layout, initialSortColumn, initialSortDirection, 
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
         }
       />
-    </>
+    </gridContext.Provider>
   );
 };
 
@@ -622,6 +703,8 @@ PamLayoutGrid.propTypes = {
   initialSortDirection: PropTypes.oneOf(['asc', 'desc']),
   showToolbar: PropTypes.bool,
   useTypeVariant: PropTypes.bool,
+  themeGroup: PropTypes.object,
+  linkComponent: PropTypes.elementType,
   actionsComponent: PropTypes.elementType,
   actions: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string,
