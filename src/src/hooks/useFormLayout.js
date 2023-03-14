@@ -192,6 +192,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
     name: section.name,
     title: section.title,
     order: section.order,
+    description: section.description,
     editable,
     enabled,
     fields: [],

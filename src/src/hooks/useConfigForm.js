@@ -151,15 +151,24 @@ const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) =
 };
 
 /**
+ * @typedef {object} FormSection
+ * @property {string} name - The name of the section
+ * @property {string} description - The description of the section
+ * @property {Array} fields - The fields in the section
+ * @property {boolean} visible - Whether the section is visible
+ */
+
+/**
  * Creates a section object for the form
  * @function createRenderSection
  * @param {object} section - section object from the form layout
  * @param {Map<string, Field>} fieldMap -
- * @returns {object} - Form section object
+ * @returns {FormSection} - Form section object
  */
 const createRenderSection = (section, fieldMap) => {
   const formSection = {
     name: section.name || section.title,
+    description: section.description,
     fields: [],
     visible: false
   };
@@ -532,9 +541,9 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
  * @param {array} sections - Array of all the sections in the form
  * @param {Map<string, object>} fields - Map of all the fields in the form
  * @param {Array<object>} updatedFields - Array of fields that need to be updated
- * @param {*} asyncThings
- * @param {*} dynValid
- * @param {*} resetFields
+ * @param {object} asyncThings - Object of async things that need to be loaded
+ * @param {object} dynValid - Object of dynamic validations
+ * @param {object} resetFields - Object of fields that need to be reset
  * @returns {Array<object>}
  */
 const processConditionalUpdate = (sections, fields, updatedFields, asyncThings = {}, dynValid = {}, resetFields = {}) => {

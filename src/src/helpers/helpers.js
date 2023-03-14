@@ -1,9 +1,13 @@
 /** @module helpers */
 /**
  * Deeply clone an object.
- * @param {object} target
- * @param {object} source
- * @returns {object}
+ * @param {object} target - object to merge things into
+ * @param {object} source - data source
+ * @returns {object} - cloned object
+ * @example const result = mergeDeep({ a: 1 }, { b: 2 });
+ * // result === { a: 1, b: 2 }
+ * @example const result = mergeDeep({ a: 1 }, { a: 2 });
+ * // result === { a: 2 }
  */
 export function mergeDeep(target, source) {
   if (typeof target !== 'object') {
@@ -29,10 +33,11 @@ export function mergeDeep(target, source) {
 }
 
 /**
- * Given an object and a path, return the value at that path.
+ * Given an object and a path, return the value at that path. If the path is not found, return undefined.
  * @example
  * const obj = { a: { b: { c: 1 } } };
  * const result = objectReducer(obj, 'a.b.c');
+ * // result === 1
  *
  * @param {object} obj - object to search
  * @param {string} path - path to value
@@ -145,19 +150,35 @@ export function createZoomOption(label, value, extent) {
 
 /**
  * Create a zoom option object from a zoomable item
- * @param {*} item
- * @param {*} labelProp
- * @param {*} valueProp
+ * @param {object} item
+ * @param {object} item.fields - fields object
+ * @param {object} item.fields.extent - extent object
+ * @param {string} labelProp
+ * @param {string} valueProp
  * @returns {object} - zoom option object
  */
 export function zoomableOption(item, labelProp = 'label', valueProp = 'id') {
   return createZoomOption(item[labelProp], item[valueProp], item.fields?.extent);
 }
 
+/**
+ * Get a list of zoom options from a list of zoomable items
+ * @param {Object[]} zoomables - list of zoomable items
+ * @param {string} labelProp - property to use for label
+ * @param {string} valueProp - property to use for value
+ * @returns {Object[]}
+ */
 export function zoomablesOptions(zoomables, labelProp = 'label', valueProp = 'id') {
   return sortOn(zoomables, 'label').map((item) => zoomableOption(item, labelProp, valueProp));
 }
 
+/**
+ * Returns possible choices for a given section and model
+ * @param {Object} layout - layout object
+ * @param {string} sectionName - name of the section
+ * @param {string} modelName - name of the model
+ * @returns {Object[]} - list of possible choices or an empty array
+ */
 export const getSectionChoices = (layout, sectionName, modelName) => {
   if (!layout || !layout.sections) {
     return [];

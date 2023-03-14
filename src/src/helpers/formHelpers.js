@@ -22,10 +22,10 @@ export function yupString(label, isRequired = true, reqMessage) {
 }
 /**
  * Create a yup schema for a date field
- * @param {*} label
- * @param {*} isRequired
- * @param {*} msg
- * @param {*} reqMessage
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {string} msg - message to display if the field is not a valid date
+ * @param {string} reqMessage - message to display if the field is required
  * @returns {YupSchema} - yup schema for a date field
  */
 export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
@@ -561,6 +561,8 @@ export const attemptFormSubmit = async (formData, isEdit, {
  * Helper to create hook bits for form submit
  * @function
  * @returns {FormSubmitOptions}
+ * @example
+ * const { modifying, setModifying, nav, enqueueSnackbar } = useFormSubmit();
  */
 export const useFormSubmit = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -568,4 +570,45 @@ export const useFormSubmit = () => {
   const [modifying, setModifying] = useState(false);
 
   return { modifying, setModifying, nav, enqueueSnackbar };
+};
+
+/**
+ * Give an array of fields, create an array of rows with the fields give a column count
+ * @param {import('../hooks/useFormLayout.js').ParsedField[]} fields
+ * @param {number} columnCount
+ * @returns
+ */
+export const createRowFields = (fields, columnCount, isInline) => {
+  const rows = [];
+  const cols = isInline ? 12 : columnCount || 1;
+  let col = 1;
+  let row = 1;
+  //Create the rows
+  fields.forEach((field, fIndex) => {
+    if (field.render.solitary) {
+      const rowObject = {
+        fields: [field],
+        solitary: true,
+        size: field.render.singleColumnSize || 12,
+        maxColumns: cols,
+      };
+      rows.push(rowObject);
+      row = rows.length;
+      col = 1;
+      return;
+    }
+
+    if (rows[row] === undefined) {
+      rows[row] = { fields: [], maxColumns: cols };
+    }
+    rows[row].fields.push(field);
+    col++;
+
+    if (col > cols) {
+      col = 1;
+      row++;
+    }
+  });
+
+  return rows;
 };

@@ -462,6 +462,7 @@ export const layout = {
       },
       {
         name: 'I\' another Section',
+        description: 'I\'m a description',
         editable: true,
         enabled: true,
         order: 10,
