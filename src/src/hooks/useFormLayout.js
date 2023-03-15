@@ -349,6 +349,7 @@ export function parseField(field, asyncFieldsMap) {
     // Allow for custom labels
     parsedField.render.addLabel = field.addLabel;
     parsedField.render.removeLabel = field.removeLabel;
+    parsedField.render.clusterColumnCount = field.clusterColumnCount;
 
     // Loop through the sub fields and parse them
     // This will also populate the validations property for each sub field

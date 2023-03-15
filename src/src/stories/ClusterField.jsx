@@ -15,6 +15,7 @@ import AnyFieldLabel from './AnyFieldLabel';
 
 // Hooks, helpers, and constants
 import { getFieldValue } from '../hooks';
+import { createRowFields } from '../helpers';
 
 /**
  * ClusterField component will render a field that contains a list of subfields
@@ -23,20 +24,33 @@ import { getFieldValue } from '../hooks';
  * @param {object} props.control - react-hook-form control object
  * @param {object} props.field - field object
  * @param {object} props.props - props object
+ * @param {object} props.options - options object
  * @param {Function} props.renderAddButton - render function for the add button
  * @param {Function} props.renderRemoveButton - render function for the remove button
  * @returns {React.ReactElement}
  */
-const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...props }) => {
-  const columns = props?.twoColumnCluster === true ? 2 : 1;
+const ClusterField = ({ control, field, options, ...props }) => {
+  const { renderAddButton, renderRemoveButton } = options || {};
+  console.log('CLF options', options);
+  // const columns = options?.clusterColumnCount || 1;
+  // let colSize = 12 / fields.length;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
   const { useFormObject } = useFormContext();
-  const { formState: { errors }, trigger } = useFormObject;
+  const { formState, trigger, clearErrors } = useFormObject;
+  const { errors } = formState;
 
   // Find any errors for the cluster field
-  const error = errors[field?.render?.name];
   const layout = field?.render || {};
+  const error = errors[layout?.name];
   const subFields = field?.subFields || [];
+  const { clusterColumnCount, inline } = layout;
+  console.log('CLF clusterColumnCount', clusterColumnCount)
+
+  const rows = createRowFields(subFields, clusterColumnCount, inline);
+
+  const buttonCol = inline ? 2 : 12;
+  const RenderBit = inline ? Grid : React.Fragment;
+  const renderArgs = inline ? { xs: 10 } : {};
 
   // Create an object with the default values set for each field in the cluster
   const initValues = {};
@@ -70,13 +84,16 @@ const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...
 
   // A default click handler for the add button
   // If a custom renderAddButton is passed in it will still be passed this method as a prop 'onClick'
-  const addClick = (layout, initValues) => {
+  const addClick = (layout, initValues, fields) => {
     // append should NOT be called with an empty object
     // If it is, there is a chance for zombie data.
     append(initValues);
 
     if (layout?.name) {
-      trigger(layout?.name);
+      if (fields?.length === 0) {
+        console.log('clearing errors', formState);
+        clearErrors(layout?.name);
+      }
     }
   };
 
@@ -84,36 +101,54 @@ const ClusterField = ({ control, field, renderAddButton, renderRemoveButton, ...
 
   // A default click handler for the remove button
   // If a custom renderRemoveButton is passed in it will still be passed this method as a prop 'onClick'
-  const removeClick = (layout, index) => {
+  const removeClick = (layout, index, fields) => {
     remove(index);
 
-    if (layout?.name) {
+    if (layout?.name && fields?.length === 1) {
       trigger(layout.name);
     }
   };
 
   return (
     <>
-      <Box {...props}>
+      <Grid xs={12} {...props}>
         <AnyFieldLabel htmlFor={layout.name} label={layout.label} required={!!layout.required} disabled={layout.disabled} iconText={layout.iconHelperText} error={!!error} />
         {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
         {layout?.helperText && <FormHelperText error={false}>{layout?.helperText}</FormHelperText>}
+      </Grid>
+      <Grid
+        data-what="all the clusters"
+        spacing={2}
+        xs={12}
+      >
         {fields.map((cluster, index) => {
-          return (<Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={cluster.id}>
-            {subFields.map((subField) => {
-              return (
-                <Grid xs={6} key={`${cluster.id}-${subField.render?.name}`}>
-                  <AnyField isNested={true} nestedName={`${layout?.name}.${index}.${subField.render?.name}`} control={control} layout={subField.render} {...props} />
-                </Grid>
-              );
-            })}
-            <Grid xs={12}>
-              {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index) })}
+          return (
+            <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={cluster.id}>
+              {rows.map((rowItem, rIndex) => {
+                return (
+                  <ClusterRow
+                    id={cluster.id}
+                    index={index}
+                    row={rowItem}
+                    control={control}
+                    options={options}
+                    layout={layout}
+                    key={`${cluster.id}-row-${rIndex}`}
+                    otherProps={props}
+                  />
+                );
+              })}
+              <Grid xs={buttonCol}>
+                {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index, fields) })}
+              </Grid>
+              {/* </Grid> */}
             </Grid>
-          </Grid>);
+          );
         })}
-      </Box>
-      {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues) })}
+      </Grid>
+      <Grid xs={12}>
+        {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
+      </Grid>
     </>
   );
 };
@@ -125,8 +160,82 @@ ClusterField.propTypes = {
     render: PropTypes.object,
     subFields: PropTypes.array,
   }),
+  options: PropTypes.shape({
+    clusterColumnCount: PropTypes.number,
+    renderAddButton: PropTypes.func,
+    renderRemoveButton: PropTypes.func,
+  }),
   renderAddButton: PropTypes.func,
   renderRemoveButton: PropTypes.func,
+};
+
+
+/**
+ * ClusterRow component will render a row of fields
+ * @param {object} props - props object
+ * @param {string} props.id - id of the cluster
+ * @param {number} props.index - index of the cluster
+ * @param {object} props.row - row object
+ * @param {object} props.row.fields - array of fields
+ * @param {boolean} props.row.solitary - solitary boolean
+ * @param {number} props.row.size - size number
+ * @param {number} props.row.maxColumns - maxColumns number
+ * @param {object} props.control - control object
+ * @param {object} props.options - options object
+ * @param {object} props.layout - layout object
+ * @param {object} props.otherProps - otherProps object
+ * @returns {React.ReactElement} - React element
+ */
+const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
+  const { fields, solitary, size, maxColumns } = row;
+  const colsAllowed = maxColumns || 1;
+  console.log('CR', colsAllowed, maxColumns)
+  let colSize = 12 / fields.length;
+  if (solitary && !isNaN(size)) {
+    colSize = parseInt(size);
+  }
+
+  const spacing = colsAllowed === 1 ? 0 : { xs: 1, sm: 2, md: 4 };
+  return (
+    <>
+      {fields.map((field, fIndex) => {
+        console.log('CR', `${layout?.name}.${index}.${field.render?.name}`);
+        return (
+          // <Grid xs={colSize} key={`${id}-${field.render?.name}`}>
+          <Grid xs={colSize} key={`${id}.${field.render?.name}`}>
+            <AnyField
+              isNested={true}
+              nestedName={`${layout?.name}.${index}.${field.render?.name}`}
+              // key={`${layout?.name}.${index}.${field.render?.name}`}
+              control={control}
+              layout={field.render}
+              options={options} {...otherProps}
+            />
+          </Grid>
+        );
+      })}
+      {/* </Grid> */}
+    </>
+  );
+};
+
+ClusterRow.propTypes = {
+  id: PropTypes.string,
+  index: PropTypes.number,
+  row: PropTypes.shape({
+    fields: PropTypes.array,
+    solitary: PropTypes.bool,
+    size: PropTypes.number,
+    maxColumns: PropTypes.number,
+  }),
+  control: PropTypes.object,
+  options: PropTypes.shape({
+    clusterColumnCount: PropTypes.number,
+    renderAddButton: PropTypes.func,
+    renderRemoveButton: PropTypes.func,
+  }),
+  layout: PropTypes.object,
+  otherProps: PropTypes.object,
 };
 
 /**

@@ -243,6 +243,79 @@ export const layout = {
             ],
           },
           {
+            'label': 'Requested Assistance Type(s)',
+            'path': 'requested_assistance_types',
+            'type': 7,
+            'model': {
+              'id': 14,
+              'modelid': 10,
+              'type': 7,
+              'name': 'requested_assistance_types',
+              'data': {
+                'multi': true,
+                'configLookupReference': 'grant_application:assistance_type'
+              },
+              'possibleChoices': [
+                {
+                  'id': 1,
+                  'name': 'Communications'
+                },
+                {
+                  'id': 2,
+                  'name': 'Federal Property Conversion'
+                },
+                {
+                  'id': 3,
+                  'name': 'Inventoried Equipment'
+                },
+                {
+                  'id': 4,
+                  'name': 'PPE'
+                },
+                {
+                  'id': 5,
+                  'name': 'Tools & Supplies'
+                },
+                {
+                  'id': 6,
+                  'name': 'Training'
+                }
+              ]
+            },
+            'required': true,
+            'disabled': false,
+            'possibleChoices': [
+              {
+                'id': 1,
+                'name': 'Communications'
+              },
+              {
+                'id': 2,
+                'name': 'Federal Property Conversion'
+              },
+              {
+                'id': 3,
+                'name': 'Inventoried Equipment'
+              },
+              {
+                'id': 4,
+                'name': 'PPE'
+              },
+              {
+                'id': 5,
+                'name': 'Tools & Supplies'
+              },
+              {
+                'id': 6,
+                'name': 'Training'
+              }
+            ],
+            'multiple': true,
+            'checkbox': true,
+            'helperText': 'Check all that apply.',
+            'iconHelperText': 'Indicate all types of assistance being requested. This may be different than what is approved for funding. Please enter this for all applications, to show program demand.'
+          },
+          {
             label: 'Another Field',
             path: 'anotherField',
             type: 10,
@@ -306,6 +379,7 @@ export const layout = {
                 },
               },
             ],
+            clusterColumnCount: 2,
             'hidden': true,
             'layout': [{
               'label': 'Federal Funding Source', 'path': 'fedFundingSource', 'type': 7,
