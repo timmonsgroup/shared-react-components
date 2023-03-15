@@ -33,6 +33,17 @@ export function mergeDeep(target, source) {
 }
 
 /**
+ * Check if a value is an object
+ * @param {any} objValue
+ * @returns {boolean} - true if object, false if not
+ */
+export function isObject(objValue) {
+  const type = typeof objValue;
+  const notNull = !!objValue;
+  return (notNull && type === 'object' && objValue.constructor === Object) ? true : false;
+}
+
+/**
  * Given an object and a path, return the value at that path. If the path is not found, return undefined.
  * @example
  * const obj = { a: { b: { c: 1 } } };

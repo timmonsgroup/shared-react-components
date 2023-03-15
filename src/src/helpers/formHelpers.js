@@ -1,6 +1,6 @@
 /** @module formHelpers */
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
-import { sortOn, functionOrDefault } from './helpers.js';
+import { sortOn, functionOrDefault, isObject } from './helpers.js';
 import {
   string, array, date, number, object
 } from 'yup';
@@ -301,10 +301,19 @@ export function yupMultiselect(label, isRequired = true, reqMessage) {
  */
 export function getSelectValue(multiple, inData) {
   if (multiple) {
-    return sortOn((inData)).map((con) => con?.id.toString());
+    return sortOn((inData)).map((con) => {
+      if (isObject(con)) {
+        return con?.id.toString();
+      }
+      return con;
+    });
   }
 
-  return (inData)?.id?.toString() || '';
+  if (isObject(inData)) {
+    return inData?.id?.toString() || '';
+  }
+
+  return inData?.toString() || '';
 }
 
 /**
@@ -585,7 +594,7 @@ export const createRowFields = (fields, columnCount, isInline) => {
   let row = 1;
   //Create the rows
   fields.forEach((field, fIndex) => {
-    if (field.render.solitary) {
+    if (field.render.solitary && !isInline) {
       const rowObject = {
         fields: [field],
         solitary: true,

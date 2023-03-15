@@ -1,4 +1,4 @@
-import { floatCompare, sortOn, caseless, mergeDeep, zoomableOption, zoomablesOptions, createZoomOption, objectReducer, getSectionChoices, processLayout } from './helpers';
+import { floatCompare, sortOn, caseless, mergeDeep, zoomableOption, zoomablesOptions, createZoomOption, objectReducer, getSectionChoices, processLayout, isObject } from './helpers';
 
 test('floatCompare correctly compares float values for an array sort method', () => {
   expect(floatCompare(1.1, 1.1)).toBe(0);
@@ -165,7 +165,6 @@ test('Object reduce method correctly reduces an object', () => {
 test('Object reduce method correctly returns missing as undefined', () => {
   const obj = { a: { b: { c: 1 } } };
   const result = objectReducer(obj, 'a.b.d');
-  console.log(result);
   expect(result).toBe(undefined);
 });
 
@@ -224,7 +223,6 @@ test('processLayout correctly processes a layout', () => {
   const processed = processLayout(layout);
   const section = processed[0];
   const {fields} = section;
-  console.log(section);
   expect(section.name).toBe('Section One');
   expect(fields.length).toBe(1);
 
@@ -240,4 +238,14 @@ test('processLayout correctly processes a layout', () => {
   expect(choices[0].id).toBe(7403);
   expect(choices[1].label).toBe('Broomtown VFD (Cherokee County)');
   expect(choices[1].id).toBe(7404);
+});
+
+test('Check if a value is an object', () => {
+  expect(isObject({}, 'empty object')).toBe(true);
+  expect(isObject([], 'empty array')).toBe(false);
+  expect(isObject('', 'emptystring')).toBe(false);
+  expect(isObject(1, 'a number')).toBe(false);
+  expect(isObject(true, 'a boolean')).toBe(false);
+  expect(isObject(null, 'the null')).toBe(false);
+  expect(isObject(undefined, 'undefined')).toBe(false);
 });
