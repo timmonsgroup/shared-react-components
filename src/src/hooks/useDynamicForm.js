@@ -44,10 +44,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
   const [sections, setSections] = useState([]);
   const [hasWatches, setHasWatches] = useState(false);
   const [validations, setValidations] = useState({});
-  const [processing, setProcessing] = useState(true);
-  const [values, setValues] = useState({});
-  const startValues = useRef({});
-  const resetValues = useRef({});
 
   // update the validation schema hookForm uses when the validation state changes
   const validationSchema = useMemo(
@@ -88,19 +84,14 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
     // Will hold the correctly formatted field values for the form
     const dynValues = {};
-    const emptyValues = {};
     parsedLayout.sections.forEach(section => {
       for (const fieldId of section.fields) {
         if (parsedLayout.fields.has(fieldId)) {
           const field = parsedLayout.fields.get(fieldId);
           // Get the value from the incoming values correctly formatted
           // If it does not exist the returned value will be the correct default format
-          const { name: eName, value: eValue } = getFieldValue(field, {});
           const { name, value } = getFieldValue(field, incomingValues || {});
-          emptyValues[eName] = eValue;
-          // resetField(eName, eValue);
           dynValues[name] = value;
-
 
           // Update the validation schema for this field
           // Do not add validations for read only fields
@@ -120,13 +111,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     if (watchMe) {
       setHasWatches(watchMe);
     }
-
-    // Set the values for the form
-    setValues(() => {
-      return {
-        ...emptyValues,
-      };
-    });
 
     //If we have any dynamic validations, set them
     if (Object.keys(dynValid).length > 0) {
@@ -149,7 +133,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
       section.fields.forEach((fieldPath) => {
         const field = parsedLayout.fields.get(fieldPath) || {};
         const { render } = field || {};
-        if (!render.hidden)  {
+        if (!render.hidden) {
           visibleCount++;
         }
 
@@ -171,12 +155,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
 
     // We do this to cause any watched fields to fire on initial load
     // This will also set the sections.
-    resetValues.current = dynValues;
-    startValues.current = emptyValues;
-    // reset(dynValues);
-    if (!watchMe){
-      setProcessing(false);
-    }
+    reset(dynValues);
     // }
     // We really only want to run this on layoutLoading changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,8 +167,10 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     if (hasWatches && !subscription) {
       /**
        * Method to complete the watch logic and update state.
+       * @function
        * @param {array} updatedFields - array of field ids that need to be modified and if it was an "update" or "reset"
        * @param {object} asyncThings - object of async render bits that should be folded into the layouts
+       *
        */
       const finishWatch = (updatedFields, asyncThings = {}) => {
         const dynValid = {};
@@ -270,21 +251,21 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
         // and out validation appearance will be out of sync with the schema
         flushSync(() => {
           for (const field in resetFields) {
-            setValue(field, startValues.current[field]);
+            resetField(field);
           }
         });
       };
 
       /**
        * Loads the data for the async fields
-       * @async
        * @function
-       * @param {*} fieldId - id of the field that is being loaded
-       * @param {*} url - url to load the data from
-       * @param {*} mappedId - property to use when mapping the id
-       * @param {*} mappedLabel - property to use when mapping the label
-       * @param {*} triggerFieldId - id of the field that triggered the load
-       * @returns promise
+       * @async
+       * @param {string} fieldId - id of the field that is being loaded
+       * @param {string} url - url to load the data from
+       * @param {string} mappedId - property to use when mapping the id
+       * @param {string} mappedLabel - property to use when mapping the label
+       * @param {string} triggerFieldId - id of the field that triggered the load
+       * @returns {Promise<Object[]>} - array of objects with id and label properties(by default)
        */
       const fetchData = async (fieldId, url, mappedId, mappedLabel, triggerFieldId) => {
         const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
@@ -321,7 +302,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
        * type is what happened. We only care about 'change'
        **/
       subscription = watch((value, { name, type }) => {
-        console.log('watch', value, name, type);
         // const triggerField = parsedLayout.triggerFields.get(`fields.${name}`);
         const triggerField = parsedLayout.triggerFields.get(name);
         if (!triggerField || type !== 'change') {
@@ -458,7 +438,6 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           finishWatch(updatedFields);
         }
       });
-      setProcessing(false);
     }
     return () => {
       // TODO: Look into termination of any triggerfield async
@@ -467,23 +446,9 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasWatches]);
 
-  useEffect(() => {
-    if (!processing) {
-      console.log('finishedSetup', startValues.current);
-      // If we have a watch, we need to trigger it on initial load
-      // reset(resetValues.current);
-      // reset(startValues.current);
-      setTimeout(() => {
-        console.log('finishedSetup AGAIN AGINA', resetValues.current);
-        reset(resetValues.current);
-      }, 100);
-    }
-  }, [processing]);
-
   return {
     ...useFormObject,
     sections,
     layoutLoading,
-    processing,
   };
 };
