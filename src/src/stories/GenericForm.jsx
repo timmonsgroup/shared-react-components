@@ -58,8 +58,6 @@ const GenericForm = ({
 }) => {
   const [modifying, setModifying] = useState(false);
   const { sections, layoutLoading, control, reset, processing, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
-  // const things = useConfigForm(layoutOptions.layout);
-  // console.log('things', things);
   const nav = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 

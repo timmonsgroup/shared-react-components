@@ -448,7 +448,6 @@ export function createFieldValidation(type, label, validationMap, field) {
 
     // TODO: Yes clusterfield I know you are here, but I don't know what to do with you yet
     case FIELDS.CLUSTER: {
-      console.log('Create cluster validations', field);
       const subFieldValidations = {};
       // Loop through and extract the validations for each subfield
       field.subFields?.forEach((subF) => {
@@ -575,17 +574,26 @@ export const attemptFormSubmit = async (formData, isEdit, {
  */
 export const useFormSubmit = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const { nav } = useNavigate();
+  const nav = useNavigate();
   const [modifying, setModifying] = useState(false);
 
   return { modifying, setModifying, nav, enqueueSnackbar };
 };
 
 /**
+ * @typedef {object} RowFields
+ * @property {ParsedField[]} fields - array of fields in the row
+ * @property {number} size - column size of the row (12 is full width, 6 is half width, etc)
+ * @property {number} maxColumns - maximum number of columns in the row
+ * @property {boolean} solitary - true if the row is a solitary field
+ * @property {boolean} isInline - true if the row is an inline field
+ */
+
+/**
  * Give an array of fields, create an array of rows with the fields give a column count
- * @param {import('../hooks/useFormLayout.js').ParsedField[]} fields
+ * @param {ParsedField[]} fields
  * @param {number} columnCount
- * @returns
+ * @returns {RowFields[]}
  */
 export const createRowFields = (fields, columnCount, isInline) => {
   const rows = [];
@@ -600,6 +608,7 @@ export const createRowFields = (fields, columnCount, isInline) => {
         solitary: true,
         size: field.render.singleColumnSize || 12,
         maxColumns: cols,
+        isInline
       };
       rows.push(rowObject);
       row = rows.length;
@@ -621,3 +630,37 @@ export const createRowFields = (fields, columnCount, isInline) => {
 
   return rows;
 };
+
+// This is copied from useFormLayout.js cause jsDoc import ain't working
+/**
+ * @typedef {object} ParsedField
+ * @property {string} id - field id
+ * @property {string} label - field label
+ * @property {string} type - field type
+ * @property {boolean} hidden - if the field is hidden
+ * @property {Array} conditions - if the field is hidden
+ * @property {object} specialProps - special props for the field
+ * @property {object} [defaultValue] - default value for the field
+ * @property {object} [modelData] - model data for the field (found on the model.data)
+ * @property {Array<ParsedField>} [subFields] - subFields for the field if its type is FIELD_TYPES.CLUSTER (i.e. 100)
+ * @property {FieldRenderProps} render - render props for the field
+ */
+
+/**
+ * @typedef {object} FieldRenderProps
+ * @property {string} type - field type
+ * @property {string} label - field label
+ * @property {string} name - field name
+ * @property {boolean} hidden - if the field is hidden
+ * @property {boolean} [required] - if the field is required
+ * @property {boolean} disabled - if the field is disabled
+ * @property {string} iconHelperText - icon helper text
+ * @property {string} helperText - helper text
+ * @property {string} requiredErrorText - required error text
+ * @property {boolean} readOnly - if the field is read only
+ * @property {boolean} [multiple] - if the field is multiple
+ * @property {string} [placeholder] - placeholder text
+ * @property {object} linkFormat - link format
+ * @property {Array<object>} [choices] - choices for the field
+ * @property {YupSchema} validations - validations for the field
+ */

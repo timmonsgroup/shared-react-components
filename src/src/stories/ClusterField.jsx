@@ -31,7 +31,7 @@ import { createRowFields } from '../helpers';
  */
 const ClusterField = ({ control, field, options, ...props }) => {
   const { renderAddButton, renderRemoveButton } = options || {};
-  console.log('CLF options', options);
+  console.debug('CLF options', options);
   // const columns = options?.clusterColumnCount || 1;
   // let colSize = 12 / fields.length;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
@@ -43,8 +43,11 @@ const ClusterField = ({ control, field, options, ...props }) => {
   const layout = field?.render || {};
   const error = errors[layout?.name];
   const subFields = field?.subFields || [];
-  const { clusterColumnCount, inline } = layout;
-  console.log('CLF clusterColumnCount', clusterColumnCount)
+  let { clusterColumnCount, inline } = layout;
+  if (clusterColumnCount === undefined) {
+    clusterColumnCount = options.clusterColumnCount || 1;
+  }
+  console.debug('CLF clusterColumnCount', clusterColumnCount)
 
   const rows = createRowFields(subFields, clusterColumnCount, inline);
 
@@ -91,7 +94,7 @@ const ClusterField = ({ control, field, options, ...props }) => {
 
     if (layout?.name) {
       if (fields?.length === 0) {
-        console.log('clearing errors', formState);
+        console.debug('clearing errors', formState);
         clearErrors(layout?.name);
       }
     }
@@ -116,37 +119,39 @@ const ClusterField = ({ control, field, options, ...props }) => {
         {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
         {layout?.helperText && <FormHelperText error={false}>{layout?.helperText}</FormHelperText>}
       </Grid>
-      <Grid
-        data-what="all the clusters"
-        spacing={2}
-        xs={12}
-      >
-        {fields.map((cluster, index) => {
-          return (
-            <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={cluster.id}>
-              {rows.map((rowItem, rIndex) => {
-                return (
-                  <ClusterRow
-                    id={cluster.id}
-                    index={index}
-                    row={rowItem}
-                    control={control}
-                    options={options}
-                    layout={layout}
-                    key={`${cluster.id}-row-${rIndex}`}
-                    otherProps={props}
-                  />
-                );
-              })}
-              <Grid xs={buttonCol}>
-                {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index, fields) })}
+      {fields.length > 0 && (
+        <Grid
+          data-what="all the clusters"
+          spacing={2}
+          xs={12}
+        >
+          {fields.map((cluster, index) => {
+            return (
+              <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={cluster.id}>
+                {rows.map((rowItem, rIndex) => {
+                  return (
+                    <ClusterRow
+                      id={cluster.id}
+                      index={index}
+                      row={rowItem}
+                      control={control}
+                      options={options}
+                      layout={layout}
+                      key={`${cluster.id}-row-${rIndex}`}
+                      otherProps={props}
+                    />
+                  );
+                })}
+                <Grid xs={buttonCol}>
+                  {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index, fields) })}
+                </Grid>
+                {/* </Grid> */}
               </Grid>
-              {/* </Grid> */}
-            </Grid>
-          );
-        })}
-      </Grid>
-      <Grid xs={12}>
+            );
+          })}
+        </Grid>
+      )}
+      <Grid xs={12} sx={{paddingTop: '0px'}}>
         {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
       </Grid>
     </>
@@ -189,7 +194,7 @@ ClusterField.propTypes = {
 const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
   const { fields, solitary, size, maxColumns } = row;
   const colsAllowed = maxColumns || 1;
-  console.log('CR', colsAllowed, maxColumns)
+  console.debug('CR', colsAllowed, maxColumns)
   let colSize = 12 / fields.length;
   if (solitary && !isNaN(size)) {
     colSize = parseInt(size);
@@ -199,7 +204,7 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
   return (
     <>
       {fields.map((field, fIndex) => {
-        console.log('CR', `${layout?.name}.${index}.${field.render?.name}`);
+        console.debug('CR', `${layout?.name}.${index}.${field.render?.name}`);
         return (
           // <Grid xs={colSize} key={`${id}-${field.render?.name}`}>
           <Grid xs={colSize} key={`${id}.${field.render?.name}`}>
