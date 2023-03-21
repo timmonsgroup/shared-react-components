@@ -36,12 +36,47 @@ export function mergeDeep(target, source) {
  * Check if a value is an object
  * @param {any} objValue
  * @returns {boolean} - true if object, false if not
+ * @example const result = isObject({ a: 1 });
+ * // result === true
+ * @example const result = isObject(1);
+ * // result === false
+ * @example const result = isObject(null);
+ * // result === false
+ * @example const result = isObject(undefined);
+ * // result === false
+ * @example const result = isObject('a');
+ * // result === false
+ * @example const result = isObject([1, 2, 3]);
+ * // result === false
+ * @example const result = isObject(new Date());
+ * // result === false
+ * @example const result = isObject(new Map());
+ * // result === false
  */
 export function isObject(objValue) {
   const type = typeof objValue;
   const notNull = !!objValue;
   return (notNull && type === 'object' && objValue.constructor === Object) ? true : false;
 }
+
+/**
+   * Helper method to check if a value is null, undefined, or ''
+   * @example
+   * isEmpty('') // true
+   * isEmpty(null) // true
+   * isEmpty(undefined) // true
+   * isEmpty(0) // false
+   * @function isEmpty
+   * @param {string | number} value
+   * @returns
+   */
+export const isEmpty = (value) => {
+  if (value === '' || value === null || value === undefined) {
+    return true;
+  }
+
+  return false;
+};
 
 /**
  * Given an object and a path, return the value at that path. If the path is not found, return undefined.

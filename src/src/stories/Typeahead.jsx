@@ -1,9 +1,11 @@
+/** @module Typeahead */
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, TextField, Autocomplete, FormHelperText } from '@mui/material';
 import AnyFieldLabel from './AnyFieldLabel';
 import FormErrorMessage from './FormErrorMessage';
+import { isEmpty } from '../helpers';
 
 /**
  * Wrapper of the Mui Autocomplete component
@@ -15,6 +17,7 @@ import FormErrorMessage from './FormErrorMessage';
  * labelSX is styling for the label
  * textFieldSX is styling for the text field this is another MUI wrapper contains an input and the dropdown icon
  * inputLabelSX is styling for the input inside the textField
+ * @function Typeahead
  * @param {object} props
  * @param {string} props.label - the label to display
  * @param {boolean} props.isRequired - is the field required
@@ -64,16 +67,11 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
     return isEqual;
   };
 
-  const isEmpty = (value) => {
-    if (value === '' || value === null || value === undefined) {
-      return true;
-    }
 
-    return false;
-  };
 
   /**
    * Helper method to get the option object can either be an object or just the value of the id
+   * @function getOpObj
    * @param {object} option
    * @returns {object} the option object
    */

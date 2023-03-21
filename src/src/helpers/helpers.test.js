@@ -1,4 +1,4 @@
-import { floatCompare, sortOn, caseless, mergeDeep, zoomableOption, zoomablesOptions, createZoomOption, objectReducer, getSectionChoices, processLayout, isObject } from './helpers';
+import { floatCompare, sortOn, caseless, mergeDeep, zoomableOption, zoomablesOptions, createZoomOption, objectReducer, getSectionChoices, processLayout, isObject, isEmpty } from './helpers';
 
 test('floatCompare correctly compares float values for an array sort method', () => {
   expect(floatCompare(1.1, 1.1)).toBe(0);
@@ -240,7 +240,7 @@ test('processLayout correctly processes a layout', () => {
   expect(choices[1].id).toBe(7404);
 });
 
-test('Check if a value is an object', () => {
+test('Check if a value is an object using isObject', () => {
   expect(isObject({}, 'empty object')).toBe(true);
   expect(isObject([], 'empty array')).toBe(false);
   expect(isObject('', 'emptystring')).toBe(false);
@@ -248,4 +248,25 @@ test('Check if a value is an object', () => {
   expect(isObject(true, 'a boolean')).toBe(false);
   expect(isObject(null, 'the null')).toBe(false);
   expect(isObject(undefined, 'undefined')).toBe(false);
+  expect(isObject(new Date(), 'a date')).toBe(false);
+  expect(isObject(() => {}, 'a function')).toBe(false);
+  expect(isObject(Symbol('a symbol'), 'a symbol')).toBe(false);
+  expect(isObject(new Map(), 'a map')).toBe(false);
+});
+
+test('Check if a value is not null, undefined or empty string using isEmpty', () => {
+  // The only things that SHOULD return true
+  expect(isEmpty('', 'emptystring')).toBe(true);
+  expect(isEmpty(null, 'the null')).toBe(true);
+  expect(isEmpty(undefined, 'undefined')).toBe(true);
+
+  //Everything else should return false
+  expect(isEmpty(0, 'a zero')).toBe(false);
+  expect(isEmpty(1, 'a number')).toBe(false);
+  expect(isEmpty(true, 'a boolean')).toBe(false);
+  expect(isEmpty(false, 'a boolean')).toBe(false);
+  expect(isEmpty(new Date(), 'a date')).toBe(false);
+  expect(isEmpty(() => {}, 'a function')).toBe(false);
+  expect(isEmpty(Symbol('a symbol'), 'a symbol')).toBe(false);
+  expect(isEmpty(new Map(), 'a map')).toBe(false);
 });

@@ -291,7 +291,8 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
           let nextValue = newValue?.id;
-          // Cause id of 0 is valid
+          // We need to set the value to null if it is empty string or undefined to correctly set 'unselected' state
+          // a value of 0 is valid
           if (nextValue === '' || nextValue === undefined) {
             nextValue = null;
           }
