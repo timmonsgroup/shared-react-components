@@ -332,7 +332,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
       const ids = field.value;
       // If the id is in the array, remove it, otherwise add it
       const newIds = ids?.includes(checkedId)
-        ? ids?.filter((id) => id !== checkedId)
+        ? ids?.filter((id) => id.toString() !== checkedId.toString())
         : [...(ids ?? []), checkedId];
       return newIds;
     };

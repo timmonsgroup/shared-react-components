@@ -303,7 +303,7 @@ export function getSelectValue(multiple, inData) {
   if (multiple) {
     return sortOn((inData)).map((con) => {
       if (isObject(con)) {
-        return con?.id.toString();
+        return con?.id;
       }
       return con;
     });
