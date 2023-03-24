@@ -48,6 +48,7 @@ export const GRID_ACTION_TYPE = Object.freeze({
 });
 
 export const REQUIRED = 'required';
+export const DISABLED = 'disabled';
 export const ID_FIELD = 'idField';
 export const LABEL_FIELD = 'labelField';
 export const DEFAULT_VALUE = 'defaultValue';
@@ -67,7 +68,7 @@ export const CONDITIONAL_RENDER = Object.freeze({
   READ_ONLY: 'readOnly',
   URL: 'url',
   RENDER_PROPERTY_ID: 'renderPropertyId',
-  DISABLED: 'disabled',
+  DISABLED,
   HIDDEN: 'hidden',
   HELPER: 'helperText',
   ICON_HELPER: 'iconHelperText',
