@@ -56,6 +56,9 @@ export const MAX_VALUE = 'maxValue';
 export const MIN_VALUE = 'minValue';
 export const MAX_LENGTH = 'maxLength';
 export const MIN_LENGTH = 'minLength';
+export const EMAIL = 'email';
+export const ZIP = 'zip';
+export const PHONE = 'phone';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
@@ -68,6 +71,7 @@ export const CONDITIONAL_RENDER = Object.freeze({
   HIDDEN: 'hidden',
   HELPER: 'helperText',
   ICON_HELPER: 'iconHelperText',
+  ALT_HELPER: 'altHelperText',
   REQ_TEXT: 'requiredErrorText',
 });
 
@@ -83,5 +87,8 @@ export const VALIDATIONS = Object.freeze({
   MAX_VALUE,
   MIN_VALUE,
   MAX_LENGTH,
-  MIN_LENGTH
+  MIN_LENGTH,
+  EMAIL,
+  PHONE,
+  ZIP,
 });

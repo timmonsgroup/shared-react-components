@@ -29,7 +29,8 @@ import { isEmpty } from '../helpers';
  * @param {object} props.labelSX - the sx styling for the label
  * @param {object} props.textFieldSX - the sx styling for the text field
  * @param {object} props.iconHelperText - the text to display in the info icon
- * @param {object} props.helperText - the helper text to display
+ * @param {object} props.altHelperText - helper text to display above the field
+ * @param {object} props.helperText - the helper text to display (below the field)
  * @param {object} props.fieldOptions - the options to pass to the field
  * @param {object} props.textFieldProps - props to pass to the text field
  * @param {object} props.textFieldProps.inputLabelProps - props to pass to the input label
@@ -37,7 +38,8 @@ import { isEmpty } from '../helpers';
  * @returns {React.ReactElement}
  */
 const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, error,
-  disabled, renderSX, labelSX, inputSX, textFieldSX, iconHelperText, helperText, fieldOptions, ...props
+  disabled, renderSX, labelSX, inputSX, textFieldSX, iconHelperText, helperText,
+  fieldOptions, altHelperText, ...props
 }, ref) => {
   // Override the default Autocomplete getOptionLabel / getOptionSelected methods
   // We can override the override methods by passing in the same method name as a prop
@@ -113,6 +115,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
               disabled={disabled}
               iconText={iconHelperText}
               fieldOptions={fieldOptions}
+              helperText={altHelperText}
             />
             <TextField
               {...params}
@@ -151,6 +154,7 @@ Typeahead.propTypes = {
   sx: PropTypes.object,
   helperText: PropTypes.string,
   iconHelperText: PropTypes.string,
+  altHelperText: PropTypes.string,
   error: PropTypes.object,
   fieldOptions: PropTypes.object,
   renderSX: PropTypes.object,

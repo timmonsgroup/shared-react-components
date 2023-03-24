@@ -1,3 +1,43 @@
+export const createTextModel = (name, label, required = false, otherThings = {}, dataThings = {}) => ({
+  label,
+  path: name,
+  type: 0,
+  model: {
+    name,
+    id: 5,
+    modelid: 10,
+    type: 0,
+    data: dataThings,
+  },
+  required,
+  ...otherThings
+});
+
+const emailField = createTextModel('email', 'Email', true, {
+  placeholder: 'Please enter your email address',
+  altHelperText: 'I GO ELSEWHERE!',
+  email: true,
+  helperText: 'I am an email field!',
+  // conditions: [
+  //   {
+  //     when: 'fireDepartment',
+  //     isValid: true,
+  //     then: {
+  //       helperText: 'I am no longer an email field!',
+  //       email: false,
+  //     }
+  //   }
+  // ],
+});
+
+const zipField = createTextModel('zipCode', 'Zippity', true, {
+  zip: true
+});
+
+const phoneField = createTextModel('phone', 'Phone Number', true, {
+  phone: true
+});
+
 export const layout = {
   layout: {
     data: {
@@ -17,6 +57,9 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
+          emailField,
+          zipField,
+          phoneField,
           {
             label: 'Fire Department',
             path: 'fireDepartment',
@@ -29,9 +72,10 @@ export const layout = {
               data: {},
             },
             placeholder: 'The typeahead will populate this field',
+            altHelperText: 'I GO ELSEWHERE!',
             iconHelperText: 'Please select the Fire Department you are applying for funding on behalf of.',
             helperText:
-              'When you select one of the options magic might happen',
+              'When you select one of the options magic might happen. Like random dog facts or something. Somewhere. Maybe.',
             required: true,
             conditions: [
               {
@@ -313,10 +357,11 @@ export const layout = {
             'multiple': true,
             'checkbox': true,
             'helperText': 'Check all that apply.',
+            'altHelperText': 'I am under the checkboxes.',
             'iconHelperText': 'Indicate all types of assistance being requested. This may be different than what is approved for funding. Please enter this for all applications, to show program demand.'
           },
           {
-            label: 'Another Field',
+            label: 'Dog Facts',
             path: 'anotherField',
             type: 10,
             model: {
@@ -328,13 +373,14 @@ export const layout = {
             },
             placeholder: 'The typeahead will populate this field',
             iconHelperText: 'Please select the Fire Department you are applying for funding on behalf of.',
-            helperText: 'When you select one of the options magic might happen',
+            helperText: 'You need to pick a fire department before I can hydrate this field.',
             required: true,
             conditions: [
               {
                 when: 'fireDepartment',
                 isValid: true,
                 then: {
+                  helperText: 'I\'m so glad you picked a fire department!',
                   url: 'https://dog-api.kinduff.com/api/facts?number=5'
                 }
               }
@@ -348,6 +394,7 @@ export const layout = {
             readOnly: false,
             placeholder: 'This here is a date',
             defaultValue: 'today',
+            altHelperText: 'I am under the date picker label',
             iconHelperText:
               'TIP The date the application was received by the Wildfire Suite.',
             helperText:
@@ -401,6 +448,7 @@ export const layout = {
             path: 'amCluster',
             type: 120,
             helperText: 'I are a cluster field and I HELPED!!!',
+            altHelperText: 'I am your woeful alternative',
             placeholder: 'A child of moMoney',
             hidden: true,
             addLabel: 'Add a pair',

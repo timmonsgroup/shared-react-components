@@ -4,7 +4,7 @@ import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
   TODAY_DEFAULT, MAX_VALUE, MIN_VALUE, MAX_LENGTH, MIN_LENGTH,
-  REQUIRED
+  REQUIRED, EMAIL, PHONE, ZIP, DISABLED
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
@@ -261,10 +261,10 @@ export function parseField(field, asyncFieldsMap) {
     return {};
   }
 
-  const { label, type, model, hidden = false, conditions = [], linkFormat } = field;
+  const { label, type, model, conditions = [], linkFormat } = field;
   const name = model?.name || `unknown${model?.id || ''}`;
-  const readOnly = !!field.readOnly;
-  const disabled = !!field.disabled;
+
+  const hidden = !!field[CONDITIONAL_RENDER.HIDDEN];
 
   const parsedField = {
     id: name,
@@ -281,18 +281,23 @@ export function parseField(field, asyncFieldsMap) {
       type: type,
       label,
       name,
+      // Boolean properties
       hidden,
+      [REQUIRED]: !!field[REQUIRED],
+      [DISABLED]: !!field[DISABLED],
+      [CONDITIONAL_RENDER.READ_ONLY]: !!field[CONDITIONAL_RENDER.READ_ONLY],
+      //Number properties
       [MAX_VALUE]: field[MAX_VALUE],
       [MIN_VALUE]: field[MIN_VALUE],
       [MAX_LENGTH]: field[MAX_LENGTH],
       [MIN_LENGTH]: field[MIN_LENGTH],
-      [REQUIRED]: !!field[REQUIRED],
-      disabled,
+      [MIN_LENGTH]: field[MIN_LENGTH],
+      //String properties
+      [CONDITIONAL_RENDER.ALT_HELPER]: field[CONDITIONAL_RENDER.ALT_HELPER],
+      [CONDITIONAL_RENDER.ICON_HELPER]: field[CONDITIONAL_RENDER.ICON_HELPER],
+      [CONDITIONAL_RENDER.HELPER]: field[CONDITIONAL_RENDER.HELPER],
+      [CONDITIONAL_RENDER.REQ_TEXT]: field[CONDITIONAL_RENDER.REQ_TEXT],
       placeholder: field.placeholder,
-      iconHelperText: field.iconHelperText,
-      helperText: field.helperText,
-      requiredErrorText: field.requiredErrorText,
-      readOnly,
       solitary: field.solitary,
       singleColumnSize: field.singleColumnSize,
       linkFormat,
@@ -326,6 +331,12 @@ export function parseField(field, asyncFieldsMap) {
 
   if (type === FIELDS.LONG_TEXT) {
     parsedField.render.isMultiLine = true;
+  }
+
+  if (type === FIELDS.TEXT) {
+    parsedField.render[EMAIL] = !!field[EMAIL];
+    parsedField.render[PHONE] = !!field[PHONE];
+    parsedField.render[ZIP] = !!field[ZIP];
   }
 
   if (field.possibleChoices) {
