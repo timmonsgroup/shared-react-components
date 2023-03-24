@@ -274,7 +274,7 @@ export function parseField(field, asyncFieldsMap) {
     hidden,
     specialProps: {},
     [DEFAULT_VALUE]: field[DEFAULT_VALUE],
-    modelData: model.data,
+    modelData: model.data || {},
     // Note any validation that are needed for a trigger field should be added here
     // The triggerfield logic will parse the base field first then the trigger field (which allows for overrides via "then")
     render: {
@@ -386,6 +386,10 @@ export function parseField(field, asyncFieldsMap) {
  * @param {object} data
  */
 function parseValidation(validationMap, data, debug = false) {
+  if (!data) {
+    return;
+  }
+
   Object.keys(data).forEach((key) => {
     if (debug) {
       console.debug('~parseValidation~', key, data[key]);
@@ -422,7 +426,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
   if (conditions?.length) {
     conditions.forEach((condition) => {
       const { when: triggerId, then: validations, isValid } = condition;
-      let value = condition?.is;
+      let value = condition?.is?.toString();
 
       // touches is a map of every field that triggerfield could influence.
       // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
@@ -517,7 +521,6 @@ export function getFieldValue(field, formData) {
           value = inData || '';
         }
       }
-      console.debug(name, 'CHOICE/OBJECT', value);
       break;
     }
     case FIELDS.CLUSTER: {

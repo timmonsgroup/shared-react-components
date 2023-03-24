@@ -30,8 +30,15 @@ import { createRowFields } from '../helpers';
  * @returns {React.ReactElement}
  */
 const ClusterField = ({ control, field, options, ...props }) => {
+  const layout = field?.render || {};
+  console.log(layout.name, '| ClusterField', layout);
+
+  if (layout.hidden) {
+    return null;
+  }
+
+
   const { renderAddButton, renderRemoveButton } = options || {};
-  console.debug('CLF options', options);
   // const columns = options?.clusterColumnCount || 1;
   // let colSize = 12 / fields.length;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
@@ -40,14 +47,12 @@ const ClusterField = ({ control, field, options, ...props }) => {
   const { errors } = formState;
 
   // Find any errors for the cluster field
-  const layout = field?.render || {};
   const error = errors[layout?.name];
   const subFields = field?.subFields || [];
   let { clusterColumnCount, inline } = layout;
   if (clusterColumnCount === undefined) {
     clusterColumnCount = options.clusterColumnCount || 1;
   }
-  console.debug('CLF clusterColumnCount', clusterColumnCount)
 
   const rows = createRowFields(subFields, clusterColumnCount, inline);
 
@@ -94,7 +99,6 @@ const ClusterField = ({ control, field, options, ...props }) => {
 
     if (layout?.name) {
       if (fields?.length === 0) {
-        console.debug('clearing errors', formState);
         clearErrors(layout?.name);
       }
     }
@@ -202,7 +206,6 @@ ClusterField.propTypes = {
 const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
   const { fields, solitary, size, maxColumns } = row;
   const colsAllowed = maxColumns || 1;
-  console.debug('CR', colsAllowed, maxColumns)
   let colSize = 12 / fields.length;
   if (solitary && !isNaN(size)) {
     colSize = parseInt(size);
@@ -212,7 +215,6 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
   return (
     <>
       {fields.map((field, fIndex) => {
-        console.debug('CR', `${layout?.name}.${index}.${field.render?.name}`);
         return (
           // <Grid xs={colSize} key={`${id}-${field.render?.name}`}>
           <Grid xs={colSize} key={`${id}.${field.render?.name}`}>
