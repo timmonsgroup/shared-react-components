@@ -68,7 +68,7 @@ export function isObject(objValue) {
    * isEmpty(0) // false
    * @function isEmpty
    * @param {string | number} value
-   * @returns
+   * @returns {boolean} - true if empty, false if not
    */
 export const isEmpty = (value) => {
   if (value === '' || value === null || value === undefined) {
