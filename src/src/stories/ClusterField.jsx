@@ -115,9 +115,16 @@ const ClusterField = ({ control, field, options, ...props }) => {
   return (
     <>
       <Grid xs={12} {...props}>
-        <AnyFieldLabel htmlFor={layout.name} label={layout.label} required={!!layout.required} disabled={layout.disabled} iconText={layout.iconHelperText} error={!!error} />
+        <AnyFieldLabel
+          htmlFor={layout.name}
+          label={layout.label}
+          required={!!layout.required}
+          disabled={layout.disabled}
+          iconText={layout.iconHelperText}
+          error={!!error}
+          helperText={layout.helperText}
+        />
         {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
-        {layout?.helperText && <FormHelperText error={false}>{layout?.helperText}</FormHelperText>}
       </Grid>
       {fields.length > 0 && (
         <Grid
@@ -154,6 +161,7 @@ const ClusterField = ({ control, field, options, ...props }) => {
       <Grid xs={12} sx={{paddingTop: '0px'}}>
         {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
       </Grid>
+      {layout?.altHelperText && <FormHelperText error={false}>{layout?.altHelperText}</FormHelperText>}
     </>
   );
 };

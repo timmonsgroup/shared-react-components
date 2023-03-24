@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import TooltipIcon from './TooltipIcon';
 
 import {
-  InputLabel, Box, FormLabel
+  InputLabel, Box, FormLabel, FormHelperText
 } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
 
@@ -20,6 +20,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {string} props.label - the label to display
  * @param {string} props.asFormInput - whether to render the label using FormLabel or InputLabel
  * @param {string} props.iconText - the text to display in the info icon
+ * @param {string} props.helperText - the text to display in the helper text
  * @param {object} props.fieldOptions - the options to pass to the field
  * @param {object} props.fieldOptions.icon - the options to pass to the info icon
  * @param {object} props.fieldOptions.icon.gap - the gap between the label and the icon
@@ -28,7 +29,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {object} props.fieldOptions.icon.iconComponent - a component to use instead of the default MUI InfoIcon
  * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
-const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, asFormInput = false, fieldOptions = {} }) => {
+const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {} }) => {
   const sx = {
     display: 'flex',
     alignItems: 'center',
@@ -51,10 +52,13 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, as
   );
 
   return (
-    <Box sx={sx}>
-      {labelComponent}
-      {iconText && <TooltipIcon infoText={iconText} {...iconProps} />}
-    </Box>
+    <>
+      <Box sx={sx}>
+        {labelComponent}
+        {iconText && <TooltipIcon infoText={iconText} {...iconProps} />}
+      </Box>
+      {helperText && <FormHelperText>{helperText}</FormHelperText>}
+    </>
   );
 };
 
@@ -66,6 +70,7 @@ AnyFieldLabel.propTypes = {
   required: PropTypes.bool,
   label: PropTypes.string.isRequired,
   iconText: PropTypes.string,
+  helperText: PropTypes.string,
   fieldOptions: PropTypes.object
 };
 

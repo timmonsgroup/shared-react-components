@@ -10,6 +10,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /**
+ * @constant {Object} VALID_PATTERNS - regex patterns for validating fields
+ * @property {RegExp} PHONE - regex pattern for validating phone numbers
+ * @property {RegExp} EMAIL - regex pattern for validating email addresses
+ * @property {RegExp} ZIP - regex pattern for validating zip codes
+ */
+export const VALID_PATTERNS = Object.freeze({
+  PHONE: /^$|^\d{3}-\d{3}-\d{4}$/,
+  EMAIL: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+  ZIP: /^$|^\d{5}(-\d{4})?$/,
+});
+
+/**
  * Create a yup schema for a string field
  * @param {string} label
  * @param {boolean} isRequired
@@ -379,9 +391,27 @@ export function createFieldValidation(type, label, validationMap, field) {
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT:
-    case FIELDS.LINK:
+    case FIELDS.LINK: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
+
+      if (type !== FIELDS.LINK) {
+        const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
+        if (isEmail) {
+          validation = validation.email('Please enter a valid email address');
+        }
+        // TODO: Rework to allow for custom regex via a field property
+        // like field.render.validationRegex and field.render.validationMessage
+        const isZip = !!validationMap.get(VALIDATIONS.ZIP);
+        if (isZip) {
+          validation = validation.matches(VALID_PATTERNS.ZIP, 'Please enter a valid zip code in the format of xxxxx or xxxxx-xxxx');
+        }
+        const isPhone = !!validationMap.get(VALIDATIONS.PHONE);
+        if (isPhone) {
+          validation = validation.matches(VALID_PATTERNS.PHONE, 'Please enter a valid phone number in the format of xxx-xxx-xxxx');
+        }
+      }
       break;
+    }
     case FIELDS.INT:
       validation = yupInt(
         label,

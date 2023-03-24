@@ -44,6 +44,7 @@ import { Box } from '@mui/material';
  * @property {string} helperText - the helper text of the field
  * @property {string} placeholder - the placeholder of the field
  * @property {string} iconHelperText - the helper text of the info icon
+ * @property {string} altHelperText - helper text to display in an alternate location
  * @property {boolean} required - whether the field is required
  * @property {boolean} disabled - whether the field is disabled
  * @property {boolean} hidden - whether the field is hidden
@@ -158,7 +159,7 @@ const renderType = (layout, fieldOptions = {}) => {
  * @param {FieldOptions} fieldOptions Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText, type }, fieldOptions) => {
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type }, fieldOptions) => {
   const inputAttrs = {
     'data-src-field': name,
     readOnly: readOnly,
@@ -169,7 +170,16 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
-      <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
+      <AnyFieldLabel
+        htmlFor={id || name}
+        error={!!error}
+        label={label}
+        required={!!required}
+        disabled={disabled}
+        iconText={iconHelperText}
+        fieldOptions={fieldOptions}
+        helperText={altHelperText}
+      />
       <TextField sx={{ width: '100%' }}
         inputProps={inputAttrs}
         disabled={disabled}
@@ -210,7 +220,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {FieldOptions} fieldOptions Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, placeholder }, fieldOptions) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder }, fieldOptions) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -228,7 +238,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
           }
           return (
             <>
-              <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
+              <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
               <TextField sx={{ width: '100%' }} {...params} />
             </>
           );}}
@@ -258,7 +268,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
  * @param {FieldOptions} fieldOptions Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, iconHelperText }, fieldOptions) => {
+const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText }, fieldOptions) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
@@ -280,6 +290,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         isRequired={!!required}
         fieldOptions={fieldOptions}
         helperText={helperText}
+        altHelperText={altHelperText}
         iconHelperText={iconHelperText}
         // These are props that are passed to the MUI TextField rendered by Typeahead
         textFieldProps={{
@@ -325,7 +336,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
  * @returns {React.ReactElement} A custom renderer for the MUI Checkbox component
  */
 const checkboxRenderer = (layout, fieldOptions) => {
-  const { label, disabled, choices = [], required, helperText, iconHelperText } = layout;
+  const { label, disabled, choices = [], required, helperText, iconHelperText, altHelperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
     const handleCheck = (checkedId) => {
@@ -348,8 +359,17 @@ const checkboxRenderer = (layout, fieldOptions) => {
           component="fieldset"
           variant="standard"
         >
-          <AnyFieldLabel asFormInput={true} htmlFor={field.id || field.name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
-          {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
+          <AnyFieldLabel
+            asFormInput={true}
+            htmlFor={field.id || field.name}
+            error={!!error}
+            label={label}
+            required={!!required}
+            disabled={disabled}
+            iconText={iconHelperText}
+            fieldOptions={fieldOptions}
+            helperText={helperText}
+          />
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
             {choices?.map((item) => (
@@ -366,6 +386,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
                 label={item.label}
               />
             ))}
+            {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
             <FormErrorMessage error={error} />
           </FormGroup>
         </FormControl>
