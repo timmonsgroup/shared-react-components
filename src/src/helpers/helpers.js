@@ -344,7 +344,8 @@ function getStructure(field) {
       disabled,
       readOnly,
       linkFormat,
-    }
+    },
+    source: model
   };
 
   if (field.possibleChoices) {

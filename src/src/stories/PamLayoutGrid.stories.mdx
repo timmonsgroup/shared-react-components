@@ -1,8 +1,29 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import Grid from './PamLayoutGrid';
 
-<Meta title="Grid/PAM Layout Grid" component={Grid} />
+<Meta 
+  title="Grid/PAM Layout Grid" 
+  component={Grid}
+  argTypes={{
+    data: {
+      control: 'array'
+    },
+    layout: {
+      control: 'object'
+    },
+    onFilterModelChange: {
+      control: 'function'
+    },
+    onSortModelChange: {
+      control: 'function'
+    }
+  }}
 
+/>
+
+export const Template = (args) => <Grid layout={args.layout} data={args.data} onFilterModelChange={args.onFilterModelChange} onSortModelChange={args.onSortModelChange} />
+
+const log = [];
 
 # Grid
 
@@ -333,8 +354,12 @@ A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout
 When there is no data the columns will still be rendered but the data will say no rows. This can show wehn you have a data source that has no results.
 
 <Canvas>
-  <Story name="No Data">
-    <Grid layout={layout} data={[]} />
+  <Story name="No Data"
+    args={{
+      layout: layout, 
+      data: [],
+    }}>
+    {Template.bind({})}
   </Story>
 </Canvas>
 
@@ -343,8 +368,12 @@ When there is no data the columns will still be rendered but the data will say n
 When there is data the data will be rendered
 
 <Canvas>
-  <Story name="With Data">
-    <Grid layout={layout} data={data} />
+  <Story name="With Data"
+    args={{
+      layout: layout, 
+      data: data,
+    }}>
+    {Template.bind({})}
   </Story>
 </Canvas>
 
@@ -354,8 +383,12 @@ When there is data the data will be rendered
 If you wish to override the default value of 'N/A' for null values you can set the nullValue property in data to what you want to display instead. For example we provide "Empty" for nullValue below.
 
 <Canvas>
-  <Story name="Null Value Override">
-    <Grid layout={nullDataLayout} data={data} />
+  <Story name="Null Value Override"
+    args={{
+      layout: nullDataLayout, 
+      data: data,
+    }}>
+    {Template.bind({})}
   </Story>
 </Canvas>
 
@@ -365,7 +398,43 @@ If you wish to override the default value of 'N/A' for null values you can set t
 Additionally the nullValue can be set on the column level.
 
 <Canvas>
-  <Story name="Column Null Value Override">
-    <Grid layout={nullDataColumnLayout} data={data} />
+  <Story name="Column Null Value Override"
+    args={{
+      layout: nullDataColumnLayout, 
+      data: data,
+    }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+
+## Filter Model Change returns source field as well
+
+Change a filter and then check out the console. Note that the filter values now have a "field" property pointing back to the source field!
+
+<Canvas>
+  <Story name="On Filter Model Change"
+    args={{
+      layout: nullDataColumnLayout, 
+      data: data,
+      onFilterModelChange: ((model)=>{ console.log("Filter Model Change story!", model) })
+    }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+
+## Sort Model Change returns source field as well
+
+Change a sort and then check out the console. Note that the sort values now have a "field" property pointing back to the source field!
+
+<Canvas>
+  <Story name="On Sort Model Change"
+    args={{
+      layout: nullDataColumnLayout, 
+      data: data,
+      onSortModelChange: ((model)=>{ console.log("Sort Model Change story!", model) })
+    }}>
+    {Template.bind({})}
   </Story>
 </Canvas>
