@@ -30,19 +30,14 @@ import { createRowFields } from '../helpers';
  * @returns {React.ReactElement}
  */
 const ClusterField = ({ control, field, options, ...props }) => {
-  const layout = field?.render || {};
-  console.log(layout.name, '| ClusterField', layout);
-
-  if (layout.hidden) {
-    return null;
-  }
-
-
   const { renderAddButton, renderRemoveButton } = options || {};
   // const columns = options?.clusterColumnCount || 1;
   // let colSize = 12 / fields.length;
   // Get all errors from react-hook-form formState and the trigger function from useFormContext
   const { useFormObject } = useFormContext();
+
+  const layout = field?.render || {};
+
   const { formState, trigger, clearErrors } = useFormObject;
   const { errors } = formState;
 
@@ -86,6 +81,12 @@ const ClusterField = ({ control, field, options, ...props }) => {
     name: layout.name,
     shouldUnregister: true,
   });
+
+  // This should happen in the parent component, but this is a fallback
+  // Note this return MUST happen after all the hook calls or lil React will lose its mind
+  if (layout.hidden) {
+    return null;
+  }
 
   // If the renderAddButton / renderRemoveButton props exist and are functions, use them, otherwise use the default render functions
   const addButtonRender = renderAddButton && renderAddButton instanceof Function ? renderAddButton : renderDefaultAddButton;

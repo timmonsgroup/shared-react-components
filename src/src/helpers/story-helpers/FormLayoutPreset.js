@@ -266,272 +266,167 @@ const fireDepartmentField = {
 };
 
 const anotherCluster = {
-  "label": "Planned Federal Project Investment",
-  "path": "fedFundingItems",
-  "type": 120,
-  "model": {
-    "id": 19,
-    "modelid": 10,
-    "type": 120,
-    "name": "fedFundingItems",
-    "data": {}
+  'label': 'Planned Federal Project Investment',
+  'path': 'fedFundingItems',
+  'type': 120,
+  'model': {
+    'id': 19,
+    'modelid': 10,
+    'type': 120,
+    'name': 'fedFundingItems',
+    'data': {}
   },
-  "required": false,
-  "disabled": false,
-  "conditions": [
+  'required': false,
+  'disabled': false,
+  'conditions': [
     {
-      "is": 4,
-      "then": {
-        "hidden": false,
-        "required": true
+      'is': 4,
+      'then': {
+        'hidden': false,
+        'required': true
       },
-      "when": "applicationStatus"
+      'when': 'moMoney'
     },
     {
-      "is": 5,
-      "then": {
-        "hidden": false,
-        "required": true
+      'is': '50',
+      'then': {
+        'hidden': false,
+        'required': true
       },
-      "when": "applicationStatus"
+      'when': 'moMoney'
     }
   ],
-  "helperText": "Please indicate the planned federal funding source and ($) amount at time of approval. Actual reimbursement to FD may be different.",
-  "layout": [
+  'helperText': 'Please indicate the planned federal funding source and ($) amount at time of approval. Actual reimbursement to FD may be different.',
+  'hidden': true,
+  'layout': [
     {
-      "label": "Federal Funding Source",
-      "path": "fedFundingSource",
-      "type": 10,
-      "model": {
-        "id": 20,
-        "modelid": 10,
-        "type": 10,
-        "name": "fedFundingSource",
-        "data": {
-          "multiple": true,
-          "direction": "DESC",
-          "objectTypeId": 30
+      'label': 'Federal Funding Source',
+      'path': 'fedFundingSource',
+      'type': 7,
+      'model': {
+        'id': 20,
+        'modelid': 10,
+        'type': 7,
+        'name': 'fedFundingSource',
+        'data': {
+          'configLookupReference': 'grant_application:fed_funding_source'
         },
-        "possibleChoices": [
+        'possibleChoices': [
           {
-            "id": 24,
-            "name": "2023 - FS VFA"
+            'id': 0,
+            'name': '2023 - FS VFA'
           },
           {
-            "id": 12,
-            "name": "2023 - FS VFA"
+            'id': 1,
+            'name': '2023 - DOI RFA'
           },
           {
-            "id": 23,
-            "name": "2023 - DOI RFA"
+            'id': 2,
+            'name': '2023 - BIL VFA'
           },
           {
-            "id": 11,
-            "name": "2023 - DOI RFA"
+            'id': 3,
+            'name': '2022 - FS VFA'
           },
           {
-            "id": 22,
-            "name": "2023 - BIL VFA"
+            'id': 5,
+            'name': '2022 - BIL VFA'
           },
           {
-            "id": 10,
-            "name": "2023 - BIL VFA"
+            'id': 6,
+            'name': '2021 - FS VFA'
           },
           {
-            "id": 9,
-            "name": "2022 - FS VFA"
+            'id': 7,
+            'name': '2021 - DOI RFA'
           },
           {
-            "id": 21,
-            "name": "2022 - FS VFA"
+            'id': 8,
+            'name': '2020 - FS VFA'
           },
           {
-            "id": 8,
-            "name": "2022 - DOI RFA"
+            'id': 9,
+            'name': '2020 - DOI RFA'
           },
           {
-            "id": 20,
-            "name": "2022 - DOI RFA"
+            'id': 10,
+            'name': '2019 - FS VFA'
           },
           {
-            "id": 19,
-            "name": "2022 - BIL VFA"
-          },
-          {
-            "id": 7,
-            "name": "2022 - BIL VFA"
-          },
-          {
-            "id": 6,
-            "name": "2021 - FS VFA"
-          },
-          {
-            "id": 18,
-            "name": "2021 - FS VFA"
-          },
-          {
-            "id": 5,
-            "name": "2021 - DOI RFA"
-          },
-          {
-            "id": 17,
-            "name": "2021 - DOI RFA"
-          },
-          {
-            "id": 4,
-            "name": "2020 - FS VFA"
-          },
-          {
-            "id": 16,
-            "name": "2020 - FS VFA"
-          },
-          {
-            "id": 3,
-            "name": "2020 - DOI RFA"
-          },
-          {
-            "id": 15,
-            "name": "2020 - DOI RFA"
-          },
-          {
-            "id": 14,
-            "name": "2019 - FS VFA"
-          },
-          {
-            "id": 2,
-            "name": "2019 - FS VFA"
-          },
-          {
-            "id": 13,
-            "name": "2019 - DOI RFA"
-          },
-          {
-            "id": 1,
-            "name": "2019 - DOI RFA"
+            'id': 11,
+            'name': '2019 - DOI RFA'
           }
         ]
       },
-      "required": true,
-      "disabled": false,
-      "possibleChoices": [
+      'required': true,
+      'disabled': false,
+      'possibleChoices': [
         {
-          "id": 24,
-          "name": "2023 - FS VFA"
+          'id': 0,
+          'name': '2023 - FS VFA'
         },
         {
-          "id": 12,
-          "name": "2023 - FS VFA"
+          'id': 1,
+          'name': '2023 - DOI RFA'
         },
         {
-          "id": 23,
-          "name": "2023 - DOI RFA"
+          'id': 2,
+          'name': '2023 - BIL VFA'
         },
         {
-          "id": 11,
-          "name": "2023 - DOI RFA"
+          'id': 3,
+          'name': '2022 - FS VFA'
         },
         {
-          "id": 22,
-          "name": "2023 - BIL VFA"
+          'id': 5,
+          'name': '2022 - BIL VFA'
         },
         {
-          "id": 10,
-          "name": "2023 - BIL VFA"
+          'id': 6,
+          'name': '2021 - FS VFA'
         },
         {
-          "id": 9,
-          "name": "2022 - FS VFA"
+          'id': 7,
+          'name': '2021 - DOI RFA'
         },
         {
-          "id": 21,
-          "name": "2022 - FS VFA"
+          'id': 8,
+          'name': '2020 - FS VFA'
         },
         {
-          "id": 8,
-          "name": "2022 - DOI RFA"
+          'id': 9,
+          'name': '2020 - DOI RFA'
         },
         {
-          "id": 20,
-          "name": "2022 - DOI RFA"
+          'id': 10,
+          'name': '2019 - FS VFA'
         },
         {
-          "id": 19,
-          "name": "2022 - BIL VFA"
-        },
-        {
-          "id": 7,
-          "name": "2022 - BIL VFA"
-        },
-        {
-          "id": 6,
-          "name": "2021 - FS VFA"
-        },
-        {
-          "id": 18,
-          "name": "2021 - FS VFA"
-        },
-        {
-          "id": 5,
-          "name": "2021 - DOI RFA"
-        },
-        {
-          "id": 17,
-          "name": "2021 - DOI RFA"
-        },
-        {
-          "id": 4,
-          "name": "2020 - FS VFA"
-        },
-        {
-          "id": 16,
-          "name": "2020 - FS VFA"
-        },
-        {
-          "id": 3,
-          "name": "2020 - DOI RFA"
-        },
-        {
-          "id": 15,
-          "name": "2020 - DOI RFA"
-        },
-        {
-          "id": 14,
-          "name": "2019 - FS VFA"
-        },
-        {
-          "id": 2,
-          "name": "2019 - FS VFA"
-        },
-        {
-          "id": 13,
-          "name": "2019 - DOI RFA"
-        },
-        {
-          "id": 1,
-          "name": "2019 - DOI RFA"
+          'id': 11,
+          'name': '2019 - DOI RFA'
         }
       ],
-      "iconHelperText": "Funding source year is the federal fiscal year. NOTE: 'FS VFA' is funding from the regularly appropriated USDA Forest Service Consolidated Payments Grant (namely, Volunteer Fire Assistance in FY2019, Rural Fire Capacity for FY2020 & FY2021, and Volunteer Fire Capacity starting in FY2022). 'DOI RFA' is funding from the Department of Interior Rural Fire Assistance program, and 'BIL VFA' is funding from the Bipartisan Infrastructure Law program."
+      'iconHelperText': "Funding source year is the federal fiscal year. NOTE: 'FS VFA' is funding from the regularly appropriated USDA Forest Service Consolidated Payments Grant (namely, Volunteer Fire Assistance in FY2019, Rural Fire Capacity for FY2020 & FY2021, and Volunteer Fire Capacity starting in FY2022). 'DOI RFA' is funding from the Department of Interior Rural Fire Assistance program, and 'BIL VFA' is funding from the Bipartisan Infrastructure Law program."
     },
     {
-      "label": "Planned Grant Amount",
-      "path": "fedFundingAmount",
-      "type": 4,
-      "model": {
-        "id": 21,
-        "modelid": 10,
-        "type": 4,
-        "name": "fedFundingAmount",
-        "data": {
-          "minValue": 0.01
+      'label': 'Planned Grant Amount',
+      'path': 'fedFundingAmount',
+      'type': 4,
+      'model': {
+        'id': 21,
+        'modelid': 10,
+        'type': 4,
+        'name': 'fedFundingAmount',
+        'data': {
+          'minValue': 0.01
         }
       },
-      "required": true,
-      "disabled": false,
-      "iconHelperText": "Please enter the planned federal investment for the selected federal funding source. This amount may be different than actual reimbursements."
+      'required': true,
+      'disabled': false,
+      'iconHelperText': 'Please enter the planned federal investment for the selected federal funding source. This amount may be different than actual reimbursements.'
     }
   ]
-}
+};
 
 export const layout = {
   layout: {
@@ -552,7 +447,6 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
-          anotherCluster,
           emailField,
           zipField,
           phoneField,
@@ -796,6 +690,7 @@ export const layout = {
             required: true,
             disabled: false,
           },
+          anotherCluster,
           {
             label: 'More Money Child',
             path: 'moMoneyChild',
