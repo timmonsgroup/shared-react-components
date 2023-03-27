@@ -20,6 +20,9 @@ import ClusterField from './ClusterField';
  */
 const DynamicField = ({ control, field, ...props }) => {
   const layout = field?.render || {};
+  if (layout.hidden) {
+    return null;
+  }
   const { type } = layout;
 
   if (type === FIELD_TYPES.CLUSTER) {

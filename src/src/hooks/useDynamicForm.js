@@ -1,6 +1,6 @@
 /** @module useDynamicForm */
 //Third party bits
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useForm } from 'react-hook-form';

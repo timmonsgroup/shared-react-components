@@ -66,6 +66,7 @@ import { Box } from '@mui/material';
  * @returns {React.ReactElement | null} - the rendered AnyField
  */
 const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...props }) => {
+  // If this component ever uses hooks make sure to move this return BELOW those hooks
   if (layout.hidden) {
     return null;
   }

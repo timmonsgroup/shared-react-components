@@ -631,7 +631,7 @@ export const createRowFields = (fields, columnCount, isInline) => {
   let col = 1;
   let row = 1;
   //Create the rows
-  fields.forEach((field, fIndex) => {
+  fields.forEach((field) => {
     if (field.render.solitary && !isInline) {
       const rowObject = {
         fields: [field],
