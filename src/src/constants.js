@@ -60,7 +60,6 @@ export const MIN_LENGTH = 'minLength';
 export const EMAIL = 'email';
 export const ZIP = 'zip';
 export const PHONE = 'phone';
-export const DISABLED = 'disabled';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
