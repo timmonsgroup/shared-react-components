@@ -57,7 +57,7 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, he
         {labelComponent}
         {iconText && <TooltipIcon infoText={iconText} {...iconProps} />}
       </Box>
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
+      {helperText && <FormHelperText sx={{marginTop:0}}>{helperText}</FormHelperText>}
     </>
   );
 };

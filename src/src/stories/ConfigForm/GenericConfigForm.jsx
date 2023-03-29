@@ -81,7 +81,7 @@ const FormSections = ({
         return (
           <Card key={index} sx={sx}>
             {index === 0 && hasTopText &&
-              <SectionTop formTitle={formTitle} formDescription={formDescription} renderFormDescription={renderFormDescription} />
+              <SectionTop title={formTitle} description={formDescription} renderDescription={renderFormDescription} />
             }
             {theSection(section, control, index, sectOpts)}
           </Card>
@@ -198,7 +198,7 @@ GenericConfigForm.propTypes = {
  */
 const defaultFormDescription = (description) => {
   return (
-    <Typography>
+    <Typography variant="formSectionDescription">
       {description}
     </Typography>
   );
@@ -221,9 +221,11 @@ const SectionTop = ({ title, description, renderDescription }) => {
     <>
       <CardContent sx={{ paddingBottom: '0px' }}>
         {title && <Typography variant="sectionHeader">{title}</Typography>}
-        {theDescription && theDescription(description)}
       </CardContent>
       <hr />
+      <CardContent sx={{ paddingBottom: '0px' }}>
+        {theDescription && theDescription(description)}
+      </CardContent>
     </>
   );
 };

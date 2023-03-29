@@ -165,8 +165,8 @@ const ClusterField = ({ control, field, options, ...props }) => {
       )}
       <Grid xs={12} sx={{paddingTop: '0px'}}>
         {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
+        {layout?.altHelperText && <FormHelperText error={false}>{layout?.altHelperText}</FormHelperText>}
       </Grid>
-      {layout?.altHelperText && <FormHelperText error={false}>{layout?.altHelperText}</FormHelperText>}
     </>
   );
 };
