@@ -21,8 +21,12 @@ import { FIELD_TYPES } from '../../constants';
  * @typedef {object} FormSectionProps
  * @property {string} title - the title to display in the section
  * @property {string} description - the description to display in the section
- * @property {function} renderDescription - a function to render the description
- * @property {function} props.renderFormDescription - a function to render the form description
+ * @property {renderSectionDescription} renderFormDescription - a function to render the form description (bypassed if renderFormInformation is provided)
+ * @property {renderSectionTitle} renderFormTitle - a function to render the form title (bypassed if renderFormInformation is provided)
+ * @property {renderSectionTop} renderFormInformation - a function to render the form information (title and description)
+ * @property {renderSectionTitle} renderSectionTitle - a function to render the section title
+ * @property {renderSectionDescription} renderSectionDescription - a function to render the section description
+ * @property {renderSectionTop} renderSectionTop - a function to render the section top
  * @property {function} renderLoading - a function to render the loading indicator
  * @property {number} columnCount - the number of columns to render
  * @property {object} fieldOptions - the options to pass to the fields
@@ -36,8 +40,8 @@ import { FIELD_TYPES } from '../../constants';
  * @returns {React.ReactElement} - the rendered form sections
  */
 const FormSections = ({
-  children, formTitle, formDescription, renderFormDescription, columnCount = 1, fieldOptions, hideEmptySections = true,
-  renderLoading
+  children, formTitle, formDescription, renderFormDescription, renderFormTitle, columnCount = 1, fieldOptions, hideEmptySections = true,
+  renderLoading, renderFormInformation, renderSectionTitle, renderSectionDescription, renderSectionTop, ...props
 }) => {
   const { sections, formProcessing, useFormObject } = useFormContext();
   const { control } = useFormObject;
@@ -67,9 +71,13 @@ const FormSections = ({
     columnCount,
     fieldOptions,
     hideEmptySections,
+    renderSectionTitle,
+    renderSectionDescription,
+    renderSectionTop
   };
 
-  const hasTopText = formTitle || formDescription;
+  const hasTopRender = renderFormInformation && (typeof renderFormInformation === 'function');
+  const hasTopText = !hasTopRender && (formTitle || formDescription || renderFormDescription || renderFormTitle);
 
   return (
     <form data-src-form="genericForm">
@@ -80,8 +88,11 @@ const FormSections = ({
         }
         return (
           <Card key={index} sx={sx}>
+            {index === 0 && hasTopRender &&
+              renderFormInformation(formTitle, formDescription)
+            }
             {index === 0 && hasTopText &&
-              <SectionTop title={formTitle} description={formDescription} renderDescription={renderFormDescription} />
+              <SectionTop title={formTitle} description={formDescription} renderDescription={renderFormDescription} renderTitle={renderFormTitle} />
             }
             {theSection(section, control, index, sectOpts)}
           </Card>
@@ -96,6 +107,11 @@ FormSections.propTypes = {
   formTitle: PropTypes.string,
   formDescription: PropTypes.string,
   renderFormDescription: PropTypes.func,
+  renderFormTitle: PropTypes.func,
+  renderFormInformation: PropTypes.func,
+  renderSectionTitle: PropTypes.func,
+  renderSectionDescription: PropTypes.func,
+  renderSectionTop: PropTypes.func,
   fieldOptions: PropTypes.object,
   hideEmptySections: PropTypes.bool,
   renderLoading: PropTypes.func,
@@ -191,6 +207,7 @@ GenericConfigForm.propTypes = {
   renderLoading: PropTypes.func,
 };
 
+/** @module SectionTop */
 /**
  * Default function to render the form description
  * @param {string | React.ReactElement} description
@@ -204,28 +221,51 @@ const defaultFormDescription = (description) => {
   );
 };
 
-/** @module SectionTop */
+/**
+ * Default function to render the form description
+ * @param {string | React.ReactElement} description
+ * @returns {React.ReactElement} - the rendered description
+ */
+const defaultSectionTitle = (title) => {
+  return (
+    <Typography variant="sectionHeader">
+      {title}
+    </Typography>
+  );
+};
+
 /**
  * Top portion of a form section will render the section title and description
  * @function SectionTop
  * @param {props} props - props object
  * @param {string} props.title - the title to display in the header
  * @param {string} props.description - the description to display in the header
- * @param {function} props.renderDescription - a function to render the form description
+ * @param {number} props.index - the index of the section
+ * @param {renderSectionTitle} props.renderTitle - a function to render the form title
+ * @param {renderSectionDescription} props.renderDescription - a function to render the form description
  * @returns {React.ReactElement} - the rendered section top
  */
-const SectionTop = ({ title, description, renderDescription }) => {
-  const theDescription = description ? functionOrDefault(renderDescription, defaultFormDescription) : null;
+const SectionTop = ({ title, description, renderTitle, renderDescription, index }) => {
+  // Allow rendering if description is provided or if renderDescription is provided
+  // this allows users to completely override the description
+  const theDescription = description || renderDescription ? functionOrDefault(renderDescription, defaultFormDescription) : null;
+  const theTitle = title || renderTitle ? functionOrDefault(renderTitle, defaultSectionTitle) : null;
 
   return (
     <>
-      <CardContent sx={{ paddingBottom: '0px' }}>
-        {title && <Typography variant="sectionHeader">{title}</Typography>}
-      </CardContent>
-      <hr />
-      <CardContent sx={{ paddingBottom: '0px' }}>
-        {theDescription && theDescription(description)}
-      </CardContent>
+      {theTitle && <>
+        <CardContent sx={{ paddingBottom: '0px' }}>
+          {theTitle(title, index)}
+        </CardContent>
+        <hr />
+      </>
+      }
+      {theDescription && <>
+        <CardContent sx={{ paddingBottom: '0px' }}>
+          {theDescription(description, index)}
+        </CardContent>
+      </>
+      }
     </>
   );
 };
@@ -234,16 +274,48 @@ SectionTop.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   renderDescription: PropTypes.func,
+  renderTitle: PropTypes.func,
+  index: PropTypes.number,
 };
 
 
+/** @module SectionRow */
+/**
+ * Callback for rendering a section description
+ * @callback renderSectionDescription
+ * @param {string} description - the description to render
+ * @param {number} index - the index of the section
+ * @returns {React.ReactElement} - the rendered description
+ */
+
+/**
+ * Callback for rendering a section title
+ * @callback renderSectionTitle
+ * @param {string} title - the description to render
+ * @param {number} index - the index of the section
+ * @returns {React.ReactElement} - the rendered description
+ */
+
+/**
+ * Callback for rendering a section title
+ * @callback renderSectionTop
+ * @param {object} section - the section properties (title, description, etc)
+ * @param {number} index - the index of the section
+ * @returns {React.ReactElement} - the rendered description
+ */
+
 /**
  * Renderer for a section with
- * @function renderColumnSection
- * @param {object} section
- * @param {object} control
- * @param {number} index
- * @param {object} options
+ * @callback renderColumnSection
+ * @param {object} section - the section to render
+ * @param {object} control - the control object from react-hook-form
+ * @param {number} index - the index of the section
+ * @param {object} options - options object
+ * @param {number} options.columnCount - the number of columns to render
+ * @param {renderSectionDescription} options.renderSectionDescription - a function to render the section description
+ * @param {renderSectionTitle} options.renderSectionTitle - a function to render the section title
+ * @param {renderSectionTop} options.renderSectionTop - a function to render the section top
+ * @param {boolean} options.hideEmptySections - a flag to hide sections that are empty
  * @returns {React.ReactElement} - the rendered column section
  */
 const renderColumnSection = (section, control, index, options) => {
@@ -253,11 +325,20 @@ const renderColumnSection = (section, control, index, options) => {
   }
 
   const rows = createRowFields(section.fields, options?.columnCount);
-  const hasTop = section.name || section.description;
+  const hasTopRender = options.renderSectionTop && (typeof options.renderSectionTop === 'function');
+  const hasTop = !hasTopRender && (section.name || section.description);
 
   return (
     <React.Fragment key={index}>
-      {hasTop && <SectionTop title={section.name} description={section.description} renderDescription={options.renderSectionDescription} />}
+      {hasTopRender && options.renderSectionTop(section, index)}
+      {hasTop &&
+        <SectionTop
+          title={section.name}
+          description={section.description}
+          renderDescription={options.renderSectionDescription}
+          renderTitle={options.renderSectionTitle}
+        />
+      }
       <CardContent>
         {rows.map((rowItem, rIndex) => {
           return (
@@ -268,8 +349,6 @@ const renderColumnSection = (section, control, index, options) => {
     </React.Fragment>
   );
 };
-
-/** @module SectionRow */
 /**
  * Component to render a row of fields inside a section
  * @function SectionRow

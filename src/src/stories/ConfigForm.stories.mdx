@@ -77,8 +77,62 @@ export const Template = (args) => {
     fieldOptions:args.fieldOptions,
     formLayout: args.formLayout,
     columnCount: args.columnCount,
+    formDescription: args.formDescription,
     formTitle: args.formTitle,
-    formDescription: args.formDescription
+    // renderSectionTop: (section, index) => {
+    //   if (index === 0) {
+    //     return null
+    //   }
+    //   return (
+    //     <div>
+    //       RENDER SECTION TOP
+    //     </div>
+    //   );
+    // },
+    // renderFormInformation: (title, description) => {
+    //   console.log('renderFormInformation', title, description);
+    //   return (
+    //     <div>
+    //       FORM INFORMATION
+    //       <p>{title}</p>
+    //       <p>{description}</p>
+    //     </div>
+    //   );
+    // },
+    // renderFormTitle: (text) => {
+    //   return (
+    //     <div>
+    //       <p>
+    //         {text}
+    //       </p>
+    //       <p>
+    //         This is a form title. It can be used to provide additional
+    //         information about the form.
+    //       </p>
+    //       <p>
+    //         This is a form title. It can be used to provide additional
+    //         information about the form.
+    //       </p>
+    //     </div>
+    //   );
+    // },
+    // renderFormDescription: (text) => {
+    //   return (
+    //     <div>
+    //       <p>
+    //         {text}
+    //       </p>
+    //       <p>
+    //         This is a form description. It can be used to provide additional
+    //         information about the form.
+    //       </p>
+    //       <p>
+    //         This is a form description. It can be used to provide additional
+    //         information about the form.
+    //       </p>
+    //     </div>
+    //   );
+    // },
   };
 
   const data = {
@@ -110,7 +164,7 @@ export const Template = (args) => {
 
 export const defaultProps = {
   formLayout: layout.layout,
-  columnCount: 1,
+  columnCount: 2,
   formTitle: 'Form Title',
   headerTitle: 'This Goes in the Header',
   formDescription: 'Form Description is thing that we can do that will render in the first section',
