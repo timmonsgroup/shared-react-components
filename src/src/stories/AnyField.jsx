@@ -29,9 +29,17 @@ import { Box } from '@mui/material';
  */
 
 /**
+ * Theme group for the label
+ * @typedef {Object} FieldLabelThemeGroup
+ * @property {object} anyFieldLabel - any theme properties to use for the box containing the label
+ * @property {object} anyFieldLabel.helperText - any theme properties to use for the helper text
+ */
+
+/**
  * Various options for the fields
  * @typedef {Object} FieldOptions
  * @property {FieldIconOptions} icon - the options to pass to the info icon
+ * @property {FieldLabelThemeGroup} labelThemeGroup - the theme group to use for the label
  */
 
 /**

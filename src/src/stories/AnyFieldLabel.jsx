@@ -5,9 +5,33 @@ import PropTypes from 'prop-types';
 import TooltipIcon from './TooltipIcon';
 
 import {
-  InputLabel, Box, FormLabel, FormHelperText
+  InputLabel, Box, FormLabel, FormHelperText, useTheme
 } from '@mui/material';
 import RequiredIndicator from './RequiredIndicator';
+
+/**
+ * Icons for info icons
+ * @typedef {Object} FieldIconOptions
+ * @property {string} color - the color of the icon
+ * @property {string} gap - the gap between the label and the icon
+ * @property {boolean} beforeLabel - whether to display the icon before the label
+ * @property {React.Component} iconComponent - a component to use instead of the default InfoIcon
+ * @property {string} iconText - the text to display in the info icon
+ */
+
+/**
+ * Theme group for the label
+ * @typedef {Object} FieldLabelThemeGroup
+ * @property {object} anyFieldLabel - any theme properties to use for the box containing the label
+ * @property {object} anyFieldLabel.helperText - any theme properties to use for the helper text
+ */
+
+/**
+ * Various options for the fields
+ * @typedef {Object} FieldOptions
+ * @property {FieldIconOptions} icon - the options to pass to the info icon
+ * @property {FieldLabelThemeGroup} labelThemeGroup - the theme group to use for the label
+ */
 
 /**
  * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
@@ -21,15 +45,18 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {string} props.asFormInput - whether to render the label using FormLabel or InputLabel
  * @param {string} props.iconText - the text to display in the info icon
  * @param {string} props.helperText - the text to display in the helper text
- * @param {object} props.fieldOptions - the options to pass to the field
- * @param {object} props.fieldOptions.icon - the options to pass to the info icon
- * @param {object} props.fieldOptions.icon.gap - the gap between the label and the icon
- * @param {object} props.fieldOptions.icon.color - the color of the icon
- * @param {object} props.fieldOptions.icon.beforeLabel - whether to display the icon before the label
- * @param {object} props.fieldOptions.icon.iconComponent - a component to use instead of the default MUI InfoIcon
+ * @param {FieldOptions} props.fieldOptions - the options to pass to the field
  * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
 const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {} }) => {
+  const theme = useTheme();
+
+  // Attempt to use the themeGroup from props, then the anyFieldLabel defined in the base theme
+  const { anyFieldLabel } = theme;
+  const { themeGroup } = fieldOptions || {};
+  const gAFL = themeGroup?.anyFieldLabel || anyFieldLabel || null;
+  let gHelper = gAFL?.helperText || anyFieldLabel?.helperText || {marginTop:0};
+
   const sx = {
     display: 'flex',
     alignItems: 'center',
@@ -52,13 +79,13 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, he
   );
 
   return (
-    <>
+    <Box sx={gAFL}>
       <Box sx={sx}>
         {labelComponent}
         {iconText && <TooltipIcon infoText={iconText} {...iconProps} />}
       </Box>
-      {helperText && <FormHelperText sx={{marginTop:0}}>{helperText}</FormHelperText>}
-    </>
+      {helperText && <FormHelperText sx={gHelper}>{helperText}</FormHelperText>}
+    </Box>
   );
 };
 

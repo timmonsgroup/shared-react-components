@@ -12,10 +12,14 @@ import { Button as MUIButton} from '@mui/material';
  * @param {string} props.variant - the variant of the button
  * @param {string} props.size - the size of the button
  * @param {string} props.color - the color of the button
- * @param {string} props.label - the label of the button
- * @param {string} props.children - the children of the button
+ * @param {string} props.label - the label of the button if provided children will be ignored
+ * @param {string} props.children - the children of the button if label is not provided
  * @param {function} props.onClick - the onClick handler of the button
  * @returns {React.ReactElement}
+ * @example
+ * <Button variant="contained" label="Click me" />
+ * // or
+ * <Button variant="contained">Click Me</Button>
  */
 export const Button = ({ backgroundColor, variant, color, size, label, children, ...props }) => {
   return (

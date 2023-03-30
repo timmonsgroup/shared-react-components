@@ -66,6 +66,12 @@ const baseThemeProperties = {
       backgroundColor: '#e6ecf2',
     },
   },
+  anyFieldLabel: {
+    marginBottom: '0.5rem',
+    helperText: {
+      marginTop: '0.5rem',
+    }
+  },
   gridActionItem: {
     types: {
       [GRID_ACTION_TYPE.ADD]: {
@@ -454,8 +460,7 @@ const baseThemeProperties = {
         root: {
           color: '#505050',
           fontSize: '16px',
-          fontWeight: 'bold',
-          marginBottom: '8px',
+          fontWeight: 'bold'
         }
       }
     },

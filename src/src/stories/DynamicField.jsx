@@ -17,6 +17,12 @@ import ClusterField from './ClusterField';
  * @param {object} props.control - react-hook-form control object
  * @param {object} props.field - field object
  * @returns {React.ReactElement}
+ * @example
+ * <DynamicField
+    field={field}
+    control={control}
+    options={options.fieldOptions || {}}
+  />
  */
 const DynamicField = ({ control, field, ...props }) => {
   const layout = field?.render || {};

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // MUI components
-import { Divider, FormHelperText, Box } from '@mui/material';
+import { Divider, FormHelperText } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components

@@ -1,3 +1,4 @@
+/** @module GenericForm */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -49,7 +50,18 @@ import axios from 'axios';
  * @param {string} props.submitColor - The color of the submit button
  * @param {string} props.editColor - The color of the edit button
  * @returns {React.ReactElement} - The component
+ *
+ * @example
+ * //example of choiceFormatter function
+const choiceFormatter = (fieldId, res, otherOptions) => {
+  const { mappedId } = otherOptions || {};
+  return res?.data?.map((opt) => {
+    const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+    return { id, label: opt.name || opt.label }
+  })
+}
  */
+
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
   domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false, iconOptions = {},

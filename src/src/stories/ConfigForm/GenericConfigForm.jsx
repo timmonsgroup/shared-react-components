@@ -283,6 +283,14 @@ const renderColumnSection = (section, control, index, options) => {
  * @param {object} props.options - the options object
  * @param {object} props.options.fieldOptions - the options to pass to the fields
  * @returns {React.ReactElement} - the rendered row using Grid
+ * @example
+ * <CardContent>
+    {rows.map((rowItem, rIndex) => {
+      return (
+        <SectionRow row={rowItem} control={control} options={options} key={`${index}-row-${rIndex}`} />
+      );
+    })}
+  </CardContent>
  */
 const SectionRow = ({ row, control, options }) => {
   const { fields, solitary, size, maxColumns } = row;
