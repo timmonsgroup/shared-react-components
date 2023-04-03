@@ -48,14 +48,14 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {FieldOptions} props.fieldOptions - the options to pass to the field
  * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
-const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {} }) => {
+const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {}, className }) => {
   const theme = useTheme();
 
   // Attempt to use the themeGroup from props, then the anyFieldLabel defined in the base theme
   const { anyFieldLabel } = theme;
   const { themeGroup } = fieldOptions || {};
   const gAFL = themeGroup?.anyFieldLabel || anyFieldLabel || null;
-  let gHelper = gAFL?.helperText || anyFieldLabel?.helperText || {marginTop:0};
+  let gHelper = gAFL?.helperText || anyFieldLabel?.helperText || { marginTop: 0 };
 
   const sx = {
     display: 'flex',
@@ -65,15 +65,15 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, he
 
   if (iconText && fieldOptions?.icon?.beforeLabel) {
     sx.flexDirection = 'row-reverse';
-    sx.justifyContent= 'flex-end';
+    sx.justifyContent = 'flex-end';
   }
 
-  const iconProps = fieldOptions?.icon || {color: 'primary'};
+  const iconProps = fieldOptions?.icon || { color: 'primary' };
 
   const labelComponent = asFormInput ? (
-    <FormLabel component="legend"><RequiredIndicator isRequired={!!required} />{label}</FormLabel>
+    <FormLabel className={className} component="legend"><RequiredIndicator isRequired={!!required} />{label}</FormLabel>
   ) : (
-    <InputLabel htmlFor={htmlFor} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
+    <InputLabel className={className} htmlFor={htmlFor} error={!!error}><RequiredIndicator disabled={disabled} isRequired={!!required} />
       {label}
     </InputLabel>
   );

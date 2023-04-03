@@ -304,6 +304,12 @@ const baseThemeProperties = {
       marginBottom: '0',
       textAlign: 'center',
     },
+    clusterEmptyText: {
+      marginBottom: '8px',
+      fontSize: '1rem',
+      fontStyle: 'italic',
+      color: darkGrey,
+    }
   },
   components: {
     MuiTypography: {
@@ -316,6 +322,7 @@ const baseThemeProperties = {
           panelHeader: 'h2',
           inspector: 'p',
           formSectionDescription: 'p',
+          clusterEmptyText: 'p',
           navLink: 'a'
         },
       },
@@ -432,6 +439,24 @@ const baseThemeProperties = {
         },
         {
           props: {
+            variant: 'clusterAdd',
+          },
+          style: ({theme}) => {
+            const mainColor = theme.palette.primary.main;
+            return {
+              padding: '0px',
+              color: mainColor,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              background: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              }
+            };
+          }
+        },
+        {
+          props: {
             variant: 'dashed',
           },
           style: {
@@ -469,12 +494,23 @@ const baseThemeProperties = {
         }
       }
     },
-    MuiFormLabel: {
+    MuiDivider: {
       styleOverrides: {
         root: {
-          color: '#505050',
-          fontSize: '16px',
-          fontWeight: 'bold'
+          borderColor: '#CBCBCB'
+        }
+      }
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: ({ className, theme }) => {
+          const clusterI = className?.toLowerCase().indexOf('cluster-field-label');
+          const color = clusterI !== -1 ? theme.palette.primary.main : '#505050';
+          return {
+            color,
+            fontSize: '16px',
+            fontWeight: 'bold',
+          };
         }
       }
     },

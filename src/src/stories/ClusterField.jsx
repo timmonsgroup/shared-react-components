@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // MUI components
-import { Divider, FormHelperText, useTheme, useMediaQuery } from '@mui/material';
+import { Divider, FormHelperText, useTheme, useMediaQuery, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
@@ -122,6 +122,7 @@ const ClusterField = ({ control, field, options, ...props }) => {
     <>
       <Grid xs={12} {...props}>
         <AnyFieldLabel
+          className="cluster-field-label"
           htmlFor={layout.name}
           label={layout.label}
           required={!!layout.required}
@@ -132,32 +133,56 @@ const ClusterField = ({ control, field, options, ...props }) => {
         />
         {error && <FormHelperText error={true}>{error?.message}</FormHelperText>}
       </Grid>
-      {fields.length > 0 && (
-        <Grid
-          data-what="all the clusters"
-          spacing={2}
-          xs={12}
-        >
-          {fields.map((cluster, index) => {
-            const rowProps = {
-              index,
-              control, options, layout,
-              otherProps: props,
-            };
+      <Grid
+        data-what="all the clusters"
+        spacing={2}
+        xs={12}
+        sx={{ paddingTop: '0px' } }
+      >
+        {fields.length > 0 && (
+          <>
+            {
+              fields.map((cluster, index) => {
+                const rowProps = {
+                  index,
+                  control, options, layout,
+                  otherProps: props,
+                };
 
-            const removeButton = removeButtonRender({ layout, remove, trigger, index, inlineAllowed, onClick: () => removeClick(layout, index, fields) });
+                const removeButton = removeButtonRender({ layout, remove, trigger, index, inlineAllowed, onClick: () => removeClick(layout, index, fields) });
 
-            return <WrapperType key={cluster.id} rows={rows} rowProps={rowProps} removeButton={removeButton} />;
-          })}
-        </Grid>
-      )}
+                return <WrapperType key={cluster.id} rows={rows} rowProps={rowProps} removeButton={removeButton} />;
+              })
+            }
+          </>
+        )}
+        {fields.length === 0 && (
+          <Typography variant="clusterEmptyText">{layout?.emptyText || 'You have not added any items.'}</Typography>
+        )
+        }
+      </Grid>
       <Grid xs={12} sx={{ paddingTop: '0px' }}>
+        <Divider sx={{ width: '100%', marginBottom: '8px' }} />
         {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
       </Grid>
       {layout?.altHelperText && <FormHelperText error={false}>{layout?.altHelperText}</FormHelperText>}
     </>
   );
 };
+
+/**
+ * @typedef {Object} ClusterRowWrapperProps
+ * @property {string} clusterId - The id of the cluster
+ * @property {Array} rows - An array of row objects
+ * @property {Object} rowProps - The props to pass to the ClusterRow component
+ * @property {ReactNode} removeButton - The remove button to render
+ */
+
+/**
+ * @function InlineWrapper - A wrapper for the ClusterRow component that renders the rows inline
+ * @param {ClusterRowWrapperProps} props
+ * @returns
+ */
 
 const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
   return (
@@ -166,7 +191,7 @@ const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
         rows.map((rowItem, rIndex) => {
           return (
             <Grid container key={`${rIndex}-${clusterId}`}>
-              <Grid container spacing={2} xs sx={{ padding: '0px' }}>
+              <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }}>
                 <ClusterRow
                   id={clusterId}
                   row={rowItem}
@@ -193,6 +218,11 @@ const WRAPPER_PROPS = {
 
 InlineWrapper.propTypes = WRAPPER_PROPS;
 
+/**
+ * @function Wrapper - A wrapper for the ClusterRow and remove button
+ * @param {ClusterRowWrapperProps}
+ * @returns
+ */
 const Wrapper = ({ clusterId, rows, rowProps, removeButton }) => {
   return (
     <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={clusterId}>
@@ -235,6 +265,7 @@ ClusterField.propTypes = {
 
 /**
  * ClusterRow component will render a row of fields
+ * @function ClusterRow
  * @param {object} props - props object
  * @param {string} props.id - id of the cluster
  * @param {number} props.index - index of the cluster
@@ -316,10 +347,14 @@ const renderDefaultAddButton = ({ layout, onClick }) => {
   const { addLabel } = layout || {};
 
   return (
-    <Button onClick={onClick}>{addLabel || 'Add'}</Button>
+    <Button variant="clusterAdd" onClick={onClick}>{addLabel || '+ Add Row'}</Button>
   );
 };
 
+/**
+ * @function TrashCanIcon - Trash can icon via Heroicons
+ * @returns {React.ReactElement} - React element
+ */
 const TrashCanIcon = () => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
