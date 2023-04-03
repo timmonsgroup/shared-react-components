@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // MUI components
-import { Divider, FormHelperText } from '@mui/material';
+import { Divider, FormHelperText, useTheme, useMediaQuery } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
@@ -30,6 +30,9 @@ import { createRowFields } from '../helpers';
  * @returns {React.ReactElement}
  */
 const ClusterField = ({ control, field, options, ...props }) => {
+  const theme = useTheme();
+  const inlineAllowed = useMediaQuery(theme.breakpoints.up('sm'));
+
   const { renderAddButton, renderRemoveButton } = options || {};
   // const columns = options?.clusterColumnCount || 1;
   // let colSize = 12 / fields.length;
@@ -50,10 +53,6 @@ const ClusterField = ({ control, field, options, ...props }) => {
   }
 
   const rows = createRowFields(subFields, clusterColumnCount, inline);
-
-  const buttonCol = inline ? 2 : 12;
-  const RenderBit = inline ? Grid : React.Fragment;
-  const renderArgs = inline ? { xs: 10 } : {};
 
   // Create an object with the default values set for each field in the cluster
   const initValues = {};
@@ -117,6 +116,8 @@ const ClusterField = ({ control, field, options, ...props }) => {
     }
   };
 
+  const WrapperType = inline && inlineAllowed ? InlineWrapper : Wrapper;
+
   return (
     <>
       <Grid xs={12} {...props}>
@@ -138,38 +139,82 @@ const ClusterField = ({ control, field, options, ...props }) => {
           xs={12}
         >
           {fields.map((cluster, index) => {
-            return (
-              <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={cluster.id}>
-                {rows.map((rowItem, rIndex) => {
-                  return (
-                    <ClusterRow
-                      id={cluster.id}
-                      index={index}
-                      row={rowItem}
-                      control={control}
-                      options={options}
-                      layout={layout}
-                      key={`${cluster.id}-row-${rIndex}`}
-                      otherProps={props}
-                    />
-                  );
-                })}
-                <Grid xs={buttonCol}>
-                  {removeButtonRender({ layout, remove, trigger, index, onClick: () => removeClick(layout, index, fields) })}
-                </Grid>
-                {/* </Grid> */}
-              </Grid>
-            );
+            const rowProps = {
+              index,
+              control, options, layout,
+              otherProps: props,
+            };
+
+            const removeButton = removeButtonRender({ layout, remove, trigger, index, inlineAllowed, onClick: () => removeClick(layout, index, fields) });
+
+            return <WrapperType key={cluster.id} rows={rows} rowProps={rowProps} removeButton={removeButton} />;
           })}
         </Grid>
       )}
-      <Grid xs={12} sx={{paddingTop: '0px'}}>
+      <Grid xs={12} sx={{ paddingTop: '0px' }}>
         {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
-        {layout?.altHelperText && <FormHelperText error={false}>{layout?.altHelperText}</FormHelperText>}
       </Grid>
+      {layout?.altHelperText && <FormHelperText error={false}>{layout?.altHelperText}</FormHelperText>}
     </>
   );
 };
+
+const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
+  return (
+    <>
+      {
+        rows.map((rowItem, rIndex) => {
+          return (
+            <Grid container key={`${rIndex}-${clusterId}`}>
+              <Grid container spacing={2} xs sx={{ padding: '0px' }}>
+                <ClusterRow
+                  id={clusterId}
+                  row={rowItem}
+                  {...rowProps}
+                />
+              </Grid>
+              <Grid style={{ maxWidth: '100px', padding: '0 0 0 8px', alignSelf: 'center' }} sx={{ textAlign: 'right' }}>
+                {removeButton}
+              </Grid>
+            </Grid>
+          );
+        })
+      }
+    </>
+  );
+};
+
+const WRAPPER_PROPS = {
+  clusterId: PropTypes.string,
+  rows: PropTypes.array,
+  rowProps: PropTypes.object,
+  removeButton: PropTypes.node,
+};
+
+InlineWrapper.propTypes = WRAPPER_PROPS;
+
+const Wrapper = ({ clusterId, rows, rowProps, removeButton }) => {
+  return (
+    <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={clusterId}>
+      {rows.map((rowItem, rIndex) => {
+        return (
+          <ClusterRow
+            id={clusterId}
+            row={rowItem}
+            key={`${clusterId}-row-${rIndex}`}
+            {...rowProps}
+          />
+        );
+      })}
+      <Grid xs={12}>
+        {removeButton}
+      </Grid>
+    </Grid>
+  );
+};
+
+Wrapper.propTypes = WRAPPER_PROPS;
+
 
 ClusterField.propTypes = {
   control: PropTypes.object,
@@ -206,23 +251,21 @@ ClusterField.propTypes = {
  */
 const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
   const { fields, solitary, size, maxColumns } = row;
-  const colsAllowed = maxColumns || 1;
+  // const colsAllowed = maxColumns || 1;
   let colSize = 12 / fields.length;
   if (solitary && !isNaN(size)) {
     colSize = parseInt(size);
   }
 
-  const spacing = colsAllowed === 1 ? 0 : { xs: 1, sm: 2, md: 4 };
+  // const spacing = colsAllowed === 1 ? 0 : { xs: 1, sm: 2, md: 4 };
   return (
     <>
       {fields.map((field, fIndex) => {
         return (
-          // <Grid xs={colSize} key={`${id}-${field.render?.name}`}>
-          <Grid xs={colSize} key={`${id}.${field.render?.name}`}>
+          <Grid xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
             <AnyField
               isNested={true}
               nestedName={`${layout?.name}.${index}.${field.render?.name}`}
-              // key={`${layout?.name}.${index}.${field.render?.name}`}
               control={control}
               layout={field.render}
               options={options} {...otherProps}
@@ -230,7 +273,6 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
           </Grid>
         );
       })}
-      {/* </Grid> */}
     </>
   );
 };
@@ -278,6 +320,14 @@ const renderDefaultAddButton = ({ layout, onClick }) => {
   );
 };
 
+const TrashCanIcon = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+      <path fillRule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clipRule="evenodd" />
+    </svg>
+  );
+};
+
 /**
  * @typedef {object} RenderRemoveButtonProps
  * @property {object} layout - layout object
@@ -292,14 +342,29 @@ const renderDefaultAddButton = ({ layout, onClick }) => {
  * The default remove button for the ClusterField component
  * @function
  * @param {RenderRemoveButtonProps} props
+ * @param {boolean} props.inlineAllowed - whether the button can be rendered inline
+ * @param {boolean} props.inline - whether the button is rendered inline
+ * @param {Function} props.onClick - onClick function for the button
+ * @param {Function} props.remove - remove function from useFieldArray
+ * @param {Function} props.trigger - trigger function from useFormContext
+ * @param {number} props.index - index of the field
  * @returns {React.ReactElement} - React element of the button
  */
-const renderDefaultRemoveButton = ({ layout, onClick }) => {
-  const { removeLabel } = layout || {};
+const renderDefaultRemoveButton = ({ layout, onClick, inlineAllowed }) => {
+  const { removeLabel, inline } = layout || {};
+  const canInline = inlineAllowed && inline;
+
+  let renderLabel = removeLabel || 'Remove';
+  const buttonProps = { onClick };
+  if (canInline) {
+    buttonProps.variant = 'inlineClusterRemove';
+    renderLabel = <TrashCanIcon />;
+  }
+
   return (
     <>
-      <Divider />
-      <Button onClick={onClick}>{removeLabel || 'Remove'}</Button>
+      {!canInline && <Divider />}
+      <Button {...buttonProps}>{renderLabel}</Button>
     </>
   );
 };

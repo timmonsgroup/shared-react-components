@@ -286,6 +286,7 @@ export function parseField(field, asyncFieldsMap) {
       [REQUIRED]: !!field[REQUIRED],
       [DISABLED]: !!field[DISABLED],
       [CONDITIONAL_RENDER.READ_ONLY]: !!field[CONDITIONAL_RENDER.READ_ONLY],
+      inline: !!field.inline,
       //Number properties
       [MAX_VALUE]: field[MAX_VALUE],
       [MIN_VALUE]: field[MIN_VALUE],

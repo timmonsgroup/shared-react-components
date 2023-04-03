@@ -541,8 +541,8 @@ export const attemptFormSubmit = async (formData, isEdit, {
   let successSnackMessage = null;
   if (queueSnack) {
     errorSnackMessage = functionOrDefault(formatSubmitError,
-      (result, { isEdit, unitLabel, isServerError }) => {
-        return isServerError && result?.response?.data?.error ? result?.response?.data?.error : `Error ${isEdit ? 'updating' : 'creating'} ${unitLabel}`;
+      (result, { isEdit, unitLabel, serverError }) => {
+        return serverError && result?.response?.data?.error ? result?.response?.data?.error : `Error ${isEdit ? 'updating' : 'creating'} ${unitLabel}`;
       }
     );
     successSnackMessage = functionOrDefault(formatSubmitMessage, (result, { isEdit, unitLabel }) => `${unitLabel} successfully ${isEdit ? 'updated' : 'created'}`);

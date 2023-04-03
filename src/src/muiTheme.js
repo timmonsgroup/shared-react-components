@@ -418,6 +418,20 @@ const baseThemeProperties = {
         },
         {
           props: {
+            variant: 'inlineClusterRemove',
+          },
+          style: {
+            borderRadius: 28,
+            color: '#DA0000',
+            background: 'none',
+            '&:hover': {
+              background: '#DA0000',
+              color: '#FFFFFF',
+            },
+          },
+        },
+        {
+          props: {
             variant: 'dashed',
           },
           style: {
