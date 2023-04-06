@@ -589,7 +589,10 @@ export const attemptFormSubmit = async (formData, isEdit, {
 
       queueSnack(errorMsg, { variant: 'error' });
     }
-    if (modifier) {
+
+    if (errorCall) {
+      errorCall(error);
+    } else if (modifier) {
       modifier(false);
     }
   }
