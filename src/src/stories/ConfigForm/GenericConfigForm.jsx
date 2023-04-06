@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 
 // Third party components
-import { Card, CardContent, Container, Stack, Typography, Skeleton } from '@mui/material';
+import { Card, CardContent, Container, Stack, Typography, Skeleton, Divider } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // Internal bits
@@ -210,6 +210,7 @@ GenericConfigForm.propTypes = {
 /** @module SectionTop */
 /**
  * Default function to render the form description
+ * @function renderFormDescription
  * @param {string | React.ReactElement} description
  * @returns {React.ReactElement} - the rendered description
  */
@@ -223,15 +224,12 @@ const defaultFormDescription = (description) => {
 
 /**
  * Default function to render the form description
+ * @function renderFormTitle
  * @param {string | React.ReactElement} description
  * @returns {React.ReactElement} - the rendered description
  */
 const defaultSectionTitle = (title) => {
-  return (
-    <Typography variant="sectionHeader">
-      {title}
-    </Typography>
-  );
+  return (<Typography variant="sectionHeader">{title}</Typography>);
 };
 
 /**
@@ -254,10 +252,10 @@ const SectionTop = ({ title, description, renderTitle, renderDescription, index 
   return (
     <>
       {theTitle && <>
-        <CardContent sx={{ paddingBottom: '0px' }}>
+        <CardContent>
           {theTitle(title, index)}
         </CardContent>
-        <hr />
+        <Divider />
       </>
       }
       {theDescription && <>

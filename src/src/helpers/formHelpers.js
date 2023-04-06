@@ -502,9 +502,10 @@ export function createFieldValidation(type, label, validationMap, field) {
  * @typedef {object} SubmitOptions
  * @property {function} enqueueSnackbar - function to enqueue a snackbar
  * @property {function} nav - function to navigate to a url
- * @property {function} onSuccess - function to call on successful submit
+ * @property {function} onSuccess - function to call on successful submit (if provided will NOT call setModifying OR nav)
  * @property {function} formatSubmitError - function to format the error message
  * @property {function} checkSuccess - function to check if the submit was successful
+ * @property {function} onError - function to call on error (if provided will NOT call setModifying)
  * @property {string} unitLabel - label for the unit being submitted
  * @property {string} successUrl - url to navigate to on success
  * @property {string} cancelUrl - url to navigate to on cancel
@@ -525,7 +526,7 @@ export function createFieldValidation(type, label, validationMap, field) {
  * @returns {Promise<void>} - promise that resolves when the submit is complete
  */
 export const attemptFormSubmit = async (formData, isEdit, {
-  enqueueSnackbar, nav, onSuccess, formatSubmitError, checkSuccess,
+  enqueueSnackbar, nav, onSuccess, onError, formatSubmitError, checkSuccess,
   unitLabel = 'Item', successUrl, cancelUrl, submitUrl, setModifying,
   formatSubmitMessage, suppressSuccessToast, suppressErrorToast
 }) => {
@@ -537,6 +538,8 @@ export const attemptFormSubmit = async (formData, isEdit, {
   const successCheck = functionOrDefault(checkSuccess, (result) => result?.data?.streamID);
   const modifier = functionOrDefault(setModifying, null);
   const queueSnack = functionOrDefault(enqueueSnackbar, null);
+  const successCall = functionOrDefault(onSuccess, null);
+  const errorCall = functionOrDefault(onError, null);
   let errorSnackMessage = null;
   let successSnackMessage = null;
   if (queueSnack) {
@@ -559,8 +562,8 @@ export const attemptFormSubmit = async (formData, isEdit, {
         queueSnack(successSnackMessage(result, { isEdit, unitLabel }), { variant: 'success' });
       }
       // If we have an onSuccess callback, call it otherwise navigate to the successUrl
-      if (onSuccess) {
-        onSuccess(result);
+      if (successCall) {
+        successCall(result);
       } else {
         nav(successUrl || cancelUrl);
         if (modifier) {
@@ -569,7 +572,12 @@ export const attemptFormSubmit = async (formData, isEdit, {
         nav(successUrl || cancelUrl);
       }
     } else {
-      setModifying(false);
+      if (errorCall) {
+        errorCall(result);
+      } else if (modifier) {
+        modifier(false);
+      }
+
       if (!suppressErrorToast && queueSnack) {
         queueSnack(errorSnackMessage(result, { isEdit, unitLabel }), { variant: 'error' });
       }

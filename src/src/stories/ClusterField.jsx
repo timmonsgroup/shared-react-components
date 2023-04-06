@@ -175,13 +175,14 @@ const ClusterField = ({ control, field, options, ...props }) => {
  * @property {string} clusterId - The id of the cluster
  * @property {Array} rows - An array of row objects
  * @property {Object} rowProps - The props to pass to the ClusterRow component
- * @property {ReactNode} removeButton - The remove button to render
+ * @property {React.ReactElement} removeButton - The remove button to render
  */
 
 /**
- * @function InlineWrapper - A wrapper for the ClusterRow component that renders the rows inline
+ * A wrapper for the ClusterRow component that renders the rows inline
+ * @function InlineWrapper
  * @param {ClusterRowWrapperProps} props
- * @returns
+ * @returns {React.ReactElement} - The rendered component
  */
 
 const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
@@ -219,9 +220,10 @@ const WRAPPER_PROPS = {
 InlineWrapper.propTypes = WRAPPER_PROPS;
 
 /**
- * @function Wrapper - A wrapper for the ClusterRow and remove button
+ * A wrapper for the ClusterRow and remove button
+ * @function Wrapper
  * @param {ClusterRowWrapperProps}
- * @returns
+ * @returns {React.ReactElement} - The rendered component
  */
 const Wrapper = ({ clusterId, rows, rowProps, removeButton }) => {
   return (
@@ -352,7 +354,8 @@ const renderDefaultAddButton = ({ layout, onClick }) => {
 };
 
 /**
- * @function TrashCanIcon - Trash can icon via Heroicons
+ * Trash can icon via Heroicons
+ * @function TrashCanIcon
  * @returns {React.ReactElement} - React element
  */
 const TrashCanIcon = () => {

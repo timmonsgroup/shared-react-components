@@ -8,6 +8,7 @@ const CACHE = {};
 
 /**
  * Layout fetching hook that assumes the default layout endpoint
+ * @function
  * @param {string} type - object type for standard get layout endpoint
  * @param {string} key - layout key for standard get layout endpoint
  * @param {string} url - optional if you are not using the standard endpoint
@@ -23,8 +24,9 @@ export const useLayout = (type, key, url = null, existingLayout = null) => {
 };
 
 /**
- * Hook to fetch WMS DescribeLayer response by url or cache
- * @returns array of useState properties layers and loading state
+ * Hook to fetch map config by key or cache
+ * @function
+ * @returns {Array<object|boolean>} mapConfig, mapConfigLoading
  */
 export const useMapConfig = (map_key) => {
   const url = `/api/map/config/getForMap/${map_key}`;
@@ -50,6 +52,7 @@ export const useMapConfig = (map_key) => {
 
 /**
  * Hook to fetch config by key or cache
+ * @function useConfig
  * @param {string} config_key
  * @returns {Array<object|boolean>} config, loading
  */
@@ -165,9 +168,10 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
 
 /**
  * Hook to use Axios get request without caching
- * @param {*} url - url to fetch
- * @param {*} defaultValue - default value of the data state
- * @returns array of useState properties data and loading state
+ * @function
+ * @param {string} url - url to fetch
+ * @param {object} defaultValue - default value of the data state
+ * @returns {Array<object|boolean|function>} data, isLoading, setData
  */
 export const useGet = (url, defaultValue = null) => {
   const [data, setData] = useState(defaultValue);
