@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 
 // Third party components
-import { Card, CardContent, Container, Stack, Typography, Skeleton, Divider } from '@mui/material';
+import { Card, CardContent, Container, Stack, Skeleton } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // Internal bits
@@ -15,6 +15,7 @@ import SubHeader from '../SubHeader';
 import LoadingSpinner from '../LoadingSpinner';
 import { createRowFields, functionOrDefault } from '../../helpers';
 import { FIELD_TYPES } from '../../constants';
+import { SectionTop } from '../Section';
 
 /** @module FormSections */
 /**
@@ -207,76 +208,6 @@ GenericConfigForm.propTypes = {
   renderLoading: PropTypes.func,
 };
 
-/** @module SectionTop */
-/**
- * Default function to render the form description
- * @function renderFormDescription
- * @param {string | React.ReactElement} description
- * @returns {React.ReactElement} - the rendered description
- */
-const defaultFormDescription = (description) => {
-  return (
-    <Typography variant="formSectionDescription">
-      {description}
-    </Typography>
-  );
-};
-
-/**
- * Default function to render the form description
- * @function renderFormTitle
- * @param {string | React.ReactElement} description
- * @returns {React.ReactElement} - the rendered description
- */
-const defaultSectionTitle = (title) => {
-  return (<Typography variant="sectionHeader">{title}</Typography>);
-};
-
-/**
- * Top portion of a form section will render the section title and description
- * @function SectionTop
- * @param {props} props - props object
- * @param {string} props.title - the title to display in the header
- * @param {string} props.description - the description to display in the header
- * @param {number} props.index - the index of the section
- * @param {renderSectionTitle} props.renderTitle - a function to render the form title
- * @param {renderSectionDescription} props.renderDescription - a function to render the form description
- * @returns {React.ReactElement} - the rendered section top
- */
-const SectionTop = ({ title, description, renderTitle, renderDescription, index }) => {
-  // Allow rendering if description is provided or if renderDescription is provided
-  // this allows users to completely override the description
-  const theDescription = description || renderDescription ? functionOrDefault(renderDescription, defaultFormDescription) : null;
-  const theTitle = title || renderTitle ? functionOrDefault(renderTitle, defaultSectionTitle) : null;
-
-  return (
-    <>
-      {theTitle && <>
-        <CardContent>
-          {theTitle(title, index)}
-        </CardContent>
-        <Divider />
-      </>
-      }
-      {theDescription && <>
-        <CardContent sx={{ paddingBottom: '0px' }}>
-          {theDescription(description, index)}
-        </CardContent>
-      </>
-      }
-    </>
-  );
-};
-
-SectionTop.propTypes = {
-  title: PropTypes.string,
-  description: PropTypes.string,
-  renderDescription: PropTypes.func,
-  renderTitle: PropTypes.func,
-  index: PropTypes.number,
-};
-
-
 /** @module SectionRow */
 /**
  * Callback for rendering a section description
@@ -393,7 +324,7 @@ const SectionRow = ({ row, control, options }) => {
               options={options.fieldOptions || {}}
             />
           </Grid>
-        )
+        );
       })}
     </Grid>
   );
@@ -413,6 +344,5 @@ SectionRow.propTypes = {
 export {
   FormSections,
   SectionRow,
-  SectionTop,
   GenericConfigForm
 };

@@ -21,8 +21,9 @@ import {
   FormSections,
   ConfigFormProvider,
   GenericConfigForm,
-  SectionRow,
-  SectionTop } from './ConfigForm';
+  SectionRow
+} from './ConfigForm';
+import { SectionTop } from './Section';
 import DynamicField from './DynamicField';
 import ClusterField from './ClusterField';
 

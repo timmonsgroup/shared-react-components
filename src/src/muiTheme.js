@@ -282,7 +282,7 @@ const baseThemeProperties = {
       marginTop: 2,
       marginBottom: 2,
     },
-    formSectionDescription: {
+    sectionDescription: {
       fontSize: '1rem',
       fontStyle: 'italic',
       color: darkGrey,
@@ -321,7 +321,7 @@ const baseThemeProperties = {
           modalTitle: 'h2',
           panelHeader: 'h2',
           inspector: 'p',
-          formSectionDescription: 'p',
+          sectionDescription: 'p',
           clusterEmptyText: 'p',
           navLink: 'a'
         },

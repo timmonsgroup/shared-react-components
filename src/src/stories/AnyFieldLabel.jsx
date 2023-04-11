@@ -48,7 +48,7 @@ import RequiredIndicator from './RequiredIndicator';
  * @param {FieldOptions} props.fieldOptions - the options to pass to the field
  * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
-const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {}, className }) => {
+const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {}, className, sx }) => {
   const theme = useTheme();
 
   // Attempt to use the themeGroup from props, then the anyFieldLabel defined in the base theme
@@ -57,10 +57,11 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, he
   const gAFL = themeGroup?.anyFieldLabel || anyFieldLabel || null;
   let gHelper = gAFL?.helperText || anyFieldLabel?.helperText || { marginTop: 0 };
 
-  const sx = {
+  const BoxSx = {
     display: 'flex',
     alignItems: 'center',
     gap: fieldOptions?.icon?.gap || '0.5rem',
+    ...sx
   };
 
   if (iconText && fieldOptions?.icon?.beforeLabel) {
@@ -80,7 +81,7 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, he
 
   return (
     <Box sx={gAFL}>
-      <Box sx={sx}>
+      <Box sx={BoxSx}>
         {labelComponent}
         {iconText && <TooltipIcon infoText={iconText} {...iconProps} />}
       </Box>

@@ -119,13 +119,15 @@ const GridActions = ({ actions, params, themeGroup, useTypeVariant }) => {
         }
 
         const extraProps = action.actionProps || {};
+        if (action.clickHandler) {
+          // Pass in the row data to the action - up to the caller to unpack
+          extraProps.onClick = () => { action.clickHandler(params.row); };
+        }
 
         return (
           <Button
             key={index}
             className={cssClass}
-            // Pass in the row data to the action - up to the caller to unpack
-            onClick={() => { action.clickHandler(params.row); }}
             size="small"
             sx={gAI}
             variant={variant}

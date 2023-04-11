@@ -137,7 +137,7 @@ const ClusterField = ({ control, field, options, ...props }) => {
         data-what="all the clusters"
         spacing={2}
         xs={12}
-        sx={{ paddingTop: '0px' } }
+        sx={{ paddingTop: '0px' }}
       >
         {fields.length > 0 && (
           <>
@@ -199,8 +199,10 @@ const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
                   {...rowProps}
                 />
               </Grid>
-              <Grid style={{ maxWidth: '100px', padding: '0 0 0 8px', alignSelf: 'center' }} sx={{ textAlign: 'right' }}>
-                {removeButton}
+              <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }} style={{ maxWidth: '100px' }}>
+                <Grid>
+                  {removeButton}
+                </Grid>
               </Grid>
             </Grid>
           );
@@ -284,16 +286,17 @@ ClusterField.propTypes = {
  */
 const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
   const { fields, solitary, size, maxColumns } = row;
-  // const colsAllowed = maxColumns || 1;
   let colSize = 12 / fields.length;
   if (solitary && !isNaN(size)) {
     colSize = parseInt(size);
   }
 
-  // const spacing = colsAllowed === 1 ? 0 : { xs: 1, sm: 2, md: 4 };
   return (
     <>
-      {fields.map((field, fIndex) => {
+      {fields.map((field) => {
+        // At xs size, we force one column
+        // At sm size, we do not allow more than 2 columns
+        // At md size and up, we allow you to specify the number of columns
         return (
           <Grid xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
             <AnyField
@@ -402,6 +405,7 @@ const renderDefaultRemoveButton = ({ layout, onClick, inlineAllowed }) => {
   return (
     <>
       {!canInline && <Divider />}
+      {canInline && <AnyFieldLabel sx={{ opacity: 0 }} label="Remove" htmlFor="" />}
       <Button {...buttonProps}>{renderLabel}</Button>
     </>
   );

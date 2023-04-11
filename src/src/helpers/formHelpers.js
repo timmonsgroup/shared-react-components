@@ -486,7 +486,8 @@ export function createFieldValidation(type, label, validationMap, field) {
       // Create the validation for the cluster field which is an array of objects
       validation = array().label(label).of(object().shape(subFieldValidations).strict());
       if (required) {
-        validation = validation.min(1, reqMessage);
+        const minMessage = reqMessage ? reqMessage : `${label} must have at least one item`;
+        validation = validation.min(1, minMessage);
       }
       break;
     }
