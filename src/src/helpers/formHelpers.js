@@ -509,7 +509,6 @@ export function createFieldValidation(type, label, validationMap, field) {
  * @property {function} onError - function to call on error (if provided will NOT call setModifying)
  * @property {string} unitLabel - label for the unit being submitted
  * @property {string} successUrl - url to navigate to on success
- * @property {string} cancelUrl - url to navigate to on cancel
  * @property {string} submitUrl - url to submit to
  * @property {function} setModifying - function to set the modifying state
  * @property {function} formatSubmitMessage - function to format the success message
@@ -528,7 +527,7 @@ export function createFieldValidation(type, label, validationMap, field) {
  */
 export const attemptFormSubmit = async (formData, isEdit, {
   enqueueSnackbar, nav, onSuccess, onError, formatSubmitError, checkSuccess,
-  unitLabel = 'Item', successUrl, cancelUrl, submitUrl, setModifying,
+  unitLabel = 'Item', successUrl, submitUrl, setModifying,
   formatSubmitMessage, suppressSuccessToast, suppressErrorToast
 }) => {
   if (!submitUrl) {
@@ -566,11 +565,11 @@ export const attemptFormSubmit = async (formData, isEdit, {
       if (successCall) {
         successCall(result);
       } else {
-        nav(successUrl || cancelUrl);
+        nav(successUrl);
         if (modifier) {
           modifier(false);
         }
-        nav(successUrl || cancelUrl);
+        nav(successUrl);
       }
     } else {
       if (errorCall) {
