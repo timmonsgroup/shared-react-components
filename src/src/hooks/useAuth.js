@@ -143,12 +143,11 @@ export const useAuth = () => {
 /**
  * These are the properties and methods that the "useAuth" hook provides to its consumers
  * We are providing the auth state, login, and logout methods
- * @param {object} props - The props for the component
+ * @param {object} config - The configuration for the component
  * @param {String[]} whitelist - The whitelist array
  * @returns {object} The auth object
  */
-const useProvideAuth = (props, whitelist) => {
-  const {config} =props;
+const useProvideAuth = (config, whitelist) => {
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
   const [authState, dispatch] = useReducer(authReducer, initialState);
