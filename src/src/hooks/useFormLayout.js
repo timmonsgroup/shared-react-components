@@ -1,9 +1,10 @@
+/** @module useFormLayout */
 import { useLayout } from './useData.js';
 import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
   TODAY_DEFAULT, MAX_VALUE, MIN_VALUE, MAX_LENGTH, MIN_LENGTH,
-  REQUIRED
+  REQUIRED, EMAIL, PHONE, ZIP, DISABLED
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
@@ -17,6 +18,7 @@ const specialProps = Object.values(SPECIAL_ATTRS);
 /**
  * Layout fetching hook that extends the useLayout hook to parse the layout data into a more usable format
  * The loading flag is tied to parsing being complete instead of the layout loading being complete
+ * @function
  * @param {string} type - object type for standard PAM get layout endpoint
  * @param {string} key - layout key for standard PAM get layout endpoint
  * @param {string} url - optional if you are not using the standard pam endpoint
@@ -34,7 +36,7 @@ export function useFormLayout(type, key, url = null, urlDomain = null, asyncOpti
         const parsed = await parseFormLayout(data, urlDomain, asyncOptions);
         setParsedLayout(parsed);
         setIsParsing(false);
-      }
+      };
       waitForParse();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,6 +123,13 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
     });
   });
 
+  /**
+   * Fetch any async data for the fields
+   * @function
+   * @param {string} fieldId - id of the field
+   * @param {string} url - url to fetch data from
+   * @returns {Array<object>}
+   */
   const fetchData = async (fieldId, url) => {
     const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
     const specialFieldProps = fields.get(fieldId).specialProps;
@@ -141,7 +150,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
       }
     });
     return things;
-  }
+  };
 
   if (asyncFields.size > 0) {
     const asyncLoaders = {};
@@ -167,6 +176,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
 
 /**
  * Parse a section
+ * @function
  * @param {object} section
  * @param {Map<string, ParsedField>} fieldMap - map of fieldId to field object
  * @param {Map<string, object>} triggerFieldMap - map of triggerFieldId to field object
@@ -182,6 +192,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
     name: section.name,
     title: section.title,
     order: section.order,
+    description: section.description,
     editable,
     enabled,
     fields: [],
@@ -202,7 +213,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
   }
 
   return parsedSection;
-};
+}
 
 /**
  * @typedef {object} ParsedField
@@ -213,6 +224,8 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
  * @property {Array} conditions - if the field is hidden
  * @property {object} specialProps - special props for the field
  * @property {object} [defaultValue] - default value for the field
+ * @property {object} [modelData] - model data for the field (found on the model.data)
+ * @property {Array<ParsedField>} [subFields] - subFields for the field if its type is FIELD_TYPES.CLUSTER (i.e. 100)
  * @property {FieldRenderProps} render - render props for the field
  */
 
@@ -238,6 +251,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
 // TODO: Create a more unified model to play nice with PamLayoutGrid
 /**
  * Parse a field
+ * @function
  * @param {object} field - field object
  * @param {Map<string, string>} asyncFieldsMap - map of async fields
  * @returns {ParsedField} parsed field
@@ -247,10 +261,10 @@ export function parseField(field, asyncFieldsMap) {
     return {};
   }
 
-  const { label, type, model, hidden = false, conditions = [], linkFormat } = field;
-  const name = model.name || `unknown${model.id}`;
-  const readOnly = !!field.readOnly;
-  const disabled = !!field.disabled;
+  const { label, type, model, conditions = [], linkFormat } = field;
+  const name = model?.name || `unknown${model?.id || ''}`;
+
+  const hidden = !!field[CONDITIONAL_RENDER.HIDDEN];
 
   const parsedField = {
     id: name,
@@ -260,25 +274,34 @@ export function parseField(field, asyncFieldsMap) {
     hidden,
     specialProps: {},
     [DEFAULT_VALUE]: field[DEFAULT_VALUE],
-    modelData: model.data,
+    modelData: model.data || {},
     // Note any validation that are needed for a trigger field should be added here
     // The triggerfield logic will parse the base field first then the trigger field (which allows for overrides via "then")
     render: {
       type: type,
       label,
       name,
+      // Boolean properties
       hidden,
+      [REQUIRED]: !!field[REQUIRED],
+      [DISABLED]: !!field[DISABLED],
+      [CONDITIONAL_RENDER.READ_ONLY]: !!field[CONDITIONAL_RENDER.READ_ONLY],
+      inline: !!field.inline,
+      emptyMessage: field.emptyMessage,
+      //Number properties
       [MAX_VALUE]: field[MAX_VALUE],
       [MIN_VALUE]: field[MIN_VALUE],
       [MAX_LENGTH]: field[MAX_LENGTH],
       [MIN_LENGTH]: field[MIN_LENGTH],
-      [REQUIRED]: !!field[REQUIRED],
-      disabled,
+      [MIN_LENGTH]: field[MIN_LENGTH],
+      //String properties
+      [CONDITIONAL_RENDER.ALT_HELPER]: field[CONDITIONAL_RENDER.ALT_HELPER],
+      [CONDITIONAL_RENDER.ICON_HELPER]: field[CONDITIONAL_RENDER.ICON_HELPER],
+      [CONDITIONAL_RENDER.HELPER]: field[CONDITIONAL_RENDER.HELPER],
+      [CONDITIONAL_RENDER.REQ_TEXT]: field[CONDITIONAL_RENDER.REQ_TEXT],
       placeholder: field.placeholder,
-      iconHelperText: field.iconHelperText,
-      helperText: field.helperText,
-      requiredErrorText: field.requiredErrorText,
-      readOnly,
+      solitary: field.solitary,
+      singleColumnSize: field.singleColumnSize,
       linkFormat,
     }
   };
@@ -312,6 +335,12 @@ export function parseField(field, asyncFieldsMap) {
     parsedField.render.isMultiLine = true;
   }
 
+  if (type === FIELDS.TEXT) {
+    parsedField.render[EMAIL] = !!field[EMAIL];
+    parsedField.render[PHONE] = !!field[PHONE];
+    parsedField.render[ZIP] = !!field[ZIP];
+  }
+
   if (field.possibleChoices) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({
       ...item,
@@ -328,6 +357,19 @@ export function parseField(field, asyncFieldsMap) {
     asyncFieldsMap.set(field.path, field.url);
   }
 
+  // Special case for cluster fields
+  if (type === FIELDS.CLUSTER) {
+    // Allow for custom labels
+    parsedField.render.addLabel = field.addLabel;
+    parsedField.render.removeLabel = field.removeLabel;
+    parsedField.render.clusterColumnCount = field.clusterColumnCount;
+
+    // Loop through the sub fields and parse them
+    // This will also populate the validations property for each sub field
+    const subFields = field.layout?.map((subF) => parseField(subF, asyncFieldsMap));
+    parsedField.subFields = subFields;
+  }
+
   const validations = new Map();
   parseValidation(validations, field);
   parseValidation(validations, data);
@@ -341,13 +383,18 @@ export function parseField(field, asyncFieldsMap) {
 
 /**
  * Parse validation
+ * @function
  * @param {Map<string, YupSchema>} validationMap
  * @param {object} data
  */
 function parseValidation(validationMap, data, debug = false) {
+  if (!data) {
+    return;
+  }
+
   Object.keys(data).forEach((key) => {
     if (debug) {
-      console.log('~parseValidation~', key, data[key]);
+      console.debug('~parseValidation~', key, data[key]);
     }
     if (validationTypes.includes(key) && data[key] !== undefined) {
       validationMap.set(key, data[key]);
@@ -372,6 +419,7 @@ function parseValidation(validationMap, data, debug = false) {
 
 /**
  * Parse conditions and add them to the triggerFieldMap
+ * @function
  * @param {string} fieldId - field id
  * @param {Map<string, TriggerField>} triggerFields - map of trigger fields
  * @param {Array<TriggerCondition>} conditions - conditions
@@ -380,7 +428,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
   if (conditions?.length) {
     conditions.forEach((condition) => {
       const { when: triggerId, then: validations, isValid } = condition;
-      let value = condition?.is;
+      let value = condition?.is?.toString();
 
       // touches is a map of every field that triggerfield could influence.
       // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
@@ -404,22 +452,24 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
       triggerFields.set(triggerId, trigField);
     });
   }
-}
+};
 
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.
  * If the data is null or missing will set as need to avoid "uncontrolled" vs "controlled" MUI errors.
- * @param {*} field - the field object should be in the syntax of the form builder (parseField)
- * @param {*} formData - the data from the database. This should be ALL the form values.
- * @param {*} isNested - not yet implemented, but will be used to parse nested (cluster) fields.
+ * @param {ParsedField} field - the field object should be in the syntax of the form builder (parseField)
+ * @param {object} formData - the data from the database. This should be ALL the form values.
  * @returns {object}
  */
 // eslint-disable-next-line no-unused-vars
-export function getFieldValue(field, formData, isNested = false) {
+export function getFieldValue(field, formData) {
+  // if the type is missing check the render object
+  let {type} = field || field?.render || {};
+
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
   // const inData = isNested && data ? data[name] : getObject(data || {}, field.path);
-  let inData = formData[name];
+  let inData = formData?.[name];
 
   // If the config specifies a default value, use that value ONLY if the data is undefined.
   if (inData === undefined && field[DEFAULT_VALUE]) {
@@ -428,7 +478,7 @@ export function getFieldValue(field, formData, isNested = false) {
 
   let value = null;
 
-  switch (field.type) {
+  switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT:
     case FIELDS.INT:
@@ -467,18 +517,22 @@ export function getFieldValue(field, formData, isNested = false) {
           value = getSelectValue(render.multiple || false, inData) || '';
         }
       } else {
-        value = inData || render.multiple ? [] : '';
+        if (!inData && render.multiple) {
+          value = [];
+        } else {
+          value = inData || '';
+        }
       }
       break;
     }
-
     case FIELDS.CLUSTER: {
       const clusterData = [];
       if (Array.isArray(inData) && inData.length) {
         inData.forEach((nug) => {
           const lineData = {};
-          if (Array.isArray(field.layout) && field.layout.length) {
-            field.layout.forEach((subF) => {
+          const {subFields} = field || [];
+          if (Array.isArray(subFields) && subFields.length) {
+            subFields.forEach((subF) => {
               const { name: fName, value: fValue } = getFieldValue(subF, nug, true);
               lineData[fName] = fValue;
             });

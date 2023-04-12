@@ -1,4 +1,4 @@
-import { floatCompare, sortOn, caseless, mergeDeep, zoomableOption, zoomablesOptions, createZoomOption } from './helpers';
+import { floatCompare, sortOn, caseless, mergeDeep, zoomableOption, zoomablesOptions, createZoomOption, objectReducer, getSectionChoices, processLayout, isObject, isEmpty } from './helpers';
 
 test('floatCompare correctly compares float values for an array sort method', () => {
   expect(floatCompare(1.1, 1.1)).toBe(0);
@@ -154,4 +154,119 @@ test('zoomablesOptions correctly creates a list of zoomable options with overrid
   expect(zoomables[1].label).toBe('label2');
   expect(zoomables[1].value).toBe('id2');
   expect(zoomables[1].extent).toEqual([2, 3]);
+});
+
+test('Object reduce method correctly reduces an object', () => {
+  const obj = { a: { b: { c: 1 } } };
+  const result = objectReducer(obj, 'a.b.c' );
+  expect(result).toBe(1);
+});
+
+test('Object reduce method correctly returns missing as undefined', () => {
+  const obj = { a: { b: { c: 1 } } };
+  const result = objectReducer(obj, 'a.b.d');
+  expect(result).toBe(undefined);
+});
+
+const layout = {
+  sections: [
+    {
+      editable: true,
+      enabled: true,
+      name: 'Section One',
+      order: 10,
+      layout: [
+        {
+          label: 'Fire Department',
+          path: 'fireDepartment',
+          type: 10,
+          model: {
+            id: 5,
+            modelid: 10,
+            type: 2,
+            name: 'fireDepartment',
+            data: {},
+          },
+          disabled: false,
+          possibleChoices: [
+            { name: 'BATTENS FD (Coffee County)', id: 7403 },
+            { name: 'Broomtown VFD (Cherokee County)', id: 7404 },
+            { name: 'Cedar Bluff VFD (Cherokee County)', id: 7405 },
+            { name: 'Centre VFD (Cherokee County)', id: 7406 },
+          ],
+        }
+      ],
+    },
+  ],
+};
+
+test('getSectionChoices correctly returns a list of choices', () => {
+  const choices = getSectionChoices(layout, 'Section One', 'fireDepartment');
+  expect(choices.length).toBe(4);
+  expect(choices[0].label).toBe('BATTENS FD (Coffee County)');
+  expect(choices[0].id).toBe(7403);
+  expect(choices[1].label).toBe('Broomtown VFD (Cherokee County)');
+  expect(choices[1].id).toBe(7404);
+});
+
+test('getSectionChoices correctly returns an empty list when section does not contain a matching modelName', () => {
+  const choices = getSectionChoices(layout, 'Section One', 'fireStation');
+  expect(choices.length).toBe(0);
+});
+
+test('getSectionChoices correctly returns an empty list when section does not exist', () => {
+  const choices = getSectionChoices(layout, 'Section Two', 'fireDepartment');
+  expect(choices.length).toBe(0);
+});
+
+test('processLayout correctly processes a layout', () => {
+  const processed = processLayout(layout);
+  const section = processed[0];
+  const {fields} = section;
+  expect(section.name).toBe('Section One');
+  expect(fields.length).toBe(1);
+
+  const field = fields[0];
+  expect(field.path).toBe('fireDepartment');
+  expect(field.type).toBe(10);
+  expect(field.render).not.toBeUndefined();
+
+  const choices = field.render.choices;
+
+  expect(choices.length).toBe(4);
+  expect(choices[0].label).toBe('BATTENS FD (Coffee County)');
+  expect(choices[0].id).toBe(7403);
+  expect(choices[1].label).toBe('Broomtown VFD (Cherokee County)');
+  expect(choices[1].id).toBe(7404);
+});
+
+test('Check if a value is an object using isObject', () => {
+  expect(isObject({}, 'empty object')).toBe(true);
+  expect(isObject([], 'empty array')).toBe(false);
+  expect(isObject('', 'emptystring')).toBe(false);
+  expect(isObject(1, 'a number')).toBe(false);
+  expect(isObject(true, 'a boolean')).toBe(false);
+  expect(isObject(null, 'the null')).toBe(false);
+  expect(isObject(undefined, 'undefined')).toBe(false);
+  expect(isObject(new Date(), 'a date')).toBe(false);
+  expect(isObject(() => {}, 'a function')).toBe(false);
+  expect(isObject(Symbol('a symbol'), 'a symbol')).toBe(false);
+  expect(isObject(new Map(), 'a map')).toBe(false);
+});
+
+test('Check if a value is not null, undefined or empty string using isEmpty', () => {
+  // The only things that SHOULD return true
+  expect(isEmpty('', 'emptystring')).toBe(true);
+  expect(isEmpty(null, 'the null')).toBe(true);
+  expect(isEmpty(undefined, 'undefined')).toBe(true);
+
+  //Everything else should return false
+  expect(isEmpty(0, 'a zero')).toBe(false);
+  expect(isEmpty(1, 'a number')).toBe(false);
+  expect(isEmpty(true, 'a boolean')).toBe(false);
+  expect(isEmpty(false, 'a boolean')).toBe(false);
+  expect(isEmpty(new Date(), 'a date')).toBe(false);
+  expect(isEmpty(() => {}, 'a function')).toBe(false);
+  expect(isEmpty(Symbol('a symbol'), 'a symbol')).toBe(false);
+  expect(isEmpty(new Map(), 'a map')).toBe(false);
 });

@@ -1,4 +1,4 @@
-import { useDynamicForm } from "../../hooks";
+import { useDynamicForm } from '../../hooks';
 import { Typography } from '@mui/material';
 import ContainerWithCard from '../../stories/ContainerWithCard';
 import LineLoader from '../../stories/LineLoader';
@@ -6,18 +6,18 @@ import AnyField from '../../stories/AnyField';
 import React from 'react';
 
 export function generateDynamicFormStoryDefaultExport(options) {
-    return ({
-      title: 'form/Dynamic Form' + (options?.title ? `/${options?.title}` : '')
-    });
-  }
+  return ({
+    title: 'form/Dynamic Form' + (options?.title ? `/${options?.title}` : '')
+  });
+}
 
-  const choiceFormatter = (fieldId, response) => {
-    const {data: {facts} = {}} = response || {};
+const choiceFormatter = (fieldId, response) => {
+  const {data: {facts} = {}} = response || {};
 
-    const formattedChoices = facts?.map((label, id) => ({id, label}));
+  const formattedChoices = facts?.map((label, id) => ({id, label}));
     
-    return formattedChoices || [];
-  }
+  return formattedChoices || [];
+};
 
 export const DynamicFormStoryTemplate = ( args ) => {
 
@@ -31,36 +31,36 @@ export const DynamicFormStoryTemplate = ( args ) => {
     );
   }
 
-    return (
-      <>
-        {sections.map((section, index) => renderFormSection(section, control, index))}
-      </>
-    );
-  }
+  return (
+    <>
+      {sections.map((section, index) => renderFormSection(section, control, index))}
+    </>
+  );
+};
 
-  const renderFormSection = (section, control, index) => {
-    return (
-      <div key={index}>
-        {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
-        {section.fields.map((field, fIndex) => (
-          <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
-        ))}
-      </div>
-    );
-  }
+const renderFormSection = (section, control, index) => {
+  return (
+    <div key={index}>
+      {section.title && <Typography variant="sectionHeader">{section.title}</Typography>}
+      {section.fields.map((field, fIndex) => (
+        <AnyField sx={{ marginTop: fIndex ? '16px' : null }} layout={field.render} control={control} key={field?.render?.name}/>
+      ))}
+    </div>
+  );
+};
 
 export function generateDefaultSection() {
   return {
     layout: [],
     editable: true,
     enabled: true,
-    name: "default section name"
-    }
+    name: 'default section name'
+  };
 }
 
 export function generateDefaultFieldLayout() {
   return {
-    label: "Default Label",
+    label: 'Default Label',
     type: 0,
     hidden: false,
     conditions: [],
@@ -68,19 +68,19 @@ export function generateDefaultFieldLayout() {
     required: false,
     readOnly: false,
     disabled: false,
-    helperText: "default helper text",
+    helperText: 'default helper text',
     requiredErrorText: "I'm required!",
     multiple: false,
     checkbox: false,
     possibleChoices: null,
     url: '',
-    path: "defaultPathModelName",
+    path: 'defaultPathModelName',
     model: {
-        name: "defaultPathModelName",
-        id: 1,
-        data: {},
-        labelField: null,
-        idField: null
+      name: 'defaultPathModelName',
+      id: 1,
+      data: {},
+      labelField: null,
+      idField: null
     }
   };
 }

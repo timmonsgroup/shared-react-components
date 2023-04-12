@@ -1,13 +1,17 @@
 module.exports = {
   env: {
     browser: true,
-  node: true,
+    node: true,
+    jest: true,
     es2021: true,
   },
   extends: ['eslint:recommended'],
   parserOptions: {
+    ecmaFeatures: {
+      jsx: true
+    },
     ecmaVersion: 'latest',
-    sourceType: 'module',
+    sourceType: 'module'
   },
   rules: {
     quotes: [

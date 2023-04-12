@@ -36,14 +36,14 @@ export const useToggle = (isOpen) => {
 
   const handleToggle = () => {
     setExpanded(!expanded);
-  }
+  };
 
   // If not expanded force expanded state
   const forceOpen = () => {
     if (!expanded) {
       setExpanded(true);
     }
-  }
+  };
 
   // Observe the toggle state and update the css class to a transitioning state
   // Skip the first render to prevent the toggle from transitioning
@@ -64,7 +64,7 @@ export const useToggle = (isOpen) => {
   // Method to be used as the "onAnimationEnd" callback for the transitioning css class
   const toggleComplete = () => {
     setToggleCss(expanded ? TOGGLE_STATES.EXPANDED : TOGGLE_STATES.COLLAPSED);
-  }
+  };
 
   return {expanded, setExpanded, handleToggle, forceOpen, toggleComplete, toggleCss};
-}
+};

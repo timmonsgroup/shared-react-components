@@ -10,13 +10,13 @@ const FormErrorMessage = ({ error, ...props }) => {
         text = 'This field is required';
       }
     }
-    return <FormHelperText error {...props}>{text}</FormHelperText>
+    return <FormHelperText error {...props}>{text}</FormHelperText>;
   }
   return null;
-}
+};
 
 FormErrorMessage.propTypes = {
   error: PropTypes.object,
-}
+};
 
 export default FormErrorMessage;

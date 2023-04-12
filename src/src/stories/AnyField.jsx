@@ -1,3 +1,4 @@
+/** @module AnyField */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
@@ -28,9 +29,17 @@ import { Box } from '@mui/material';
  */
 
 /**
+ * Theme group for the label
+ * @typedef {Object} FieldLabelThemeGroup
+ * @property {object} anyFieldLabel - any theme properties to use for the box containing the label
+ * @property {object} anyFieldLabel.helperText - any theme properties to use for the helper text
+ */
+
+/**
  * Various options for the fields
  * @typedef {Object} FieldOptions
  * @property {FieldIconOptions} icon - the options to pass to the info icon
+ * @property {FieldLabelThemeGroup} labelThemeGroup - the theme group to use for the label
  */
 
 /**
@@ -43,6 +52,7 @@ import { Box } from '@mui/material';
  * @property {string} helperText - the helper text of the field
  * @property {string} placeholder - the placeholder of the field
  * @property {string} iconHelperText - the helper text of the info icon
+ * @property {string} altHelperText - helper text to display in an alternate location
  * @property {boolean} required - whether the field is required
  * @property {boolean} disabled - whether the field is disabled
  * @property {boolean} hidden - whether the field is hidden
@@ -52,47 +62,57 @@ import { Box } from '@mui/material';
 
 /**
  * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
- * @component
+ * @function
  * @param {object} props
  * @param {object} props.control - the react-hook-form control object
  * @param {object} props.rules - the react-hook-form rules object (this is not used if using form level validation)
  * @param {object} props.layout - the layout object
  * @param {boolean} props.disabled - whether the field is disabled
+ * @param {string} props.nestedName - the name of the field if it is nested
+ * @param {boolean} props.isNested - whether the field is nested
  * @param {FieldOptions} props.options - various options for the fields
  * @returns {React.ReactElement | null} - the rendered AnyField
  */
-const AnyField = ({ control, rules, layout, options, ...props }) => {
+const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...props }) => {
+  // If this component ever uses hooks make sure to move this return BELOW those hooks
   if (layout.hidden) {
     return null;
   }
 
   const renderState = renderType(layout, options);
+  // Per react-hook-form docs, we should not unregister fields in a field Array at this level
+  // It is done via the useFieldArray hook in ClusterField component
+  const shouldUnregister = !isNested;
+  const name = (isNested && nestedName) ? nestedName : layout.name;
 
   return (
     <Box {...props}>
       <Controller
-        shouldUnregister={true}
+        shouldUnregister={shouldUnregister}
         control={control}
         rules={rules}
-        name={layout.name}
+        name={name}
         render={renderState}
       />
     </Box>
   );
-}
+};
 
 AnyField.propTypes = {
   control: PropTypes.object.isRequired,
   rules: PropTypes.object,
   layout: PropTypes.object.isRequired,
   options: PropTypes.object,
-}
+  isNested: PropTypes.bool,
+  nestedName: PropTypes.string,
+};
 
 /**
  * Return the correct renderer for the given type
+ * @function
  * @param {FieldLayout} layout - the layout object for the field
  * @param {FieldOptions} fieldOptions - various options for the fields
- * @returns  {function} the renderer function
+ * @returns {React.ReactElement} - the rendered field
  */
 const renderType = (layout, fieldOptions = {}) => {
   if (layout.iconHelperText) {
@@ -139,26 +159,36 @@ const renderType = (layout, fieldOptions = {}) => {
     default:
       return textRenderer(layout, fieldOptions);
   }
-}
+};
 
 /**
  * This is a custom renderer for the MUI TextField component to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the MUI TextField component
+ * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, iconHelperText, helperText, type }, fieldOptions) => {
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type }, fieldOptions) => {
   const inputAttrs = {
     'data-src-field': name,
     readOnly: readOnly,
-  }
+  };
 
   const isNumber = type === FIELD_TYPES.CURRENCY || type === FIELD_TYPES.INT || type === FIELD_TYPES.FLOAT;
   const prefix = readOnly ? '' : 'Enter';
 
   const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
     <>
-      <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
+      <AnyFieldLabel
+        htmlFor={id || name}
+        error={!!error}
+        label={label}
+        required={!!required}
+        disabled={disabled}
+        iconText={iconHelperText}
+        fieldOptions={fieldOptions}
+        helperText={altHelperText}
+      />
       <TextField sx={{ width: '100%' }}
         inputProps={inputAttrs}
         disabled={disabled}
@@ -190,15 +220,16 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   };
 
   return TextFieldWrapped;
-}
+};
 
 /**
  * This is a custom renderer for the MUI DatePicker component to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the MUI DatePicker component
+ * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, placeholder }, fieldOptions) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder }, fieldOptions) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -216,10 +247,10 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
           }
           return (
             <>
-              <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
+              <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
               <TextField sx={{ width: '100%' }} {...params} />
             </>
-          )}}
+          );}}
       />
       {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
       <FormErrorMessage error={error} />
@@ -237,15 +268,16 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
   };
 
   return DateField;
-}
+};
 
 /**
  * This is a custom renderer for our Typeahead component to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the Typeahead component
+ * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, iconHelperText }, fieldOptions) => {
+const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText }, fieldOptions) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
@@ -267,6 +299,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         isRequired={!!required}
         fieldOptions={fieldOptions}
         helperText={helperText}
+        altHelperText={altHelperText}
         iconHelperText={iconHelperText}
         // These are props that are passed to the MUI TextField rendered by Typeahead
         textFieldProps={{
@@ -277,11 +310,17 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         }}
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
-          onChange(newValue?.id || null);
+          let nextValue = newValue?.id;
+          // We need to set the value to null if it is empty string or undefined to correctly set 'unselected' state
+          // a value of 0 is valid
+          if (nextValue === '' || nextValue === undefined) {
+            nextValue = null;
+          }
+          onChange(nextValue);
         }}
         error={error}
       />
-    )
+    );
   };
 
   WrappedTypeahead.propTypes = {
@@ -296,26 +335,27 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
   };
 
   return WrappedTypeahead;
-}
+};
 
 /**
  * This is a custom renderer for MUI Checkboxes to work with react-hook-form
+ * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
  * @param {FieldOptions} fieldOptions Various options for the field
- * @returns {function} A custom renderer for the Typeahead component
+ * @returns {React.ReactElement} A custom renderer for the MUI Checkbox component
  */
 const checkboxRenderer = (layout, fieldOptions) => {
-  const { label, disabled, choices = [], required, helperText, iconHelperText } = layout;
+  const { label, disabled, choices = [], required, helperText, iconHelperText, altHelperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
     const handleCheck = (checkedId) => {
       const ids = field.value;
       // If the id is in the array, remove it, otherwise add it
       const newIds = ids?.includes(checkedId)
-        ? ids?.filter((id) => id !== checkedId)
+        ? ids?.filter((id) => id.toString() !== checkedId.toString())
         : [...(ids ?? []), checkedId];
       return newIds;
-    }
+    };
 
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
@@ -328,8 +368,17 @@ const checkboxRenderer = (layout, fieldOptions) => {
           component="fieldset"
           variant="standard"
         >
-          <AnyFieldLabel asFormInput={true} htmlFor={field.id || field.name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} fieldOptions={fieldOptions} />
-          {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
+          <AnyFieldLabel
+            asFormInput={true}
+            htmlFor={field.id || field.name}
+            error={!!error}
+            label={label}
+            required={!!required}
+            disabled={disabled}
+            iconText={iconHelperText}
+            fieldOptions={fieldOptions}
+            helperText={helperText}
+          />
           <FormGroup>
             {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
             {choices?.map((item) => (
@@ -346,11 +395,12 @@ const checkboxRenderer = (layout, fieldOptions) => {
                 label={item.label}
               />
             ))}
+            {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
             <FormErrorMessage error={error} />
           </FormGroup>
         </FormControl>
       </>
-    )
+    );
   };
 
   Checkboxes.propTypes = {
@@ -358,6 +408,6 @@ const checkboxRenderer = (layout, fieldOptions) => {
     fieldState: PropTypes.object,
   };
   return Checkboxes;
-}
+};
 
 export default AnyField;

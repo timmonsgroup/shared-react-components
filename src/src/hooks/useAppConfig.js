@@ -6,7 +6,7 @@ export const configContext = createContext();
 
 export const useConfig = () => {
   return useContext(configContext);
-}
+};
 
 export function useGetAppConfig() {
   const retried = useRef(false);

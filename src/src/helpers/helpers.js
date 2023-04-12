@@ -1,8 +1,13 @@
+/** @module helpers */
 /**
  * Deeply clone an object.
- * @param {object} target
- * @param {object} source
- * @returns {object}
+ * @param {object} target - object to merge things into
+ * @param {object} source - data source
+ * @returns {object} - cloned object
+ * @example const result = mergeDeep({ a: 1 }, { b: 2 });
+ * // result === { a: 1, b: 2 }
+ * @example const result = mergeDeep({ a: 1 }, { a: 2 });
+ * // result === { a: 2 }
  */
 export function mergeDeep(target, source) {
   if (typeof target !== 'object') {
@@ -25,13 +30,60 @@ export function mergeDeep(target, source) {
     }
   });
   return target;
+}
+
+/**
+ * Check if a value is an object
+ * @param {any} objValue
+ * @returns {boolean} - true if object, false if not
+ * @example const result = isObject({ a: 1 });
+ * // result === true
+ * @example const result = isObject(1);
+ * // result === false
+ * @example const result = isObject(null);
+ * // result === false
+ * @example const result = isObject(undefined);
+ * // result === false
+ * @example const result = isObject('a');
+ * // result === false
+ * @example const result = isObject([1, 2, 3]);
+ * // result === false
+ * @example const result = isObject(new Date());
+ * // result === false
+ * @example const result = isObject(new Map());
+ * // result === false
+ */
+export function isObject(objValue) {
+  const type = typeof objValue;
+  const notNull = !!objValue;
+  return (notNull && type === 'object' && objValue.constructor === Object) ? true : false;
+}
+
+/**
+   * Helper method to check if a value is null, undefined, or ''
+   * @example
+   * isEmpty('') // true
+   * isEmpty(null) // true
+   * isEmpty(undefined) // true
+   * isEmpty(0) // false
+   * @function isEmpty
+   * @param {string | number} value
+   * @returns {boolean} - true if empty, false if not
+   */
+export const isEmpty = (value) => {
+  if (value === '' || value === null || value === undefined) {
+    return true;
+  }
+
+  return false;
 };
 
 /**
- * Given an object and a path, return the value at that path.
+ * Given an object and a path, return the value at that path. If the path is not found, return undefined.
  * @example
  * const obj = { a: { b: { c: 1 } } };
  * const result = objectReducer(obj, 'a.b.c');
+ * // result === 1
  *
  * @param {object} obj - object to search
  * @param {string} path - path to value
@@ -139,24 +191,40 @@ export function sortOn(items, prop = 'label', isNumber = false) {
  * @returns {object} - zoom option object
  */
 export function createZoomOption(label, value, extent) {
-  return { label, value, extent }
-};
+  return { label, value, extent };
+}
 
 /**
  * Create a zoom option object from a zoomable item
- * @param {*} item
- * @param {*} labelProp
- * @param {*} valueProp
+ * @param {object} item
+ * @param {object} item.fields - fields object
+ * @param {object} item.fields.extent - extent object
+ * @param {string} labelProp
+ * @param {string} valueProp
  * @returns {object} - zoom option object
  */
 export function zoomableOption(item, labelProp = 'label', valueProp = 'id') {
   return createZoomOption(item[labelProp], item[valueProp], item.fields?.extent);
-};
+}
 
+/**
+ * Get a list of zoom options from a list of zoomable items
+ * @param {Object[]} zoomables - list of zoomable items
+ * @param {string} labelProp - property to use for label
+ * @param {string} valueProp - property to use for value
+ * @returns {Object[]}
+ */
 export function zoomablesOptions(zoomables, labelProp = 'label', valueProp = 'id') {
   return sortOn(zoomables, 'label').map((item) => zoomableOption(item, labelProp, valueProp));
 }
 
+/**
+ * Returns possible choices for a given section and model
+ * @param {Object} layout - layout object
+ * @param {string} sectionName - name of the section
+ * @param {string} modelName - name of the model
+ * @returns {Object[]} - list of possible choices or an empty array
+ */
 export const getSectionChoices = (layout, sectionName, modelName) => {
   if (!layout || !layout.sections) {
     return [];
@@ -174,7 +242,7 @@ export const getSectionChoices = (layout, sectionName, modelName) => {
   })) : [];
 
   return choices;
-}
+};
 
 /**
  * Simple layout process method to convert the layout object into a format that the layout builder can use.
@@ -225,7 +293,7 @@ export function processGenericLayout(layout) {
   const layoutTypes = {
     1: 'Form',
     2: 'Grid',
-  }
+  };
 
   const data = {};
 
@@ -241,11 +309,11 @@ export function processGenericLayout(layout) {
     sections: sections,
     title: layout.name,
     id: layout.id,
-    type: layoutTypes[layout.type] || "Unknown Layout Type: " + layout.type,
+    type: layoutTypes[layout.type] || 'Unknown Layout Type: ' + layout.type,
     editable: layout.editable,
     data,
     isGeneric: true,
-  }
+  };
 
   return newLayout;
 }
@@ -276,7 +344,8 @@ function getStructure(field) {
       disabled,
       readOnly,
       linkFormat,
-    }
+    },
+    source: model
   };
 
   if (field.possibleChoices) {
@@ -289,11 +358,11 @@ function getStructure(field) {
   }
 
   if (field.width) {
-    dynField.width = field.width
+    dynField.width = field.width;
   }
 
   if (field.flex) {
-    dynField.flex = field.flex
+    dynField.flex = field.flex;
   }
 
   if (field.nullValue) {
@@ -303,9 +372,17 @@ function getStructure(field) {
   return dynField;
 }
 
+export const functionOrDefault = (f, fdefault) => {
+  if (typeof f === 'function') {
+    return f;
+  }
+
+  return fdefault;
+};
+
 export const hasPermission = (permission, acl) => {
   return acl?.includes(permission) || false;
-}
+};
 
 export const hasAllPermissions = (permissions, acl) => {
   for (let perm of permissions) {
@@ -315,7 +392,7 @@ export const hasAllPermissions = (permissions, acl) => {
   }
 
   return true;
-}
+};
 
 export const hasAnyPermissions = (permissions, acl) => {
   for (let perm of permissions)
@@ -323,7 +400,7 @@ export const hasAnyPermissions = (permissions, acl) => {
       return true;
 
   return false;
-}
+};
 
 /**
  * Number with zero padding

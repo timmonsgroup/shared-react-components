@@ -1,3 +1,4 @@
+/** @module useData */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosRetry  from 'axios-retry';
@@ -7,6 +8,7 @@ const CACHE = {};
 
 /**
  * Layout fetching hook that assumes the default layout endpoint
+ * @function
  * @param {string} type - object type for standard get layout endpoint
  * @param {string} key - layout key for standard get layout endpoint
  * @param {string} url - optional if you are not using the standard endpoint
@@ -19,11 +21,12 @@ export const useLayout = (type, key, url = null, existingLayout = null) => {
   const [data, isLoading] = useStaleData(fetchUrl, existingLayout || {}, existingLayout !== null);
 
   return [data, isLoading];
-}
+};
 
 /**
- * Hook to fetch WMS DescribeLayer response by url or cache
- * @returns array of useState properties layers and loading state
+ * Hook to fetch map config by key or cache
+ * @function
+ * @returns {Array<object|boolean>} mapConfig, mapConfigLoading
  */
 export const useMapConfig = (map_key) => {
   const url = `/api/map/config/getForMap/${map_key}`;
@@ -45,10 +48,15 @@ export const useMapConfig = (map_key) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
   return [mapConfig, mapConfigLoading];
-}
+};
 
+/**
+ * Hook to fetch config by key or cache
+ * @function useConfig
+ * @param {string} config_key
+ * @returns {Array<object|boolean>} config, loading
+ */
 export const useConfig = (config_key) => {
-
   const url = `/api/app/config/get?configKey=${config_key}`;
   // If debug mode is enabled, we will use the fake data
   const defaultValue = {};
@@ -67,11 +75,12 @@ export const useConfig = (config_key) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
   return [config, configLoading];
-}
+};
 
 /**
  * Hook that will fetch data from a url and cache it
  * If the isDev flag is set to true, the first fetch will be faked and defaultValue will be returned and set in cache
+ * @function
  * @param {string} url - url to fetch data from
  * @param {any} defaultValue - default value to use if the cache is empty
  * @param {boolean} useDefault - flag to use the default value
@@ -117,7 +126,7 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
       return () => {
         timeRef && clearTimeout(timeRef);
         mounted = false;
-      }
+      };
     } else if (CACHE[cacheId] !== undefined) {
       setData(CACHE[cacheId]);
       setLoading(false);
@@ -149,19 +158,20 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
       return () => {
         controller.abort();
         mounted = false;
-      }
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [data, isLoading];
-}
+};
 
 /**
  * Hook to use Axios get request without caching
- * @param {*} url - url to fetch
- * @param {*} defaultValue - default value of the data state
- * @returns array of useState properties data and loading state
+ * @function
+ * @param {string} url - url to fetch
+ * @param {object} defaultValue - default value of the data state
+ * @returns {Array<object|boolean|function>} data, isLoading, setData
  */
 export const useGet = (url, defaultValue = null) => {
   const [data, setData] = useState(defaultValue);
@@ -189,7 +199,7 @@ export const useGet = (url, defaultValue = null) => {
           setLoading(false);
         }
       });
-    }
+    };
 
     getData();
 
@@ -197,11 +207,11 @@ export const useGet = (url, defaultValue = null) => {
     return () => {
       controller.abort();
       mounted = false;
-    }
+    };
   }, [url]);
 
   return [data, isLoading, setData];
-}
+};
 
 /**
  * Hook to use axios-retry to retry a request if it fails with a 504 error

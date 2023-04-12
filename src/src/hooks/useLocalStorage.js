@@ -17,7 +17,7 @@ export const getStorage = (key, defaultValue) => {
   }
 
   return defaultValue;
-}
+};
 
 /**
  * A hook to use localStorage as a model for state.
@@ -33,4 +33,4 @@ export const useLocalStorage = (key, defaultValue) => {
     localStorage.setItem(key, JSON.stringify(value));
   }, [key, value]);
   return [value, setValue];
-}
+};

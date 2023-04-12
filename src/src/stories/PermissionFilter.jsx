@@ -8,11 +8,25 @@ import { useAuth } from '../hooks/useAuth';
 /**
  * Component that checks if the user has the required permissions
  * Should set ONE of the following properties permission, any, OR all
- * permission {array of strings} - A single required permission
- * any {array of strings} - Passes if ANY of the permissions are met
- * all {array of strings} - Passes if ALL of the permissions are met
- * isRoute {boolean} - If true, the component will render a Navigate component instead of null if the user does not have the required permissions
- * children {React.ReactNode} - The children to render if the user has the required permissions
+ * @param {object} props
+ * @param {string} props.permission - A single required permission
+ * @param {array<string>} props.any - Passes if ANY of the permissions are met
+ * @param {array<string>} props.all - Passes if ALL of the permissions are met
+ * @param {boolean} props.isRoute - If true, the component will render a Navigate component instead of null if the user does not have the required permissions
+ * @param {React.ReactNode} props.children - The children to render if the user has the required permissions
+ * @returns {React.ReactElement} - The children to render if the user has the required permissions OR null if the user does not have the required permissions
+ *
+ * @example
+		SampleUsage:
+		<PermissionFilter permission="admin">
+				<div>Admin</div>
+		</PermissionFilter>
+		<PermissionFilter any={["admin", "user"]}>
+				<div>Admin or User</div>
+		</PermissionFilter>
+		<PermissionFilter all={["admin", "user"]}>
+				<div>Admin and User</div>
+		</PermissionFilter>
  */
 const PermissionFilter = ({ permission, any, all, isRoute, children, ...props }) => {
   // Get the user acls from the auth hook authState
@@ -42,7 +56,7 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, ...props })
   }
   // User has failed all the checks, return a null component (nothing rendered) or a Navigate component to the root.
   return returned;
-}
+};
 
 PermissionFilter.propTypes = {
   // ACL is a list of strings
@@ -51,7 +65,7 @@ PermissionFilter.propTypes = {
   any: PropTypes.array,
   all: PropTypes.array,
   isRoute: PropTypes.bool,
-}
+};
 
 PermissionFilter.defaultProps = {
   acl: [],
@@ -61,18 +75,4 @@ PermissionFilter.defaultProps = {
   isRoute: false,
 };
 
-
 export default PermissionFilter;
-
-/*
-		SampleUsage:
-		<PermissionFilter permission="admin">
-				<div>Admin</div>
-		</PermissionFilter>
-		<PermissionFilter any={["admin", "user"]}>
-				<div>Admin or User</div>
-		</PermissionFilter>
-		<PermissionFilter all={["admin", "user"]}>
-				<div>Admin and User</div>
-		</PermissionFilter>
-*/

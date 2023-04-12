@@ -13,8 +13,8 @@ const RadioOptions = ({ row, id, label, items, error, isRequired, ...props }) =>
           <FormControlLabel value={item.id} control={<Radio />} label={item.label} key={`${id}_${index}`} />
         ))}
       </>
-    )
-  }
+    );
+  };
 
   return (
     <FormControl error={!!error}>
@@ -30,7 +30,7 @@ const RadioOptions = ({ row, id, label, items, error, isRequired, ...props }) =>
       <FormErrorMessage error={error} />
     </FormControl>
   );
-}
+};
 
 RadioOptions.propTypes = {
   id: PropTypes.string.isRequired,
@@ -39,6 +39,6 @@ RadioOptions.propTypes = {
   row: PropTypes.bool,
   error: PropTypes.object,
   isRequired: PropTypes.bool,
-}
+};
 
 export default RadioOptions;

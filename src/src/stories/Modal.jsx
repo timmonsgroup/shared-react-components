@@ -1,4 +1,5 @@
-import * as React from 'react';
+/** @module Modal */
+import React from 'react';
 import Button from './Button';
 import PropTypes from 'prop-types';
 import { Dialog, DialogActions, DialogContent, IconButton, Typography } from '@mui/material';
@@ -7,6 +8,7 @@ import { Close } from '@mui/icons-material';
 /**
  * Wrapper of the Mui Dialog component
  * Prevent closing by clicking outside of the dialog by NOT passing in a handleClose prop
+ * @function
  * @param {object} props
  * @param {string} props.title - the title of the dialog
  * @param {string} props.okLabel - the label for the OK button
@@ -21,7 +23,7 @@ import { Close } from '@mui/icons-material';
  * @param {function} props.handleClose - the function to call when the dialog is closed
  * @param {string} props.okColor - the color of the OK button
  * @param {string} props.cancelColor - the color of the Cancel button
- * @returns {React.ReactElement}
+ * @returns {React.ReactElement} - React component
  */
 const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open, showX, children, hideActions, hideCancel, hideOk, okColor = 'primary', cancelColor = 'regressive', ...props }) => {
   const titleRender = () => {
@@ -46,7 +48,7 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
     }
 
     return <>{title}</>;
-  }
+  };
 
   return (
     <Dialog
@@ -60,14 +62,14 @@ const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open,
       <DialogContent>{children}</DialogContent>
       {hideActions ? null : (
         <DialogActions>
-          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={cancelColor}></ShowHidden>
+          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={cancelColor}/>
           <ShowHidden hide={hideOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} color={okColor} />
         </DialogActions>
       )
       }
     </Dialog>
   );
-}
+};
 
 Modal.propTypes = {
   open: PropTypes.bool.isRequired,
@@ -90,14 +92,21 @@ Modal.propTypes = {
   maxWidth: PropTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl']),
 };
 
+/**
+ * @function
+ * @param {object} props - props object
+ * @param {boolean} props.hide - whether to hide the button or not
+ * @param {object} props.props - props for the Button component
+ * @returns {React.ReactElement | null} - React component
+ */
 const ShowHidden = ({ hide, ...props }) => {
   return hide ? null :
     (
       <Button {...props} />
-    )
-}
+    );
+};
 ShowHidden.propTypes = {
   hide: PropTypes.bool
-}
+};
 
 export default Modal;

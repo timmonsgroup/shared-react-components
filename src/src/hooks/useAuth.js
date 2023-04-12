@@ -1,3 +1,4 @@
+/** @module useAuth */
 import React, {
   useState,
   useRef,
@@ -29,8 +30,11 @@ const loggedOutUser = {
   isSignedIn: false,
 };
 
-// Define the actions that can be dispatched
-// These represent the different state changes that the auth state can be in
+/**
+ * Define the actions that can be dispatched
+ * These represent the different state changes that the auth state can be in
+ * @constant ACTIONS
+ */
 const ACTIONS = {
   SET_CONFIG: 'SET_CONFIG',
   BEGIN_LOGIN: 'begin_login',
@@ -45,19 +49,29 @@ const ACTIONS = {
   SET_REFRESHING: 'set_refreshing',
 };
 
+/**
+ * Define the states that the stale check can be in
+ * @constant STALE_CHECK_STATES
+ */
 const STALE_CHECK_STATES = {
   NEW_SESSION: 'NEW_SESSION',
   STALE_CHECK_REQUESTED: 'STALE_CHECK_REQUESTED',
   STALE_CHECK_COMPLETE: 'STALE_CHECK_COMPLETE',
   STALE_CHECK_IN_PROGRESS: 'STALE_CHECK_IN_PROGRESS',
-}
+};
 
-// Valid states that allow logins to occur
-// If the auth state is not in this list, we will not allow logins
-// This will, for example, not allow someone to attempt to log in while already logged in
+/**
+ * Valid states that allow logins to occur
+ * If the auth state is not in this list, we will not allow logins
+ * This will, for example, not allow someone to attempt to log in while already logged in
+ * @constant VALID_LOGIN_STATES
+ */
 const VALID_LOGIN_STATES = [AUTH_STATES.INITIALIZING, AUTH_STATES.LOGGED_OUT, AUTH_STATES.TOKEN_STALE];
 
-// Initialize the auth state
+/**
+ * Define the initial state of the auth state
+ * @constant initialState
+ */
 const initialState = {
   state: AUTH_STATES.INITIALIZING,
   refreshToken: null,
@@ -70,6 +84,10 @@ const initialState = {
   },
 };
 
+/**
+ * This is the context that will be used to provide the auth state to its consumers
+ * @constant authContext
+ */
 export const authContext = createContext();
 
 let META_WHITE_LIST = [];
@@ -78,8 +96,17 @@ let META_WHITE_LIST = [];
 let APP_ID = '123-456';
 
 
-// Wrap the hook with a provider
-// Use cookieReference to differentiate between multiple apps using the same cookie
+/**
+ * Wrap the hook with a provider
+ * Use cookieReference to differentiate between multiple apps using the same cookie *
+ * @param {object} props - The props for the component
+ * @param {object} props.config - The config object
+ * @param {string} props.config.cookieReference - The cookie reference
+ * @param {array} props.whitelist - The whitelist array
+ * @param {object} props.children - The children
+ * @function ProvideAuth
+ * @returns {React.Context} The auth context provider
+ */
 export const ProvideAuth = ({ config, whitelist, children }) => {
   if (config?.cookieReference) {
     APP_ID = config.cookieReference;
@@ -113,8 +140,13 @@ export const useAuth = () => {
   return context;
 };
 
-// These are the properties and methods that the "useAuth" hook provides to its consumers
-// We are providing the auth state, login, and logout methods
+/**
+ * These are the properties and methods that the "useAuth" hook provides to its consumers
+ * We are providing the auth state, login, and logout methods
+ * @param {object} props - The props for the component
+ * @param {String[]} whitelist - The whitelist array
+ * @returns {object} The auth object
+ */
 const useProvideAuth = (props, whitelist) => {
   const [config] = useState(props);
   // We are using the useReducer hook to manage the auth state
@@ -222,7 +254,10 @@ const useProvideAuth = (props, whitelist) => {
    * This function is called to start the login process
    * It will open the login endpoint in a new tab
    * Should be exposed to the consumer as part of this hook
-   * @param {*} state The state to login with, this will be returned with a valid login
+   * @param {objec | string} state The state to login with, this will be returned with a valid login
+   * @function
+   * @async
+   * @returns {boolean|Promise<void>} True if the login was started, false if the login was not started
    */
   const login = async (state) => {
     // Check to see if the auth state is valid for a login
@@ -266,6 +301,8 @@ const useProvideAuth = (props, whitelist) => {
    * This function is called to start the logout process
    * It will open the logout endpoint in a new tab
    * Should be exposed to the consumer as part of this hook
+   * @function
+   * @async
    */
   const logout = async () => {
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
@@ -285,6 +322,11 @@ const useProvideAuth = (props, whitelist) => {
     else window.location.href = fetchUrl;
   };
 
+  /**
+   * Refresh the token
+   * @function
+   * @async
+   */
   const refresh = async () => {
 
     const refreshToken = authState.refreshToken || await getRefreshTokenFromSession();
@@ -294,13 +336,15 @@ const useProvideAuth = (props, whitelist) => {
     } else {
       logout_internal('refresh else');
     }
-  }
+  };
 
-  /*
+  /**
   * A Token has an expiration time
   * When we get close to the expiration time we will check if the user is active
   * If they are not active we will log them out
   * If they are active we will refresh the token
+  * @function
+  * @async
   */
   const checkIfStale = async () => {
     if (authState.staleCheckState === STALE_CHECK_STATES.STALE_CHECK_REQUESTED) {
@@ -328,20 +372,25 @@ const useProvideAuth = (props, whitelist) => {
         scheduleStaleCheck(60);
         return;
       }
-
     }
   };
 
+  /**
+   * Method to decode a JWT token and determine the expiration time
+   * @function
+   * @returns {integer} the time in seconds until the token expires
+   */
   const getTimeToExpired = () => {
     let decodedToken = decodeTokenToJWT(authState.bearerToken);
     let expiresAt = decodedToken.exp;
     let currentTime = Math.floor(Date.now() / 1000);
     return expiresAt - currentTime;
-  }
+  };
 
   /**
    * This function will schedule a stale check in the future
    * @param {integer} timeInSeconds the time in seconds to wait before triggering another stale check
+   * @function
    */
   const scheduleStaleCheck = (timeInSeconds) => {
     if (staleCheckTimeoutTracker !== -1) {
@@ -351,11 +400,13 @@ const useProvideAuth = (props, whitelist) => {
     staleCheckTimeoutTracker = setTimeout(() => {
       dispatch({ type: ACTIONS.SET_STALE_CHECK_STATE, staleCheckState: STALE_CHECK_STATES.STALE_CHECK_REQUESTED });
     }, timeInSeconds * 1000);
-  }
+  };
 
   /**
    * Parse the tokens from the url and dispatch the appropriate actions
-   * @param {*} tokenData
+   * @param {Array} tokenData the token data from the url
+   * @param {object} maybeUser the user object from the url
+   * @function
    * @returns {object}
    */
   const parseTokenAndUpdateState = async (tokenData, maybeUser) => {
@@ -432,7 +483,7 @@ const useProvideAuth = (props, whitelist) => {
     dispatch({
       type: ACTIONS.SET_STALE_CHECK_STATE,
       staleCheckState: STALE_CHECK_STATES.NEW_SESSION,
-    })
+    });
 
     // Now we need to get the permissions for the user
     if (!maybeUser || !maybeUser?.permissions) {
@@ -464,9 +515,10 @@ const useProvideAuth = (props, whitelist) => {
 
   /**
    * Called to reset the state of the auth object
+   * @function
+   * @async
    */
-  const logout_internal = async (debug) => {
-    // console.log('logout_internal: ', debug);
+  const logout_internal = async () => {
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
@@ -478,13 +530,20 @@ const useProvideAuth = (props, whitelist) => {
     dispatch({ type: ACTIONS.FINISH_LOGOUT });
   };
 
+  /**
+   * Dispatch the token stale action
+   * @function
+   * @async
+   */
   const logout_internal_soft = async () => {
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.TOKEN_STALE });
-  }
+  };
 
   /**
    * Attempt to refresh the token
+   * @async
+   * @function
    * @param {*} refreshToken the token used to call the refresh endpoint
    */
   const startWithRefreshToken = async (refreshToken) => {
@@ -509,9 +568,12 @@ const useProvideAuth = (props, whitelist) => {
     }
   };
 
-  /* This is called if we discovered a boot token in the session
+  /**
+   * This is called if we discovered a boot token in the session
    * This can happen when we authenticate without opening a new tab
    * The oAuth helper will set the boot token in the session and then return to the current page
+   * @async
+   * @function
    * @param {String} bootToken the token used to start the oAuth flow
    * @param {Object|null} maybeBootUser the user object stored in the session to start the oAuth flow
    */
@@ -530,6 +592,7 @@ const useProvideAuth = (props, whitelist) => {
    * We expect the message to come from the same origin
    * We then make sure that the event type is 'oauth-token'
    * @param {*} event the event that was posted to the window from the oAuth tab
+   * @function
    * deprecated
    */
   const handleMessage = (event) => {
@@ -546,6 +609,8 @@ const useProvideAuth = (props, whitelist) => {
   /**
    * This function will call to the permissions endpoint to get the permissions for the user
    * @param {String} bearerToken the bearer token to use for the call
+   * @async
+   * @function
    */
   const getPermissions = async (bearerToken) => {
     // We will; call to the /api/user/echo with our bearer token in order to get a response of the current ACLs
@@ -569,6 +634,11 @@ const useProvideAuth = (props, whitelist) => {
     }
   };
 
+  /**
+   * Just return the bearer token
+   * @function
+   * @returns {String} the bearer token
+   */
   const getBearerToken = () => {
     return authState.bearerToken;
   };
@@ -592,16 +662,27 @@ const useProvideAuth = (props, whitelist) => {
 
 let activeBearerToken = null;
 
+/**
+ * Get the active bearer token
+ * @function
+ * @returns {String} the active bearer token
+ */
 const getActiveBearerToken = () => {
   return activeBearerToken;
-}
+};
 
+/**
+ * set the active bearer token
+ * @function
+ * @param {string} bearerToken
+ */
 const setActiveBearerToken = (bearerToken) => {
   activeBearerToken = bearerToken;
-}
+};
 
 /**
  * Reducer hook method for the auth state
+ * @function
  * @param {*} nextState
  * @param {*} action
  * @returns {object}
@@ -676,19 +757,19 @@ const authReducer = (nextState, action) => {
       return {
         ...nextState,
         state: AUTH_STATES.REFRESHING_TOKEN,
-      }
+      };
     }
     case ACTIONS.SET_STALE_CHECK_STATE: {
       return {
         ...nextState,
         staleCheckState: action.staleCheckState,
-      }
+      };
     }
     case ACTIONS.SET_LAST_REQUEST_TIME: {
       return {
         ...nextState,
         lastRequestTime: action.time,
-      }
+      };
     }
     case ACTIONS.BEGIN_LOGOUT:
       return {
@@ -729,6 +810,9 @@ const authReducer = (nextState, action) => {
  * This function will attempt to get the refresh token from session storage
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
+ * @function
+ * @async
+ * @returns {String} the refresh token
  */
 const getRefreshTokenFromSession = async () => {
   try {
@@ -743,6 +827,9 @@ const getRefreshTokenFromSession = async () => {
 
 /**
  * This will attempt to get the subject from the cookie
+ * @function
+ * @async
+ * @returns {String} the subject
  */
 const getSubjectFromCookie = async () => {
   // Check to see if there is a cookie containing the sub
@@ -765,12 +852,15 @@ const getSubjectFromCookie = async () => {
   }
 
   return subject;
-}
+};
 
 /**
  * This function will attempt to get the boot token from session storage
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
+ * @function
+ * @async
+ * @returns {String} the boot token
  */
 const getBootTokenFromSession = async () => {
   try {
@@ -789,6 +879,7 @@ const getBootTokenFromSession = async () => {
  * When we authenticate, if we are given a refresh token, we will store it in session storage
  * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
  * @function
+ * @async
  */
 const getBootUserFromSession = async () => {
   try {
@@ -806,6 +897,12 @@ const getBootUserFromSession = async () => {
   return null;
 };
 
+/**
+ * Checks to see if the config object is valid
+ * @param {object} config
+ * @function
+ * @returns {boolean} true if the all the required bits of config are present
+ */
 const isValidConfig = (config) => {
   let keys = Object.keys(config);
 
@@ -822,6 +919,8 @@ const isValidConfig = (config) => {
 /**
  * This function will store the refresh token in session storage
  * Later on we can retrieve it and use it to get a new access token
+ * @function
+ * @param {String} refreshToken
  */
 const setRefreshTokenInSession = (refreshToken) => {
   window.localStorage.setItem('refreshToken', refreshToken);
@@ -829,6 +928,8 @@ const setRefreshTokenInSession = (refreshToken) => {
 
 /**
  * This function will set the subject in the cookie
+ * @function
+ * @param {String} subject
  */
 const setSubjectInCookie = (subject) => {
   // Set our subject cookie
@@ -839,13 +940,13 @@ const setSubjectInCookie = (subject) => {
       domain = domain.split('.').slice(1).join('.');
 
 
-      let cookie = { name: 'sub', value: subject, sameSite: 'lax' }
+      let cookie = { name: 'sub', value: subject, sameSite: 'lax' };
 
       if (domain && domain !== 'localhost') {
         cookie.domain = domain;
       }
 
-      window.cookieStore.set(cookie)
+      window.cookieStore.set(cookie);
     } else {
       // Set or replace the cookie so that sub is set to the subject
       const oldValue = document.cookie.split(';');
@@ -856,10 +957,11 @@ const setSubjectInCookie = (subject) => {
   } catch (ex) {
     console.debug('Error setting refreshToken cookie', ex);
   }
-}
+};
 
 /**
  * This function will clear the refresh token from session storage
+ * @function
  */
 const clearRefreshTokenInSession = () => {
   window.sessionStorage.removeItem('refreshToken');
@@ -869,21 +971,20 @@ const clearRefreshTokenInSession = () => {
 
 /**
  * This will clear the subject cookie
+ * @function
+ * @async
  */
 const clearSubjectCookie = async () => {
   let domain = window.location.hostname.split('.').slice(1).join('.');
-  let deleted = false;
   try {
     // FireFox doesn't support cookieStore
     if (window.cookieStore) {
       await window.cookieStore.delete('sub', { domain });
-      deleted = true;
     } else {
       // Set or replace the cookie so that sub is set to the subject
       const oldValue = document.cookie.split(';');
       const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
       document.cookie = newValue.join(';');
-      deleted = true;
     }
   } catch (ex) {
     console.debug('Error clearing refreshToken cookie', ex);
@@ -893,4 +994,4 @@ const clearSubjectCookie = async () => {
   // So we will set it to an empty string
   // Setting to special string so the application can check it if logged itself out of it if another app did it
   setSubjectInCookie(APP_ID);
-}
+};

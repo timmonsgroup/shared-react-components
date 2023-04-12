@@ -15,22 +15,22 @@ const useIsModal = (modalClosed, debugId) => {
     if (debugId) {
       console.log(`${debugId} ${message}`);
     }
-  }
+  };
 
   const onClose = () => {
     debug('onClose');
     setOpen(false);
-  }
+  };
 
   const onOk = () => {
     debug('onOk');
     setOpen(false);
-  }
+  };
 
   const onCancel = () => {
     debug('onCancel');
     setOpen(false);
-  }
+  };
 
   // Monitors the open state and calls the modalClosed function when the modal is closed
   useEffect(() => {
@@ -44,6 +44,6 @@ const useIsModal = (modalClosed, debugId) => {
   }, [open]);
 
   return { open, setOpen, onClose, onOk, onCancel, previousOpen };
-}
+};
 
 export default useIsModal;

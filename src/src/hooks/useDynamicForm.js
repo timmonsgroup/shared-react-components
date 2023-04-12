@@ -1,5 +1,6 @@
+/** @module useDynamicForm */
 //Third party bits
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useForm } from 'react-hook-form';
@@ -132,7 +133,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
       section.fields.forEach((fieldPath) => {
         const field = parsedLayout.fields.get(fieldPath) || {};
         const { render } = field || {};
-        if (!render.hidden)  {
+        if (!render.hidden) {
           visibleCount++;
         }
 
@@ -166,8 +167,10 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
     if (hasWatches && !subscription) {
       /**
        * Method to complete the watch logic and update state.
+       * @function
        * @param {array} updatedFields - array of field ids that need to be modified and if it was an "update" or "reset"
        * @param {object} asyncThings - object of async render bits that should be folded into the layouts
+       *
        */
       const finishWatch = (updatedFields, asyncThings = {}) => {
         const dynValid = {};
@@ -251,16 +254,18 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
             resetField(field);
           }
         });
-      }
+      };
 
       /**
        * Loads the data for the async fields
-       * @param {*} fieldId - id of the field that is being loaded
-       * @param {*} url - url to load the data from
-       * @param {*} mappedId - property to use when mapping the id
-       * @param {*} mappedLabel - property to use when mapping the label
-       * @param {*} triggerFieldId - id of the field that triggered the load
-       * @returns promise
+       * @function
+       * @async
+       * @param {string} fieldId - id of the field that is being loaded
+       * @param {string} url - url to load the data from
+       * @param {string} mappedId - property to use when mapping the id
+       * @param {string} mappedLabel - property to use when mapping the label
+       * @param {string} triggerFieldId - id of the field that triggered the load
+       * @returns {Promise<Object[]>} - array of objects with id and label properties(by default)
        */
       const fetchData = async (fieldId, url, mappedId, mappedLabel, triggerFieldId) => {
         const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
@@ -276,7 +281,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
             return data?.map((opt) => {
               const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
               const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
-              return { id, label }
+              return { id, label };
             });
         }
         ).catch(error => {
@@ -286,7 +291,7 @@ export const useDynamicForm = (layoutOptions = {}, incomingValues = {}, urlDomai
           }
         });
         return things || [];
-      }
+      };
 
       // There may be a way to dynamically watch just the needed fields, they all seem hacky
       // This subscription will fire on every change

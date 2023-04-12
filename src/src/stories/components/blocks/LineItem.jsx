@@ -7,7 +7,7 @@ const LineItem = ({label, value, units, ...props}) => {
   return (<Typography {...props}>
     <b>{label}:</b> {value}{units ? ` ${units}` :''}
   </Typography>);
-}
+};
 
 LineItem.propTypes = {
   label: PropTypes.string,

@@ -31,6 +31,8 @@ const darkBlue = '#1F4765';
 const lightBlue = '#2b5c92';
 const lightGray = '#C8C8C8';
 const orange = '#D16400';
+const fontFamily = '"PT Sans", "Helvetica", "Arial", "sans-serif"';
+const darkGrey = '#878787';
 
 // This is the base theme that is used to create the theme for the app
 // It is recommended to create your own theme and then merge it with the base theme
@@ -63,6 +65,12 @@ const baseThemeProperties = {
     '& .row-odd': { // Odd rows are slightly darker
       backgroundColor: '#e6ecf2',
     },
+  },
+  anyFieldLabel: {
+    marginBottom: '0.5rem',
+    helperText: {
+      marginTop: '0.5rem',
+    }
   },
   gridActionItem: {
     types: {
@@ -235,7 +243,9 @@ const baseThemeProperties = {
     },
   },
   typography: {
-    fontFamily: ['"PT Sans"', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+    allVariants: {
+      fontFamily: '"PT Sans", "Helvetica", "Arial", "sans-serif"',
+    },
     navLink: {
       fontFamily: 'inherit',
       fontSize: '0.875rem',
@@ -246,6 +256,7 @@ const baseThemeProperties = {
       marginBottom: 2,
     },
     subHeader: {
+      fontFamily: 'inherit',
       fontSize: '0.875rem',
       fontWeight: 'bold',
       color: darkBlue,
@@ -253,6 +264,7 @@ const baseThemeProperties = {
       marginBottom: 2,
     },
     inspector: {
+      fontFamily: 'inherit',
       fontSize: '0.875rem',
       marginTop: '8px',
       marginBottom: '8px',
@@ -263,10 +275,18 @@ const baseThemeProperties = {
       marginBottom: '8px',
     },
     sectionHeader: {
+      fontFamily: 'inherit',
       fontSize: '1rem',
       fontWeight: 'bold',
       color: darkBlue,
       marginTop: 2,
+      marginBottom: 2,
+    },
+    sectionDescription: {
+      fontSize: '1rem',
+      fontStyle: 'italic',
+      color: darkGrey,
+      marginTop: 0,
       marginBottom: 2,
     },
     panelHeader: {
@@ -284,16 +304,25 @@ const baseThemeProperties = {
       marginBottom: '0',
       textAlign: 'center',
     },
+    clusterEmptyText: {
+      marginBottom: '8px',
+      fontSize: '1rem',
+      fontStyle: 'italic',
+      color: darkGrey,
+    }
   },
   components: {
     MuiTypography: {
       defaultProps: {
+        fontFamily,
         variantMapping: {
           sectionHeader: 'h1',
           subHeader: 'h2',
           modalTitle: 'h2',
           panelHeader: 'h2',
           inspector: 'p',
+          sectionDescription: 'p',
+          clusterEmptyText: 'p',
           navLink: 'a'
         },
       },
@@ -396,6 +425,38 @@ const baseThemeProperties = {
         },
         {
           props: {
+            variant: 'inlineClusterRemove',
+          },
+          style: {
+            borderRadius: 28,
+            color: '#DA0000',
+            background: 'none',
+            '&:hover': {
+              background: '#DA0000',
+              color: '#FFFFFF',
+            },
+          },
+        },
+        {
+          props: {
+            variant: 'clusterAdd',
+          },
+          style: ({theme}) => {
+            const mainColor = theme.palette.primary.main;
+            return {
+              padding: '0px',
+              color: mainColor,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              background: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              }
+            };
+          }
+        },
+        {
+          props: {
             variant: 'dashed',
           },
           style: {
@@ -430,6 +491,34 @@ const baseThemeProperties = {
       styleOverrides: {
         tooltip: {
           fontSize: '14px',
+        }
+      }
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: '#CBCBCB'
+        }
+      }
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: ({ className, theme }) => {
+          const clusterI = className?.toLowerCase().indexOf('cluster-field-label');
+          const color = clusterI !== -1 ? theme.palette.primary.main : '#505050';
+          return {
+            color,
+            fontSize: '16px',
+            fontWeight: 'bold',
+          };
+        }
+      }
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: darkGrey,
+          fontSize: '16px',
         }
       }
     },

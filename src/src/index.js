@@ -1,11 +1,7 @@
 export { ActionLinksRow, FlexCard, HeadingFlexRow, LineItem } from './stories/components/blocks';
 export { default as Inspector } from './stories/components/inspector/Inspector';
 
-export {
-  AnyField, AppBar, Button, ContainerWithCard, FormErrorMessage, GenericForm, LineLoader,
-  LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, AnyFieldLabel, TooltipIcon,
-  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
-} from './stories';
+export * from './stories';
 
 export {
   default as defaultMuiTheme,
@@ -39,5 +35,8 @@ export {
   parseField, getFieldValue, processFieldValue,
 
   // useDynamicForm exports
-  useDynamicForm
+  useDynamicForm,
+
+  // useConfigForm exports
+  processDynamicFormLayout, useConfigForm, fetchChoices
 } from './hooks/index';

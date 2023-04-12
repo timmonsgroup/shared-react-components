@@ -1,6 +1,5 @@
 import { Typography, Card, CardContent } from '@mui/material';
 import React from 'react';
-import Button from './Button';
 import PropTypes from 'prop-types';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -33,7 +32,7 @@ Primary.propTypes = {
   color: PropTypes.string,
   label: PropTypes.string,
   variant: PropTypes.string,
-}
+};
 
 export const Secondary = Template.bind({});
 Secondary.args = {

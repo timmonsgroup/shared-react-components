@@ -34,7 +34,7 @@ const GenericLayout = ({ data, layout, actions, themeGroup, ...props }) => {
         return <div>Unknown layout type: {processLayout.type}</div>;
     }
 
-  }
+  };
   return <Stack
     spacing={2}
     direction="column"

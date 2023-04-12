@@ -1,9 +1,22 @@
+/** @module ActionLinksRow */
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Link, Divider, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
+/**
+ * @function ActionLinksRow
+ * @param {object} props - props object
+ * @param {object} props.links - array of link objects
+ * @param {string} props.links.label - label for the link
+ * @param {string} props.links.url - url for the link
+ * @param {string} props.links.target - target for the link
+ * @param {boolean} props.includeDivider - whether to include a divider above the links
+ * @param {object} props.themeGroup - theme object
+ * @param {object} props.themeGroup.actionLinkRow - theme object for the action link row
+ * @returns {React.ReactElement} - React component
+ */
 const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
   const theme = useTheme();
 
@@ -25,7 +38,7 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
           <Link sx={alr} marginLeft="3px" key={index} href={url} target={target} rel="noopener noreferrer">
             {label}
           </Link>
-        )
+        );
       }
       return (
         <>
@@ -36,14 +49,14 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
         </>
       );
     });
-  }
+  };
 
   const renderDivider = (includeDivider) => {
     if (includeDivider) {
       return <Divider />;
     }
     return null;
-  }
+  };
 
   return (
     <React.Fragment>
@@ -53,7 +66,7 @@ const ActionLinksRow = ({ links, includeDivider = true, themeGroup }) => {
       </Box>
     </React.Fragment>
   );
-}
+};
 
 ActionLinksRow.propTypes = {
   links: PropTypes.arrayOf(PropTypes.shape({

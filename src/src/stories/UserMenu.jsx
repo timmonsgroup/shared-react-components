@@ -63,7 +63,7 @@ UserMenu.propTypes = {
   onLogin: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
   links: PropTypes.arrayOf(PropTypes.shape({ title: PropTypes.string, href: PropTypes.string })),
-}
+};
 
 UserMenu.defaultProps = {
   user: null,

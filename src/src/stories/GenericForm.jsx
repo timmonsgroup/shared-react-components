@@ -1,3 +1,4 @@
+/** @module GenericForm */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -49,7 +50,18 @@ import axios from 'axios';
  * @param {string} props.submitColor - The color of the submit button
  * @param {string} props.editColor - The color of the edit button
  * @returns {React.ReactElement} - The component
+ *
+ * @example
+ * //example of choiceFormatter function
+const choiceFormatter = (fieldId, res, otherOptions) => {
+  const { mappedId } = otherOptions || {};
+  return res?.data?.map((opt) => {
+    const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+    return { id, label: opt.name || opt.label }
+  })
+}
  */
+
 const GenericForm = ({
   formTitle, headerTitle, cancelUrl, successUrl, isEdit, defaultValues, layoutOptions = {}, twoColumn = false,
   domainUrl, unitLabel, helpText, submitUrl, formatPayload, onSuccess, alternatingCols = false, iconOptions = {},
@@ -57,7 +69,7 @@ const GenericForm = ({
   submitColor = 'primary', editColor = 'primary', hideEmptySections = true
 }) => {
   const [modifying, setModifying] = useState(false);
-  const { sections, layoutLoading, control, reset, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
+  const { sections, layoutLoading, control, reset, processing, handleSubmit } = useDynamicForm(layoutOptions, defaultValues, domainUrl, setModifying, asyncOptions);
   const nav = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -121,7 +133,7 @@ const GenericForm = ({
         <ContainerWithCard>
           <LineLoader message="Loading..." />
         </ContainerWithCard>
-      )
+      );
     }
 
     const theSection = twoColumn ? renderTwoColumnSection : renderFormSection;
@@ -142,7 +154,7 @@ const GenericForm = ({
               </Stack>
           }
         />
-        <LoadingSpinner isActive={modifying} />
+        <LoadingSpinner isActive={modifying || processing} />
         <Container sx={{ position: 'relative', marginTop: '16px' }} maxWidth={false}>
           <form data-src-form="genericForm">
             {sections.map((section, index) => {

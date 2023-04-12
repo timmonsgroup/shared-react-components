@@ -1,3 +1,4 @@
+/** @module AppBar */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -11,6 +12,10 @@ import PermissionFilter from './PermissionFilter';
 //We are making the bold and, hopefully, correct assumption that your application will always use 'Can Sign In' as the permission string
 import { ACLS } from '../constants';
 
+/**
+ * The default theme for the app bar
+ * @type {object}
+ */
 const theTheme = {
   appBar: {
     logo: {
@@ -21,10 +26,11 @@ const theTheme = {
       position: 'relative'
     },
   }
-}
+};
 
 /**
  * App Bar Component for the application
+ * @function AppBar
  * @param {object} props
  * @param {object} props.user - The user object from the authState
  * @param {function} props.onLogout - A logout function to call when the user clicks the logout button
@@ -132,6 +138,7 @@ AppBar.propTypes = {
   logoUrl: PropTypes.string,
   userLinks: PropTypes.array,
   buttonVariant: PropTypes.string,
+  themeGroup: PropTypes.shape({}),
 };
 
 AppBar.defaultProps = {

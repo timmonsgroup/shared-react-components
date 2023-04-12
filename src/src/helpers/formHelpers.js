@@ -1,8 +1,25 @@
+/** @module formHelpers */
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
-import { sortOn } from './helpers.js';
+import { sortOn, functionOrDefault, isObject } from './helpers.js';
 import {
   string, array, date, number, object
 } from 'yup';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * @constant {Object} VALID_PATTERNS - regex patterns for validating fields
+ * @property {RegExp} PHONE - regex pattern for validating phone numbers
+ * @property {RegExp} EMAIL - regex pattern for validating email addresses
+ * @property {RegExp} ZIP - regex pattern for validating zip codes
+ */
+export const VALID_PATTERNS = Object.freeze({
+  PHONE: /^$|^\d{3}-\d{3}-\d{4}$/,
+  EMAIL: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+  ZIP: /^$|^\d{5}(-\d{4})?$/,
+});
 
 /**
  * Create a yup schema for a string field
@@ -17,10 +34,10 @@ export function yupString(label, isRequired = true, reqMessage) {
 }
 /**
  * Create a yup schema for a date field
- * @param {*} label
- * @param {*} isRequired
- * @param {*} msg
- * @param {*} reqMessage
+ * @param {string} label - label for the field
+ * @param {boolean} isRequired - is the field required
+ * @param {string} msg - message to display if the field is not a valid date
+ * @param {string} reqMessage - message to display if the field is required
  * @returns {YupSchema} - yup schema for a date field
  */
 export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
@@ -141,6 +158,7 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
  * @param {string} label - label for the field
  * @param {string|number} maxValue - the max value the field can be
  * @param {boolean} isInt - should the test be for an integer or a float
+ * @function
  * @returns {YupSchema}
  */
 const addMaxValue = (schema, label, maxValue, isInt) => {
@@ -170,6 +188,7 @@ const addMaxValue = (schema, label, maxValue, isInt) => {
  * @param {string} label - label for the field
  * @param {string|number} minValue - the max value the field can be
  * @param {boolean} isInt - should the test be for an integer or a float
+ * @function
  * @returns {YupSchema}
  */
 const addMinValue = (schema, label, minValue, isInt) => {
@@ -294,10 +313,19 @@ export function yupMultiselect(label, isRequired = true, reqMessage) {
  */
 export function getSelectValue(multiple, inData) {
   if (multiple) {
-    return sortOn((inData)).map((con) => con?.id.toString());
+    return sortOn((inData)).map((con) => {
+      if (isObject(con)) {
+        return con?.id;
+      }
+      return con;
+    });
   }
 
-  return (inData)?.id?.toString() || '';
+  if (isObject(inData)) {
+    return inData?.id?.toString() || '';
+  }
+
+  return inData?.toString() || '';
 }
 
 /**
@@ -363,9 +391,27 @@ export function createFieldValidation(type, label, validationMap, field) {
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT:
-    case FIELDS.LINK:
+    case FIELDS.LINK: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
+
+      if (type !== FIELDS.LINK) {
+        const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
+        if (isEmail) {
+          validation = validation.email('Please enter a valid email address');
+        }
+        // TODO: Rework to allow for custom regex via a field property
+        // like field.render.validationRegex and field.render.validationMessage
+        const isZip = !!validationMap.get(VALIDATIONS.ZIP);
+        if (isZip) {
+          validation = validation.matches(VALID_PATTERNS.ZIP, 'Please enter a valid zip code in the format of xxxxx or xxxxx-xxxx');
+        }
+        const isPhone = !!validationMap.get(VALIDATIONS.PHONE);
+        if (isPhone) {
+          validation = validation.matches(VALID_PATTERNS.PHONE, 'Please enter a valid phone number in the format of xxx-xxx-xxxx');
+        }
+      }
       break;
+    }
     case FIELDS.INT:
       validation = yupInt(
         label,
@@ -431,24 +477,20 @@ export function createFieldValidation(type, label, validationMap, field) {
     // }
 
     // TODO: Yes clusterfield I know you are here, but I don't know what to do with you yet
-    // case FIELDS.CLUSTER: {
-    //   dynField.render.is = 'ClusterField';
-    //   // Loop through and process fields tied to the cluster.
-    //   const subFieldValidations = {};
-    //   const subFields = field.layout?.map((subF) => {
-    //     const { field: subField, validation: subValid } = getStructure(subF);
-    //     if (subF.model) {
-    //       const subName = subF.model?.name || 'unknownSub';
-    //       if (subValid) {
-    //         subFieldValidations[subName] = subValid;
-    //       }
-    //     }
-    //     return subField;
-    //   });
-    //   dynField.render.fields = subFields;
-    //   validation = array().of(object().shape(subFieldValidations).strict());
-    //   break;
-    // }
+    case FIELDS.CLUSTER: {
+      const subFieldValidations = {};
+      // Loop through and extract the validations for each subfield
+      field.subFields?.forEach((subF) => {
+        subFieldValidations[subF.render?.name] = subF.validations;
+      });
+      // Create the validation for the cluster field which is an array of objects
+      validation = array().label(label).of(object().shape(subFieldValidations).strict());
+      if (required) {
+        const minMessage = reqMessage ? reqMessage : `${label} must have at least one item`;
+        validation = validation.min(1, minMessage);
+      }
+      break;
+    }
 
     default:
       break;
@@ -456,3 +498,210 @@ export function createFieldValidation(type, label, validationMap, field) {
 
   return validation;
 }
+
+/**
+ * @typedef {object} SubmitOptions
+ * @property {function} enqueueSnackbar - function to enqueue a snackbar
+ * @property {function} nav - function to navigate to a url
+ * @property {function} onSuccess - function to call on successful submit (if provided will NOT call setModifying OR nav)
+ * @property {function} formatSubmitError - function to format the error message
+ * @property {function} checkSuccess - function to check if the submit was successful
+ * @property {function} onError - function to call on error (if provided will NOT call setModifying)
+ * @property {string} unitLabel - label for the unit being submitted
+ * @property {string} successUrl - url to navigate to on success
+ * @property {string} submitUrl - url to submit to
+ * @property {function} setModifying - function to set the modifying state
+ * @property {function} formatSubmitMessage - function to format the success message
+ * @property {boolean} suppressSuccessToast - true to suppress the success toast
+ * @property {boolean} suppressErrorToast - true to suppress the error toast *
+ */
+
+/**
+ * Method to reduce the amount of boilerplate code needed to submit a form
+ * @function
+ * @async
+ * @param {object} formData - data to submit
+ * @param {boolean} isEdit - true if editing, false if creating
+ * @param {SubmitOptions} options - options object
+ * @returns {Promise<void>} - promise that resolves when the submit is complete
+ */
+export const attemptFormSubmit = async (formData, isEdit, {
+  enqueueSnackbar, nav, onSuccess, onError, formatSubmitError, checkSuccess,
+  unitLabel = 'Item', successUrl, submitUrl, setModifying,
+  formatSubmitMessage, suppressSuccessToast, suppressErrorToast
+}) => {
+  if (!submitUrl) {
+    console.log('No submit url provided. Data to submit:', formData);
+    return;
+  }
+
+  const successCheck = functionOrDefault(checkSuccess, (result) => result?.data?.streamID);
+  const modifier = functionOrDefault(setModifying, null);
+  const queueSnack = functionOrDefault(enqueueSnackbar, null);
+  const successCall = functionOrDefault(onSuccess, null);
+  const errorCall = functionOrDefault(onError, null);
+  let errorSnackMessage = null;
+  let successSnackMessage = null;
+  if (queueSnack) {
+    errorSnackMessage = functionOrDefault(formatSubmitError,
+      (result, { isEdit, unitLabel, serverError }) => {
+        return serverError && result?.response?.data?.error ? result?.response?.data?.error : `Error ${isEdit ? 'updating' : 'creating'} ${unitLabel}`;
+      }
+    );
+    successSnackMessage = functionOrDefault(formatSubmitMessage, (result, { isEdit, unitLabel }) => `${unitLabel} successfully ${isEdit ? 'updated' : 'created'}`);
+  }
+
+  if (modifier) {
+    modifier(true);
+  }
+
+  try {
+    const result = await axios.post(submitUrl, formData);
+    if (successCheck(result)) {
+      if (!suppressSuccessToast && queueSnack) {
+        queueSnack(successSnackMessage(result, { isEdit, unitLabel }), { variant: 'success' });
+      }
+      // If we have an onSuccess callback, call it otherwise navigate to the successUrl
+      if (successCall) {
+        successCall(result);
+      } else {
+        nav(successUrl);
+        if (modifier) {
+          modifier(false);
+        }
+        nav(successUrl);
+      }
+    } else {
+      if (errorCall) {
+        errorCall(result);
+      } else if (modifier) {
+        modifier(false);
+      }
+
+      if (!suppressErrorToast && queueSnack) {
+        queueSnack(errorSnackMessage(result, { isEdit, unitLabel }), { variant: 'error' });
+      }
+    }
+  } catch (error) {
+    if (!suppressErrorToast && queueSnack) {
+      // Sending a true flag to formatSubmitError indicates that the error came from the server
+      const errorMsg = errorSnackMessage(error, { isEdit, unitLabel, serverError: true });
+
+      queueSnack(errorMsg, { variant: 'error' });
+    }
+
+    if (errorCall) {
+      errorCall(error);
+    } else if (modifier) {
+      modifier(false);
+    }
+  }
+};
+
+/**
+ * @typedef {object} FormSubmitOptions
+ * @property {function} enqueueSnackbar - function to enqueue a snackbar
+ * @property {function} nav - function to navigate to a url
+ * @property {boolean} modifying - true if the form is currently being modified
+ * @property {function} setModifying - function to set the modifying state
+ */
+
+/**
+ * Helper to create hook bits for form submit
+ * @function
+ * @returns {FormSubmitOptions}
+ * @example
+ * const { modifying, setModifying, nav, enqueueSnackbar } = useFormSubmit();
+ */
+export const useFormSubmit = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const nav = useNavigate();
+  const [modifying, setModifying] = useState(false);
+
+  return { modifying, setModifying, nav, enqueueSnackbar };
+};
+
+/**
+ * @typedef {object} RowFields
+ * @property {ParsedField[]} fields - array of fields in the row
+ * @property {number} size - column size of the row (12 is full width, 6 is half width, etc)
+ * @property {number} maxColumns - maximum number of columns in the row
+ * @property {boolean} solitary - true if the row is a solitary field
+ * @property {boolean} isInline - true if the row is an inline field
+ */
+
+/**
+ * Give an array of fields, create an array of rows with the fields give a column count
+ * @param {ParsedField[]} fields
+ * @param {number} columnCount
+ * @returns {RowFields[]}
+ */
+export const createRowFields = (fields, columnCount, isInline) => {
+  const rows = [];
+  const cols = isInline ? 12 : columnCount || 1;
+  let col = 1;
+  let row = 1;
+  //Create the rows
+  fields.forEach((field) => {
+    if (field.render.solitary && !isInline) {
+      const rowObject = {
+        fields: [field],
+        solitary: true,
+        size: field.render.singleColumnSize || 12,
+        maxColumns: cols,
+        isInline
+      };
+      rows.push(rowObject);
+      row = rows.length;
+      col = 1;
+      return;
+    }
+
+    if (rows[row] === undefined) {
+      rows[row] = { fields: [], maxColumns: cols };
+    }
+    rows[row].fields.push(field);
+    col++;
+
+    if (col > cols) {
+      col = 1;
+      row++;
+    }
+  });
+
+  return rows;
+};
+
+// This is copied from useFormLayout.js cause jsDoc import ain't working
+/**
+ * @typedef {object} ParsedField
+ * @property {string} id - field id
+ * @property {string} label - field label
+ * @property {string} type - field type
+ * @property {boolean} hidden - if the field is hidden
+ * @property {Array} conditions - if the field is hidden
+ * @property {object} specialProps - special props for the field
+ * @property {object} [defaultValue] - default value for the field
+ * @property {object} [modelData] - model data for the field (found on the model.data)
+ * @property {Array<ParsedField>} [subFields] - subFields for the field if its type is FIELD_TYPES.CLUSTER (i.e. 100)
+ * @property {FieldRenderProps} render - render props for the field
+ */
+
+/**
+ * @typedef {object} FieldRenderProps
+ * @property {string} type - field type
+ * @property {string} label - field label
+ * @property {string} name - field name
+ * @property {boolean} hidden - if the field is hidden
+ * @property {boolean} [required] - if the field is required
+ * @property {boolean} disabled - if the field is disabled
+ * @property {string} iconHelperText - icon helper text
+ * @property {string} helperText - helper text
+ * @property {string} requiredErrorText - required error text
+ * @property {boolean} readOnly - if the field is read only
+ * @property {boolean} [multiple] - if the field is multiple
+ * @property {string} [placeholder] - placeholder text
+ * @property {object} linkFormat - link format
+ * @property {Array<object>} [choices] - choices for the field
+ * @property {YupSchema} validations - validations for the field
+ */

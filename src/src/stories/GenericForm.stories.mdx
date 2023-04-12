@@ -1,6 +1,7 @@
 import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
 import GenericForm from './GenericForm';
 import { HashRouter as Router } from 'react-router-dom';
+import { Paper, Grid } from '@mui/material';
 import { layout } from '../helpers/story-helpers/FormLayoutPreset';
 
 <Meta title="Form/GenericForm" component={GenericForm} />
@@ -21,6 +22,18 @@ export const choiceFormatter = (fieldId, res, otherOptions) => {
     };
   });
 };
+
+export const choiceFormatter2 = (fieldId, response, options) => {
+  console.log('choiceFormatter', fieldId, response, options);
+  const { data } = response || {};
+  const choiceDataList = data.facts;
+  const formattedChoices = choiceDataList.map((choiceDataItem, index) => {
+      return { id: index, label: choiceDataItem };
+  });
+
+  return formattedChoices;
+}
+
 export const availColors = [
   'primary',
   'secondary',
@@ -88,7 +101,7 @@ export const defaultProps = {
   twoColumn: true,
   formatPayload,
   headerTitle: 'I am a header title',
-  formTitle:'Generic Form',
+  formTitle: 'Generic Form',
   hideEmptySections: true,
   submitUrl: null,
   submitColor: 'primary',
@@ -105,10 +118,15 @@ export const defaultProps = {
 A `GenericForm` component incorporates a PAM style form layout to render.
 
 ## Multi Section With Conditionals
+
 This example shows how to use the `GenericForm` component to render a multi section form with conditional fields.
 
 <Canvas>
-  <Story name="Multi Section With Conditionals" argTypes={formArgs} args={defaultProps}>
+  <Story
+    name="Multi Section With Conditionals"
+    argTypes={formArgs}
+    args={defaultProps}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>

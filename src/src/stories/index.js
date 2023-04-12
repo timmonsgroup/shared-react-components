@@ -16,9 +16,27 @@ import RequiredIndicator from './RequiredIndicator';
 import SubHeader from './SubHeader';
 import Typeahead from './Typeahead';
 import SideBar from './SideBar';
+import {
+  ConfigForm,
+  FormSections,
+  ConfigFormProvider,
+  GenericConfigForm,
+  SectionRow
+} from './ConfigForm';
+import { SectionTop } from './Section';
+import DynamicField from './DynamicField';
+import ClusterField from './ClusterField';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,
-  LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon,
-  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar
+  LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon, DynamicField, ClusterField,
+  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar,
+
+  // ConfigForm exports
+  ConfigForm,
+  FormSections,
+  ConfigFormProvider,
+  GenericConfigForm,
+  SectionRow,
+  SectionTop
 };

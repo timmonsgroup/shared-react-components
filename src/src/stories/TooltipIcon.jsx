@@ -56,7 +56,7 @@ const TooltipIcon = ({ iconComponent, infoText, ...props }) => {
       </div>
     </ClickAwayListener>
   );
-}
+};
 
 TooltipIcon.propTypes = {
   iconComponent: PropTypes.elementType,

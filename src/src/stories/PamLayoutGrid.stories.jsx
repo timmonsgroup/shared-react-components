@@ -257,6 +257,17 @@ const layout = {
         'flex': 2
       },
       {
+        'label': 'Link',
+        'path': 'sampleLink',
+        'type': 100,
+        'model': {
+          'id': 8,
+          'modelid': 10,
+          'type': 4,
+          'name': 'sampleLink',
+        }
+      },
+      {
         'label': 'More Money',
         'path': 'moMoney',
         'type': 4,
@@ -334,7 +345,6 @@ WithDataAndActions.args = {
 };
 
 export const WithDataAndToolbar = Template.bind({});
-console.log('WithDataAndToolbar', WithDataAndToolbar);
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 WithDataAndToolbar.args = {
   data: data,

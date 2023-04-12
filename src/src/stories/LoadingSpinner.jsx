@@ -1,15 +1,19 @@
+/** @module LoadingSpinner */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Backdrop, Box, CircularProgress, Stack } from '@mui/material';
 
 /**
  * LoadingSpinner is a component that displays a spinner with an optional message
+ * @function
  * @param {object} props - The props for the component
  * @param {boolean} props.isActive - Whether the spinner is active
  * @param {string} props.variant - The variant of the spinner
  * @param {string} props.message - The message to display
  * @param {number} props.zIndex - Custom zIndex of the spinner - by default it is set to theme.zIndex.tooltip (1500) + 1
- * @returns React component
+ * @returns {React.ReactElement} - React component
+ * @example
+ * <LoadingSpinner isActive={true} />
  */
 const LoadingSpinner = ({ isActive, variant, message, zIndex }) => {
   /**
@@ -40,19 +44,19 @@ const LoadingSpinner = ({ isActive, variant, message, zIndex }) => {
       </Backdrop>
     </div>
   );
-}
+};
 
 LoadingSpinner.propTypes = {
   message: PropTypes.string,
   isActive: PropTypes.bool,
   variant: PropTypes.oneOf(['background', 'primary', 'accent', 'secondary', 'error', 'tertiary', 'success']),
   zIndex: PropTypes.number,
-}
+};
 
 LoadingSpinner.defaultProps = {
   message: null,
   isActive: false,
   variant: 'accent',
-}
+};
 
 export default LoadingSpinner;

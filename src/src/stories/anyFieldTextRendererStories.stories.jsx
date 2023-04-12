@@ -67,30 +67,30 @@ export const FloatField = Template.bind({});
 export const LinkField = Template.bind({});
 
 TextField.args = {
-  label: "Text Field",
+  label: 'Text Field',
   ...standardAnyFieldArgs,
-  requiredErrorText: "Text required",
+  requiredErrorText: 'Text required',
   type: 0,
 };
 
 LongTextField.args = {
-  label: "Long Text Field",
+  label: 'Long Text Field',
   ...standardAnyFieldArgs,
-  requiredErrorText: "Text required",
+  requiredErrorText: 'Text required',
   type: 1,
 };
 
 IntField.args = {
-  label: "Int Field",
+  label: 'Int Field',
   ...standardAnyFieldArgs,
-  requiredErrorText: "Whole number required",
+  requiredErrorText: 'Whole number required',
   type: 2,
 };
 
 FloatField.args = {
-  label: "Float Field",
+  label: 'Float Field',
   ...standardAnyFieldArgs,
-  requiredErrorText: "Whole number or decimal number required",
+  requiredErrorText: 'Whole number or decimal number required',
   type: 3,
   useFloatControls: true,
   integerDigits: undefined,
@@ -99,9 +99,9 @@ FloatField.args = {
 };
 
 LinkField.args = {
-  label: "Link Field",
+  label: 'Link Field',
   ...standardAnyFieldArgs,
-  requiredErrorText: "Link text required",
+  requiredErrorText: 'Link text required',
   type: 100,
 };
 

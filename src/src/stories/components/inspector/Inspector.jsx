@@ -42,7 +42,7 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
         <Divider />
       </>
     );
-  }
+  };
 
   const renderFeaturedCard = () => {
 
@@ -67,13 +67,13 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
     return (
       <Box sx={fcThemeHeading}>{featuredCard.heading}</Box>
     );
-  }
+  };
 
   const renderSingleCard = (card, index) => {
     return(
       <FlexCard key={index} themeGroup={tg} item={card}></FlexCard>
     );
-  }
+  };
 
   if(!cardData || cardData.length === 0) {
     return (
@@ -92,7 +92,7 @@ const Inspector = ({ cardData, featuredCard, featuredCardRenderer, heading, head
       {renderCardData}
     </div>
   );
-}
+};
 
 Inspector.propTypes = {
   cardData: PropTypes.arrayOf(PropTypes.shape({
