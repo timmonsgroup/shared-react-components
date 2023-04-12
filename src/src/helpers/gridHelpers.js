@@ -142,15 +142,42 @@ export const getValueNameOrDefault = (value, defaultValue) => {
 
 
 /**
+ * This function provides the basic formatting. We do not need to provide a getter or formatter for basic fields
+ * If the editable flag is set to true then we will set the editable property to true and provide a valueSetter
+ * @param {Object} muiGridColumn 
+ */
+export const addBasicFormatting = (muiGridColumn, editable) => {
+  if (editable) {
+    muiGridColumn.editable = true;
+    muiGridColumn.valueSetter = ({ value, row }) => {
+      // This does not work on the 'id' column BTW
+      row[muiGridColumn.field] = value;
+      return row;
+    };
+  }
+}
+
+/**
    * This takes a mui column and adds formatting to it to handle date fields
    * @param {Object} muiGridColumn - The column from the layout
    * @see https://mui.com/components/data-grid/filtering/#value-getter
    * @see https://mui.com/components/data-grid/filtering/#value-options
    */
-export const addDateFormatting = (muiGridColumn) => {
+export const addDateFormatting = (muiGridColumn, editable) => {
   muiGridColumn.type = 'date';
   muiGridColumn.valueGetter = ({ value }) => getDateOrDefault(value, null); // Value GETTER needs to return null for the date to be displayed as N/A and for the filter to work
   muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, muiGridColumn.nullValue);
+
+  if (editable) {
+    muiGridColumn.editable = true;
+    muiGridColumn.valueSetter = ({ value, row }) => {
+      // Update the row
+      debugger;
+      // This does not work on the 'id' column BTW
+      row[muiGridColumn.field] = value;
+      return row;
+    };
+  }
 };
 
 export const addCurrencyFormatting = (muiGridColumn) => {
@@ -172,11 +199,24 @@ export const addCurrencyFormatting = (muiGridColumn) => {
    * @see https://mui.com/components/data-grid/filtering/#value-getter
    * @see https://mui.com/components/data-grid/filtering/#value-options
    */
-export const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
+export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable) => {
   // single select
   muiGridColumn.type = 'singleSelect';
   muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name }; });
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
+
+  if (editable) {
+    muiGridColumn.editable = true;
+    muiGridColumn.valueSetter = ({ value, row }) => {
+      // Update the row
+      // Re-map the value to the object
+      const mapped = layoutColumn.render.choices.find(c => c.label === value);
+      if(mapped) {
+        row[muiGridColumn.field] = mapped.source;
+      }
+      return row;
+    };
+  }
 };
 
 
@@ -275,7 +315,7 @@ const addActionButtonFormatting = (muiGridColumn, actionData) => {
  * @param {LayoutColumn} column
  * @returns {MuiGridColumn}
  */
-export const convertLayoutColumnToMuiColumn = (column, nullValue) => {
+export const convertLayoutColumnToMuiColumn = (column, nullValue, editable) => {
   let ret = baseColumnConfig(column, nullValue);
 
   if (column.columnOverride && typeof column.columnOverride === 'function') {
@@ -287,14 +327,15 @@ export const convertLayoutColumnToMuiColumn = (column, nullValue) => {
     case 1: // Long Text // These two fields dont need any special formatting
     case 2: // Integer
     case 3: // Float
+      addBasicFormatting(ret, editable);
       break;
     case 4: // Currency
-      addCurrencyFormatting(ret); break;
-    case 5: addDateFormatting(ret); break; // Date
+      addCurrencyFormatting(ret, editable); break;
+    case 5: addDateFormatting(ret, editable); break; // Date
     case 6: // Flag
       break;
-    case 7: addSingleSelectFormatting(ret, column); break; // Single Select
-    case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
+    case 7: addSingleSelectFormatting(ret, column, editable); break; // Single Select
+    case 10: addObjectReferenceFormatting(ret, column, editable); break; // Object Link
     case 99: addActionButtonFormatting(ret, column.render); break; // Action Buttons
     case 100: addExternalLinkFormatting(ret); break; // Link
     default: console.error('Unknown column type', column.type); break;

@@ -352,6 +352,7 @@ function getStructure(field) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({
       label: item.name,
       id: item.id,
+      source: item,
     })) : [];
 
     dynField.render.choices = choices;

@@ -348,6 +348,8 @@ const PamLayoutGrid = ({
   }
 
   const nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
+  const editable = processedLayout.editable || false;
+
   const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
 
   // Check for optional actions
@@ -363,10 +365,9 @@ const PamLayoutGrid = ({
 
 
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
-  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, nullValue)).filter(Boolean); // Remove any columns that are not defined
+  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, nullValue, editable)).filter(Boolean); // Remove any columns that are not defined
   renderColumns = renderColumns.map((column) => addRendering(column));
-  renderColumns.editable = processLayout.editable || false;
-  console.info('renderColumns', renderColumns);
+  
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar ? {
     components: { Toolbar: MUIGridToolbar },
@@ -473,6 +474,7 @@ const PamLayoutGrid = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
         }
+        editMode="row"
       />
     </gridContext.Provider>
   );

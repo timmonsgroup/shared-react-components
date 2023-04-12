@@ -438,3 +438,18 @@ Change a sort and then check out the console. Note that the sort values now have
     {Template.bind({})}
   </Story>
 </Canvas>
+
+
+## Editable
+
+If the layout has the editable flag set to true the grid will also be editable. This will allow you to edit the data in the grid.
+
+<Canvas>
+  <Story name="Editable"
+    args={{
+      layout: { ...nullDataColumnLayout, editable: true }, 
+      data: data
+    }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
