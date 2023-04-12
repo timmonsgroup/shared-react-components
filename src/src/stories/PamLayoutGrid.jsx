@@ -365,6 +365,8 @@ const PamLayoutGrid = ({
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
   let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, nullValue)).filter(Boolean); // Remove any columns that are not defined
   renderColumns = renderColumns.map((column) => addRendering(column));
+  renderColumns.editable = processLayout.editable || false;
+  console.info('renderColumns', renderColumns);
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar ? {
     components: { Toolbar: MUIGridToolbar },

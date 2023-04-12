@@ -191,11 +191,11 @@ const useProvideAuth = (props, whitelist) => {
       }
     } else {
       // If the config is not valid, we will set the state to be error
-      console.error('useProvideAuth: config is invalid');
+      console.warn('useProvideAuth: config is invalid');
       dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initInfo]);
+  }, [initInfo, config]);
 
   // This will be run once and only once when is first called
   useEffect(() => {
