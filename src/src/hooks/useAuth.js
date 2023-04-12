@@ -148,7 +148,7 @@ export const useAuth = () => {
  * @returns {object} The auth object
  */
 const useProvideAuth = (props, whitelist) => {
-  const [config] = useState(props);
+  const {config} =props;
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
   const [authState, dispatch] = useReducer(authReducer, initialState);
@@ -192,7 +192,7 @@ const useProvideAuth = (props, whitelist) => {
     } else {
       // If the config is not valid, we will set the state to be error
       console.warn('useProvideAuth: config is invalid');
-      dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
+      //dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initInfo, config]);
