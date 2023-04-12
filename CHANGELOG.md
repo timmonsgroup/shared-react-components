@@ -1,4 +1,13 @@
 # Change Log #
+## Release 0.8.0 - 4/12/2023 ##
+### New Functionality ###
+#### Components ####
+* `ConfigForm`
+    * This is a new component that should be used as a wrapper around the `GenericConfigForm` component.
+    * It sets up the useFormContext hook from React Hook Form
+* `GenericConfigForm`
+    * This is a replacement for the `GenericForm` component.
+    * You must load the layout and data (if edit) for the form before you can render the form.
 
 ## Release 0.7.3 - 3/01/2023 ##
 ### New Functionality ###
