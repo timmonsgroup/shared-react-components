@@ -24,9 +24,6 @@ const defaultSX = {
   flexGrow: 1
 };
 
-
-
-
 const addObjectReferenceRendering = (muiGridColumn, { render, path }) => {
 
   let { linkFormat } = render;
@@ -56,8 +53,15 @@ const addObjectReferenceRendering = (muiGridColumn, { render, path }) => {
       return muiGridColumn.nullValue;
     };
   }
-}
+};
 
+/**
+ * This is our default renderer function for external links
+ * @function
+ * @param {Object} muiGridColumn - The column to render
+ *
+ * @returns {React.ReactElement}
+ */
 const addExternalLinkRendering = (muiGridColumn, columnConfig) => {
   muiGridColumn.renderCell = (params) => {
     return <LinkCellWrapper muiGridColumn={muiGridColumn} params={params} />;
@@ -367,7 +371,7 @@ const PamLayoutGrid = ({
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
   let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, nullValue, editable)).filter(Boolean); // Remove any columns that are not defined
   renderColumns = renderColumns.map((column) => addRendering(column));
-  
+
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar ? {
     components: { Toolbar: MUIGridToolbar },
