@@ -4,6 +4,8 @@ import {
   BrowserRouter as Router
 } from 'react-router-dom';
 
+import { authMock } from '../mocks/authMock';
+
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Util/PermissionFilter',
@@ -92,4 +94,18 @@ export const AllWhereOneDoesNotMatch = Template.bind({});
 AllWhereOneDoesNotMatch.args = {
   acl: sampleACL,
   all: ['admin', 'user', 'This Does Not Exist']
+};
+
+
+// This needs to be called on load for the story
+// authMock.setAuthState({
+//   user: null,
+//   state: 'LOGGING_IN',
+// });
+
+export const ShowLoggingIn = Template.bind({});
+ShowLoggingIn.args = {
+  acl: sampleACL,
+  all: ['admin', 'user', 'This Does Not Exist'],
+  showLoggingIn: true
 };

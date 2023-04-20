@@ -29,11 +29,19 @@ const Template = (args) => {
   );
 };
 
-const navLinks = [{ title: 'Home', href: '#' }, { title: 'About', href: '#/about' }];
+const navLinks = [
+  { title: 'Home', href: '#' }, 
+  { title: 'About', href: '#/about' }, 
+  {title: "Logged In Link", permission: "Foo"}, 
+  { title: "Secret", href: "#/secret", permission: "Can Has Secret" }  
+];
+
 const user = {
   name: 'Jane Doe',
   isSignedIn: true,
+  permissions: ["Can Sign In", "Foo"],
 };
+
 
 export const LoggedOut = Template.bind({});
 LoggedOut.args = {};
@@ -51,4 +59,12 @@ CustomLogo.args = {
   navLinks,
   user,
   logoUrl: 'https://www.logomaker.com/wpstatic/uploads/2015/06/Logo-Samples2-73-min.jpg'
+};
+
+export const LoggingIn = Template.bind({});
+LoggingIn.args = {
+  navLinks,
+  showLoggingIn: true,
+  onLogin: () => {},
+  onLogout: () => {},
 };

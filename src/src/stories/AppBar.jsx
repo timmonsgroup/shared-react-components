@@ -51,17 +51,14 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
 
   // Helper render method to simplify the final render returned
   const renderMenu = () => {
-    if (user) {
-      return (
-        <Stack spacing={10} direction="row">
-          <Stack spacing={2} direction="row">
-            {navLinks.map(renderButton)}
-          </Stack>
-          {renderUserArea()}
+    return (
+      <Stack spacing={10} direction="row">
+        <Stack spacing={2} direction="row">
+          {navLinks.map(renderButton)}
         </Stack>
-      );
-    }
-    return renderUserArea();
+        {renderUserArea()}
+      </Stack>
+    );
   };
 
   // On the off chance a button is defined that does not need special permission render it with the PermissionFilter.
@@ -79,7 +76,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
 
     if (item.permission) {
       return (
-        <PermissionFilter key={index} permission={item.permission}>
+        <PermissionFilter key={index} permission={item.permission}> showLoggingIn={ props.showLoggingIn || false } 
           {theButton}
         </PermissionFilter>
       );
@@ -91,7 +88,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
   // Render the user area if the user is allowed to sign in.
   const renderUserArea = () => {
     return (
-      <PermissionFilter permission={ACLS.SIGN_IN} debug="UserMenu">
+      <PermissionFilter permission={ACLS.SIGN_IN} debug="UserMenu" showLoggingIn={ props.showLoggingIn || false } >
         <UserMenu
           user={user}
           onLogin={onLogin}
@@ -139,14 +136,12 @@ AppBar.propTypes = {
   userLinks: PropTypes.array,
   buttonVariant: PropTypes.string,
   themeGroup: PropTypes.shape({}),
+  showLoggingIn: PropTypes.bool,
 };
 
 AppBar.defaultProps = {
   navLinks: [
-    { title: 'Home', href: '/' },
-    { title: 'Communities', href: '/communities' },
-    { title: 'Plans', href: '/pam/plans' },
-    { title: 'Explorer', href: '/explorer/hvra' },
+    { title: 'Home', href: '/' }
   ],
   user: null,
   logoUrl:
