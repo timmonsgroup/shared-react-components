@@ -355,21 +355,6 @@ function parseValidation(validationMap, data, debug = false) {
 }
 
 /**
- * @typedef {object} TriggerCondition
- * @property {string} when - trigger field id
- * @property {string} is - value to trigger on
- * @property {object} then - conditions
- * @property {boolean} isValid - if the field is valid
- */
-
-/**
- * @typedef {object} TriggerField
- * @property {string} id - field id
- * @property {Map<string, string>} fieldValues - map of field values
- * @property {Map<string, string>} touches - map of fields that trigger field could influence
- */
-
-/**
  * Parse conditions and add them to the triggerFieldMap
  * @function
  * @param {string} fieldId - field id

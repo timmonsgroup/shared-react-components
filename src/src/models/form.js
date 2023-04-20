@@ -1,3 +1,9 @@
+
+/**
+  * @module Types
+  * @see {@link https://stackoverflow.com/questions/49836644/how-to-import-a-typedef-from-one-file-to-another-in-jsdoc-using-node-js/73232942#73232942|stackoverflow}
+  */
+
 /**
  * @typedef {Object} ParsedFormLayout
  * @property {Array<ParsedSection>} sections - array of parsed sections
@@ -16,12 +22,19 @@
  */
 
 /**
+ * @typedef {object} ProcessedDynamicFormLayout
+ * @property {object} defaultValues - The default values for the form
+ * @property {object} validations - The validation schema for the form
+ * @property {object} fieldsToWatch - The fields that need to be watched for changes
+ */
+
+/**
  * @typedef {object} ParsedField
  * @property {string} id - field id
  * @property {string} label - field label
  * @property {string} type - field type
  * @property {boolean} hidden - if the field is hidden
- * @property {Array} conditions - if the field is hidden
+ * @property {Array<TriggerCondition>} conditions - if the field is hidden
  * @property {object} specialProps - special props for the field
  * @property {object} [defaultValue] - default value for the field
  * @property {object} [modelData] - model data for the field (found on the model.data)
@@ -63,6 +76,29 @@
  * @property {function} formatSubmitMessage - function to format the success message
  * @property {boolean} suppressSuccessToast - true to suppress the success toast
  * @property {boolean} suppressErrorToast - true to suppress the error toast *
+ */
+
+/**
+ * @typedef {object} TriggerCondition
+ * @property {string} when - trigger field id
+ * @property {string} is - value to trigger on
+ * @property {object} then - conditions
+ * @property {boolean} isValid - if the field is valid
+ */
+
+/**
+ * @typedef {object} TriggerField
+ * @property {string} id - field id
+ * @property {Map<string, string>} fieldValues - map of field values
+ * @property {Map<string, string>} touches - map of fields that trigger field could influence
+ */
+
+/**
+ * @typedef {object} FormSection
+ * @property {string} name - The name of the section
+ * @property {string} description - The description of the section
+ * @property {Array} fields - The fields in the section
+ * @property {boolean} visible - Whether the section is visible
  */
 
 /**

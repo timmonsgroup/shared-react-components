@@ -1,5 +1,6 @@
 /** @module useFormConfig */
 //Third party bits
+import '../models/form';
 import { useEffect, useMemo, useState, useLayoutEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
@@ -17,12 +18,6 @@ import {
 } from '../constants';
 import { objectReducer } from '../helpers';
 
-/**
- * @typedef {object} ProcessedDynamicFormLayout
- * @property {object} defaultValues - The default values for the form
- * @property {object} validations - The validation schema for the form
- * @property {object} fieldsToWatch - The fields that need to be watched for changes
- */
 
 /**
  * @function processDynamicFormLayout
@@ -149,14 +144,6 @@ const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) =
 
   return updatedFields;
 };
-
-/**
- * @typedef {object} FormSection
- * @property {string} name - The name of the section
- * @property {string} description - The description of the section
- * @property {Array} fields - The fields in the section
- * @property {boolean} visible - Whether the section is visible
- */
 
 /**
  * Creates a section object for the form
@@ -538,7 +525,7 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
 /**
  * Process the updated fields and update the render sections
  * @function processConditionalUpdate
- * @param {array} sections - Array of all the sections in the form
+ * @param {Array<FormSection>} sections - Array of all the sections in the form
  * @param {Map<string, object>} fields - Map of all the fields in the form
  * @param {Array<object>} updatedFields - Array of fields that need to be updated
  * @param {object} asyncThings - Object of async things that need to be loaded

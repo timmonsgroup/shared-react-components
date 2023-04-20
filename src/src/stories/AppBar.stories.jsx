@@ -3,6 +3,7 @@ import AppBar from './AppBar';
 import {
   BrowserRouter as Router
 } from 'react-router-dom';
+import { authContext } from '../src/hooks/useAuth';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -22,10 +23,20 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
   // The router wrapper is needed because the AppBar uses routing bits
+  const auth = {
+    authState: {
+      user: {
+        acl: null
+      }
+    }
+  };
+
   return (
-    <Router>
-      <AppBar {...args} />
-    </Router>
+    <authContext.Provider value={auth}>
+      <Router>
+        <AppBar {...args} />
+      </Router>
+    </authContext.Provider>
   );
 };
 
@@ -42,8 +53,8 @@ export const LoggedIn = Template.bind({});
 LoggedIn.args = {
   navLinks,
   user,
-  onLogin: () => {},
-  onLogout: () => {},
+  onLogin: () => { },
+  onLogout: () => { },
 };
 
 export const CustomLogo = Template.bind({});

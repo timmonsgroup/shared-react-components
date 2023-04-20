@@ -30,6 +30,7 @@ const theTheme = {
 
 /**
  * App Bar Component for the application
+ * @description This component is used to render the application's app bar. It is important to note if you are using the PermissionFilter component, you must have this component as a child of the useAuthProvider.
  * @function AppBar
  * @param {object} props
  * @param {object} props.user - The user object from the authState
