@@ -26,11 +26,12 @@ import {
 import { SectionTop } from './Section';
 import DynamicField from './DynamicField';
 import ClusterField from './ClusterField';
+import RenderExpandableCell from './RenderExpandableCell';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,
   LineLoader, LoadingSpinner, Modal, PamLayoutGrid, PermissionFilter, TooltipIcon, DynamicField, ClusterField,
-  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar,
+  RadioOptions, RequiredIndicator, SubHeader, Typeahead, SideBar, RenderExpandableCell,
 
   // ConfigForm exports
   ConfigForm,

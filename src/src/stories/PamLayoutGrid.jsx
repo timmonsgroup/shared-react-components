@@ -12,6 +12,7 @@ import Button from './Button';
 import { processLayout, processGenericLayout } from '../helpers/helpers.js';
 
 import { convertLayoutColumnToMuiColumn } from '../helpers/gridHelpers.js';
+import RenderExpandableCell from './RenderExpandableCell';
 
 const gridContext = React.createContext();
 
@@ -189,11 +190,24 @@ const addActionButtonRendering = (muiGridColumn, actionData) => {
   };
 };
 
-const addRendering = (column) => {
+/**
+ * Wraps the value in a component which determines if a tooltip should be displayed
+ * @function
+ * @param {object} muiGridColumn - The column used by the MUIGrid component
+ */
+const addExpandableRendering = (muiGridColumn) => {
+  muiGridColumn.renderCell = (params) => {
+    return (
+      <RenderExpandableCell muiGridColumn={muiGridColumn} {...params} />
+    );
+  };
+};
 
+const addRendering = (column) => {
   switch (column.source.type) {
     case 99: addActionButtonRendering(column, column.source.render); break; // Action Buttons
     case 100: addExternalLinkRendering(column); break; // Link
+    default: addExpandableRendering(column); break; // Expandable
   }
 
   return column;
