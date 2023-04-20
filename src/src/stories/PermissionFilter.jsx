@@ -5,6 +5,8 @@ import { Navigate } from 'react-router-dom';
 import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../helpers/helpers.js';
 import { useAuth } from '../hooks/useAuth';
 
+import { CircularProgress } from '@mui/material';
+
 /**
  * Component that checks if the user has the required permissions
  * Should set ONE of the following properties permission, any, OR all
@@ -31,6 +33,11 @@ import { useAuth } from '../hooks/useAuth';
 const PermissionFilter = ({ permission, any, all, isRoute, children, ...props }) => {
   // Get the user acls from the auth hook authState
   const { authState } = useAuth();
+
+  React.useEffect(() => {
+    console.log('authState', authState, props.showLoggingIn);
+  }, [authState]);
+
   // props.acl is a backdoor to allow storybook stories to pass in acls
   const acl = authState?.user?.acl || props.acl;
 
@@ -38,8 +45,14 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, ...props })
   const returned = isRoute === true ? (<Navigate to="/" />) : null;
 
   // There is not component to render OR there are no acls to check
-  if (!children || !acl || !acl.length) {
+  if ((!children || !acl || !acl.length) && !props.showLoggingIn) {
     return returned;
+  }
+
+  console.log('authState?.state', authState?.state, authState?.state === 'LOGGING_IN',  props.showLoggingIn);
+  if(authState?.state === 'LOGGING_IN' && props.showLoggingIn) {
+    console.log('showLoggingIn');
+    return <CircularProgress />;
   }
 
   // Check if the user has the singular permission
@@ -65,6 +78,7 @@ PermissionFilter.propTypes = {
   any: PropTypes.array,
   all: PropTypes.array,
   isRoute: PropTypes.bool,
+  showLoggingIn: PropTypes.bool,
 };
 
 PermissionFilter.defaultProps = {
