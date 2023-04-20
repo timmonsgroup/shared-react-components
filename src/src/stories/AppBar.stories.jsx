@@ -3,7 +3,8 @@ import AppBar from './AppBar';
 import {
   BrowserRouter as Router
 } from 'react-router-dom';
-import { authContext } from '../src/hooks/useAuth';
+import { authContext } from '../hooks/useAuth';
+import { authMock } from '../mocks/authMock';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -22,17 +23,17 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-  // The router wrapper is needed because the AppBar uses routing bits
-  const auth = {
-    authState: {
-      user: {
-        acl: null
-      }
-    }
-  };
 
+  // const auth = {
+  //   authState: {
+  //     user: {
+  //       acl: null
+  //     }
+  //   }
+  // };
+  // The router and authContext wrappers are needed because the AppBar and PermissionFilter use routing and useAuth
   return (
-    <authContext.Provider value={auth}>
+    <authContext.Provider value={authMock}>
       <Router>
         <AppBar {...args} />
       </Router>
@@ -41,16 +42,16 @@ const Template = (args) => {
 };
 
 const navLinks = [
-  { title: 'Home', href: '#' }, 
-  { title: 'About', href: '#/about' }, 
-  {title: "Logged In Link", permission: "Foo"}, 
-  { title: "Secret", href: "#/secret", permission: "Can Has Secret" }  
+  { title: 'Home', href: '#' },
+  { title: 'About', href: '#/about' },
+  { title: 'Logged In Link', permission: 'Foo' },
+  { title: 'Secret', href: '#/secret', permission: 'Can Has Secret' }
 ];
 
 const user = {
   name: 'Jane Doe',
   isSignedIn: true,
-  permissions: ["Can Sign In", "Foo"],
+  permissions: ['Can Sign In', 'Foo'],
 };
 
 
@@ -76,6 +77,6 @@ export const LoggingIn = Template.bind({});
 LoggingIn.args = {
   navLinks,
   showLoggingIn: true,
-  onLogin: () => {},
-  onLogout: () => {},
+  onLogin: () => { },
+  onLogout: () => { },
 };

@@ -34,9 +34,8 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, ...props })
   // Get the user acls from the auth hook authState
   const { authState } = useAuth();
 
-  React.useEffect(() => {
-    console.log('authState', authState, props.showLoggingIn);
-  }, [authState]);
+  // As this is under the authProvider context it will render on every authState change
+  console.log('PermissionFilter', authState);
 
   // props.acl is a backdoor to allow storybook stories to pass in acls
   const acl = authState?.user?.acl || props.acl;
