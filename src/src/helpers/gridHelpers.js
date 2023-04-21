@@ -144,7 +144,7 @@ export const getValueNameOrDefault = (value, defaultValue) => {
 /**
  * This function provides the basic formatting. We do not need to provide a getter or formatter for basic fields
  * If the editable flag is set to true then we will set the editable property to true and provide a valueSetter
- * @param {Object} muiGridColumn 
+ * @param {Object} muiGridColumn
  */
 export const addBasicFormatting = (muiGridColumn, editable) => {
   if (editable) {
@@ -172,7 +172,6 @@ export const addDateFormatting = (muiGridColumn, editable) => {
     muiGridColumn.editable = true;
     muiGridColumn.valueSetter = ({ value, row }) => {
       // Update the row
-      debugger;
       // This does not work on the 'id' column BTW
       row[muiGridColumn.field] = value;
       return row;
