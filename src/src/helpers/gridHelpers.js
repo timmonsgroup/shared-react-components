@@ -134,7 +134,7 @@ export const getValueNameOrDefault = (value, defaultValue) => {
 
   // If its a list of objects get all their names and join them
   if (Array.isArray(value)) {
-    return value.map(v => v.name).join(', ');
+    return value.map(v => v?.name).join(', ');
   }
 
   return value.name || defaultValue;
