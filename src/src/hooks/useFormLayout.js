@@ -409,7 +409,7 @@ export function getFieldValue(field, formData) {
   let inData = formData?.[name];
 
   // If the config specifies a default value, use that value ONLY if the data is undefined.
-  if (inData === undefined && field[DEFAULT_VALUE]) {
+  if ((inData === undefined || inData === null) && field[DEFAULT_VALUE]) {
     inData = field[DEFAULT_VALUE];
   }
 
@@ -446,7 +446,7 @@ export function getFieldValue(field, formData) {
         // Special parsing for checkboxes
         if (render.multiple && render.checkbox) {
           if (Array.isArray(inData)) {
-            value = getSelectValue(true, inData) || '';
+            value = getSelectValue(true, inData) || [];
           } else {
             value = [];
           }

@@ -314,7 +314,11 @@ export function yupMultiselect(label, isRequired = true, reqMessage) {
  */
 export function getSelectValue(multiple, inData) {
   if (multiple) {
-    return sortOn((inData)).map((con) => {
+    if (!Array.isArray(inData)) {
+      return [];
+    }
+
+    return inData.map((con) => {
       if (isObject(con)) {
         return con?.id;
       }

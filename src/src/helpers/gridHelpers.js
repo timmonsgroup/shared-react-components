@@ -34,7 +34,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
       value: 'contains',
       getApplyFilterFn: (filterItem) => {
         return (params) => {
-          if (!filterItem.value) return true;
+          if (!filterItem.value && filterItem.value !== 0) return true;
           let path = layoutColumn.path.split('.');
           let val_ = params?.row;
           for (const element of path) {
@@ -43,7 +43,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
 
           // if the value is an array we need map the names to a string
           if (Array.isArray(val_)) {
-            val_ = val_.map(v => v.name).join(' ');
+            val_ = val_.filter(v => v !== null && v!== undefined).map(v => v?.name).join(' ');
           }
 
           // If the value is an object then we need to get the name
@@ -201,7 +201,10 @@ export const addCurrencyFormatting = (muiGridColumn) => {
 export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable) => {
   // single select
   muiGridColumn.type = 'singleSelect';
-  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name }; });
+  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => {
+    if (!c) return { value: null, label: null };
+    return { value: c.label || c.name, label: c.label || c.name };
+  });
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
 
   if (editable) {
@@ -209,17 +212,14 @@ export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable)
     muiGridColumn.valueSetter = ({ value, row }) => {
       // Update the row
       // Re-map the value to the object
-      const mapped = layoutColumn.render.choices.find(c => c.label === value);
-      if(mapped) {
+      const mapped = layoutColumn.render.choices.find(c => c?.label === value);
+      if (mapped) {
         row[muiGridColumn.field] = mapped.source;
       }
       return row;
     };
   }
 };
-
-
-
 
 /**
  * This takes a mui column and adds formatting to it to handle object reference fields
