@@ -9,7 +9,7 @@ const getWidth = (refItem) => {
 
 const setOverflow = (refItem, overflow) => {
   if (refItem?.current?.style) {
-    refItem.style.overflow = overflow;
+    refItem.current.style.overflow = overflow;
   }
 };
 

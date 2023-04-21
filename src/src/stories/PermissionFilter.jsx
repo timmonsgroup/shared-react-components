@@ -30,7 +30,7 @@ import { CircularProgress } from '@mui/material';
 				<div>Admin and User</div>
 		</PermissionFilter>
  */
-const PermissionFilter = ({ permission, any, all, isRoute, children, ...props }) => {
+const PermissionFilter = ({ permission, any, all, isRoute, children, showLoggingIn, ...props }) => {
   // Get the user acls from the auth hook authState
   const { authState } = useAuth();
 
@@ -44,14 +44,13 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, ...props })
   const returned = isRoute === true ? (<Navigate to="/" />) : null;
 
   // There is not component to render OR there are no acls to check
-  if ((!children || !acl || !acl.length) && !props.showLoggingIn) {
+  if ((!children || !acl || !acl.length) && !showLoggingIn) {
     return returned;
   }
 
-  // console.log('authState?.state', authState?.state, authState?.state === 'LOGGING_IN',  props.showLoggingIn);
-  if(authState?.state === 'LOGGING_IN' && props.showLoggingIn) {
-    // console.log('showLoggingIn');
-    return <CircularProgress />;
+  // console.log('authState?.state', authState?.state, authState?.state === 'LOGGING_IN',  showLoggingIn);
+  if(authState?.state === 'LOGGING_IN' && showLoggingIn) {
+    return <CircularProgress color="accent" />;
   }
 
   // Check if the user has the singular permission

@@ -42,7 +42,7 @@ const theTheme = {
  * @param {string} props.logoUrl - The url for the logo
  * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
  */
-const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, ...props }) => {
+const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, ...props }) => {
   const theme = useTheme();
   const appBar = theme?.appBar || theTheme.appBar;
 
@@ -77,7 +77,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
 
     if (item.permission) {
       return (
-        <PermissionFilter key={index} permission={item.permission}> showLoggingIn={ props.showLoggingIn || false } 
+        <PermissionFilter key={index} permission={item.permission} showLoggingIn={ showLoggingIn || false }>
           {theButton}
         </PermissionFilter>
       );
@@ -89,7 +89,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
   // Render the user area if the user is allowed to sign in.
   const renderUserArea = () => {
     return (
-      <PermissionFilter permission={ACLS.SIGN_IN} debug="UserMenu" showLoggingIn={ props.showLoggingIn || false } >
+      <PermissionFilter permission={ACLS.SIGN_IN} debug="UserMenu" showLoggingIn={ showLoggingIn || false } >
         <UserMenu
           user={user}
           onLogin={onLogin}
