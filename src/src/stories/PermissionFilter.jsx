@@ -35,7 +35,6 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, showLogging
   const { authState } = useAuth();
 
   // As this is under the authProvider context it will render on every authState change
-  // console.log('PermissionFilter', authState);
 
   // props.acl is a backdoor to allow storybook stories to pass in acls
   const acl = authState?.user?.acl || props.acl;
@@ -48,7 +47,6 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, showLogging
     return returned;
   }
 
-  // console.log('authState?.state', authState?.state, authState?.state === 'LOGGING_IN',  showLoggingIn);
   if(authState?.state === 'LOGGING_IN' && showLoggingIn) {
     return <CircularProgress color="accent" />;
   }

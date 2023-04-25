@@ -1,249 +1,58 @@
+import { FIRE_DEPTS } from './LargeDataset';
 const FUNDING_SOURCES = [
   {
-    'id': 0,
-    'name': '2023 - FS VFA'
+    id: 0,
+    name: '2023 - FS VFA',
   },
   {
-    'id': 1,
-    'name': '2023 - DOI RFA'
+    id: 1,
+    name: '2023 - DOI RFA',
   },
   {
-    'id': 2,
-    'name': '2023 - BIL VFA'
+    id: 2,
+    name: '2023 - BIL VFA',
   },
   {
-    'id': 3,
-    'name': '2022 - FS VFA'
+    id: 3,
+    name: '2022 - FS VFA',
   },
   {
-    'id': 5,
-    'name': '2022 - BIL VFA'
+    id: 5,
+    name: '2022 - BIL VFA',
   },
   {
-    'id': 6,
-    'name': '2021 - FS VFA'
+    id: 6,
+    name: '2021 - FS VFA',
   },
   {
-    'id': 7,
-    'name': '2021 - DOI RFA'
+    id: 7,
+    name: '2021 - DOI RFA',
   },
   {
-    'id': 8,
-    'name': '2020 - FS VFA'
+    id: 8,
+    name: '2020 - FS VFA',
   },
   {
-    'id': 9,
-    'name': '2020 - DOI RFA'
+    id: 9,
+    name: '2020 - DOI RFA',
   },
   {
-    'id': 10,
-    'name': '2019 - FS VFA'
+    id: 10,
+    name: '2019 - FS VFA',
   },
   {
-    'id': 11,
-    'name': '2019 - DOI RFA'
-  }
-];
-
-const FD_CHOICES = [
-  {
-    name: 'BATTENS FD (Coffee County)',
-    id: 7403,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Broomtown VFD (Cherokee County)',
-    id: 7404,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: '1234',
-    state: null,
-    fireDepartmentType: {
-      id: 1,
-      name: 'Volunteer',
-    },
-    region: null,
-  },
-  {
-    name: 'Cedar Bluff VFD (Cherokee County)',
-    id: 7405,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: '5678',
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Centre VFD (Cherokee County)',
-    id: 7406,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 1,
-      name: 'Volunteer',
-    },
-    region: null,
-  },
-  {
-    name: 'Cloudland VFD (Cherokee County)',
-    id: 7407,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'DUNCANVILLE VFD (Bibb County)',
-    id: 7408,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Ellisville VFD (Calhoun County)',
-    id: 7409,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'FULLERS CROSSROADS FD (Crenshaw County)',
-    id: 7410,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Gaylesville VFD (Cherokee County)',
-    id: 7411,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Leesburg VFD (Cherokee County)',
-    id: 7412,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'McCords Crossroads VFD (Cherokee County)',
-    id: 7413,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Mt. Weisner VFD (Calhoun County)',
-    id: 7414,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Sand Rock VFD (Cherokee County)',
-    id: 7415,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Spring Creek VFD (Cherokee County)',
-    id: 7416,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
-  },
-  {
-    name: 'Spring Garden VFD (Calhoun County)',
-    id: 7417,
-    createdBy: null,
-    lastModifiedBy: null,
-    fdid: null,
-    state: null,
-    fireDepartmentType: {
-      id: 0,
-      name: 'Unknown',
-    },
-    region: null,
+    id: 11,
+    name: '2019 - DOI RFA',
   },
 ];
 
-export const createTextModel = (name, label, required = false, otherThings = {}, dataThings = {}) => ({
+export const createTextModel = (
+  name,
+  label,
+  required = false,
+  otherThings = {},
+  dataThings = {}
+) => ({
   label,
   path: name,
   type: 0,
@@ -255,7 +64,7 @@ export const createTextModel = (name, label, required = false, otherThings = {},
     data: dataThings,
   },
   required,
-  ...otherThings
+  ...otherThings,
 });
 
 const emailField = createTextModel('email', 'Email', true, {
@@ -276,11 +85,11 @@ const emailField = createTextModel('email', 'Email', true, {
 });
 
 const zipField = createTextModel('zipCode', 'Zippity', true, {
-  zip: true
+  zip: true,
 });
 
 const phoneField = createTextModel('phone', 'Phone Number', true, {
-  phone: true
+  phone: true,
 });
 
 const fireDepartmentField = {
@@ -296,7 +105,8 @@ const fireDepartmentField = {
   },
   placeholder: 'The typeahead will populate this field',
   altHelperText: 'I GO ELSEWHERE!',
-  iconHelperText: 'Please select the Fire Department you are applying for funding on behalf of.',
+  iconHelperText:
+    'Please select the Fire Department you are applying for funding on behalf of.',
   helperText:
     'When you select one of the options magic might happen. Like random dog facts or something. Somewhere. Maybe.',
   required: true,
@@ -305,13 +115,13 @@ const fireDepartmentField = {
       when: 'fireDepartment',
       isValid: true,
       then: {
-        helperText: 'The magic will die when you clear me!'
-      }
-    }
+        helperText: 'The magic will die when you clear me!',
+      },
+    },
   ],
   disabled: false,
   // 'url': 'https://datausa.io/api/data?drilldowns=State&measures=dep'
-  possibleChoices: FD_CHOICES,
+  possibleChoices: FIRE_DEPTS,
 };
 
 const clusterField = {
@@ -375,102 +185,103 @@ const clusterField = {
       minValue: 2.01,
       required: true,
       disabled: false,
-    }
-  ]
+    },
+  ],
 };
 
 const checkboxes = {
-  'label': 'Requested Assistance Type(s)',
-  'path': 'requested_assistance_types',
-  'type': 7,
-  'model': {
-    'id': 14,
-    'modelid': 10,
-    'type': 7,
-    'name': 'requested_assistance_types',
-    'data': {
-      'multi': true,
-      'configLookupReference': 'grant_application:assistance_type'
+  label: 'Requested Assistance Type(s)',
+  path: 'requested_assistance_types',
+  type: 7,
+  model: {
+    id: 14,
+    modelid: 10,
+    type: 7,
+    name: 'requested_assistance_types',
+    data: {
+      multi: true,
+      configLookupReference: 'grant_application:assistance_type',
     },
-    'possibleChoices': [
+    possibleChoices: [
       {
-        'id': 1,
-        'name': 'Communications'
+        id: 1,
+        name: 'Communications',
       },
       {
-        'id': 2,
-        'name': 'Federal Property Conversion'
+        id: 2,
+        name: 'Federal Property Conversion',
       },
       {
-        'id': 3,
-        'name': 'Inventoried Equipment'
+        id: 3,
+        name: 'Inventoried Equipment',
       },
       {
-        'id': 4,
-        'name': 'PPE'
+        id: 4,
+        name: 'PPE',
       },
       {
-        'id': 5,
-        'name': 'Tools & Supplies'
+        id: 5,
+        name: 'Tools & Supplies',
       },
       {
-        'id': 6,
-        'name': 'Training'
-      }
-    ]
+        id: 6,
+        name: 'Training',
+      },
+    ],
   },
-  'required': true,
-  'disabled': false,
-  'possibleChoices': [
+  required: true,
+  disabled: false,
+  possibleChoices: [
     {
-      'id': 1,
-      'name': 'Communications'
+      id: 1,
+      name: 'Communications',
     },
     {
-      'id': 2,
-      'name': 'Federal Property Conversion'
+      id: 2,
+      name: 'Federal Property Conversion',
     },
     {
-      'id': 3,
-      'name': 'Inventoried Equipment'
+      id: 3,
+      name: 'Inventoried Equipment',
     },
     {
-      'id': 4,
-      'name': 'PPE'
+      id: 4,
+      name: 'PPE',
     },
     {
-      'id': 5,
-      'name': 'Tools & Supplies'
+      id: 5,
+      name: 'Tools & Supplies',
     },
     {
-      'id': 6,
-      'name': 'Training'
-    }
+      id: 6,
+      name: 'Training',
+    },
   ],
-  'multiple': true,
-  'checkbox': true,
-  'helperText': 'Check all that apply.',
-  'altHelperText': 'I am under the checkboxes.',
-  'iconHelperText': 'Indicate all types of assistance being requested. This may be different than what is approved for funding. Please enter this for all applications, to show program demand.'
+  multiple: true,
+  checkbox: true,
+  helperText: 'Check all that apply.',
+  altHelperText: 'I am under the checkboxes.',
+  iconHelperText:
+    'Indicate all types of assistance being requested. This may be different than what is approved for funding. Please enter this for all applications, to show program demand.',
 };
 
 const anotherCluster = {
-  'label': 'Planned Federal Project Investment',
-  'path': 'fedFundingItems',
-  'type': 120,
-  'model': {
-    'id': 19,
-    'modelid': 10,
-    'type': 120,
-    'name': 'fedFundingItems',
-    'data': {}
+  label: 'Planned Federal Project Investment',
+  path: 'fedFundingItems',
+  type: 120,
+  model: {
+    id: 19,
+    modelid: 10,
+    type: 120,
+    name: 'fedFundingItems',
+    data: {},
   },
-  'required': true,
-  'disabled': false,
-  'inline': true,
+  required: true,
+  disabled: false,
+  inline: true,
   clusterColumnCount: 2,
-  'emptyMessage': 'No items added yet.',
-  'hidden': false,
+  emptyMessage: 'No items added yet.',
+  hidden: false,
   // 'conditions': [
   //   {
   //     'is': 4,
@@ -489,46 +300,61 @@ const anotherCluster = {
   //     'when': 'moMoney'
   //   }
   // ],
-  'helperText': 'Please indicate the planned federal funding source and ($) amount at time of approval. Actual reimbursement to FD may be different.',
-  'layout': [
+  helperText:
+    'Please indicate the planned federal funding source and ($) amount at time of approval. Actual reimbursement to FD may be different.',
+  layout: [
     {
-      'label': 'Federal Funding Source',
-      'path': 'fedFundingSource',
-      'type': 7,
-      'model': {
-        'id': 20,
-        'modelid': 10,
-        'type': 7,
-        'name': 'fedFundingSource',
+      label: 'Federal Funding Source',
+      path: 'fedFundingSource',
+      type: 7,
+      model: {
+        id: 20,
+        modelid: 10,
+        type: 7,
+        name: 'fedFundingSource',
       },
-      'required': true,
-      'disabled': false,
-      'possibleChoices': FUNDING_SOURCES,
+      required: true,
+      disabled: false,
+      possibleChoices: FUNDING_SOURCES,
       // helperText: 'I am a helper text',
-      'iconHelperText': "Funding source year is the federal fiscal year. NOTE: 'FS VFA' is funding from the regularly appropriated USDA Forest Service Consolidated Payments Grant (namely, Volunteer Fire Assistance in FY2019, Rural Fire Capacity for FY2020 & FY2021, and Volunteer Fire Capacity starting in FY2022). 'DOI RFA' is funding from the Department of Interior Rural Fire Assistance program, and 'BIL VFA' is funding from the Bipartisan Infrastructure Law program."
+      iconHelperText:
+        "Funding source year is the federal fiscal year. NOTE: 'FS VFA' is funding from the regularly appropriated USDA Forest Service Consolidated Payments Grant (namely, Volunteer Fire Assistance in FY2019, Rural Fire Capacity for FY2020 & FY2021, and Volunteer Fire Capacity starting in FY2022). 'DOI RFA' is funding from the Department of Interior Rural Fire Assistance program, and 'BIL VFA' is funding from the Bipartisan Infrastructure Law program.",
     },
-    createTextModel('fedFundingYear', 'Funding Source Year', 2, true, 'Please enter the federal fiscal year for the selected federal funding source. This may be different than the actual reimbursement year.'),
-    createTextModel('fedFundingBacon', 'Funding Source Year', 2, true, 'Please enter the federal fiscal year for the selected federal funding source. This may be different than the actual reimbursement year.'),
+    createTextModel(
+      'fedFundingYear',
+      'Funding Source Year',
+      2,
+      true,
+      'Please enter the federal fiscal year for the selected federal funding source. This may be different than the actual reimbursement year.'
+    ),
+    createTextModel(
+      'fedFundingBacon',
+      'Funding Source Year',
+      2,
+      true,
+      'Please enter the federal fiscal year for the selected federal funding source. This may be different than the actual reimbursement year.'
+    ),
     // checkboxes,
     {
-      'label': 'Planned Grant Amount',
-      'path': 'fedFundingAmount',
-      'type': 4,
-      'model': {
-        'id': 21,
-        'modelid': 10,
-        'type': 4,
-        'name': 'fedFundingAmount',
-        'data': {
-          'minValue': 0.01
-        }
+      label: 'Planned Grant Amount',
+      path: 'fedFundingAmount',
+      type: 4,
+      model: {
+        id: 21,
+        modelid: 10,
+        type: 4,
+        name: 'fedFundingAmount',
+        data: {
+          minValue: 0.01,
+        },
       },
       // altHelperText: 'I am a helper text',
-      'required': true,
-      'disabled': false,
-      'iconHelperText': 'Please enter the planned federal investment for the selected federal funding source. This amount may be different than actual reimbursements.'
-    }
-  ]
+      required: true,
+      disabled: false,
+      iconHelperText:
+        'Please enter the planned federal investment for the selected federal funding source. This amount may be different than actual reimbursements.',
+    },
+  ],
 };
 
 const integerField = {
@@ -625,23 +451,25 @@ const asyncTypeahead = {
     modelid: 10,
     type: 2,
     name: 'anotherField',
-    data: {}
+    data: {},
   },
   placeholder: 'The typeahead will populate this field',
-  iconHelperText: 'Please select the Fire Department you are applying for funding on behalf of.',
-  helperText: 'You need to pick a fire department before I can hydrate this field.',
+  iconHelperText:
+    'Please select the Fire Department you are applying for funding on behalf of.',
+  helperText:
+    'You need to pick a fire department before I can hydrate this field.',
   required: true,
   conditions: [
     {
       when: 'fireDepartment',
       isValid: true,
       then: {
-        helperText: 'I\'m so glad you picked a fire department!',
-        url: 'https://dog-api.kinduff.com/api/facts?number=5'
-      }
-    }
+        helperText: "I'm so glad you picked a fire department!",
+        url: 'https://dog-api.kinduff.com/api/facts?number=5',
+      },
+    },
   ],
-  disabled: false
+  disabled: false,
 };
 
 const dateField = {
@@ -654,8 +482,7 @@ const dateField = {
   altHelperText: 'I am under the date picker label',
   iconHelperText:
     'TIP The date the application was received by the Wildfire Suite.',
-  helperText:
-    'The date the application was received by the Wildfire Suite.',
+  helperText: 'The date the application was received by the Wildfire Suite.',
   model: {
     id: 6,
     modelid: 10,
@@ -701,8 +528,8 @@ export const layout = {
         ],
       },
       {
-        name: 'I\' another Section',
-        description: 'I\'m a description',
+        name: "I' another Section",
+        description: "I'm a description",
         editable: true,
         enabled: true,
         order: 10,
@@ -780,12 +607,7 @@ export const viewLayout = {
         enabled: true,
         name: 'No columns or rows',
         order: 10,
-        layout: [
-          emailField,
-          zipField,
-          phoneField,
-          fireDepartmentField
-        ],
+        layout: [emailField, zipField, phoneField, fireDepartmentField],
       },
       {
         enabled: true,
@@ -795,9 +617,9 @@ export const viewLayout = {
         layout: [
           [emailField, zipField],
 
-          [phoneField, fireDepartmentField]
+          [phoneField, fireDepartmentField],
         ],
-      }
+      },
     ],
   },
 };

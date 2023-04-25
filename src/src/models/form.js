@@ -1,6 +1,6 @@
 
 /**
-  * @module Types
+  * @module FormTypes
   * @see {@link https://stackoverflow.com/questions/49836644/how-to-import-a-typedef-from-one-file-to-another-in-jsdoc-using-node-js/73232942#73232942|stackoverflow}
   */
 

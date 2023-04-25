@@ -1,4 +1,5 @@
 /** @module useAuth */
+import '../models/auth';
 import React, {
   useState,
   useRef,
@@ -143,9 +144,9 @@ export const useAuth = () => {
 /**
  * These are the properties and methods that the "useAuth" hook provides to its consumers
  * We are providing the auth state, login, and logout methods
- * @param {object} config - The configuration for the component
- * @param {String[]} whitelist - The whitelist array
- * @returns {object} The auth object
+ * @param {object} config The configuration for the component
+ * @param {String[]} whitelist The whitelist array
+ * @returns {AuthContext} The auth context object
  */
 const useProvideAuth = (config, whitelist) => {
   // We are using the useReducer hook to manage the auth state
@@ -418,8 +419,7 @@ const useProvideAuth = (config, whitelist) => {
     }
 
     // Pull the info out of the token
-    const { token, isExpired, user, refresh_token } =
-      parseTokens(tokenData);
+    const { token, isExpired, user, refresh_token } = parseTokens(tokenData);
 
     const subject = await getSubjectFromCookie();
 
