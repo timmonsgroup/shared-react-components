@@ -6,31 +6,45 @@ import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../helpers/
 import { useAuth } from '../hooks/useAuth';
 
 import { CircularProgress } from '@mui/material';
+import { AUTH_STATES } from '../constants.js';
 
 /**
- * Component that checks if the user has the required permissions
+ * @description Component that checks if the user has the required permissions
  * Should set ONE of the following properties permission, any, OR all
  * @param {object} props
- * @param {string} props.permission - A single required permission
- * @param {array<string>} props.any - Passes if ANY of the permissions are met
- * @param {array<string>} props.all - Passes if ALL of the permissions are met
- * @param {boolean} props.isRoute - If true, the component will render a Navigate component instead of null if the user does not have the required permissions
+ * @param {string} props.permission A single required permission
+ * @param {array<string>} props.any Passes if ANY of the permissions are met
+ * @param {array<string>} props.all Passes if ALL of the permissions are met
+ * @param {boolean} props.isRoute If true, the component will render a Navigate component instead of null if the user does not have the required permissions
+ * @param {Route401Props} props.noAuthOptions If isRoute is true, this component will be rendered instead of the Navigate component if the user does not have the required permissions
+ * @param {boolean} props.showLoggingIn - If true, the component will render a CircularProgress component if the user is in the LOGGING_IN state
  * @param {React.ReactNode} props.children - The children to render if the user has the required permissions
  * @returns {React.ReactElement} - The children to render if the user has the required permissions OR null if the user does not have the required permissions
  *
  * @example
 		SampleUsage:
+    // Show the children if the user has the admin permission
 		<PermissionFilter permission="admin">
 				<div>Admin</div>
 		</PermissionFilter>
+    // Show the children if the user has the admin OR user permission
 		<PermissionFilter any={["admin", "user"]}>
 				<div>Admin or User</div>
 		</PermissionFilter>
+    // Show the children if the user has the admin AND user permission
 		<PermissionFilter all={["admin", "user"]}>
 				<div>Admin and User</div>
 		</PermissionFilter>
+
+    // Route example. If the user does not have the required permissions, they will be redirected to the root
+    <Route path="applications/addfd" element={
+        <PermissionFilter isRoute={true} permission={ACLS.CAN_ADD_APPLICATION}>
+          <ApplicationForm type={GRANT_APP_TYPES.FD} />
+        </PermissionFilter>
+      }
+    />;
  */
-const PermissionFilter = ({ permission, any, all, isRoute, children, showLoggingIn, ...props }) => {
+const PermissionFilter = ({ permission, any, all, isRoute, showLoggingIn, children, ...props }) => {
   // Get the user acls from the auth hook authState
   const { authState } = useAuth();
 
@@ -47,7 +61,7 @@ const PermissionFilter = ({ permission, any, all, isRoute, children, showLogging
     return returned;
   }
 
-  if(authState?.state === 'LOGGING_IN' && showLoggingIn) {
+  if(authState?.state === AUTH_STATES.LOGGING_IN && showLoggingIn) {
     return <CircularProgress color="accent" />;
   }
 
@@ -75,6 +89,7 @@ PermissionFilter.propTypes = {
   all: PropTypes.array,
   isRoute: PropTypes.bool,
   showLoggingIn: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 PermissionFilter.defaultProps = {
