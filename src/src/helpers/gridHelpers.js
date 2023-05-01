@@ -1,4 +1,5 @@
 
+/** @module GridHelpers */
 import { dateFormatter, currencyFormatter } from './helpers.js';
 /**
 * This is the base config for a column that is used by the MUIGrid component
@@ -86,6 +87,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
 /**
    * This function provides a date value or a default value if the date is null or undefined
    * It is used to render the cell as 'N/A' if the date is null or undefined
+   * @function
    * @param {Date|String} value
    * @param {String} defaultValue
    * @returns {object}
@@ -108,6 +110,7 @@ export const getDateOrDefault = (value, defaultValue) => {
 /**
  * This function provides a date value or a default value if the date is null or undefined.
  * The returned date is formatted as a string according to the common dateFormatter for the entire app.
+ * @function
  * @param {Date|String} value
  * @param {String} defaultValue
  * @returns {String}
@@ -123,6 +126,7 @@ export const getDateOrDefaultFormatted = (value, defaultValue) => {
 /**
  * This provides a name value or a default value if the name is null or undefined
  * It is used to render the cell as 'N/A' if the object or name is null or undefined
+ * @function
  * @param {Object} value - The object that contains the name
  * @param {String} defaultValue - The default value to return if the name is null or undefined
  * @returns {String}
@@ -144,6 +148,7 @@ export const getValueNameOrDefault = (value, defaultValue) => {
 /**
  * This function provides the basic formatting. We do not need to provide a getter or formatter for basic fields
  * If the editable flag is set to true then we will set the editable property to true and provide a valueSetter
+ * @function
  * @param {Object} muiGridColumn
  */
 export const addBasicFormatting = (muiGridColumn, editable) => {
@@ -159,6 +164,7 @@ export const addBasicFormatting = (muiGridColumn, editable) => {
 
 /**
    * This takes a mui column and adds formatting to it to handle date fields
+   * @function
    * @param {Object} muiGridColumn - The column from the layout
    * @see https://mui.com/components/data-grid/filtering/#value-getter
    * @see https://mui.com/components/data-grid/filtering/#value-options
@@ -179,6 +185,10 @@ export const addDateFormatting = (muiGridColumn, editable) => {
   }
 };
 
+/**
+ * @function addCurrencyFormatting
+ * @param {object} muiGridColumn - The muiGridColumn to add the formatting to
+ */
 export const addCurrencyFormatting = (muiGridColumn) => {
   muiGridColumn.type = 'number';
   muiGridColumn.valueFormatter = ({ value }) => {
@@ -228,10 +238,7 @@ export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable)
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @param {Object} linkFormat - The column from the layout - TODO: This isnt true as we destructured the linkFormat from the layout column
  */
-const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
-  let { linkFormat } = render;
-  // Object Link
-
+const addObjectReferenceFormatting = (muiGridColumn, { path }) => {
   if (path) {
     muiGridColumn.valueFormatter = ({ value }) => {
 
@@ -311,6 +318,7 @@ const addActionButtonFormatting = (muiGridColumn, actionData) => {
 /**
  * This function takes a layout column and returns a mui column
  * It will determine the type of column and add formatting to the mui column
+ * @function convertLayoutColumnToMuiColumn
  * @param {LayoutColumn} column
  * @returns {MuiGridColumn}
  */

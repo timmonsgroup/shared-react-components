@@ -105,7 +105,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
         return (
           <Box sx={renderSX || {}}>
             <AnyFieldLabel
-              htmlFor={textFieldProps.id || textFieldProps.name}
+              htmlFor={textFieldProps?.id || textFieldProps?.name || 'typeahead'}
               error={textFieldProps?.error}
               sx={labelSX || {}}
               label={label || 'Search'}
