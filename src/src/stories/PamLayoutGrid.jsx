@@ -457,22 +457,22 @@ const PamLayoutGrid = ({
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar
     ? {
-        components: { Toolbar: MUIGridToolbar },
-        // Four buttons appear on the MUI grid by default, we want to hide them
-        disableColumnSelector: true,
-        disableDensitySelector: true,
-        disableExportSelector: true,
-        componentsProps: {
-          toolbar: {
-            // Quick filter is a search box that appears in the toolbar
-            showQuickFilter: true,
-            quickFilterProps: { debounceMs: 500 },
-            //Disable csv and print to completely remove the "Export" button
-            csvOptions: { disableToolbarButton: false },
-            printOptions: { disableToolbarButton: true },
-          },
+      components: { Toolbar: MUIGridToolbar },
+      // Four buttons appear on the MUI grid by default, we want to hide them
+      disableColumnSelector: true,
+      disableDensitySelector: true,
+      disableExportSelector: true,
+      componentsProps: {
+        toolbar: {
+          // Quick filter is a search box that appears in the toolbar
+          showQuickFilter: true,
+          quickFilterProps: { debounceMs: 500 },
+          //Disable csv and print to completely remove the "Export" button
+          csvOptions: { disableToolbarButton: false },
+          printOptions: { disableToolbarButton: true },
         },
-      }
+      },
+    }
     : {};
 
   const initialState = {
