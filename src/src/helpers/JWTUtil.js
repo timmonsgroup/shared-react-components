@@ -1,4 +1,4 @@
-
+import '../models/auth';
 /*
   This is a collection of utility functions for working with JWT tokens
 */
@@ -17,6 +17,11 @@ export const decodeTokenToJWT = (token) => {
   return jwt;
 };
 
+/**
+ * @function parseTokens
+ * @param {string} tokensB64
+ * @returns {ParsedUserToken}
+ */
 export const parseTokens = (tokensB64) => {
   const token = decodeBase64Token(tokensB64) || {};
   const {id_token, access_token} = token;

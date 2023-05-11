@@ -1,4 +1,5 @@
 /** @module formHelpers */
+import '../models/form';
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
 import { sortOn, functionOrDefault, isObject } from './helpers.js';
 import {
@@ -313,7 +314,11 @@ export function yupMultiselect(label, isRequired = true, reqMessage) {
  */
 export function getSelectValue(multiple, inData) {
   if (multiple) {
-    return sortOn((inData)).map((con) => {
+    if (!Array.isArray(inData)) {
+      return [];
+    }
+
+    return inData.map((con) => {
       if (isObject(con)) {
         return con?.id;
       }
@@ -499,22 +504,6 @@ export function createFieldValidation(type, label, validationMap, field) {
   return validation;
 }
 
-/**
- * @typedef {object} SubmitOptions
- * @property {function} enqueueSnackbar - function to enqueue a snackbar
- * @property {function} nav - function to navigate to a url
- * @property {function} onSuccess - function to call on successful submit (if provided will NOT call setModifying OR nav)
- * @property {function} formatSubmitError - function to format the error message
- * @property {function} checkSuccess - function to check if the submit was successful
- * @property {function} onError - function to call on error (if provided will NOT call setModifying)
- * @property {string} unitLabel - label for the unit being submitted
- * @property {string} successUrl - url to navigate to on success
- * @property {string} submitUrl - url to submit to
- * @property {function} setModifying - function to set the modifying state
- * @property {function} formatSubmitMessage - function to format the success message
- * @property {boolean} suppressSuccessToast - true to suppress the success toast
- * @property {boolean} suppressErrorToast - true to suppress the error toast *
- */
 
 /**
  * Method to reduce the amount of boilerplate code needed to submit a form
@@ -598,13 +587,6 @@ export const attemptFormSubmit = async (formData, isEdit, {
   }
 };
 
-/**
- * @typedef {object} FormSubmitOptions
- * @property {function} enqueueSnackbar - function to enqueue a snackbar
- * @property {function} nav - function to navigate to a url
- * @property {boolean} modifying - true if the form is currently being modified
- * @property {function} setModifying - function to set the modifying state
- */
 
 /**
  * Helper to create hook bits for form submit
@@ -620,15 +602,6 @@ export const useFormSubmit = () => {
 
   return { modifying, setModifying, nav, enqueueSnackbar };
 };
-
-/**
- * @typedef {object} RowFields
- * @property {ParsedField[]} fields - array of fields in the row
- * @property {number} size - column size of the row (12 is full width, 6 is half width, etc)
- * @property {number} maxColumns - maximum number of columns in the row
- * @property {boolean} solitary - true if the row is a solitary field
- * @property {boolean} isInline - true if the row is an inline field
- */
 
 /**
  * Give an array of fields, create an array of rows with the fields give a column count
@@ -671,37 +644,3 @@ export const createRowFields = (fields, columnCount, isInline) => {
 
   return rows;
 };
-
-// This is copied from useFormLayout.js cause jsDoc import ain't working
-/**
- * @typedef {object} ParsedField
- * @property {string} id - field id
- * @property {string} label - field label
- * @property {string} type - field type
- * @property {boolean} hidden - if the field is hidden
- * @property {Array} conditions - if the field is hidden
- * @property {object} specialProps - special props for the field
- * @property {object} [defaultValue] - default value for the field
- * @property {object} [modelData] - model data for the field (found on the model.data)
- * @property {Array<ParsedField>} [subFields] - subFields for the field if its type is FIELD_TYPES.CLUSTER (i.e. 100)
- * @property {FieldRenderProps} render - render props for the field
- */
-
-/**
- * @typedef {object} FieldRenderProps
- * @property {string} type - field type
- * @property {string} label - field label
- * @property {string} name - field name
- * @property {boolean} hidden - if the field is hidden
- * @property {boolean} [required] - if the field is required
- * @property {boolean} disabled - if the field is disabled
- * @property {string} iconHelperText - icon helper text
- * @property {string} helperText - helper text
- * @property {string} requiredErrorText - required error text
- * @property {boolean} readOnly - if the field is read only
- * @property {boolean} [multiple] - if the field is multiple
- * @property {string} [placeholder] - placeholder text
- * @property {object} linkFormat - link format
- * @property {Array<object>} [choices] - choices for the field
- * @property {YupSchema} validations - validations for the field
- */

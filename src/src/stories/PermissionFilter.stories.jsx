@@ -4,6 +4,9 @@ import {
   BrowserRouter as Router
 } from 'react-router-dom';
 
+import { authContext } from '../hooks/useAuth';
+import { authMock } from '../mocks/authMock';
+
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Util/PermissionFilter',
@@ -39,17 +42,19 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-  // The router wrapper is needed because the AppBar uses routing bits
+  // The router wrapper is needed if the PermissionFilter uses routing bits
   return (
-    <Router>
-      <div style={{ width: '150px', border: '1px solid blue', padding: '5px' }}>
-        If "content" shows below the filter has passed. If not the content has been filtered.
-        <hr />
-        <PermissionFilter {...args}>
-          <div>content</div>
-        </PermissionFilter>
-      </div>
-    </Router>
+    <authContext.Provider value={authMock}>
+      <Router>
+        <div style={{ width: '150px', border: '1px solid blue', padding: '5px' }}>
+          If "content" shows below the filter has passed. If not the content has been filtered.
+          <hr />
+          <PermissionFilter {...args}>
+            <div>content</div>
+          </PermissionFilter>
+        </div>
+      </Router>
+    </authContext.Provider>
   );
 };
 
@@ -92,4 +97,18 @@ export const AllWhereOneDoesNotMatch = Template.bind({});
 AllWhereOneDoesNotMatch.args = {
   acl: sampleACL,
   all: ['admin', 'user', 'This Does Not Exist']
+};
+
+
+// This needs to be called on load for the story
+// authMock.setAuthState({
+//   user: null,
+//   state: 'LOGGING_IN',
+// });
+
+export const ShowLoggingIn = Template.bind({});
+ShowLoggingIn.args = {
+  acl: sampleACL,
+  all: ['admin', 'user', 'This Does Not Exist'],
+  showLoggingIn: true
 };

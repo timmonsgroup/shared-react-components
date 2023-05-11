@@ -1,4 +1,5 @@
 
+/** @module GridHelpers */
 import { dateFormatter, currencyFormatter } from './helpers.js';
 /**
 * This is the base config for a column that is used by the MUIGrid component
@@ -34,7 +35,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
       value: 'contains',
       getApplyFilterFn: (filterItem) => {
         return (params) => {
-          if (!filterItem.value) return true;
+          if (!filterItem.value && filterItem.value !== 0) return true;
           let path = layoutColumn.path.split('.');
           let val_ = params?.row;
           for (const element of path) {
@@ -43,7 +44,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
 
           // if the value is an array we need map the names to a string
           if (Array.isArray(val_)) {
-            val_ = val_.map(v => v.name).join(' ');
+            val_ = val_.filter(v => v !== null && v!== undefined).map(v => v?.name).join(' ');
           }
 
           // If the value is an object then we need to get the name
@@ -86,6 +87,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
 /**
    * This function provides a date value or a default value if the date is null or undefined
    * It is used to render the cell as 'N/A' if the date is null or undefined
+   * @function
    * @param {Date|String} value
    * @param {String} defaultValue
    * @returns {object}
@@ -108,6 +110,7 @@ export const getDateOrDefault = (value, defaultValue) => {
 /**
  * This function provides a date value or a default value if the date is null or undefined.
  * The returned date is formatted as a string according to the common dateFormatter for the entire app.
+ * @function
  * @param {Date|String} value
  * @param {String} defaultValue
  * @returns {String}
@@ -123,6 +126,7 @@ export const getDateOrDefaultFormatted = (value, defaultValue) => {
 /**
  * This provides a name value or a default value if the name is null or undefined
  * It is used to render the cell as 'N/A' if the object or name is null or undefined
+ * @function
  * @param {Object} value - The object that contains the name
  * @param {String} defaultValue - The default value to return if the name is null or undefined
  * @returns {String}
@@ -134,7 +138,7 @@ export const getValueNameOrDefault = (value, defaultValue) => {
 
   // If its a list of objects get all their names and join them
   if (Array.isArray(value)) {
-    return value.map(v => v.name).join(', ');
+    return value.map(v => v?.name).join(', ');
   }
 
   return value.name || defaultValue;
@@ -142,17 +146,49 @@ export const getValueNameOrDefault = (value, defaultValue) => {
 
 
 /**
+ * This function provides the basic formatting. We do not need to provide a getter or formatter for basic fields
+ * If the editable flag is set to true then we will set the editable property to true and provide a valueSetter
+ * @function
+ * @param {Object} muiGridColumn
+ */
+export const addBasicFormatting = (muiGridColumn, editable) => {
+  if (editable) {
+    muiGridColumn.editable = true;
+    muiGridColumn.valueSetter = ({ value, row }) => {
+      // This does not work on the 'id' column BTW
+      row[muiGridColumn.field] = value;
+      return row;
+    };
+  }
+}
+
+/**
    * This takes a mui column and adds formatting to it to handle date fields
+   * @function
    * @param {Object} muiGridColumn - The column from the layout
    * @see https://mui.com/components/data-grid/filtering/#value-getter
    * @see https://mui.com/components/data-grid/filtering/#value-options
    */
-export const addDateFormatting = (muiGridColumn) => {
+export const addDateFormatting = (muiGridColumn, editable) => {
   muiGridColumn.type = 'date';
   muiGridColumn.valueGetter = ({ value }) => getDateOrDefault(value, null); // Value GETTER needs to return null for the date to be displayed as N/A and for the filter to work
   muiGridColumn.valueFormatter = ({ value }) => getDateOrDefaultFormatted(value, muiGridColumn.nullValue);
+
+  if (editable) {
+    muiGridColumn.editable = true;
+    muiGridColumn.valueSetter = ({ value, row }) => {
+      // Update the row
+      // This does not work on the 'id' column BTW
+      row[muiGridColumn.field] = value;
+      return row;
+    };
+  }
 };
 
+/**
+ * @function addCurrencyFormatting
+ * @param {object} muiGridColumn - The muiGridColumn to add the formatting to
+ */
 export const addCurrencyFormatting = (muiGridColumn) => {
   muiGridColumn.type = 'number';
   muiGridColumn.valueFormatter = ({ value }) => {
@@ -172,15 +208,28 @@ export const addCurrencyFormatting = (muiGridColumn) => {
    * @see https://mui.com/components/data-grid/filtering/#value-getter
    * @see https://mui.com/components/data-grid/filtering/#value-options
    */
-export const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
+export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable) => {
   // single select
   muiGridColumn.type = 'singleSelect';
-  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => { return { value: c.label || c.name, label: c.label || c.name }; });
+  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => {
+    if (!c) return { value: null, label: null };
+    return { value: c.label || c.name, label: c.label || c.name };
+  });
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
+
+  if (editable) {
+    muiGridColumn.editable = true;
+    muiGridColumn.valueSetter = ({ value, row }) => {
+      // Update the row
+      // Re-map the value to the object
+      const mapped = layoutColumn.render.choices.find(c => c?.label === value);
+      if (mapped) {
+        row[muiGridColumn.field] = mapped.source;
+      }
+      return row;
+    };
+  }
 };
-
-
-
 
 /**
  * This takes a mui column and adds formatting to it to handle object reference fields
@@ -189,10 +238,7 @@ export const addSingleSelectFormatting = (muiGridColumn, layoutColumn) => {
  * @param {Object} muiGridColumn - The column used by the MUIGrid component
  * @param {Object} linkFormat - The column from the layout - TODO: This isnt true as we destructured the linkFormat from the layout column
  */
-const addObjectReferenceFormatting = (muiGridColumn, { render, path }) => {
-  let { linkFormat } = render;
-  // Object Link
-
+const addObjectReferenceFormatting = (muiGridColumn, { path }) => {
   if (path) {
     muiGridColumn.valueFormatter = ({ value }) => {
 
@@ -272,10 +318,11 @@ const addActionButtonFormatting = (muiGridColumn, actionData) => {
 /**
  * This function takes a layout column and returns a mui column
  * It will determine the type of column and add formatting to the mui column
+ * @function convertLayoutColumnToMuiColumn
  * @param {LayoutColumn} column
  * @returns {MuiGridColumn}
  */
-export const convertLayoutColumnToMuiColumn = (column, nullValue) => {
+export const convertLayoutColumnToMuiColumn = (column, nullValue, editable) => {
   let ret = baseColumnConfig(column, nullValue);
 
   if (column.columnOverride && typeof column.columnOverride === 'function') {
@@ -287,14 +334,15 @@ export const convertLayoutColumnToMuiColumn = (column, nullValue) => {
     case 1: // Long Text // These two fields dont need any special formatting
     case 2: // Integer
     case 3: // Float
+      addBasicFormatting(ret, editable);
       break;
     case 4: // Currency
-      addCurrencyFormatting(ret); break;
-    case 5: addDateFormatting(ret); break; // Date
+      addCurrencyFormatting(ret, editable); break;
+    case 5: addDateFormatting(ret, editable); break; // Date
     case 6: // Flag
       break;
-    case 7: addSingleSelectFormatting(ret, column); break; // Single Select
-    case 10: addObjectReferenceFormatting(ret, column); break; // Object Link
+    case 7: addSingleSelectFormatting(ret, column, editable); break; // Single Select
+    case 10: addObjectReferenceFormatting(ret, column, editable); break; // Object Link
     case 99: addActionButtonFormatting(ret, column.render); break; // Action Buttons
     case 100: addExternalLinkFormatting(ret); break; // Link
     default: console.error('Unknown column type', column.type); break;

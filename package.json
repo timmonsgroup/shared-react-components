@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": false,
   "eslintIgnore": [
     "node_modules",
@@ -18,17 +18,21 @@
     "./constants": "./dist/constants.js"
   },
   "scripts": {
+    "nuke": "rimraf dist",
     "clean": "npm run clean:root && npm run clean:hooks && npm run clean:hooks && npm run clean:stories",
     "clean:hooks": "rimraf dist/hooks/*",
     "clean:helpers": "rimraf dist/helpers/*",
     "clean:stories": "rimraf dist/stories/*",
+    "clean:models": "rimraf dist/models/*",
     "clean:root": "rimraf dist/*.js",
-    "build:package": "npm run clean && npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index && npm run build:tsd",
-    "build:package-localdevTypes": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index && npm run build:tsd",
-    "build:package-localdev": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:index",
+    "allTheThings": "npm run build:components && npm run build:hooks && npm run build:helpers && npm run build:models && npm run build:index",
+    "build:package": "npm run nuke && npm run allTheThings && npm run build:tsd",
+    "build:package-localdevTypes": "npm run allTheThings && npm run build:tsd",
+    "build:package-localdev": "npm run allTheThings",
     "build:components": "set NODE_ENV=production&&babel src/src/stories --out-dir dist/stories --copy-files",
     "build:hooks": "set NODE_ENV=production&&babel src/src/hooks --out-dir dist/hooks --copy-files",
     "build:helpers": "set NODE_ENV=production&&babel src/src/helpers --out-dir dist/helpers --copy-files",
+    "build:models": "set NODE_ENV=production&&babel src/src/models --out-dir dist/models --copy-files",
     "build:index": "set NODE_ENV=production&&babel src/src/index.js src/src/constants.js src/src/muiTheme.js --out-dir dist --copy-files",
     "build-storybook": "cd src && npm run build-storybook",
     "documentation": "cd src && npm run documentation",

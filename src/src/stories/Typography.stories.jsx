@@ -8,46 +8,38 @@ export default {
   component: Typography,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
-    backgroundColor: { control: 'color' },
+    color: {
+      control: 'select',
+      options: ['text', 'primary', 'secondary', 'error', 'warning.main', 'tertiary.main', 'accent', 'success.main'],
+      defaultValue: 'text',
+    },
+    text: {
+      control: 'text',
+      defaultValue: 'This is a test'
+    },
     variant: {
+      options: [
+        // Our variants
+        'sectionHeader', 'sectionDescription', 'subHeader', 'inspector', 'clusterEmptyText', 'panelHeader', 'navLink',
+        'modalTitle',
+        // MUI variants
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body1', 'body2', 'caption', 'p',
+      ],
+      defaultValue: 'p',
       control: {
         type: 'select',
-        options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subHeader', 'inspector', 'body1', 'body2', 'caption', 'button', 'overline', 'srOnly', 'inherit'],
       }
     }
   },
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Card><CardContent><Typography {...args}>THings</Typography></CardContent></Card>;
+const Template = ({ text, ...args }) => <Card><CardContent><Typography {...args}>{text}</Typography></CardContent></Card>;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  color: 'primary',
-  label: 'Primary',
-};
+export const Examples = Template.bind({});
 
-Primary.propTypes = {
+Template.propTypes = {
   color: PropTypes.string,
-  label: PropTypes.string,
   variant: PropTypes.string,
-};
-
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: 'Seconded',
-  color: 'secondary',
-};
-
-export const Large = Template.bind({});
-Large.args = {
-  size: 'large',
-  label: 'Big Thing',
-};
-
-export const Small = Template.bind({});
-Small.args = {
-  size: 'small',
-  label: 'Button',
+  text: PropTypes.string,
 };

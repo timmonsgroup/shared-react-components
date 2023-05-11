@@ -3,7 +3,10 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { ButtonGroup } from '@mui/material';
-import { DataGrid as MUIGrid, GridToolbar as MUIGridToolbar } from '@mui/x-data-grid';
+import {
+  DataGrid as MUIGrid,
+  GridToolbar as MUIGridToolbar,
+} from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
@@ -12,6 +15,7 @@ import Button from './Button';
 import { processLayout, processGenericLayout } from '../helpers/helpers.js';
 
 import { convertLayoutColumnToMuiColumn } from '../helpers/gridHelpers.js';
+import RenderExpandableCell from './RenderExpandableCell';
 
 const gridContext = React.createContext();
 
@@ -21,14 +25,10 @@ const defaultSX = {
   height: '100%',
   minHeight: '500px',
   minWidth: '700px',
-  flexGrow: 1
+  flexGrow: 1,
 };
 
-
-
-
 const addObjectReferenceRendering = (muiGridColumn, { render, path }) => {
-
   let { linkFormat } = render;
 
   if (linkFormat) {
@@ -43,21 +43,25 @@ const addObjectReferenceRendering = (muiGridColumn, { render, path }) => {
 
       if (params && value) {
         let link = linkFormat;
-        link = link.replace('{id}', value.id)
+        link = link
+          .replace('{id}', value.id)
           .replace('${streamID}', value.streamID)
           .replace('${name}', value.name);
 
-        return (
-          <Link to={`${link}`}>
-            {params.value.name || 'No Name'}
-          </Link>
-        );
+        return <Link to={`${link}`}>{params.value.name || 'No Name'}</Link>;
       }
       return muiGridColumn.nullValue;
     };
   }
-}
+};
 
+/**
+ * This is our default renderer function for external links
+ * @function
+ * @param {Object} muiGridColumn - The column to render
+ *
+ * @returns {React.ReactElement}
+ */
 const addExternalLinkRendering = (muiGridColumn, columnConfig) => {
   muiGridColumn.renderCell = (params) => {
     return <LinkCellWrapper muiGridColumn={muiGridColumn} params={params} />;
@@ -79,7 +83,8 @@ const GridActions = ({ actions, params, themeGroup, useTypeVariant }) => {
   const theme = useTheme();
 
   const { gridActionItem } = theme;
-  const gAI = themeGroup?.gridActionItem || gridActionItem || { color: '#231100', paddingX: '0.75rem' };
+  const gAI = themeGroup?.gridActionItem ||
+    gridActionItem || { color: '#231100', paddingX: '0.75rem' };
 
   return (
     <ButtonGroup
@@ -121,7 +126,9 @@ const GridActions = ({ actions, params, themeGroup, useTypeVariant }) => {
         const extraProps = action.actionProps || {};
         if (action.clickHandler) {
           // Pass in the row data to the action - up to the caller to unpack
-          extraProps.onClick = () => { action.clickHandler(params.row); };
+          extraProps.onClick = () => {
+            action.clickHandler(params.row);
+          };
         }
 
         return (
@@ -148,7 +155,6 @@ GridActions.propTypes = {
   useTypeVariant: PropTypes.bool,
 };
 
-
 /**
  * @typedef {Object} ActionItem
  * @property {string} label - The label for the action
@@ -163,7 +169,6 @@ GridActions.propTypes = {
  * @typedef {Object} ActionData
  * @property {ActionItem[]} actionList - The list of actions
  */
-
 
 /**
  * This takes a mui column and adds formatting to it to handle action button fields
@@ -180,16 +185,76 @@ const addActionButtonRendering = (muiGridColumn, actionData) => {
   // This allows us to use hooks inside the component
   muiGridColumn.renderCell = (params) => {
     return (
-      <ActionWrapper muiGridColumn={muiGridColumn} actions={actions} params={params} />
+      <ActionWrapper
+        muiGridColumn={muiGridColumn}
+        actions={actions}
+        params={params}
+      />
     );
   };
 };
 
-const addRendering = (column) => {
+/**
+ * Wraps the value in a component which determines if a tooltip should be displayed
+ * @function
+ * @param {object} muiGridColumn - The column used by the MUIGrid component
+ */
+const addExpandableRendering = (muiGridColumn) => {
+  const type = muiGridColumn.source.type;
+  muiGridColumn.renderCell = (params) => {
+    return <RenderExpandableCell muiGridColumn={muiGridColumn} {...params} />;
+  };
+};
 
-  switch (column.source.type) {
-    case 99: addActionButtonRendering(column, column.source.render); break; // Action Buttons
-    case 100: addExternalLinkRendering(column); break; // Link
+const addObjectReferenceLinkRendering = (muiGridColumn) => {
+  const { render, path } = muiGridColumn.source || {};
+  const { linkFormat } = render || {};
+
+  if (linkFormat) {
+    muiGridColumn.renderCell = (params) => {
+      let path_parts = path.split('.');
+
+      let value = params.row;
+
+      for (const element of path_parts) {
+        value = value != null ? value[element] : null;
+      }
+
+      if (params && value) {
+        let link = linkFormat;
+        link = link
+          .replace('{id}', value.id)
+          .replace('${streamID}', value.streamID)
+          .replace('${name}', value.name);
+
+        return <Link to={`${link}`}>{params.value.name || 'No Name'}</Link>;
+      }
+      return 'N/A';
+    };
+  }
+};
+
+const addRendering = (column) => {
+  const { source } = column || {};
+  switch (source.type) {
+    case 10: {
+      //Check for linkFormat
+      if (source.render?.linkFormat) {
+        addObjectReferenceLinkRendering(column);
+      } else {
+        addExpandableRendering(column);
+      }
+      break;
+    }
+    case 99:
+      addActionButtonRendering(column, source.render);
+      break; // Action Buttons
+    case 100:
+      addExternalLinkRendering(column);
+      break; // Link
+    default:
+      addExpandableRendering(column);
+      break; // Expandable
   }
 
   return column;
@@ -205,11 +270,16 @@ const addRendering = (column) => {
  * @returns {React.ReactElement}
  */
 const ActionWrapper = (props) => {
-  const { actionsComponent, themeGroup, useTypeVariant } = useContext(gridContext);
+  const { actionsComponent, themeGroup, useTypeVariant } =
+    useContext(gridContext);
   // Default to the GridActions component if no custom component is passed in
   const Actions = actionsComponent || GridActions;
   return (
-    <Actions {...props} themeGroup={themeGroup} useTypeVariant={useTypeVariant} />
+    <Actions
+      {...props}
+      themeGroup={themeGroup}
+      useTypeVariant={useTypeVariant}
+    />
   );
 };
 
@@ -236,7 +306,6 @@ const getBaseAction = (action) => {
   };
 };
 
-
 /**
  * This takes a mui column and adds formatting to it to handle external link fields
  * @function LinkCellWrapper
@@ -250,9 +319,12 @@ const LinkCellWrapper = ({ params, muiGridColumn }) => {
   // Default to the Grid component if no custom component is passed in
   const Link = linkComponent || GridLink;
   return (
-    <Link params={params} themeGroup={themeGroup} muiGridColumn={muiGridColumn} />
+    <Link
+      params={params}
+      themeGroup={themeGroup}
+      muiGridColumn={muiGridColumn}
+    />
   );
-
 };
 LinkCellWrapper.propTypes = {
   params: PropTypes.object,
@@ -276,27 +348,26 @@ LinkCellWrapper.propTypes = {
 const GridLink = ({ params, muiGridColumn }) => {
   if (typeof params.value === 'string') {
     if (params && params.value) {
-      return (<a href={params.value} target="_blank" rel="noreferrer" >
-        {params.value}
-      </a>);
+      return (
+        <a href={params.value} target="_blank" rel="noreferrer">
+          {params.value}
+        </a>
+      );
     }
   } else if (params.value && params.value.url) {
-    return (<a href={params.value.url} target="_blank" rel="noreferrer" >
-      {params.value?.label || params.value.url}
-    </a>);
+    return (
+      <a href={params.value.url} target="_blank" rel="noreferrer">
+        {params.value?.label || params.value.url}
+      </a>
+    );
   }
   return muiGridColumn.nullValue;
 };
 
 GridLink.propTypes = {
-  params: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-  ]),
+  params: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   muiGridColumn: PropTypes.object,
 };
-
-
 
 /**
  * Primary UI component for user interaction
@@ -314,8 +385,17 @@ GridLink.propTypes = {
  */
 // eslint-disable-next-line
 const PamLayoutGrid = ({
-  data, layout, initialSortColumn, initialSortDirection, showToolbar, actions, themeGroup,
-  linkComponent, actionsComponent, useTypeVariant, ...props
+  data,
+  layout,
+  initialSortColumn,
+  initialSortDirection,
+  showToolbar,
+  actions,
+  themeGroup,
+  linkComponent,
+  actionsComponent,
+  useTypeVariant,
+  ...props
 }) => {
   // memo of shared values
   const sharedValues = React.useMemo(() => {
@@ -341,19 +421,26 @@ const PamLayoutGrid = ({
   //If the layout has a type property and that property is a number then we are using the new generic layout and should process it as such
   if (hasType && typeof layout.type === 'number') {
     processedLayout = processGenericLayout(layout);
-  } else if (hasType && typeof layout.type === 'string') { // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
+  } else if (hasType && typeof layout.type === 'string') {
+    // If the layout has a type property and that property is a string then we are using an already processed new layout and should use it as is
     processedLayout = layout;
-  } else { //Otherwise use our own layout processing
+  } else {
+    //Otherwise use our own layout processing
     processedLayout = { name: 'Unknown', sections: processLayout(layout) };
   }
 
   const nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
-  const layoutColumns = processedLayout?.sections && processedLayout?.sections?.length ? processedLayout.sections[0].fields : [];
+  const editable = processedLayout.editable || false;
+
+  const layoutColumns =
+    processedLayout?.sections && processedLayout?.sections?.length
+      ? processedLayout.sections[0].fields
+      : [];
 
   // Check for optional actions
   if (actions?.length) {
     actions.sort((a, b) => a.order - b.order);
-    const actionsColumns = actions.map(action => {
+    const actionsColumns = actions.map((action) => {
       return getBaseAction(action);
     });
 
@@ -361,42 +448,50 @@ const PamLayoutGrid = ({
     layoutColumns.push(...actionsColumns);
   }
 
-
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
-  let renderColumns = (layoutColumns || []).map((item) => convertLayoutColumnToMuiColumn(item, nullValue)).filter(Boolean); // Remove any columns that are not defined
+  let renderColumns = (layoutColumns || [])
+    .map((item) => convertLayoutColumnToMuiColumn(item, nullValue, editable))
+    .filter(Boolean); // Remove any columns that are not defined
   renderColumns = renderColumns.map((column) => addRendering(column));
+
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
-  const compThings = showToolbar ? {
-    components: { Toolbar: MUIGridToolbar },
-    // Four buttons appear on the MUI grid by default, we want to hide them
-    disableColumnSelector: true,
-    disableDensitySelector: true,
-    disableExportSelector: true,
-    componentsProps: {
-      toolbar: {
-        // Quick filter is a search box that appears in the toolbar
-        showQuickFilter: true,
-        quickFilterProps: { debounceMs: 500 },
-        //Disable csv and print to completely remove the "Export" button
-        csvOptions: { disableToolbarButton: false },
-        printOptions: { disableToolbarButton: true },
+  const compThings = showToolbar
+    ? {
+      components: { Toolbar: MUIGridToolbar },
+      // Four buttons appear on the MUI grid by default, we want to hide them
+      disableColumnSelector: true,
+      disableDensitySelector: true,
+      disableExportSelector: true,
+      componentsProps: {
+        toolbar: {
+          // Quick filter is a search box that appears in the toolbar
+          showQuickFilter: true,
+          quickFilterProps: { debounceMs: 500 },
+          //Disable csv and print to completely remove the "Export" button
+          csvOptions: { disableToolbarButton: false },
+          printOptions: { disableToolbarButton: true },
+        },
       },
-    },
-  } : {};
+    }
+    : {};
 
   const initialState = {
     pagination: {
-      pageSize: 10
-    }
+      pageSize: 10,
+    },
   };
 
   // If we have an initial sort column, then we set it in the initial state
   if (initialSortColumn) {
     initialState.sorting = {
-      sortModel: [{ field: initialSortColumn, sort: initialSortDirection === 'desc' ? 'desc' : 'asc' }],
+      sortModel: [
+        {
+          field: initialSortColumn,
+          sort: initialSortDirection === 'desc' ? 'desc' : 'asc',
+        },
+      ],
     };
   }
-
 
   // This is the start of our new generic layout processing
   if (processedLayout.data) {
@@ -411,10 +506,15 @@ const PamLayoutGrid = ({
         // The field property should be the name of the column to sort by
         // The order property should be either 'asc' or 'desc'
         initialState.sorting = {
-          sortModel: [{
-            field: processedLayout.data.gridConfig.sort.field,
-            sort: processedLayout.data.gridConfig.sort.order === 'desc' ? 'desc' : 'asc'
-          }]
+          sortModel: [
+            {
+              field: processedLayout.data.gridConfig.sort.field,
+              sort:
+                processedLayout.data.gridConfig.sort.order === 'desc'
+                  ? 'desc'
+                  : 'asc',
+            },
+          ],
         };
       }
     }
@@ -427,7 +527,9 @@ const PamLayoutGrid = ({
     if (props.onFilterModelChange) {
       // We need to map the items in the filter model to link back to the original layout field
       const mappedModel = model.items.map((item) => {
-        const layoutField = layoutColumns.find((field) => field.path === item.columnField);
+        const layoutField = layoutColumns.find(
+          (field) => field.path === item.columnField
+        );
         let ret = {
           ...item,
           field: layoutField.source,
@@ -443,7 +545,9 @@ const PamLayoutGrid = ({
     if (props.onSortModelChange) {
       // We need to map the items in the sort model to link back to the original layout field
       const mappedModel = model.map((item) => {
-        const layoutField = layoutColumns.find((field) => field.path === item.field);
+        const layoutField = layoutColumns.find(
+          (field) => field.path === item.field
+        );
         let ret = {
           ...item,
           field: layoutField.source,
@@ -454,7 +558,7 @@ const PamLayoutGrid = ({
 
       props.onSortModelChange(mappedModel);
     }
-  }
+  };
 
   return (
     <gridContext.Provider value={sharedValues}>
@@ -471,6 +575,7 @@ const PamLayoutGrid = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
         }
+        editMode="row"
       />
     </gridContext.Provider>
   );
@@ -487,17 +592,21 @@ PamLayoutGrid.propTypes = {
   themeGroup: PropTypes.object,
   linkComponent: PropTypes.elementType,
   actionsComponent: PropTypes.elementType,
-  actions: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string,
-    order: PropTypes.number.isRequired,
-    width: PropTypes.number,
-    actionList: PropTypes.arrayOf(PropTypes.shape({
-      label: PropTypes.string.isRequired,
+  actions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
       order: PropTypes.number.isRequired,
-      type: PropTypes.string,
-      clickHandler: PropTypes.func.isRequired,
-    })).isRequired,
-  })),
+      width: PropTypes.number,
+      actionList: PropTypes.arrayOf(
+        PropTypes.shape({
+          label: PropTypes.string.isRequired,
+          order: PropTypes.number.isRequired,
+          type: PropTypes.string,
+          clickHandler: PropTypes.func.isRequired,
+        })
+      ).isRequired,
+    })
+  ),
   onFilterModelChange: PropTypes.func,
   onSortModelChange: PropTypes.func,
 };
@@ -506,6 +615,4 @@ PamLayoutGrid.defaultProps = {
   showToolbar: false,
 };
 
-export {
-  PamLayoutGrid as default,
-};
+export { PamLayoutGrid as default };

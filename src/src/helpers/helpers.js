@@ -177,10 +177,10 @@ export function sortOn(items, prop = 'label', isNumber = false) {
   }
 
   if (isNumber) {
-    return [...items].sort((a, b) => floatCompare(a[prop], b[prop]));
+    return [...items].sort((a, b) => floatCompare(a?.[prop], b?.[prop]));
   }
 
-  return [...items].sort((a, b) => caseless(a[prop], b[prop]));
+  return [...items].sort((a, b) => caseless(a?.[prop], b?.[prop]));
 }
 
 /**
@@ -256,7 +256,7 @@ export function processLayout(layout) {
   }
 
   if (layout.type === 1) {
-    console.warn('You are processomh a form layout with the processLayout method. You should be using the useFormLayout and parseFormLayout methods instead.');
+    console.warn('You are processing a form layout with the processLayout method. You should be using the useFormLayout and parseFormLayout methods instead.');
   }
 
   const sections = layout.sections.map((section) => {
@@ -352,6 +352,7 @@ function getStructure(field) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({
       label: item.name,
       id: item.id,
+      source: item,
     })) : [];
 
     dynField.render.choices = choices;

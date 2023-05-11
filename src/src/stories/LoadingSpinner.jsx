@@ -15,7 +15,7 @@ import { Backdrop, Box, CircularProgress, Stack } from '@mui/material';
  * @example
  * <LoadingSpinner isActive={true} />
  */
-const LoadingSpinner = ({ isActive, variant, message, zIndex }) => {
+const LoadingSpinner = ({ isActive, variant, message, zIndex, ...props }) => {
   /**
    * MUI base theme default zIndex values
     appBar:1100
@@ -28,7 +28,7 @@ const LoadingSpinner = ({ isActive, variant, message, zIndex }) => {
     tooltip:1500
    */
   return (
-    <div>
+    <div {...props}>
       <Backdrop
         sx={{ zIndex: (theme) => {
           return isNaN(zIndex) ? theme.zIndex.tooltip + 1 : zIndex;

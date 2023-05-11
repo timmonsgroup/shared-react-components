@@ -69,8 +69,6 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
     return isEqual;
   };
 
-
-
   /**
    * Helper method to get the option object can either be an object or just the value of the id
    * @function getOpObj
@@ -99,7 +97,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
       renderOption={(optProps, option) => (
-        <Box component="li" {...optProps}>
+        <Box component="li" {...optProps} key={option.id || option.value}>
           {option.label}
         </Box>
       )}
@@ -107,7 +105,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
         return (
           <Box sx={renderSX || {}}>
             <AnyFieldLabel
-              htmlFor={textFieldProps.id || textFieldProps.name}
+              htmlFor={textFieldProps?.id || textFieldProps?.name || 'typeahead'}
               error={textFieldProps?.error}
               sx={labelSX || {}}
               label={label || 'Search'}
