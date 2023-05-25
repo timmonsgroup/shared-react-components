@@ -281,7 +281,8 @@ const useProvideAuth = (config, whitelist) => {
 
     // If we don't have a refresh token or boot token, we will open a new tab to the login endpoint
     // Calculate our redirect url based off of the origin of the current page and the login endpoint in our api
-    let redirect = `${window.location.origin}/api/oauth/callback`;
+    // const apiSlug = config.apiSlug || 'api';
+    let redirect = config.redirectUri || `${window.location.origin}/api/oauth/callback`;
     let fetchUrl = `https://${config.host}/oauth2/authorize?response_type=code&client_id=${config.clientId}&redirect_uri=${redirect}`;
 
     if (state) {
@@ -309,7 +310,8 @@ const useProvideAuth = (config, whitelist) => {
     logout_internal('logout');
 
     // Calculate our redirect url based off of the origin of the current page and the logout endpoint in our api
-    const redirect = window.location.origin + '/api/oauth/logout';
+    const apiSlug = config.apiSlug || 'api';
+    const redirect = `${window.location.origin}/${apiSlug}/oauth/logout`;
 
     // Open the logout endpoint in a new tab
     const fetchUrl = config?.logoutURL || (config?.useAzureAD ?
@@ -328,7 +330,6 @@ const useProvideAuth = (config, whitelist) => {
    * @async
    */
   const refresh = async () => {
-
     const refreshToken = authState.refreshToken || await getRefreshTokenFromSession();
     if (refreshToken) {
       dispatch({ type: ACTIONS.SET_REFRESHING });
@@ -546,7 +547,8 @@ const useProvideAuth = (config, whitelist) => {
    * @param {*} refreshToken the token used to call the refresh endpoint
    */
   const startWithRefreshToken = async (refreshToken) => {
-    const url = `${window.location.origin}/api/oauth/refresh`;
+    const apiSlug = config.apiSlug || 'api';
+    const url = `${window.location.origin}/${apiSlug}/oauth/refresh`;
 
     try {
       axios.post(url, refreshToken, { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(res => {

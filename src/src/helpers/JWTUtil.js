@@ -13,7 +13,8 @@ export const decodeBase64Token = (tokenBase64String) => {
 };
 
 export const decodeTokenToJWT = (token) => {
-  const jwt = JSON.parse(atob(token.split('.')[1]));
+  const spilt = token.includes('.') ? token.split('.')[1] : token;
+  const jwt = JSON.parse(atob(spilt));
   return jwt;
 };
 

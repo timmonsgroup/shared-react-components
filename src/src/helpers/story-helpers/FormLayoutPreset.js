@@ -134,6 +134,7 @@ const clusterField = {
   addLabel: 'Add a pair',
   removeLabel: 'Remove a pair',
   solitary: true,
+  inline: true,
   model: {
     id: 8,
     modelid: 10,
@@ -583,6 +584,30 @@ export const layout = {
                   hidden: false,
                 },
                 when: 'fireDepartment',
+                isValid: true,
+              },
+            ],
+          },
+          {
+            label: 'Cluster Must Validate',
+            path: 'validateCluster',
+            type: 0,
+            model: {
+              id: 7,
+              modelid: 10,
+              type: 0,
+              name: 'validateCluster',
+              data: {},
+            },
+            required: false,
+            hidden: true,
+            conditions: [
+              {
+                then: {
+                  hidden: false,
+                  helperText: 'You have at least one cluster. I appear',
+                },
+                when: 'amCluster',
                 isValid: true,
               },
             ],

@@ -402,6 +402,7 @@ const PamLayoutGrid = ({
     return { themeGroup, actionsComponent, useTypeVariant, linkComponent };
   }, [themeGroup, actionsComponent, useTypeVariant, linkComponent]);
 
+
   const theme = useTheme();
   // Extract the 'pamGrid' theme group from the theme
   const { pamGrid } = theme;
@@ -415,6 +416,7 @@ const PamLayoutGrid = ({
     ...theming,
   };
 
+  // TODO need to rework this so these are not re-run on every render but still accessible in other functions.
   let processedLayout = layout;
   const hasType = Object.prototype.hasOwnProperty.call(layout, 'type');
 
@@ -429,30 +431,37 @@ const PamLayoutGrid = ({
     processedLayout = { name: 'Unknown', sections: processLayout(layout) };
   }
 
-  const nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
-  const editable = processedLayout.editable || false;
-
   const layoutColumns =
     processedLayout?.sections && processedLayout?.sections?.length
       ? processedLayout.sections[0].fields
       : [];
 
-  // Check for optional actions
-  if (actions?.length) {
-    actions.sort((a, b) => a.order - b.order);
-    const actionsColumns = actions.map((action) => {
-      return getBaseAction(action);
-    });
-
-    // Append the actions to the end of the columns
-    layoutColumns.push(...actionsColumns);
-  }
-
   // This converts the layout field into a list of columns that can be used by the MUIGrid component
-  let renderColumns = (layoutColumns || [])
-    .map((item) => convertLayoutColumnToMuiColumn(item, nullValue, editable))
-    .filter(Boolean); // Remove any columns that are not defined
-  renderColumns = renderColumns.map((column) => addRendering(column));
+  // This needs to be memoized so that it is not re-run every time the component renders other wise column state is lost between renders
+  const renderColumns = React.useMemo(() => {
+    const nullValue = processedLayout?.data?.source?.nullValue || 'N/A';
+    const editable = processedLayout.editable || false;
+
+    // Check for optional actions
+    if (actions?.length) {
+      actions.sort((a, b) => a.order - b.order);
+      const actionsColumns = actions.map((action) => {
+        return getBaseAction(action);
+      });
+
+      // Append the actions to the end of the columns
+      layoutColumns.push(...actionsColumns);
+    }
+    let theCols = (layoutColumns || [])
+      .map((item) => convertLayoutColumnToMuiColumn(item, nullValue, editable))
+      .filter(Boolean); // Remove any columns that are not defined
+    return theCols.map((column) => addRendering(column));
+  }, [layout]);
+
+  // let renderColumns = (layoutColumns || [])
+  //   .map((item) => convertLayoutColumnToMuiColumn(item, nullValue, editable))
+  //   .filter(Boolean); // Remove any columns that are not defined
+  // renderColumns = renderColumns.map((column) => addRendering(column));
 
   // If we have showToolbar set to true add the Toolbar component to the grid and set other props
   const compThings = showToolbar

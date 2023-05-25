@@ -14,7 +14,8 @@ import {
   ID_FIELD,
   LABEL_FIELD,
   CONDITIONAL_RENDER,
-  DEFAULT_VALUE
+  DEFAULT_VALUE,
+  FIELD_TYPES
 } from '../constants';
 import { objectReducer } from '../helpers';
 
@@ -272,8 +273,17 @@ export const useConfigForm = (formLayout, data, options) => {
       subscription = watch((formValues, { name, type }) => {
         let watched = watchFields.includes(name);
 
-        if (!watched || type !== 'change') {
+        // This field is not watched
+        if (!watched) {
           return;
+        }
+
+        if (type !== 'change') {
+          // check if clusterField
+          const clusterField = formLayout.fields.get(name);
+          if (clusterField.type !== FIELD_TYPES.CLUSTER) {
+            return;
+          }
         }
 
         const finishSetup = ({ renderSections, resetFields, dynValid }) => {
@@ -445,7 +455,7 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
     // We have to run a separate loop because conditions could be met for a specific value AND for "anyValue" (i.e. not null)
     if (triggerField.hasOnChange) {
       // If the value is null, we need to handle the reset of the affected fields
-      if (formValue !== null && formValue !== undefined && formValue !== '') {
+      if (formValue !== null && formValue !== undefined && formValue !== '' && formValue?.length > 0) {
         const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, 'anyValue', options);
         anyUpdates.forEach(({ id, conditional }) => {
           updateConditional(id, conditional);
