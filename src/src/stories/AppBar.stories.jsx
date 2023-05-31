@@ -60,8 +60,8 @@ Template.args = {
   navLinks,
   logoUrl: '',
   showLoggingIn: false,
-  onLogin: () => {},
-  onLogout: () => {},
+  onLogin: () => { },
+  onLogout: () => { },
 };
 
 
@@ -77,7 +77,7 @@ LoggedOut.args = {
       state: AUTH_STATES.LOGGED_IN,
     });
   },
-  onLogout: () => {},
+  onLogout: () => { },
 };
 
 export const LoggedIn = (args) => {
@@ -95,8 +95,8 @@ export const LoggedIn = (args) => {
 };
 LoggedIn.args = {
   navLinks,
-  onLogin: () => {},
-  onLogout: () => {},
+  onLogin: () => { },
+  onLogout: () => { },
 };
 
 export const CustomLogo = (args) => {
@@ -115,6 +115,7 @@ CustomLogo.args = {
   navLinks,
   user: baseUser,
   logoUrl: 'https://www.logomaker.com/wpstatic/uploads/2015/06/Logo-Samples2-73-min.jpg',
+  logoText: 'Arkansas CWD Application'
 };
 
 
@@ -133,6 +134,6 @@ export const LoggingIn = (args) => {
 LoggingIn.args = {
   navLinks,
   showLoggingIn: true,
-  onLogin: () => {},
-  onLogout: () => {},
+  onLogin: () => { },
+  onLogout: () => { },
 };

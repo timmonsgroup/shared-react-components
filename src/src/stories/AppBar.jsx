@@ -25,6 +25,14 @@ const theTheme = {
       top: '3px',
       position: 'relative'
     },
+    logoText: {
+      height: '100%',
+      width: 'auto',
+      maxHeight: '44px',
+      top: '3px',
+      position: 'relative',
+      maxWidth: "150px"
+    },
   }
 };
 
@@ -41,14 +49,16 @@ const theTheme = {
  * @param {string} props.navLinks[].href - The path for the nav link
  * @param {string} props.logoUrl - The url for the logo
  * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
+ * @param {string} props.logoText - The text to place next to the logo on the app bar 
  */
-const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, ...props }) => {
+const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, ...props }) => {
   const theme = useTheme();
   const appBar = theme?.appBar || theTheme.appBar;
 
   // If a theme group was passed in, use that instead of the default
   const theming = themeGroup || appBar;
   const logoStyle = theming?.logo || theTheme.appBar.logo;
+  const logoTextStyle = theming?.logoText || theTheme.appBar.logoText
 
   // Helper render method to simplify the final render returned
   const renderMenu = () => {
@@ -77,7 +87,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
 
     if (item.permission) {
       return (
-        <PermissionFilter key={index} permission={item.permission} showLoggingIn={ showLoggingIn || false }>
+        <PermissionFilter key={index} permission={item.permission} showLoggingIn={showLoggingIn || false}>
           {theButton}
         </PermissionFilter>
       );
@@ -89,7 +99,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
   // Render the user area if the user is allowed to sign in.
   const renderUserArea = () => {
     return (
-      <PermissionFilter permission={ACLS.SIGN_IN} debug="UserMenu" showLoggingIn={ showLoggingIn || false } >
+      <PermissionFilter permission={ACLS.SIGN_IN} debug="UserMenu" showLoggingIn={showLoggingIn || false} >
         <UserMenu
           user={user}
           onLogin={onLogin}
@@ -110,17 +120,25 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
       >
         <Toolbar>
           <Box sx={{ flexGrow: 1 }}>
-            {logoUrl ? (
-              <img
-                alt="Logo"
-                src={logoUrl}
-                style={logoStyle}
-                className="appbar-logo"
-              />
-            ) : (
-              <p>Logo</p>
-            )}
+            <Stack spacing={3} direction="row" >
+              {logoUrl ? (
+                <img
+                  alt="Logo"
+                  src={logoUrl}
+                  style={logoStyle}
+                  className="appbar-logo"
+                />
+              ) : (
+                <p>Logo</p>
+              )}
+              {logoText ? (
+                <Box sx={logoTextStyle} alt='Logo text'>
+                  {logoText}
+                </Box>
+              ) : ''}
+            </Stack>
           </Box>
+
           {renderMenu()}
         </Toolbar>
       </MUIAppBar>

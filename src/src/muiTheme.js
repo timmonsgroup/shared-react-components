@@ -42,7 +42,6 @@ const baseThemeProperties = {
       height: '100%',
       width: 'auto',
       maxHeight: '44px',
-      top: '3px',
       position: 'relative'
     },
   },
@@ -441,7 +440,7 @@ const baseThemeProperties = {
           props: {
             variant: 'clusterAdd',
           },
-          style: ({theme}) => {
+          style: ({ theme }) => {
             const mainColor = theme.palette.primary.main;
             return {
               padding: '0px',
