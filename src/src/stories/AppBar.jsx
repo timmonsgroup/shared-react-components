@@ -11,6 +11,7 @@ import UserMenu from './UserMenu';
 import PermissionFilter from './PermissionFilter';
 //We are making the bold and, hopefully, correct assumption that your application will always use 'Can Sign In' as the permission string
 import { ACLS } from '../constants';
+import { functionOrDefault } from '../helpers';
 
 /**
  * The default theme for the app bar
@@ -50,8 +51,9 @@ const theTheme = {
  * @param {string} props.logoUrl - The url for the logo
  * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
  * @param {string} props.logoText - The text to place next to the logo on the app bar 
+ * @param {function} props.renderLogo - A function to overwrite the default renderer for the logo section - Optional 
  */
-const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, ...props }) => {
+const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props }) => {
   const theme = useTheme();
   const appBar = theme?.appBar || theTheme.appBar;
 
@@ -111,6 +113,28 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
     );
   };
 
+  const defaultLogoRenderer = (logoUrl, logoText) => {
+    return (
+      <Stack spacing={3} direction="row" >
+        {logoUrl && (
+          <img
+            alt="Logo"
+            src={logoUrl}
+            style={logoStyle}
+            className="appbar-logo"
+          />
+        )}
+        {logoText ? (
+          <Box sx={logoTextStyle} alt='Logo text'>
+            {logoText}
+          </Box>
+        ) : ''}
+      </Stack>
+    )
+  }
+
+  const theLogo = logoUrl || logoText || renderLogo ? functionOrDefault(renderLogo, defaultLogoRenderer) : null
+
   return (
     <Box sx={{ flexGrow: 1, height: '64px' }}>
       <MUIAppBar
@@ -120,23 +144,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
       >
         <Toolbar>
           <Box sx={{ flexGrow: 1 }}>
-            <Stack spacing={3} direction="row" >
-              {logoUrl ? (
-                <img
-                  alt="Logo"
-                  src={logoUrl}
-                  style={logoStyle}
-                  className="appbar-logo"
-                />
-              ) : (
-                <p>Logo</p>
-              )}
-              {logoText ? (
-                <Box sx={logoTextStyle} alt='Logo text'>
-                  {logoText}
-                </Box>
-              ) : ''}
-            </Stack>
+            {theLogo && theLogo(logoUrl, logoText)}
           </Box>
 
           {renderMenu()}
