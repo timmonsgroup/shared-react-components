@@ -1,4 +1,5 @@
 import { FIRE_DEPTS } from './LargeDataset';
+import testJson from './/test.json'
 const FUNDING_SOURCES = [
   {
     id: 0,
@@ -72,6 +73,23 @@ const emailField = createTextModel('email', 'Email', true, {
   altHelperText: 'I GO ELSEWHERE!',
   email: true,
   helperText: 'I am an email field!',
+  // conditions: [
+  //   {
+  //     when: 'fireDepartment',
+  //     isValid: true,
+  //     then: {
+  //       helperText: 'I am no longer an email field!',
+  //       email: false,
+  //     }
+  //   }
+  // ],
+});
+
+const customRegexField = createTextModel('customRegexFieldID', 'Custom Regex Field ID', true, {
+  placeholder: 'This field needs to match this patten: "/^[a-z0-9]+$/i"',
+  helperText: 'I match the regex! /^[a-z0-9]+$/i',
+  validationPattern: '^[a-z0-9]+$',
+  valdationFlags: 'i'
   // conditions: [
   //   {
   //     when: 'fireDepartment',
@@ -514,6 +532,7 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
+          customRegexField,
           emailField,
           zipField,
           phoneField,

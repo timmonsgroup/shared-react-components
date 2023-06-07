@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import testJson from './story-helpers/test.json'
 
 /**
  * @constant {Object} VALID_PATTERNS - regex patterns for validating fields
@@ -395,26 +396,35 @@ export function createFieldValidation(type, label, validationMap, field) {
 
   switch (type) {
     case FIELDS.LONG_TEXT:
-    case FIELDS.TEXT:
-    case FIELDS.LINK: {
+    case FIELDS.TEXT: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
 
-      if (type !== FIELDS.LINK) {
-        const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
-        if (isEmail) {
-          validation = validation.email('Please enter a valid email address');
-        }
-        // TODO: Rework to allow for custom regex via a field property
-        // like field.render.validationRegex and field.render.validationMessage
-        const isZip = !!validationMap.get(VALIDATIONS.ZIP);
-        if (isZip) {
-          validation = validation.matches(VALID_PATTERNS.ZIP, 'Please enter a valid zip code in the format of xxxxx or xxxxx-xxxx');
-        }
-        const isPhone = !!validationMap.get(VALIDATIONS.PHONE);
-        if (isPhone) {
-          validation = validation.matches(VALID_PATTERNS.PHONE, 'Please enter a valid phone number in the format of xxx-xxx-xxxx');
-        }
+      const isPattern = !!validationMap.get(VALIDATIONS.VALIDATION_PATTERN)
+      if (isPattern) {
+        const regexval = new RegExp(validationMap.get(VALIDATIONS.VALIDATION_PATTERN), 'i')
+        validation = validation.matches(regexval, 'you broke. flag is')
+        console.log('\t', VALIDATIONS.VALIDATION_PATTERN)
+        console.log('\t', validationMap)
+        console.log('\t', regexval)
       }
+      const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
+      if (isEmail) {
+        validation = validation.email('Please enter a valid email address');
+      }
+      // TODO: Rework to allow for custom regex via a field property
+      // like field.render.validationRegex and field.render.validationMessage
+      const isZip = !!validationMap.get(VALIDATIONS.ZIP);
+      if (isZip) {
+        validation = validation.matches(VALID_PATTERNS.ZIP, 'Please enter a valid zip code in the format of xxxxx or xxxxx-xxxx');
+      }
+      const isPhone = !!validationMap.get(VALIDATIONS.PHONE);
+      if (isPhone) {
+        validation = validation.matches(VALID_PATTERNS.PHONE, 'Please enter a valid phone number in the format of xxx-xxx-xxxx');
+      }
+      break;
+    }
+    case FIELDS.LINK: {
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
       break;
     }
     case FIELDS.INT:
