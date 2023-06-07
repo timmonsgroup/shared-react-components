@@ -399,16 +399,14 @@ export function createFieldValidation(type, label, validationMap, field) {
     case FIELDS.TEXT: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
 
-      const hasRegexpValidationData = !!validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
-      if (hasRegexpValidationData) {
-        const regexpValidationData = validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
+      const regexpValidationData = validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
+      if (regexpValidationData) {
+        console.log('bingo')
+        const { pattern, flags, errorMessage } = regexpValidationData
 
-        const regexpPattern = regexpValidationData.pattern
-        const regexpFlags = regexpValidationData.flags
-        const regexp = new RegExp(regexpPattern, regexpFlags)
+        const regexp = new RegExp(pattern, flags)
 
-        const errorMessage = regexpValidationData.errorMessage || `Please enter a value that matches the regular expression: ${regexp}`
-        validation = validation.matches(regexp, errorMessage)
+        validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`)
       }
       const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
       if (isEmail) {
