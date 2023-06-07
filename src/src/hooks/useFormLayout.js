@@ -251,6 +251,7 @@ export function parseField(field, asyncFieldsMap) {
       [CONDITIONAL_RENDER.ICON_HELPER]: field[CONDITIONAL_RENDER.ICON_HELPER],
       [CONDITIONAL_RENDER.HELPER]: field[CONDITIONAL_RENDER.HELPER],
       [CONDITIONAL_RENDER.REQ_TEXT]: field[CONDITIONAL_RENDER.REQ_TEXT],
+      [VALIDATIONS.DISABLE_FUTURE]: field[VALIDATIONS.DISABLE_FUTURE],
       placeholder: field.placeholder,
       solitary: field.solitary,
       singleColumnSize: field.singleColumnSize,
@@ -401,7 +402,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
 // eslint-disable-next-line no-unused-vars
 export function getFieldValue(field, formData) {
   // if the type is missing check the render object
-  let {type} = field || field?.render || {};
+  let { type } = field || field?.render || {};
 
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
@@ -467,7 +468,7 @@ export function getFieldValue(field, formData) {
       if (Array.isArray(inData) && inData.length) {
         inData.forEach((nug) => {
           const lineData = {};
-          const {subFields} = field || [];
+          const { subFields } = field || [];
           if (Array.isArray(subFields) && subFields.length) {
             subFields.forEach((subF) => {
               const { name: fName, value: fValue } = getFieldValue(subF, nug, true);
