@@ -401,7 +401,6 @@ export function createFieldValidation(type, label, validationMap, field) {
 
       const regexpValidationData = validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
       if (regexpValidationData) {
-        console.log('bingo')
         const { pattern, flags, errorMessage } = regexpValidationData
 
         const regexp = new RegExp(pattern, flags)
