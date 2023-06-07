@@ -92,5 +92,6 @@ export const VALIDATIONS = Object.freeze({
   EMAIL,
   PHONE,
   ZIP,
-  REGEXP_VALIDATION_DATA: 'regexpValidationData'
+  REGEXP_VALIDATION_DATA: 'regexpValidationData',
+  DISABLE_FUTURE: 'disableFuture'
 });

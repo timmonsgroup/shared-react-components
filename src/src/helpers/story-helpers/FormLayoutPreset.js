@@ -514,6 +514,7 @@ const dateField = {
   },
   required: true,
   disabled: false,
+  disableFuture: true,
 };
 
 export const layout = {

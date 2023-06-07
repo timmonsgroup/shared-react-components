@@ -475,9 +475,17 @@ export function createFieldValidation(type, label, validationMap, field) {
       );
       break;
     }
-    case FIELDS.DATE:
+    case FIELDS.DATE: {
       validation = yupDate(label, required, null, reqMessage);
+
+      const disableFutureDates = !!validationMap.get(VALIDATIONS.DISABLE_FUTURE);
+      if (disableFutureDates) {
+        const today = new Date().toDateString()
+
+        validation = validation.max(today);
+      }
       break;
+    }
 
     // NOTE that Checkboxes are multi-selects, so we use the same validation
     case FIELDS.CHOICE:
