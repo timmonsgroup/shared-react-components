@@ -399,13 +399,16 @@ export function createFieldValidation(type, label, validationMap, field) {
     case FIELDS.TEXT: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
 
-      const isPattern = !!validationMap.get(VALIDATIONS.VALIDATION_PATTERN)
-      if (isPattern) {
-        const regexval = new RegExp(validationMap.get(VALIDATIONS.VALIDATION_PATTERN), 'i')
-        validation = validation.matches(regexval, 'you broke. flag is')
-        console.log('\t', VALIDATIONS.VALIDATION_PATTERN)
-        console.log('\t', validationMap)
-        console.log('\t', regexval)
+      const hasRegexpValidationData = !!validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
+      if (hasRegexpValidationData) {
+        const regexpValidationData = validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
+
+        const regexpPattern = regexpValidationData.pattern
+        const regexpFlags = regexpValidationData.flags
+        const regexp = new RegExp(regexpPattern, regexpFlags)
+
+        const errorMessage = regexpValidationData.errorMessage || `Please enter a value that matches the regular expression: ${regexp}`
+        validation = validation.matches(regexp, errorMessage)
       }
       const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
       if (isEmail) {
