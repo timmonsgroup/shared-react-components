@@ -60,6 +60,7 @@ export const MIN_LENGTH = 'minLength';
 export const EMAIL = 'email';
 export const ZIP = 'zip';
 export const PHONE = 'phone';
+export const DISABLE_FUTURE = 'disableFuture';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
@@ -74,6 +75,7 @@ export const CONDITIONAL_RENDER = Object.freeze({
   ICON_HELPER: 'iconHelperText',
   ALT_HELPER: 'altHelperText',
   REQ_TEXT: 'requiredErrorText',
+  DISABLE_FUTURE,
 });
 
 export const SPECIAL_ATTRS = Object.freeze({
@@ -92,6 +94,6 @@ export const VALIDATIONS = Object.freeze({
   EMAIL,
   PHONE,
   ZIP,
-  REGEXP_VALIDATION_DATA: 'regexpValidationData',
-  DISABLE_FUTURE: 'disableFuture'
+  DISABLE_FUTURE,
+  REGEXP_VALIDATION: 'regexpValidation'
 });

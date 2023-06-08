@@ -88,7 +88,7 @@ const emailField = createTextModel('email', 'Email', true, {
 const customRegexField = createTextModel('customRegexFieldID', 'Custom Regex Field ID', true, {
   placeholder: 'This field needs to match this patten: "/^[a-z0-9]+$/i"',
   helperText: 'I match the regex! /^[a-z0-9]+$/i',
-  regexpValidationData: {
+  regexpValidation: {
     pattern: '^[a-z0-9]+$',
     flags: 'i',
     errorMessage: 'Please enter a value that only contains alphanumeric characters'

@@ -399,13 +399,14 @@ export function createFieldValidation(type, label, validationMap, field) {
     case FIELDS.TEXT: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
 
-      const regexpValidationData = validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
-      if (regexpValidationData) {
-        const { pattern, flags, errorMessage } = regexpValidationData
+      const regexProps = validationMap.get(VALIDATIONS.REGEXP_VALIDATION);
+      if (regexProps) {
+        const { pattern, flags, errorMessage } = regexProps;
 
-        const regexp = new RegExp(pattern, flags)
-
-        validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`)
+        if (pattern) {
+          const regexp = new RegExp(pattern, flags);
+          validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`);
+        }
       }
       const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
       if (isEmail) {
