@@ -399,13 +399,14 @@ export function createFieldValidation(type, label, validationMap, field) {
     case FIELDS.TEXT: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
 
-      const regexpValidationData = validationMap.get(VALIDATIONS.REGEXP_VALIDATION_DATA)
-      if (regexpValidationData) {
-        const { pattern, flags, errorMessage } = regexpValidationData
+      const regexProps = validationMap.get(VALIDATIONS.REGEXP_VALIDATION);
+      if (regexProps) {
+        const { pattern, flags, errorMessage } = regexProps;
 
-        const regexp = new RegExp(pattern, flags)
-
-        validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`)
+        if (pattern) {
+          const regexp = new RegExp(pattern, flags);
+          validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`);
+        }
       }
       const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
       if (isEmail) {
@@ -475,9 +476,17 @@ export function createFieldValidation(type, label, validationMap, field) {
       );
       break;
     }
-    case FIELDS.DATE:
+    case FIELDS.DATE: {
       validation = yupDate(label, required, null, reqMessage);
+
+      const disableFutureDates = !!validationMap.get(VALIDATIONS.DISABLE_FUTURE);
+      if (disableFutureDates) {
+        const today = new Date().toDateString()
+
+        validation = validation.max(today);
+      }
       break;
+    }
 
     // NOTE that Checkboxes are multi-selects, so we use the same validation
     case FIELDS.CHOICE:

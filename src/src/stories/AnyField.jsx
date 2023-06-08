@@ -196,7 +196,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
         id={id || name}
         error={!!error}
         onChange={onChange}
-        onBlur = {onBlur}
+        onBlur={onBlur}
         value={value}
         multiline={isMultiLine}
         minRows={isMultiLine ? 3 : 1}
@@ -229,7 +229,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {FieldOptions} fieldOptions Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder }, fieldOptions) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions) => {
   const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -238,6 +238,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
         disabled={disabled}
         value={value}
         onChange={onChange}
+        disableFuture={disableFuture}
         renderInput={(params) => {
           // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
           params.inputProps['data-src-field'] = name;
@@ -250,7 +251,8 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
               <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
               <TextField sx={{ width: '100%' }} {...params} />
             </>
-          );}}
+          );
+        }}
       />
       {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
       <FormErrorMessage error={error} />

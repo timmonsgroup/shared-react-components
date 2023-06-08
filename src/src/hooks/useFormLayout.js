@@ -6,7 +6,7 @@ import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
   TODAY_DEFAULT, MAX_VALUE, MIN_VALUE, MAX_LENGTH, MIN_LENGTH,
-  REQUIRED, EMAIL, PHONE, ZIP, DISABLED
+  REQUIRED, EMAIL, PHONE, ZIP, DISABLED, DISABLE_FUTURE
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
@@ -275,6 +275,11 @@ export function parseField(field, asyncFieldsMap) {
     parsedField.render.checkbox = !!field.checkbox;
   }
 
+  // add date specific props
+  if (type === FIELDS.DATE) {
+    parsedField.render[DISABLE_FUTURE] = !!field[DISABLE_FUTURE];
+  }
+
   // map special props to the field
 
   specialProps.forEach((prop) => {
@@ -401,7 +406,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
 // eslint-disable-next-line no-unused-vars
 export function getFieldValue(field, formData) {
   // if the type is missing check the render object
-  let {type} = field || field?.render || {};
+  let { type } = field || field?.render || {};
 
   const { render } = field || {};
   const name = render.name || `unknown${render.id}`;
@@ -467,7 +472,7 @@ export function getFieldValue(field, formData) {
       if (Array.isArray(inData) && inData.length) {
         inData.forEach((nug) => {
           const lineData = {};
-          const {subFields} = field || [];
+          const { subFields } = field || [];
           if (Array.isArray(subFields) && subFields.length) {
             subFields.forEach((subF) => {
               const { name: fName, value: fValue } = getFieldValue(subF, nug, true);
