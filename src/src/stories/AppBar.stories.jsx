@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { authContext } from '../hooks/useAuth';
 import { authMock } from '../mocks/authMock';
 import { AUTH_STATES } from '../constants';
+import { Box, Stack } from '@mui/material';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -118,6 +119,60 @@ CustomLogo.args = {
   logoText: 'Arkansas CWD Application'
 };
 
+export const CustomLogoWithCustomLogoRenderer = (args) => {
+  const user = {
+    ...baseUser,
+    isSignedIn: false
+  };
+
+  authMock.setAuthState({
+    user,
+    state: AUTH_STATES.LOGGED_OUT,
+  });
+  return <Wrapped {...args} user={user} />;
+};
+
+const customLogoUrlStyle = {
+  height: '100%',
+  width: 'auto',
+  maxHeight: '44px',
+  top: '3px',
+  position: 'relative'
+}
+const customLogoTextStyle = {
+  height: '100%',
+  width: 'auto',
+  maxHeight: '44px',
+  top: '3px',
+  position: 'relative',
+  maxWidth: "150px"
+}
+
+CustomLogoWithCustomLogoRenderer.args = {
+  navLinks,
+  user: baseUser,
+  logoUrl: 'https://www.logomaker.com/wpstatic/uploads/2015/06/Logo-Samples2-73-min.jpg',
+  logoText: 'Arkansas CWD Application',
+  renderLogo: (logoUrl, logoText) => {
+    return (
+      <Stack spacing={3} direction="row" >
+        {logoText ? (
+          <Box sx={customLogoUrlStyle} alt='Logo text'>
+            {logoText}
+          </Box>
+        ) : ''}
+        {logoUrl && (
+          <img
+            alt="Logo"
+            style={customLogoTextStyle}
+            src={logoUrl}
+            className="appbar-logo"
+          />
+        )}
+      </Stack>
+    )
+  }
+};
 
 export const LoggingIn = (args) => {
   const user = {
