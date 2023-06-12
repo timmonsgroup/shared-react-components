@@ -1,5 +1,4 @@
 import { FIRE_DEPTS } from './LargeDataset';
-import testJson from './/test.json'
 const FUNDING_SOURCES = [
   {
     id: 0,
