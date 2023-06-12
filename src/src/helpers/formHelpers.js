@@ -9,7 +9,6 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import testJson from './story-helpers/test.json'
 
 /**
  * @constant {Object} VALID_PATTERNS - regex patterns for validating fields
