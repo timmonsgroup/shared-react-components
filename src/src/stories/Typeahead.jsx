@@ -19,22 +19,22 @@ import { isEmpty } from '../helpers';
  * inputLabelSX is styling for the input inside the textField
  * @function Typeahead
  * @param {object} props
- * @param {string} props.label - the label to display
- * @param {boolean} props.isRequired - is the field required
- * @param {object} props.items - the items to display in the dropdown
- * @param {object} props.error - the error message to display
- * @param {boolean} props.disabled - is the field disabled
- * @param {object} props.renderSX - the sx styling for the surrounding box
- * @param {object} props.sx - the sx styling for the Autocomplete component
- * @param {object} props.labelSX - the sx styling for the label
- * @param {object} props.textFieldSX - the sx styling for the text field
- * @param {object} props.iconHelperText - the text to display in the info icon
- * @param {object} props.altHelperText - helper text to display above the field
- * @param {object} props.helperText - the helper text to display (below the field)
- * @param {object} props.fieldOptions - the options to pass to the field
- * @param {object} props.textFieldProps - props to pass to the text field
- * @param {object} props.textFieldProps.inputLabelProps - props to pass to the input label
- * @param {object} props.textFieldProps.inputProps - props to pass to the input
+ * @param {string} [props.label] - the label to display
+ * @param {boolean} [props.isRequired] - is the field required
+ * @param {object} [props.items] - the items to display in the dropdown
+ * @param {object} [props.error] - the error message to display
+ * @param {boolean} [props.disabled] - is the field disabled
+ * @param {object} [props.renderSX] - the sx styling for the surrounding box
+ * @param {object} [props.sx] - the sx styling for the Autocomplete component
+ * @param {object} [props.labelSX] - the sx styling for the label
+ * @param {object} [props.textFieldSX] - the sx styling for the text field
+ * @param {object} [props.iconHelperText] - the text to display in the info icon
+ * @param {object} [props.altHelperText] - helper text to display above the field
+ * @param {object} [props.helperText] - the helper text to display (below the field)
+ * @param {object} [props.fieldOptions] - the options to pass to the field
+ * @param {object} [props.textFieldProps] - props to pass to the text field
+ * @param {object} [props.textFieldProps.inputLabelProps] - props to pass to the input label
+ * @param {object} [props.textFieldProps.inputProps] - props to pass to the input
  * @returns {React.ReactElement}
  */
 const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, error,

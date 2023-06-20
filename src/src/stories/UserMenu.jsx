@@ -29,15 +29,15 @@ MenuArrow.propTypes = {
  * A user menu component that displays the user name and a menu of links if provided
  * @function UserMenu
  * @param {object} props
- * @param {object} props.user - the user object
- * @param {string} props.user.name - the name of the user
- * @param {boolean} props.user.isSignedIn - boolean to indicate if the user is signed in
- * @param {function} props.onLogin - the onLogin handler
- * @param {function} props.onLogout - the onLogout handler
- * @param {object[]} props.links - an array of links to display in the menu
- * @param {string} props.links[].title - the title of the link
- * @param {string} props.links[].href - the href of the link
- * @param {boolean} props.hideArrow - boolean to indicate if the arrow should be hidden
+ * @param {object} [props.user] - the user object
+ * @param {string} [props.user.name] - the name of the user
+ * @param {boolean} [props.user.isSignedIn] - boolean to indicate if the user is signed in
+ * @param {function} [props.onLogin] - the onLogin handler
+ * @param {function} [props.onLogout] - the onLogout handler
+ * @param {object[]} [props.links] - an array of links to display in the menu
+ * @param {string} [props.links[].title] - the title of the link
+ * @param {string} [props.links[].href] - the href of the link
+ * @param {boolean} [props.hideArrow] - boolean to indicate if the arrow should be hidden
  * @returns {React.ReactElement} - the user menu
  */
 const UserMenu = ({ user, onLogin, onLogout, links, hideArrow }) => {
@@ -96,11 +96,13 @@ const UserMenu = ({ user, onLogin, onLogout, links, hideArrow }) => {
               </MenuItem>
             );
           })}
-          <MenuItem onClick={onLogout}>Sign Out</MenuItem>
+          {onLogout &&
+            <MenuItem onClick={onLogout}>Sign Out</MenuItem>
+          }
         </Menu>
       </>
     );
-  } else {
+  } else if(onLogin) {
     return (
       <>
         <Button onClick={onLogin} disableElevation={true} label="Sign in" />
@@ -111,8 +113,8 @@ const UserMenu = ({ user, onLogin, onLogout, links, hideArrow }) => {
 
 UserMenu.propTypes = {
   user: PropTypes.shape({ name: PropTypes.string, isSignedIn: PropTypes.bool }),
-  onLogin: PropTypes.func.isRequired,
-  onLogout: PropTypes.func.isRequired,
+  onLogin: PropTypes.func,
+  onLogout: PropTypes.func,
   links: PropTypes.arrayOf(
     PropTypes.shape({ title: PropTypes.string, href: PropTypes.string })
   ),

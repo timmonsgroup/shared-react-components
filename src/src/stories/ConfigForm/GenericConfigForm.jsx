@@ -125,20 +125,20 @@ FormSections.propTypes = {
  * Must be wrapped in a FormProvider
  * @function GenericConfigForm
  * @param {object} props
- * @param {string} props.headerTitle - the title to display in the header
- * @param {string} props.resetColor - the color to use for the edit button
- * @param {string} props.cancelColor - the color to use for the cancel button
- * @param {string} props.cancelUrl - the url to redirect to when the cancel button is clicked
- * @param {boolean} props.isEdit - whether or not the form is in edit mode
- * @param {string} props.submitColor - the color to use for the submit button
- * @param {FormSectionProps} props.sectionProps - the props to pass to the section (See FormSections Component)
- * @param {string} props.cancelLabel - the label to use for the cancel button
- * @param {string} props.resetLabel - the label to use for the reset button
- * @param {string} props.submitLabel - the label to use for the submit button
- * @param {function} props.onSubmit - the function to call when the form is submitted
- * @param {boolean} props.modifying - whether or not the form is currently being modified
- * @param {object} props.children - the children to render
- * @param {function} props.renderLoading - the function to render while the form is loading
+ * @param {string} [props.headerTitle] - the title to display in the header
+ * @param {string} [props.resetColor] - the color to use for the edit button
+ * @param {string} [props.cancelColor] - the color to use for the cancel button
+ * @param {string} [props.cancelUrl] - the url to redirect to when the cancel button is clicked
+ * @param {boolean} [props.isEdit] - whether or not the form is in edit mode
+ * @param {string} [props.submitColor] - the color to use for the submit button
+ * @param {FormSectionProps} [props.sectionProps] - the props to pass to the section (See FormSections Component)
+ * @param {string} [props.cancelLabel] - the label to use for the cancel button
+ * @param {string} [props.resetLabel] - the label to use for the reset button
+ * @param {string} [props.submitLabel] - the label to use for the submit button
+ * @param {function} [props.onSubmit] - the function to call when the form is submitted
+ * @param {boolean} [props.modifying] - whether or not the form is currently being modified
+ * @param {object} [props.children] - the children to render
+ * @param {function} [props.renderLoading] - the function to render while the form is loading
  * @returns {React.ReactElement} - the rendered form
  */
 const GenericConfigForm = ({
