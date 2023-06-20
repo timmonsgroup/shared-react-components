@@ -392,6 +392,7 @@ export function createFieldValidation(type, label, validationMap, field) {
   const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
   const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
   const reqMessage = field?.render?.requiredErrorText;
+  const disableFutureErrorText = field?.render?.disableFutureErrorText;
 
   switch (type) {
     case FIELDS.LONG_TEXT:
@@ -482,7 +483,7 @@ export function createFieldValidation(type, label, validationMap, field) {
       if (disableFutureDates) {
         const today = new Date().toDateString()
 
-        validation = validation.max(today);
+        validation = validation.max(today, disableFutureErrorText);
       }
       break;
     }

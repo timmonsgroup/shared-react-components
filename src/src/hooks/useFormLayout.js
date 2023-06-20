@@ -6,7 +6,7 @@ import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
   TODAY_DEFAULT, MAX_VALUE, MIN_VALUE, MAX_LENGTH, MIN_LENGTH,
-  REQUIRED, EMAIL, PHONE, ZIP, DISABLED, DISABLE_FUTURE
+  REQUIRED, EMAIL, PHONE, ZIP, DISABLED, DISABLE_FUTURE, DISABLE_FUTURE_ERROR_TEXT
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
@@ -278,6 +278,7 @@ export function parseField(field, asyncFieldsMap) {
   // add date specific props
   if (type === FIELDS.DATE) {
     parsedField.render[DISABLE_FUTURE] = !!field[DISABLE_FUTURE];
+    parsedField.render[DISABLE_FUTURE_ERROR_TEXT] = field[DISABLE_FUTURE_ERROR_TEXT];
   }
 
   // map special props to the field
