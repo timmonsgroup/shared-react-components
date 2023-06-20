@@ -670,3 +670,86 @@ export const viewLayout = {
     ],
   },
 };
+
+export const inlineFormLayout = {
+  layout: {
+    data: {
+      create: '/api/grantApplication/new',
+    },
+    id: 2,
+    modelId: 10,
+    enabled: true,
+    name: 'Inline Form Layout Name',
+    editable: true,
+    layoutKey: 'ALLSAMPLEFILTER',
+    type: 1,
+    sections: [
+      {
+        name: "",
+        editable: true,
+        enabled: true,
+        layout: [
+          {
+            label: "Surveillance Season",
+            path: "season",
+            type: 7,
+            listName: "HUNT_SEASON",
+            required: true,
+            requiredErrorText: "Please select a season",
+            model: {
+              name: "season",
+            },
+            possibleChoices: [
+              {
+                id: '2024',
+                name: '2024-2025'
+              },
+              {
+                id: '2023',
+                name: '2023-2024'
+              },
+              {
+                id: '2022',
+                name: '2022-2023'
+              },
+              {
+                id: '2021',
+                name: '2021-2022'
+              },
+              {
+                id: '2020',
+                name: '2020-2021'
+              },
+              {
+                id: '2019',
+                name: '2019-2020'
+              }
+            ] 
+          },
+          {
+            label: "Hunter First Name",
+            path: "hunterFirstName",
+            type: 0,
+            required: false,
+            maxLength: 25,
+            model: {
+              name: "hunterFirstName",
+            }
+          },
+          {
+            label: "Hunter Last Name",
+            path: "hunterLastName",
+            type: 0,
+            required: false,
+            maxLength: 25,
+            model: {
+              name: "hunterLastName",
+            }
+          },
+
+        ]
+      }
+    ],
+  },
+};
+

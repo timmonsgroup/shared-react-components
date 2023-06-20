@@ -71,6 +71,19 @@ const baseThemeProperties = {
       marginTop: '0.5rem',
     }
   },
+  inlineForm: {
+    container: {
+      position: 'relative', 
+      marginTop: '16px'
+    },
+    buttonContainer: {
+      marginTop: '55px',
+    },
+    submitButton: {
+      marginRight: '20px'
+    },
+    resetButton: {}
+  },
   gridActionItem: {
     types: {
       [GRID_ACTION_TYPE.ADD]: {

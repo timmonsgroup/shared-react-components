@@ -21,6 +21,7 @@ import {
   FormSections,
   ConfigFormProvider,
   GenericConfigForm,
+  GenericInlineForm,
   SectionRow
 } from './ConfigForm';
 import { SectionTop } from './Section';
@@ -38,6 +39,7 @@ export {
   FormSections,
   ConfigFormProvider,
   GenericConfigForm,
+  GenericInlineForm,
   SectionRow,
   SectionTop
 };
