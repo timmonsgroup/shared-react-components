@@ -102,9 +102,9 @@ let APP_ID = '123-456';
  * Use cookieReference to differentiate between multiple apps using the same cookie *
  * @param {object} props - The props for the component
  * @param {object} props.config - The config object
- * @param {string} props.config.cookieReference - The cookie reference
- * @param {array} props.whitelist - The whitelist array
- * @param {object} props.children - The children
+ * @param {string} [props.config.cookieReference] - The cookie reference
+ * @param {array} [props.whitelist] - The whitelist array
+ * @param {object} [props.children] - The children
  * @function ProvideAuth
  * @returns {React.Context} The auth context provider
  */
@@ -145,7 +145,7 @@ export const useAuth = () => {
  * These are the properties and methods that the "useAuth" hook provides to its consumers
  * We are providing the auth state, login, and logout methods
  * @param {object} config The configuration for the component
- * @param {String[]} whitelist The whitelist array
+ * @param {String[]} [whitelist] The whitelist array
  * @returns {AuthContext} The auth context object
  */
 const useProvideAuth = (config, whitelist) => {

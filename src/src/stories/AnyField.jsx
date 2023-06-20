@@ -65,15 +65,15 @@ import { Box } from '@mui/material';
  * @function
  * @param {object} props
  * @param {object} props.control - the react-hook-form control object
- * @param {object} props.rules - the react-hook-form rules object (this is not used if using form level validation)
  * @param {object} props.layout - the layout object
- * @param {boolean} props.disabled - whether the field is disabled
- * @param {string} props.nestedName - the name of the field if it is nested
- * @param {boolean} props.isNested - whether the field is nested
- * @param {FieldOptions} props.options - various options for the fields
+ * @param {object} [props.rules] - the react-hook-form rules object (this is not used if using form level validation)
+ * @param {boolean} [props.disabled] - whether the field is disabled
+ * @param {string} [props.nestedName] - the name of the field if it is nested
+ * @param {boolean} [props.isNested] - whether the field is nested
+ * @param {FieldOptions} [props.options] - various options for the fields
  * @returns {React.ReactElement | null} - the rendered AnyField
  */
-const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...props }) => {
+const AnyField = ({ control, layout, rules, options, nestedName, isNested, ...props }) => {
   // If this component ever uses hooks make sure to move this return BELOW those hooks
   if (layout.hidden) {
     return null;
@@ -100,8 +100,8 @@ const AnyField = ({ control, rules, layout, options, nestedName, isNested, ...pr
 
 AnyField.propTypes = {
   control: PropTypes.object.isRequired,
-  rules: PropTypes.object,
   layout: PropTypes.object.isRequired,
+  rules: PropTypes.object,
   options: PropTypes.object,
   isNested: PropTypes.bool,
   nestedName: PropTypes.string,
@@ -165,7 +165,7 @@ const renderType = (layout, fieldOptions = {}) => {
  * This is a custom renderer for the MUI TextField component to work with react-hook-form
  * @function
  * @param {FieldLayout} layout Object containing the layout of the field
- * @param {FieldOptions} fieldOptions Various options for the field
+ * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
 const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type }, fieldOptions) => {
@@ -226,7 +226,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * This is a custom renderer for the MUI DatePicker component to work with react-hook-form
  * @function
  * @param {FieldLayout} layout Object containing the layout of the field
- * @param {FieldOptions} fieldOptions Various options for the field
+ * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
 const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions) => {
@@ -276,7 +276,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
  * This is a custom renderer for our Typeahead component to work with react-hook-form
  * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
- * @param {FieldOptions} fieldOptions Various options for the field
+ * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
 const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText }, fieldOptions) => {
@@ -343,7 +343,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
  * This is a custom renderer for MUI Checkboxes to work with react-hook-form
  * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
- * @param {FieldOptions} fieldOptions Various options for the field
+ * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI Checkbox component
  */
 const checkboxRenderer = (layout, fieldOptions) => {
