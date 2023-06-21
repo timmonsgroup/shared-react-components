@@ -65,7 +65,7 @@ const renderColumnSection = (section, control, index, options) => {
 
 /** @module InlineFormSections */
 /**
- * @typedef {object} FormSectionProps
+ * @typedef {object} InlineFormSectionProps
  * @property {string} [title] - the title to display in the section
  * @property {string} [description] - the description to display in the section
  * @property {renderSectionDescription} [renderFormDescription] - a function to render the form description (bypassed if renderFormInformation is provided)
@@ -83,7 +83,7 @@ const renderColumnSection = (section, control, index, options) => {
 /**
  * InlineFormSections will loop through the sections and render them and their fields inside an html form
  * @function InlineFormSections
- * @param {FormSectionProps} props - props object
+ * @param {InlineFormSectionProps} props - props object
  * @returns {React.ReactElement} - the rendered form sections
  */
 const InlineFormSections = ({
@@ -174,7 +174,7 @@ InlineFormSections.propTypes = {
  * @param {object} props
  * @param {string} [props.resetColor] - the color to use for the edit button
  * @param {string} [props.submitColor] - the color to use for the submit button
- * @param {FormSectionProps} [props.sectionProps] - the props to pass to the section (See FormSections Component)
+ * @param {InlineFormSectionProps} [props.sectionProps] - the props to pass to the section (See FormSections Component)
  * @param {string} [props.resetLabel] - the label to use for the reset button
  * @param {string} [props.submitLabel] - the label to use for the submit button
  * @param {function} [props.onSubmit] - the function to call when the form is submitted
