@@ -22,12 +22,12 @@ import { SectionRow } from './GenericConfigForm';
  * @param {object} section - the section to render
  * @param {object} control - the control object from react-hook-form
  * @param {number} index - the index of the section
- * @param {object} options - options object
- * @param {number} options.columnCount - the number of columns to render
- * @param {renderSectionDescription} options.renderSectionDescription - a function to render the section description
- * @param {renderSectionTitle} options.renderSectionTitle - a function to render the section title
- * @param {renderSectionTop} options.renderSectionTop - a function to render the section top
- * @param {boolean} options.hideEmptySections - a flag to hide sections that are empty
+ * @param {object} [options] - options object
+ * @param {number} [options.columnCount] - the number of columns to render
+ * @param {renderSectionDescription} [options.renderSectionDescription] - a function to render the section description
+ * @param {renderSectionTitle} [options.renderSectionTitle] - a function to render the section title
+ * @param {renderSectionTop} [options.renderSectionTop] - a function to render the section top
+ * @param {boolean} [options.hideEmptySections] - a flag to hide sections that are empty
  * @returns {React.ReactElement} - the rendered column section
  */
 const renderColumnSection = (section, control, index, options) => {
@@ -37,7 +37,7 @@ const renderColumnSection = (section, control, index, options) => {
   }
 
   const rows = createRowFields(section.fields, options?.columnCount);
-  const hasTopRender = options.renderSectionTop && (typeof options.renderSectionTop === 'function');
+  const hasTopRender = options?.renderSectionTop && (typeof options?.renderSectionTop === 'function');
   const hasTop = !hasTopRender && (section.name || section.description);
 
   return (
@@ -47,8 +47,8 @@ const renderColumnSection = (section, control, index, options) => {
         <SectionTop
           title={section.name}
           description={section.description}
-          renderDescription={options.renderSectionDescription}
-          renderTitle={options.renderSectionTitle}
+          renderDescription={options?.renderSectionDescription}
+          renderTitle={options?.renderSectionTitle}
         />
       }
       <CardContent>
@@ -193,7 +193,7 @@ const GenericInlineForm = ({
 
   const defaultThemeGroup = {
     container: {
-      position: 'relative', 
+      position: 'relative',
       marginTop: '16px'
     },
     buttonContainer: {
