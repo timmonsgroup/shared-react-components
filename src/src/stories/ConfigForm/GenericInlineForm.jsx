@@ -66,19 +66,19 @@ const renderColumnSection = (section, control, index, options) => {
 /** @module InlineFormSections */
 /**
  * @typedef {object} FormSectionProps
- * @property {string} title - the title to display in the section
- * @property {string} description - the description to display in the section
- * @property {renderSectionDescription} renderFormDescription - a function to render the form description (bypassed if renderFormInformation is provided)
- * @property {renderSectionTitle} renderFormTitle - a function to render the form title (bypassed if renderFormInformation is provided)
- * @property {renderSectionTop} renderFormInformation - a function to render the form information (title and description)
- * @property {renderSectionTitle} renderSectionTitle - a function to render the section title
- * @property {renderSectionDescription} renderSectionDescription - a function to render the section description
- * @property {renderSectionTop} renderSectionTop - a function to render the section top
- * @property {function} renderLoading - a function to render the loading indicator
- * @property {number} columnCount - the number of columns to render
- * @property {object} fieldOptions - the options to pass to the fields
- * @property {boolean} hideEmptySections - whether or not to hide the section if it is empty
- * @property {object} children - the children to render
+ * @property {string} [title] - the title to display in the section
+ * @property {string} [description] - the description to display in the section
+ * @property {renderSectionDescription} [renderFormDescription] - a function to render the form description (bypassed if renderFormInformation is provided)
+ * @property {renderSectionTitle} [renderFormTitle] - a function to render the form title (bypassed if renderFormInformation is provided)
+ * @property {renderSectionTop} [renderFormInformation] - a function to render the form information (title and description)
+ * @property {renderSectionTitle} [renderSectionTitle] - a function to render the section title
+ * @property {renderSectionDescription} [renderSectionDescription] - a function to render the section description
+ * @property {renderSectionTop} [renderSectionTop] - a function to render the section top
+ * @property {function} [renderLoading] - a function to render the loading indicator
+ * @property {number} [columnCount] - the number of columns to render
+ * @property {object} [fieldOptions] - the options to pass to the fields
+ * @property {boolean} [hideEmptySections] - whether or not to hide the section if it is empty
+ * @property {object} [children] - the children to render
  */
 /**
  * InlineFormSections will loop through the sections and render them and their fields inside an html form
@@ -179,6 +179,7 @@ InlineFormSections.propTypes = {
  * @param {string} [props.submitLabel] - the label to use for the submit button
  * @param {function} [props.onSubmit] - the function to call when the form is submitted
  * @param {boolean} [props.modifying] - whether or not the form is currently being modified
+ * @param {object} [props.formOptions] - the options to pass to the form to customize the styling
  * @param {object} [props.children] - the children to render
  * @param {function} [props.renderLoading] - the function to render while the form is loading
  * @returns {React.ReactElement} - the rendered form
