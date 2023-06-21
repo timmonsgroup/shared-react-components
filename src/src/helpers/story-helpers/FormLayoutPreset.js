@@ -514,6 +514,7 @@ const dateField = {
   required: true,
   disabled: false,
   disableFuture: true,
+  disableFutureErrorText: "This error text appears when the date picker fails its disable future validation ${max}"
 };
 
 export const layout = {

@@ -12,13 +12,13 @@ import { AUTH_STATES } from '../constants.js';
  * @description Component that checks if the user has the required permissions
  * Should set ONE of the following properties permission, any, OR all
  * @param {object} props
- * @param {string} props.permission A single required permission
- * @param {array<string>} props.any Passes if ANY of the permissions are met
- * @param {array<string>} props.all Passes if ALL of the permissions are met
- * @param {boolean} props.isRoute If true, the component will render a Navigate component instead of null if the user does not have the required permissions
- * @param {Route401Props} props.noAuthOptions If isRoute is true, this component will be rendered instead of the Navigate component if the user does not have the required permissions
- * @param {boolean} props.showLoggingIn - If true, the component will render a CircularProgress component if the user is in the LOGGING_IN state
- * @param {React.ReactNode} props.children - The children to render if the user has the required permissions
+ * @param {string} [props.permission] A single required permission
+ * @param {array<string>} [props.any] Passes if ANY of the permissions are met
+ * @param {array<string>} [props.all] Passes if ALL of the permissions are met
+ * @param {boolean} [props.isRoute] If true, the component will render a Navigate component instead of null if the user does not have the required permissions
+ * @param {Route401Props} [props.noAuthOptions] If isRoute is true, this component will be rendered instead of the Navigate component if the user does not have the required permissions
+ * @param {boolean} [props.showLoggingIn] - If true, the component will render a CircularProgress component if the user is in the LOGGING_IN state
+ * @param {React.ReactNode} [props.children] - The children to render if the user has the required permissions
  * @returns {React.ReactElement} - The children to render if the user has the required permissions OR null if the user does not have the required permissions
  *
  * @example

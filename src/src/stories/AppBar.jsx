@@ -50,8 +50,8 @@ const theTheme = {
  * @param {string} props.navLinks[].href - The path for the nav link
  * @param {string} props.logoUrl - The url for the logo
  * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
- * @param {string} props.logoText - The text to place next to the logo on the app bar 
- * @param {function} props.renderLogo - A function to overwrite the default renderer for the logo section - Optional 
+ * @param {string} props.logoText - The text to place next to the logo on the app bar
+ * @param {function} props.renderLogo - A function to overwrite the default renderer for the logo section - Optional
  */
 const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props }) => {
   const theme = useTheme();
@@ -155,9 +155,9 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
 };
 
 AppBar.propTypes = {
-  user: PropTypes.shape({}),
   onLogin: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
+  user: PropTypes.shape({}),
   navLinks: PropTypes.array,
   logoUrl: PropTypes.string,
   userLinks: PropTypes.array,

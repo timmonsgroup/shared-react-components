@@ -10,22 +10,22 @@ import { Close } from '@mui/icons-material';
  * Prevent closing by clicking outside of the dialog by NOT passing in a handleClose prop
  * @function
  * @param {object} props
- * @param {string} props.title - the title of the dialog
- * @param {string} props.okLabel - the label for the OK button
- * @param {string} props.cancelLabel - the label for the Cancel button
  * @param {boolean} props.open - whether the dialog is open or not
- * @param {boolean} props.showX - whether to show the X in the top right corner
- * @param {boolean} props.hideActions - whether to hide the actions (OK and Cancel buttons)
- * @param {boolean} props.hideCancel - whether to hide the Cancel button
- * @param {boolean} props.hideOk - whether to hide the OK button
- * @param {function} props.onOk - the function to call when the OK button is clicked
- * @param {function} props.onCancel - the function to call when the Cancel button is clicked
- * @param {function} props.handleClose - the function to call when the dialog is closed
- * @param {string} props.okColor - the color of the OK button
- * @param {string} props.cancelColor - the color of the Cancel button
+ * @param {string} [props.title] - the title of the dialog
+ * @param {string} [props.okLabel] - the label for the OK button
+ * @param {string} [props.cancelLabel] - the label for the Cancel button
+ * @param {boolean} [props.showX] - whether to show the X in the top right corner
+ * @param {boolean} [props.hideActions] - whether to hide the actions (OK and Cancel buttons)
+ * @param {boolean} [props.hideCancel] - whether to hide the Cancel button
+ * @param {boolean} [props.hideOk] - whether to hide the OK button
+ * @param {function} [props.onOk] - the function to call when the OK button is clicked
+ * @param {function} [props.onCancel] - the function to call when the Cancel button is clicked
+ * @param {function} [props.handleClose] - the function to call when the dialog is closed
+ * @param {string} [props.okColor] - the color of the OK button
+ * @param {string} [props.cancelColor] - the color of the Cancel button
  * @returns {React.ReactElement} - React component
  */
-const Modal = ({ okLabel, cancelLabel, title, onOk, onCancel, handleClose, open, showX, children, hideActions, hideCancel, hideOk, okColor = 'primary', cancelColor = 'regressive', ...props }) => {
+const Modal = ({ open, okLabel, cancelLabel, title, onOk, onCancel, handleClose, showX, children, hideActions, hideCancel, hideOk, okColor = 'primary', cancelColor = 'regressive', ...props }) => {
   const titleRender = () => {
     if (showX) {
       return (
