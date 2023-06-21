@@ -20,19 +20,19 @@ import { SectionTop } from '../Section';
 /** @module FormSections */
 /**
  * @typedef {object} FormSectionProps
- * @property {string} title - the title to display in the section
- * @property {string} description - the description to display in the section
- * @property {renderSectionDescription} renderFormDescription - a function to render the form description (bypassed if renderFormInformation is provided)
- * @property {renderSectionTitle} renderFormTitle - a function to render the form title (bypassed if renderFormInformation is provided)
- * @property {renderSectionTop} renderFormInformation - a function to render the form information (title and description)
- * @property {renderSectionTitle} renderSectionTitle - a function to render the section title
- * @property {renderSectionDescription} renderSectionDescription - a function to render the section description
- * @property {renderSectionTop} renderSectionTop - a function to render the section top
- * @property {function} renderLoading - a function to render the loading indicator
- * @property {number} columnCount - the number of columns to render
- * @property {object} fieldOptions - the options to pass to the fields
- * @property {boolean} hideEmptySections - whether or not to hide the section if it is empty
- * @property {object} children - the children to render
+ * @property {string} [title] - the title to display in the section
+ * @property {string} [description] - the description to display in the section
+ * @property {renderSectionDescription} [renderFormDescription] - a function to render the form description (bypassed if renderFormInformation is provided)
+ * @property {renderSectionTitle} [renderFormTitle] - a function to render the form title (bypassed if renderFormInformation is provided)
+ * @property {renderSectionTop} [renderFormInformation] - a function to render the form information (title and description)
+ * @property {renderSectionTitle} [renderSectionTitle] - a function to render the section title
+ * @property {renderSectionDescription} [renderSectionDescription] - a function to render the section description
+ * @property {renderSectionTop} [renderSectionTop] - a function to render the section top
+ * @property {function} [renderLoading] - a function to render the loading indicator
+ * @property {number} [columnCount] - the number of columns to render
+ * @property {object} [fieldOptions] - the options to pass to the fields
+ * @property {boolean} [hideEmptySections] - whether or not to hide the section if it is empty
+ * @property {object} [children] - the children to render
  */
 /**
  * FormSections will loop through the sections and render them and their fields inside an html form
@@ -237,14 +237,17 @@ GenericConfigForm.propTypes = {
  * Renderer for a section with
  * @callback renderColumnSection
  * @param {object} section - the section to render
+ * @param {array} section.fields - the fields to render in the section
+ * @param {string} [section.title] - the title of the section
+ * @param {string} [section.description] - the description of the section
  * @param {object} control - the control object from react-hook-form
  * @param {number} index - the index of the section
- * @param {object} options - options object
- * @param {number} options.columnCount - the number of columns to render
- * @param {renderSectionDescription} options.renderSectionDescription - a function to render the section description
- * @param {renderSectionTitle} options.renderSectionTitle - a function to render the section title
- * @param {renderSectionTop} options.renderSectionTop - a function to render the section top
- * @param {boolean} options.hideEmptySections - a flag to hide sections that are empty
+ * @param {object} [options] - options object
+ * @param {number} [options.columnCount] - the number of columns to render
+ * @param {renderSectionDescription} [options.renderSectionDescription] - a function to render the section description
+ * @param {renderSectionTitle} [options.renderSectionTitle] - a function to render the section title
+ * @param {renderSectionTop} [options.renderSectionTop] - a function to render the section top
+ * @param {boolean} [options.hideEmptySections] - a flag to hide sections that are empty
  * @returns {React.ReactElement} - the rendered column section
  */
 const renderColumnSection = (section, control, index, options) => {
@@ -254,7 +257,7 @@ const renderColumnSection = (section, control, index, options) => {
   }
 
   const rows = createRowFields(section.fields, options?.columnCount);
-  const hasTopRender = options.renderSectionTop && (typeof options.renderSectionTop === 'function');
+  const hasTopRender = options?.renderSectionTop && (typeof options?.renderSectionTop === 'function');
   const hasTop = !hasTopRender && (section.name || section.description);
 
   return (
@@ -264,8 +267,8 @@ const renderColumnSection = (section, control, index, options) => {
         <SectionTop
           title={section.name}
           description={section.description}
-          renderDescription={options.renderSectionDescription}
-          renderTitle={options.renderSectionTitle}
+          renderDescription={options?.renderSectionDescription}
+          renderTitle={options?.renderSectionTitle}
         />
       }
       <CardContent>
@@ -284,12 +287,12 @@ const renderColumnSection = (section, control, index, options) => {
  * @param {object} props - props object
  * @param {object} props.row - the row object
  * @param {array} props.row.fields - the fields to render
- * @param {boolean} props.row.solitary - whether or not the row is a solitary field
- * @param {number} props.row.size - the size of the solitary field
- * @param {number} props.row.maxColumns - the max number of columns to render
+ * @param {boolean} [props.row.solitary] - whether or not the row is a solitary field
+ * @param {number} [props.row.size] - the size of the solitary field
+ * @param {number} [props.row.maxColumns] - the max number of columns to render
  * @param {object} props.control - the control object from useForm
- * @param {object} props.options - the options object
- * @param {object} props.options.fieldOptions - the options to pass to the fields
+ * @param {object} [props.options] - the options object
+ * @param {object} [props.options.fieldOptions] - the options to pass to the fields
  * @returns {React.ReactElement} - the rendered row using Grid
  * @example
  * <CardContent>
@@ -321,7 +324,7 @@ const SectionRow = ({ row, control, options }) => {
             <DynamicField
               field={field}
               control={control}
-              options={options.fieldOptions || {}}
+              options={options?.fieldOptions || {}}
             />
           </Grid>
         );
@@ -332,7 +335,7 @@ const SectionRow = ({ row, control, options }) => {
 
 SectionRow.propTypes = {
   row: PropTypes.shape({
-    fields: PropTypes.array,
+    fields: PropTypes.array.isRequired,
     solitary: PropTypes.bool,
     size: PropTypes.number,
     maxColumns: PropTypes.number,
