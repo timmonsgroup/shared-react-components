@@ -276,12 +276,12 @@ ClusterField.propTypes = {
  * @param {object} props.row - row object
  * @param {object} props.row.fields - array of fields
  * @param {boolean} props.row.solitary - solitary boolean
- * @param {number} props.row.size - size number
- * @param {number} props.row.maxColumns - maxColumns number
+ * @param {number} [props.row.size] - size number
+ * @param {number} [props.row.maxColumns] - maxColumns number
  * @param {object} props.control - control object
- * @param {object} props.options - options object
- * @param {object} props.layout - layout object
- * @param {object} props.otherProps - otherProps object
+ * @param {object} [props.options] - options object
+ * @param {object} [props.layout] - layout object
+ * @param {object} [props.otherProps] - otherProps object
  * @returns {React.ReactElement} - React element
  */
 const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
