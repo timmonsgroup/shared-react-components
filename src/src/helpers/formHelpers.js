@@ -1,7 +1,7 @@
 /** @module formHelpers */
 import '../models/form';
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
-import { sortOn, functionOrDefault, isObject } from './helpers.js';
+import { functionOrDefault, isObject } from './helpers.js';
 import {
   string, array, date, number, object
 } from 'yup';
@@ -25,8 +25,8 @@ export const VALID_PATTERNS = Object.freeze({
 /**
  * Create a yup schema for a string field
  * @param {string} label
- * @param {boolean} isRequired
- * @param {string} reqMessage
+ * @param {boolean} [isRequired]
+ * @param {string} [reqMessage]
  * @returns {YupSchema} - yup schema for the field
  */
 export function yupString(label, isRequired = true, reqMessage) {
@@ -36,9 +36,9 @@ export function yupString(label, isRequired = true, reqMessage) {
 /**
  * Create a yup schema for a date field
  * @param {string} label - label for the field
- * @param {boolean} isRequired - is the field required
- * @param {string} msg - message to display if the field is not a valid date
- * @param {string} reqMessage - message to display if the field is required
+ * @param {boolean} [isRequired] - is the field required
+ * @param {string} [msg] - message to display if the field is not a valid date
+ * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for a date field
  */
 export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
@@ -66,7 +66,7 @@ export function validDateFormat(value) {
 
 /**
  * Covert multiselect form input into an api ready array
- * @param {Array<object>} selections - array of selected items
+ * @param {Array<object>} [selections] - array of selected items
  * @returns {Array<{id: number}>} - array of selected items with id
  */
 export function multiToPayload(selections) {
@@ -76,8 +76,8 @@ export function multiToPayload(selections) {
 /**
  * Create a yup schema for a typeahead field
  * @param {string} label - label for the field
- * @param {boolean} isRequired - is the field required
- * @param {string} reqMessage - message to display if the field is required
+ * @param {boolean} [isRequired] - is the field required
+ * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for the field
  */
 export function yupTypeAhead(label, isRequired = true, reqMessage) {
@@ -87,9 +87,9 @@ export function yupTypeAhead(label, isRequired = true, reqMessage) {
 /**
  * Create a yup schema for a string field that ensures the value is trimmed
  * @param {string} label - label for the field
- * @param {boolean} isRequired - is the field required
- * @param {string} trimMsg - message to display if the field is not trimmed
- * @param {string} reqMessage - message to display if the field is required
+ * @param {boolean} [isRequired] - is the field required
+ * @param {string} [trimMsg] - message to display if the field is not trimmed
+ * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for the field
  */
 export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
@@ -99,11 +99,11 @@ export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
 /**
  * Create a yup schema for an integer field that checks max/min length
  * @param {string} label - label for the field
- * @param {boolean} isRequired - is the field required
- * @param {number} maxLength - max length of the field
- * @param {string} msg - message to display if the field is not an integer
- * @param {string} reqMessage - message to display if the field is required
- * @param {number} minLength - min length of the field
+ * @param {boolean} [isRequired] - is the field required
+ * @param {number} [maxLength] - max length of the field
+ * @param {string} [msg] - message to display if the field is not an integer
+ * @param {string} [reqMessage] - message to display if the field is required
+ * @param {number} [minLength] - min length of the field
  * @returns {YupSchema}
  */
 export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, minLength, minValue, maxValue) {
@@ -124,15 +124,15 @@ export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, min
 /**
  * Create a yup schema for a float field that checks max/min length
  * @param {string} label - label for the field
- * @param {boolean} isRequired - is the field required
- * @param {number} int - max number of integers
- * @param {number} frac - max number of decimals
- * @param {number} maxLength - max length of the field
- * @param {string} msg - message to display if the field is not in the correct format
- * @param {string} maxValue - max value of the field
- * @param {string} reqMessage - message to display if the field is required
- * @param {number} minLength - min length of the field
- * @param {number} minValue - min value of the field
+ * @param {boolean} [isRequired] - is the field required
+ * @param {number} [int] - max number of integers
+ * @param {number} [frac] - max number of decimals
+ * @param {number} [maxLength] - max length of the field
+ * @param {string} [msg] - message to display if the field is not in the correct format
+ * @param {string} [maxValue] - max value of the field
+ * @param {string} [reqMessage] - message to display if the field is required
+ * @param {number} [minLength] - min length of the field
+ * @param {number} [minValue] - min value of the field
  * @returns {YupSchema}
  */
 export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength, minValue) {
@@ -157,8 +157,8 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
  * Add a test to a yup schema to check the max value of a field
  * @param {YupSchema} schema - the schema to add the test to
  * @param {string} label - label for the field
- * @param {string|number} maxValue - the max value the field can be
- * @param {boolean} isInt - should the test be for an integer or a float
+ * @param {string|number}[maxValue - the max value the field can be
+ * @param {boolean} [isInt] - should the test be for an integer or a float
  * @function
  * @returns {YupSchema}
  */
@@ -188,7 +188,7 @@ const addMaxValue = (schema, label, maxValue, isInt) => {
  * @param {YupSchema} schema - the schema to add the test to
  * @param {string} label - label for the field
  * @param {string|number} minValue - the max value the field can be
- * @param {boolean} isInt - should the test be for an integer or a float
+ * @param {boolean} [isInt] - should the test be for an integer or a float
  * @function
  * @returns {YupSchema}
  */
@@ -216,11 +216,11 @@ const addMinValue = (schema, label, minValue, isInt) => {
 /**
  * Create a yup schema for a currency field that checks max/min length
  * @param {string} label - label for the field
- * @param {boolean} isRequired - is the field required
- * @param {number} maxLength - max length of the field
- * @param {string} msg - message to display if the field is not formatted correctly
- * @param {string} reqMessage - message to display if the field is required
- * @param {number} minLength - min length of the field
+ * @param {boolean} [isRequired] - is the field required
+ * @param {number} [maxLength] - max length of the field
+ * @param {string} [msg] - message to display if the field is not formatted correctly
+ * @param {string} [reqMessage] - message to display if the field is required
+ * @param {number} [minLength] - min length of the field
  * @returns {YupSchema} - yup schema for a currency field
  */
 export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage, minLength, maxValue, minValue) {

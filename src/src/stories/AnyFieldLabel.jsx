@@ -12,25 +12,25 @@ import RequiredIndicator from './RequiredIndicator';
 /**
  * Icons for info icons
  * @typedef {Object} FieldIconOptions
- * @property {string} color - the color of the icon
- * @property {string} gap - the gap between the label and the icon
- * @property {boolean} beforeLabel - whether to display the icon before the label
- * @property {React.Component} iconComponent - a component to use instead of the default InfoIcon
- * @property {string} iconText - the text to display in the info icon
+ * @property {string} [color] - the color of the icon
+ * @property {string} [gap] - the gap between the label and the icon
+ * @property {boolean} [beforeLabel] - whether to display the icon before the label
+ * @property {React.Component} [iconComponent] - a component to use instead of the default InfoIcon
+ * @property {string} [iconText] - the text to display in the info icon
  */
 
 /**
  * Theme group for the label
  * @typedef {Object} FieldLabelThemeGroup
- * @property {object} anyFieldLabel - any theme properties to use for the box containing the label
- * @property {object} anyFieldLabel.helperText - any theme properties to use for the helper text
+ * @property {object} [anyFieldLabel] - any theme properties to use for the box containing the label
+ * @property {object} [anyFieldLabel.helperText] - any theme properties to use for the helper text
  */
 
 /**
  * Various options for the fields
  * @typedef {Object} FieldOptions
- * @property {FieldIconOptions} icon - the options to pass to the info icon
- * @property {FieldLabelThemeGroup} labelThemeGroup - the theme group to use for the label
+ * @property {FieldIconOptions} [icon] - the options to pass to the info icon
+ * @property {FieldLabelThemeGroup} [labelThemeGroup] - the theme group to use for the label
  */
 
 /**
@@ -38,14 +38,14 @@ import RequiredIndicator from './RequiredIndicator';
  * @function
  * @param {object} props
  * @param {string} props.htmlFor - the id to use for htmlFor
- * @param {string} props.error - the error message to display
- * @param {boolean} props.disabled - is the field disabled
- * @param {boolean} props.required - is the field required
- * @param {string} props.label - the label to display
- * @param {string} props.asFormInput - whether to render the label using FormLabel or InputLabel
- * @param {string} props.iconText - the text to display in the info icon
- * @param {string} props.helperText - the text to display in the helper text
- * @param {FieldOptions} props.fieldOptions - the options to pass to the field
+ * @param {string} [props.error] - the error message to display
+ * @param {boolean} [props.disabled] - is the field disabled
+ * @param {boolean} [props.required] - is the field required
+ * @param {string} [props.label] - the label to display
+ * @param {string} [props.asFormInput] - whether to render the label using FormLabel or InputLabel
+ * @param {string} [props.iconText] - the text to display in the info icon
+ * @param {string} [props.helperText] - the text to display in the helper text
+ * @param {FieldOptions} [props.fieldOptions] - the options to pass to the field
  * @returns {React.ReactElement} a label for a field with an optional info icon and required indicator
  */
 const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, helperText, asFormInput = false, fieldOptions = {}, className, sx }) => {
@@ -92,6 +92,8 @@ const AnyFieldLabel = ({ htmlFor, error, disabled, required, label, iconText, he
 
 AnyFieldLabel.propTypes = {
   htmlFor: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  sx: PropTypes.object,
   asFormInput: PropTypes.bool,
   error: PropTypes.bool,
   disabled: PropTypes.bool,

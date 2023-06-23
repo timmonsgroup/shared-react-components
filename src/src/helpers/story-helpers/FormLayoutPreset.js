@@ -84,25 +84,31 @@ const emailField = createTextModel('email', 'Email', true, {
   // ],
 });
 
-const customRegexField = createTextModel('customRegexFieldID', 'Custom Regex Field ID', true, {
-  placeholder: 'This field needs to match this patten: "/^[a-z0-9]+$/i"',
-  helperText: 'I match the regex! /^[a-z0-9]+$/i',
-  regexpValidation: {
-    pattern: '^[a-z0-9]+$',
-    flags: 'i',
-    errorMessage: 'Please enter a value that only contains alphanumeric characters'
+const customRegexField = createTextModel(
+  'customRegexFieldID',
+  'Custom Regex Field ID',
+  true,
+  {
+    placeholder: 'This field needs to match this patten: "/^[a-z0-9]+$/i"',
+    helperText: 'I match the regex! /^[a-z0-9]+$/i',
+    regexpValidation: {
+      pattern: '^[a-z0-9]+$',
+      flags: 'i',
+      errorMessage:
+        'Please enter a value that only contains alphanumeric characters',
+    },
+    // conditions: [
+    //   {
+    //     when: 'fireDepartment',
+    //     isValid: true,
+    //     then: {
+    //       helperText: 'I am no longer an email field!',
+    //       email: false,
+    //     }
+    //   }
+    // ],
   }
-  // conditions: [
-  //   {
-  //     when: 'fireDepartment',
-  //     isValid: true,
-  //     then: {
-  //       helperText: 'I am no longer an email field!',
-  //       email: false,
-  //     }
-  //   }
-  // ],
-});
+);
 
 const zipField = createTextModel('zipCode', 'Zippity', true, {
   zip: true,
@@ -514,7 +520,8 @@ const dateField = {
   required: true,
   disabled: false,
   disableFuture: true,
-  disableFutureErrorText: "This error text appears when the date picker fails its disable future validation ${max}"
+  disableFutureErrorText:
+    'This error text appears when the date picker fails its disable future validation ${max}',
 };
 
 export const layout = {
@@ -686,71 +693,69 @@ export const inlineFormLayout = {
     type: 1,
     sections: [
       {
-        name: "",
+        name: '',
         editable: true,
         enabled: true,
         layout: [
           {
-            label: "Surveillance Season",
-            path: "season",
+            label: 'Surveillance Season',
+            path: 'season',
             type: 7,
-            listName: "HUNT_SEASON",
+            listName: 'HUNT_SEASON',
             required: true,
-            requiredErrorText: "Please select a season",
+            requiredErrorText: 'Please select a season',
             model: {
-              name: "season",
+              name: 'season',
             },
             possibleChoices: [
               {
                 id: '2024',
-                name: '2024-2025'
+                name: '2024-2025',
               },
               {
                 id: '2023',
-                name: '2023-2024'
+                name: '2023-2024',
               },
               {
                 id: '2022',
-                name: '2022-2023'
+                name: '2022-2023',
               },
               {
                 id: '2021',
-                name: '2021-2022'
+                name: '2021-2022',
               },
               {
                 id: '2020',
-                name: '2020-2021'
+                name: '2020-2021',
               },
               {
                 id: '2019',
-                name: '2019-2020'
-              }
-            ] 
+                name: '2019-2020',
+              },
+            ],
           },
           {
-            label: "Hunter First Name",
-            path: "hunterFirstName",
+            label: 'Hunter First Name',
+            path: 'hunterFirstName',
             type: 0,
             required: false,
             maxLength: 25,
             model: {
-              name: "hunterFirstName",
-            }
+              name: 'hunterFirstName',
+            },
           },
           {
-            label: "Hunter Last Name",
-            path: "hunterLastName",
+            label: 'Hunter Last Name',
+            path: 'hunterLastName',
             type: 0,
             required: false,
             maxLength: 25,
             model: {
-              name: "hunterLastName",
-            }
+              name: 'hunterLastName',
+            },
           },
-
-        ]
-      }
+        ],
+      },
     ],
   },
 };
-

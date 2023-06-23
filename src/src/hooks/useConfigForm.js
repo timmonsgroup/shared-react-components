@@ -15,7 +15,8 @@ import {
   LABEL_FIELD,
   CONDITIONAL_RENDER,
   DEFAULT_VALUE,
-  FIELD_TYPES
+  FIELD_TYPES,
+  ANY_VALUE
 } from '../constants';
 import { objectReducer } from '../helpers';
 
@@ -452,11 +453,11 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
     let nullChangeValue = false;
 
     // Check for any "onChange" fields
-    // We have to run a separate loop because conditions could be met for a specific value AND for "anyValue" (i.e. not null)
+    // We have to run a separate loop because conditions could be met for a specific value AND for ANY_VALUE (i.e. not null)
     if (triggerField.hasOnChange) {
       // If the value is null, we need to handle the reset of the affected fields
       if (formValue !== null && formValue !== undefined && formValue !== '' && formValue?.length > 0) {
-        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, 'anyValue', options);
+        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options);
         anyUpdates.forEach(({ id, conditional }) => {
           updateConditional(id, conditional);
         });
@@ -487,8 +488,8 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
         // This would happen with a field that has a remoteUrl that updates on EVERY triggerfield change.
         if (!value.has(formValue)) {
           addReset(fieldId);
-        } else if (value.has('anyValue') && nullChangeValue) {
-          // We need to reset any fields that may have been triggered by an "anyValue" trigger and allow it to be reset when the triggerfield is null
+        } else if (value.has(ANY_VALUE) && nullChangeValue) {
+          // We need to reset any fields that may have been triggered by an ANY_VALUE trigger and allow it to be reset when the triggerfield is null
           addReset(fieldId);
         }
       });
