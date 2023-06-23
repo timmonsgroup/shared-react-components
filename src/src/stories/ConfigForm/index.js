@@ -4,11 +4,13 @@ import {
   SectionRow,
   GenericConfigForm
 } from './GenericConfigForm';
+import { GenericInlineForm } from './GenericInlineForm';
 
 export {
   ConfigForm,
   FormSections,
   ConfigFormProvider,
   GenericConfigForm,
+  GenericInlineForm,
   SectionRow
 };

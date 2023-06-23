@@ -392,29 +392,40 @@ export function createFieldValidation(type, label, validationMap, field) {
   const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
   const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
   const reqMessage = field?.render?.requiredErrorText;
+  const disableFutureErrorText = field?.render?.disableFutureErrorText;
 
   switch (type) {
     case FIELDS.LONG_TEXT:
-    case FIELDS.TEXT:
-    case FIELDS.LINK: {
+    case FIELDS.TEXT: {
       validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
 
-      if (type !== FIELDS.LINK) {
-        const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
-        if (isEmail) {
-          validation = validation.email('Please enter a valid email address');
-        }
-        // TODO: Rework to allow for custom regex via a field property
-        // like field.render.validationRegex and field.render.validationMessage
-        const isZip = !!validationMap.get(VALIDATIONS.ZIP);
-        if (isZip) {
-          validation = validation.matches(VALID_PATTERNS.ZIP, 'Please enter a valid zip code in the format of xxxxx or xxxxx-xxxx');
-        }
-        const isPhone = !!validationMap.get(VALIDATIONS.PHONE);
-        if (isPhone) {
-          validation = validation.matches(VALID_PATTERNS.PHONE, 'Please enter a valid phone number in the format of xxx-xxx-xxxx');
+      const regexProps = validationMap.get(VALIDATIONS.REGEXP_VALIDATION);
+      if (regexProps) {
+        const { pattern, flags, errorMessage } = regexProps;
+
+        if (pattern) {
+          const regexp = new RegExp(pattern, flags);
+          validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`);
         }
       }
+      const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
+      if (isEmail) {
+        validation = validation.email('Please enter a valid email address');
+      }
+      // TODO: Rework to allow for custom regex via a field property
+      // like field.render.validationRegex and field.render.validationMessage
+      const isZip = !!validationMap.get(VALIDATIONS.ZIP);
+      if (isZip) {
+        validation = validation.matches(VALID_PATTERNS.ZIP, 'Please enter a valid zip code in the format of xxxxx or xxxxx-xxxx');
+      }
+      const isPhone = !!validationMap.get(VALIDATIONS.PHONE);
+      if (isPhone) {
+        validation = validation.matches(VALID_PATTERNS.PHONE, 'Please enter a valid phone number in the format of xxx-xxx-xxxx');
+      }
+      break;
+    }
+    case FIELDS.LINK: {
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
       break;
     }
     case FIELDS.INT:
@@ -465,9 +476,17 @@ export function createFieldValidation(type, label, validationMap, field) {
       );
       break;
     }
-    case FIELDS.DATE:
+    case FIELDS.DATE: {
       validation = yupDate(label, required, null, reqMessage);
+
+      const disableFutureDates = !!validationMap.get(VALIDATIONS.DISABLE_FUTURE);
+      if (disableFutureDates) {
+        const today = new Date().toDateString()
+
+        validation = validation.max(today, disableFutureErrorText);
+      }
       break;
+    }
 
     // NOTE that Checkboxes are multi-selects, so we use the same validation
     case FIELDS.CHOICE:

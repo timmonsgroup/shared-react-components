@@ -42,7 +42,6 @@ const baseThemeProperties = {
       height: '100%',
       width: 'auto',
       maxHeight: '44px',
-      top: '3px',
       position: 'relative'
     },
   },
@@ -71,6 +70,19 @@ const baseThemeProperties = {
     helperText: {
       marginTop: '0.5rem',
     }
+  },
+  inlineForm: {
+    container: {
+      position: 'relative', 
+      marginTop: '16px'
+    },
+    buttonContainer: {
+      marginTop: '55px',
+    },
+    submitButton: {
+      marginRight: '20px'
+    },
+    resetButton: {}
   },
   gridActionItem: {
     types: {
@@ -441,7 +453,7 @@ const baseThemeProperties = {
           props: {
             variant: 'clusterAdd',
           },
-          style: ({theme}) => {
+          style: ({ theme }) => {
             const mainColor = theme.palette.primary.main;
             return {
               padding: '0px',
