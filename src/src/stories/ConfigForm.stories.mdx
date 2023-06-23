@@ -154,7 +154,7 @@ export const Template = (args) => {
           return <Skeleton />;
         }}
       >
-        <GenericConfigForm {...args} sectionProps={sectionProps} renderLoading={() => {
+        <GenericConfigForm {...args} onSubmit={formatPayload} sectionProps={sectionProps} renderLoading={() => {
           return <Skeleton />;
         }} />
       </ConfigForm>

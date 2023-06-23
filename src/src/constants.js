@@ -48,6 +48,7 @@ export const GRID_ACTION_TYPE = Object.freeze({
 });
 
 export const REQUIRED = 'required';
+export const PLACEHOLDER = 'placeholder';
 export const DISABLED = 'disabled';
 export const ID_FIELD = 'idField';
 export const LABEL_FIELD = 'labelField';
@@ -61,23 +62,26 @@ export const EMAIL = 'email';
 export const ZIP = 'zip';
 export const PHONE = 'phone';
 export const DISABLE_FUTURE = 'disableFuture';
-export const DISABLE_FUTURE_ERROR_TEXT = 'disableFutureErrorText'
+export const DISABLE_FUTURE_ERROR_TEXT = 'disableFutureErrorText';
+
+export const ANY_VALUE = 'anyValue';
 
 export const CONDITIONAL_RENDER = Object.freeze({
   REQUIRED,
   LABEL_FIELD,
   ID_FIELD,
+  PLACEHOLDER,
+  DISABLED,
+  DISABLE_FUTURE,
+  DISABLE_FUTURE_ERROR_TEXT,
   READ_ONLY: 'readOnly',
   URL: 'url',
   RENDER_PROPERTY_ID: 'renderPropertyId',
-  DISABLED,
   HIDDEN: 'hidden',
   HELPER: 'helperText',
   ICON_HELPER: 'iconHelperText',
   ALT_HELPER: 'altHelperText',
-  REQ_TEXT: 'requiredErrorText',
-  DISABLE_FUTURE,
-  DISABLE_FUTURE_ERROR_TEXT
+  REQ_TEXT: 'requiredErrorText'
 });
 
 export const SPECIAL_ATTRS = Object.freeze({

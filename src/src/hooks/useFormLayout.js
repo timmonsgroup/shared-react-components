@@ -6,7 +6,8 @@ import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
   TODAY_DEFAULT, MAX_VALUE, MIN_VALUE, MAX_LENGTH, MIN_LENGTH,
-  REQUIRED, EMAIL, PHONE, ZIP, DISABLED, DISABLE_FUTURE, DISABLE_FUTURE_ERROR_TEXT
+  REQUIRED, EMAIL, PHONE, ZIP, DISABLED, DISABLE_FUTURE, DISABLE_FUTURE_ERROR_TEXT,
+  PLACEHOLDER, ANY_VALUE
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
@@ -251,7 +252,7 @@ export function parseField(field, asyncFieldsMap) {
       [CONDITIONAL_RENDER.ICON_HELPER]: field[CONDITIONAL_RENDER.ICON_HELPER],
       [CONDITIONAL_RENDER.HELPER]: field[CONDITIONAL_RENDER.HELPER],
       [CONDITIONAL_RENDER.REQ_TEXT]: field[CONDITIONAL_RENDER.REQ_TEXT],
-      placeholder: field.placeholder,
+      [PLACEHOLDER]: field[PLACEHOLDER],
       solitary: field.solitary,
       singleColumnSize: field.singleColumnSize,
       linkFormat,
@@ -378,7 +379,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
       const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
 
       if (isValid) {
-        value = 'anyValue';
+        value = ANY_VALUE;
         trigField.hasOnChange = true;
       }
 

@@ -32,7 +32,7 @@ const theTheme = {
       maxHeight: '44px',
       top: '3px',
       position: 'relative',
-      maxWidth: "150px"
+      maxWidth: '150px'
     },
   }
 };
@@ -42,16 +42,16 @@ const theTheme = {
  * @description This component is used to render the application's app bar. It is important to note if you are using the PermissionFilter component, you must have this component as a child of the useAuthProvider.
  * @function AppBar
  * @param {object} props
- * @param {object} props.user - The user object from the authState
- * @param {function} props.onLogout - A logout function to call when the user clicks the logout button
- * @param {function} props.onLogin - The login function to call when the user clicks the login button
- * @param {array} props.navLinks - An array of objects to render as nav links
- * @param {string} props.navLinks[].title - The label for the nav link
- * @param {string} props.navLinks[].href - The path for the nav link
- * @param {string} props.logoUrl - The url for the logo
- * @param {string} props.buttonVariant - The MUI variant name for the buttons creating by navLinks
- * @param {string} props.logoText - The text to place next to the logo on the app bar
- * @param {function} props.renderLogo - A function to overwrite the default renderer for the logo section - Optional
+ * @param {object} [props.user] - The user object from the authState
+ * @param {function} [props.onLogout] - A logout function to call when the user clicks the logout button
+ * @param {function} [props.onLogin] - The login function to call when the user clicks the login button
+ * @param {array} [props.navLinks] - An array of objects to render as nav links
+ * @param {string} [props.navLinks[].title] - The label for the nav link
+ * @param {string} [props.navLinks[].href] - The path for the nav link
+ * @param {string} [props.logoUrl] - The url for the logo
+ * @param {string} [props.buttonVariant] - The MUI variant name for the buttons creating by navLinks
+ * @param {string} [props.logoText] - The text to place next to the logo on the app bar
+ * @param {function} [props.renderLogo] - A function to overwrite the default renderer for the logo section - Optional
  */
 const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props }) => {
   const theme = useTheme();
@@ -60,7 +60,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
   // If a theme group was passed in, use that instead of the default
   const theming = themeGroup || appBar;
   const logoStyle = theming?.logo || theTheme.appBar.logo;
-  const logoTextStyle = theming?.logoText || theTheme.appBar.logoText
+  const logoTextStyle = theming?.logoText || theTheme.appBar.logoText;
 
   // Helper render method to simplify the final render returned
   const renderMenu = () => {
@@ -125,15 +125,15 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
           />
         )}
         {logoText ? (
-          <Box sx={logoTextStyle} alt='Logo text'>
+          <Box sx={logoTextStyle} alt="Logo text">
             {logoText}
           </Box>
         ) : ''}
       </Stack>
-    )
-  }
+    );
+  };
 
-  const theLogo = logoUrl || logoText || renderLogo ? functionOrDefault(renderLogo, defaultLogoRenderer) : null
+  const theLogo = logoUrl || logoText || renderLogo ? functionOrDefault(renderLogo, defaultLogoRenderer) : null;
 
   return (
     <Box sx={{ flexGrow: 1, height: '64px' }}>
@@ -155,8 +155,10 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
 };
 
 AppBar.propTypes = {
-  onLogin: PropTypes.func.isRequired,
-  onLogout: PropTypes.func.isRequired,
+  onLogin: PropTypes.func,
+  onLogout: PropTypes.func,
+  logoText: PropTypes.string,
+  renderLogo: PropTypes.func,
   user: PropTypes.shape({}),
   navLinks: PropTypes.array,
   logoUrl: PropTypes.string,

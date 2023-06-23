@@ -88,7 +88,7 @@ const renderColumnSection = (section, control, index, options) => {
  */
 const InlineFormSections = ({
   children, formTitle, formDescription, renderFormDescription, renderFormTitle, columnCount = 1, fieldOptions, hideEmptySections = true,
-  renderLoading, renderFormInformation, renderSectionTitle, renderSectionDescription, renderSectionTop, ...props
+  renderLoading, renderFormInformation, renderSectionTitle, renderSectionDescription, renderSectionTop
 }) => {
   const { sections, formProcessing, useFormObject } = useFormContext();
   const { control } = useFormObject;
@@ -210,8 +210,6 @@ const GenericInlineForm = ({
   const { themeGroup } = formOptions || {};
   const inlineFormGroup = themeGroup?.inlineForm || inlineForm || defaultThemeGroup;
 
-
-
   // Get the form context
   // useFormObject is all the properties from react-hook-form useForm object
   // formProcessing is a boolean that is true when the form is processing
@@ -264,6 +262,16 @@ GenericInlineForm.propTypes = {
   isEdit: PropTypes.bool,
   submitLabel: PropTypes.string,
   submitColor: PropTypes.string,
+  formOptions: PropTypes.shape({
+    themeGroup: PropTypes.shape({
+      inlineForm: PropTypes.shape({
+        container: PropTypes.object,
+        buttonContainer: PropTypes.object,
+        submitButton: PropTypes.object,
+        resetButton: PropTypes.object
+      })
+    })
+  }),
   // Runtime error if this is not defined ABOVE
   sectionProps: PropTypes.shape(InlineFormSections.propTypes),
   children: PropTypes.node,
