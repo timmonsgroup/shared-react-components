@@ -374,14 +374,16 @@ GridLink.propTypes = {
  * @param {Object} props - The props for the component
  * @param {Object} props.data - The data for the grid
  * @param {Object} props.layout - The layout for the grid
- * @param {String} props.initialSortColumn - The initial sort column for the grid
- * @param {String} props.initialSortDirection - The initial sort direction for the grid
- * @param {Boolean} props.showToolbar - Whether to show the toolbar
- * @param {Array} props.actions - The actions column for the grid
- * @param {Object} props.themeGroup - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
- * @param {Object} props.actionsComponent - The component to use for the actions column
- * @param {Object} props.linkComponent - The component to use for the link column
- * @param {Boolean} props.useTypeVariant - Whether to use the type variant for the grid
+ * @param {String} [props.initialSortColumn] - The initial sort column for the grid
+ * @param {String} [props.initialSortDirection] - The initial sort direction for the grid
+ * @param {Boolean} [props.showToolbar] - Whether to show the toolbar
+ * @param {Array} [props.actions] - The actions column for the grid
+ * @param {Object} [props.themeGroup] - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
+ * @param {Object} [props.actionsComponent] - The component to use for the actions column
+ * @param {Object} [props.linkComponent] - The component to use for the link column
+ * @param {Boolean} [props.useTypeVariant] - Whether to use the type variant for the grid
+ * @param {Number} [props.initialRowCount] - The initial row count for the grid
+ * @param {Array} [props.rowsPerPageOptions] - The rows per page options for the grid
  */
 // eslint-disable-next-line
 const PamLayoutGrid = ({
@@ -395,6 +397,8 @@ const PamLayoutGrid = ({
   linkComponent,
   actionsComponent,
   useTypeVariant,
+  rowsPerPageOptions,
+  initialRowCount,
   ...props
 }) => {
   // memo of shared values
@@ -484,9 +488,10 @@ const PamLayoutGrid = ({
     }
     : {};
 
+  const rPPOpts = rowsPerPageOptions || [10, 25, 50, 100];
   const initialState = {
     pagination: {
-      pageSize: 10,
+      pageSize: initialRowCount || rPPOpts[0] || 10,
     },
   };
 
@@ -580,7 +585,7 @@ const PamLayoutGrid = ({
         columns={renderColumns}
         sx={sxProps}
         initialState={initialState}
-        rowsPerPageOptions={props.rowsPerPageOptions || [10, 25, 50, 100]}
+        rowsPerPageOptions={rPPOpts}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
         }
@@ -593,6 +598,7 @@ const PamLayoutGrid = ({
 PamLayoutGrid.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
+  initialRowCount: PropTypes.number,
   layout: PropTypes.object.isRequired,
   initialSortColumn: PropTypes.string,
   initialSortDirection: PropTypes.oneOf(['asc', 'desc']),
