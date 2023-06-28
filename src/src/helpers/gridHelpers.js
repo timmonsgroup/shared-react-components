@@ -348,5 +348,7 @@ export const convertLayoutColumnToMuiColumn = (column, nullValue, editable) => {
     default: console.error('Unknown column type', column.type); break;
   }
 
+  console.log('Converted column', column, ret)
+
   return ret;
 };

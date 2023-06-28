@@ -1,3 +1,4 @@
+/** @module GenericInlineForm */
 //Third party bits
 import React from 'react';
 import PropTypes from 'prop-types';

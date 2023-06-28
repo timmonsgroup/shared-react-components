@@ -1,8 +1,8 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import Grid from './PamLayoutGrid';
 
-<Meta 
-  title="Grid/PAM Layout Grid" 
+<Meta
+  title="Grid/PAM Layout Grid"
   component={Grid}
   argTypes={{
     data: {
@@ -21,7 +21,14 @@ import Grid from './PamLayoutGrid';
 
 />
 
-export const Template = (args) => <Grid layout={args.layout} data={args.data} onFilterModelChange={args.onFilterModelChange} onSortModelChange={args.onSortModelChange} />
+export const Template = (args) => <Grid
+  layout={args.layout}
+  data={args.data}
+  onFilterModelChange={args.onFilterModelChange}
+  onSortModelChange={args.onSortModelChange}
+  rowsPerPageOptions={[20, 50, 100]}
+  initialRowCount={50}
+/>
 
 const log = [];
 
@@ -73,6 +80,7 @@ export const layout = {
         "type": 0,
         "name": "name"
       },
+      "sortable": false,
       "required": false,
       "disabled": false,
       "flex": 1
@@ -356,7 +364,7 @@ When there is no data the columns will still be rendered but the data will say n
 <Canvas>
   <Story name="No Data"
     args={{
-      layout: layout, 
+      layout: layout,
       data: [],
     }}>
     {Template.bind({})}
@@ -370,7 +378,7 @@ When there is data the data will be rendered
 <Canvas>
   <Story name="With Data"
     args={{
-      layout: layout, 
+      layout: layout,
       data: data,
     }}>
     {Template.bind({})}
@@ -385,7 +393,7 @@ If you wish to override the default value of 'N/A' for null values you can set t
 <Canvas>
   <Story name="Null Value Override"
     args={{
-      layout: nullDataLayout, 
+      layout: nullDataLayout,
       data: data,
     }}>
     {Template.bind({})}
@@ -400,7 +408,7 @@ Additionally the nullValue can be set on the column level.
 <Canvas>
   <Story name="Column Null Value Override"
     args={{
-      layout: nullDataColumnLayout, 
+      layout: nullDataColumnLayout,
       data: data,
     }}>
     {Template.bind({})}
@@ -415,7 +423,7 @@ Change a filter and then check out the console. Note that the filter values now 
 <Canvas>
   <Story name="On Filter Model Change"
     args={{
-      layout: nullDataColumnLayout, 
+      layout: nullDataColumnLayout,
       data: data,
       onFilterModelChange: ((model)=>{ console.log("Filter Model Change story!", model) })
     }}>
@@ -431,7 +439,7 @@ Change a sort and then check out the console. Note that the sort values now have
 <Canvas>
   <Story name="On Sort Model Change"
     args={{
-      layout: nullDataColumnLayout, 
+      layout: nullDataColumnLayout,
       data: data,
       onSortModelChange: ((model)=>{ console.log("Sort Model Change story!", model) })
     }}>
@@ -447,7 +455,7 @@ If the layout has the editable flag set to true the grid will also be editable. 
 <Canvas>
   <Story name="Editable"
     args={{
-      layout: { ...nullDataColumnLayout, editable: true }, 
+      layout: { ...nullDataColumnLayout, editable: true },
       data: data
     }}>
     {Template.bind({})}

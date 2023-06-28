@@ -28,6 +28,15 @@ import { SectionTop } from './Section';
 import DynamicField from './DynamicField';
 import ClusterField from './ClusterField';
 import RenderExpandableCell from './RenderExpandableCell';
+import {
+  ViewContext,
+  ConfigView,
+  ViewSection,
+  ViewRows,
+  ViewColumns,
+  ViewField,
+  ClusterTable
+} from './ConfigView';
 
 export {
   AnyField, AnyFieldLabel, AppBar, GenericForm, Button, ContainerWithCard, FormErrorMessage,
@@ -41,5 +50,14 @@ export {
   GenericConfigForm,
   GenericInlineForm,
   SectionRow,
-  SectionTop
+  SectionTop,
+
+  // ConfigView exports
+  ViewContext,
+  ConfigView,
+  ViewSection,
+  ViewRows,
+  ViewColumns,
+  ViewField,
+  ClusterTable
 };

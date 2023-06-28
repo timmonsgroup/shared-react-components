@@ -73,7 +73,7 @@ const baseThemeProperties = {
   },
   inlineForm: {
     container: {
-      position: 'relative', 
+      position: 'relative',
       marginTop: '16px'
     },
     buttonContainer: {
@@ -168,6 +168,21 @@ const baseThemeProperties = {
     featuredCard: {
       heading: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
       legend: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
+    }
+  },
+  configView: {
+    clusterField: {
+      alternateRowColor: '#F6F6F6',
+      headerColor: darkBlue,
+      headerTextColor: '#FFFFFF',
+    },
+  },
+  detailItem: {
+    fontSize: '0.875rem',
+    marginTop: '8px',
+    marginBottom: '8px',
+    '&.label': {
+      fontWeight: 'bold'
     }
   },
   filterableCard: {

@@ -47,6 +47,14 @@ export const GRID_ACTION_TYPE = Object.freeze({
   CUSTOM: 'custom'
 });
 
+export const STATIC_TYPES = Object.freeze({
+  HEADER: 'header',
+  TEXT: 'text',
+  DIVIDER: 'divider',
+  COMPONENT: 'component',
+  IMAGE: 'image',
+});
+
 export const REQUIRED = 'required';
 export const PLACEHOLDER = 'placeholder';
 export const DISABLED = 'disabled';
