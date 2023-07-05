@@ -17,6 +17,27 @@ import AnyFieldLabel from './AnyFieldLabel';
 
 import { FIELD_TYPES } from '../constants';
 import { Box } from '@mui/material';
+import { isEmpty, isObject } from '../helpers';
+
+const makeFilter = (checkedId) => {
+  const checkId = isObject(checkedId) ? checkedId.id : checkedId;
+  return (option) => {
+    const optId = isObject(option) ? option.id : option;
+    return optId.toString() === checkId.toString();
+  }
+};
+
+
+const handleMultiSelectChange = (field, checkedId) => {
+  const ids = field.value;
+  const checkId = isObject(checkedId) ? checkedId.id : checkedId;
+  // If the id is in the array, remove it, otherwise add it
+  const filterFunc = makeFilter(checkId);
+  const newIds = ids?.includes(checkId)
+    ? ids?.filter(filterFunc)
+    : [...(ids ?? []), checkId];
+  return newIds;
+};
 
 /**
  * Icons for info icons
@@ -57,6 +78,7 @@ import { Box } from '@mui/material';
  * @property {boolean} disabled - whether the field is disabled
  * @property {boolean} hidden - whether the field is hidden
  * @property {array} choices - The choices for the field
+ * @property {boolean} multiple - whether the field is multi select
  * @property {boolean} isMultiLine - whether the field is multiline
  */
 
@@ -279,7 +301,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
  * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText }, fieldOptions) => {
+const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText, multiple }, fieldOptions) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
@@ -294,6 +316,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         name={name}
         {...dataAttrs}
         {...field}
+        multiple={multiple}
         sx={{ width: '100%' }}
         disabled={disabled}
         items={choices || []}
@@ -312,13 +335,25 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         }}
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
-          let nextValue = newValue?.id;
-          // We need to set the value to null if it is empty string or undefined to correctly set 'unselected' state
-          // a value of 0 is valid
-          if (nextValue === '' || nextValue === undefined) {
-            nextValue = null;
+          // Need slightly different logic for multiple.
+          if (multiple) {
+            // The internal autocomplete component returns the ENTIRE object. So we map it consistently to just the id / value
+            const nextValue = newValue.map((v) => {
+              if (isObject(v)) {
+                return v.id || v.value;
+              }
+              return v;
+            });
+            onChange(nextValue);
+          } else {
+            let nextValue = newValue?.id || newValue?.value || newValue;
+            // We need to set the value to null if it is empty string or undefined to correctly set 'unselected' state
+            // a value of 0 is valid
+            if (nextValue === '' || nextValue === undefined) {
+              nextValue = null;
+            }
+            onChange(nextValue);
           }
-          onChange(nextValue);
         }}
         error={error}
       />
@@ -350,15 +385,6 @@ const checkboxRenderer = (layout, fieldOptions) => {
   const { label, disabled, choices = [], required, helperText, iconHelperText, altHelperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
-    const handleCheck = (checkedId) => {
-      const ids = field.value;
-      // If the id is in the array, remove it, otherwise add it
-      const newIds = ids?.includes(checkedId)
-        ? ids?.filter((id) => id.toString() !== checkedId.toString())
-        : [...(ids ?? []), checkedId];
-      return newIds;
-    };
-
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
     return (
@@ -391,7 +417,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
                   onBlur={field.onBlur}
                   checked={field?.value?.includes(item.id)}
                   onChange={(e) => {
-                    field.onChange(handleCheck(item.id));
+                    field.onChange(handleMultiSelectChange(field, item.id));
                   }}
                 />}
                 label={item.label}

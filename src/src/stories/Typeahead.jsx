@@ -31,6 +31,7 @@ import { isEmpty } from '../helpers';
  * @param {object} [props.iconHelperText] - the text to display in the info icon
  * @param {object} [props.altHelperText] - helper text to display above the field
  * @param {object} [props.helperText] - the helper text to display (below the field)
+ * @param {boolean} [props.multiple] - is the field a multi-select
  * @param {object} [props.fieldOptions] - the options to pass to the field
  * @param {object} [props.textFieldProps] - props to pass to the text field
  * @param {object} [props.textFieldProps.inputLabelProps] - props to pass to the input label
@@ -38,7 +39,7 @@ import { isEmpty } from '../helpers';
  * @returns {React.ReactElement}
  */
 const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, error,
-  disabled, renderSX, labelSX, inputSX, textFieldSX, iconHelperText, helperText,
+  disabled, renderSX, labelSX, inputSX, textFieldSX, iconHelperText, helperText, multiple,
   fieldOptions, altHelperText, ...props
 }, ref) => {
   // Override the default Autocomplete getOptionLabel / getOptionSelected methods
@@ -65,7 +66,11 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
     const foundOpt = getOpObj(value);
 
     // Things will get strange if we don't have a found option at this point and you dun goofed A A Ron
-    const isEqual = foundOpt ? (option?.id === foundOpt?.id || option?.value === foundOpt?.value) : true;
+    const noId = isEmpty(foundOpt?.id);
+    const noValue = isEmpty(foundOpt?.value);
+    const sameId = !noId && (foundOpt.id === option?.id);
+    const sameValue = !noValue && (foundOpt.value === option?.value);
+    const isEqual = foundOpt ? (sameId || sameValue) : true;
     return isEqual;
   };
 
@@ -92,6 +97,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
       ref={ref}
       sx={sx || { width: 300 }}
       options={items}
+      multiple={multiple}
       autoHighlight
       disabled={disabled}
       getOptionLabel={getOptionLabel}
@@ -151,6 +157,7 @@ Typeahead.propTypes = {
   label: PropTypes.string,
   sx: PropTypes.object,
   helperText: PropTypes.string,
+  multiple: PropTypes.bool,
   iconHelperText: PropTypes.string,
   altHelperText: PropTypes.string,
   error: PropTypes.object,
