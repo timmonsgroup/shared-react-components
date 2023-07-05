@@ -282,13 +282,15 @@ export function parseField(field, asyncFieldsMap) {
     parsedField.render[DISABLE_FUTURE_ERROR_TEXT] = field[DISABLE_FUTURE_ERROR_TEXT];
   }
 
-  // map special props to the field
-
-  specialProps.forEach((prop) => {
-    if (data[prop]) {
-      parsedField.specialProps[prop] = data[prop];
-    }
-  });
+  // it is possible for data to be null if the data object in the model is null
+  if (data) {
+    // map special props to the field
+    specialProps.forEach((prop) => {
+      if (data[prop]) {
+        parsedField.specialProps[prop] = data[prop];
+      }
+    });
+  }
 
   if (type === FIELDS.LONG_TEXT) {
     parsedField.render.isMultiLine = true;
