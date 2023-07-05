@@ -227,7 +227,7 @@ export function parseField(field, asyncFieldsMap) {
     hidden,
     specialProps: {},
     [DEFAULT_VALUE]: field[DEFAULT_VALUE],
-    modelData: model.data || {},
+    modelData: model?.data || {},
     // Note any validation that are needed for a trigger field should be added here
     // The triggerfield logic will parse the base field first then the trigger field (which allows for overrides via "then")
     render: {

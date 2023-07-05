@@ -98,7 +98,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
       isOptionEqualToValue={isOptionEqualToValue}
       renderOption={(optProps, option) => (
         <Box component="li" {...optProps} key={option.id || option.value}>
-          {option.label}
+          {option.label || option.name}
         </Box>
       )}
       renderInput={(params) => {
