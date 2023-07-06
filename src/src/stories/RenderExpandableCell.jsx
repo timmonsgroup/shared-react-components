@@ -1,5 +1,7 @@
 /** @module RenderExpandableCell */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { Tooltip } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 
@@ -13,6 +15,15 @@ const setOverflow = (refItem, overflow) => {
   }
 };
 
+/**
+ * A helper component to render a cell with a tooltip if the text is truncated
+ * @function RenderExpandableCell
+ * @param {object} props - props object
+ * @param {string} props.formattedValue - formatted value to display
+ * @returns {React.ReactElement} - React component
+ * @example
+ * <RenderExpandableCell formattedValue={formattedValue} />
+ */
 const RenderExpandableCell = ({formattedValue,  ...props}) => {
   const [isOverflowed, setIsOverflow] = useState(false);
 
@@ -56,6 +67,10 @@ const RenderExpandableCell = ({formattedValue,  ...props}) => {
       </span>
     </Tooltip>
   );
+};
+
+RenderExpandableCell.propTypes = {
+  formattedValue: PropTypes.string,
 };
 
 export default RenderExpandableCell;

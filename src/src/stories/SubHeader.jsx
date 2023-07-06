@@ -10,11 +10,10 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
  * if neither then no header will be rendered
  * @function SubHeader
  * @param {object} props
- * @param {string} props.title - title to display
- * @param {function} props.titleRender - function to render the title
- * @param {function} props.rightRender - function to render the right side of the header
- * @param {string} props.color - color of the header
- * @param {object} props.props - props for AppBar
+ * @param {string} [props.title] - title to display
+ * @param {function} [props.titleRender] - function to render the title
+ * @param {function} [props.rightRender] - function to render the right side of the header
+ * @param {string} [props.color] - color of the header
  * @returns {React.ReactElement}
  */
 const SubHeader = ({ title, titleRender, rightRender, color = 'accent', ...props }) => {

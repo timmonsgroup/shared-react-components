@@ -1,3 +1,4 @@
+/** @module SideBar */
 import React, { forwardRef, useImperativeHandle } from 'react';
 
 import PropTypes from 'prop-types';
@@ -34,8 +35,17 @@ SideBarButton.propTypes = {
 
 
 /**
- * Wrapper of the Mui Drawer component
+ * Custom implementation of the Mui Drawer component
  * Sets some base properties
+ * @function SideBar
+ * @param {object} props - props object
+ * @param {boolean} props.initiallyOpen - boolean to indicate if the sidebar should be open by default
+ * @param {number} [props.drawerWidth] - width of the sidebar
+ * @param {string} [props.title] - title of the sidebar
+ * @param {string} [props.aboutThisSideBarLabel] - label for the about this sidebar button
+ * @param {function} [props.onAbtThisClick] - click handler for the about this sidebar button
+ * @param {function} [props.onSideBarToggle] - click handler for the sidebar toggle button
+ * @param {object} [props.sx] - sx object for the sidebar
  * @returns {React.ReactElement}
  */
 const SideBar = forwardRef(({ initiallyOpen, drawerWidth, children, title, aboutThisSideBarLabel, onAbtThisClick, onSideBarToggle, sx }, ref) => {

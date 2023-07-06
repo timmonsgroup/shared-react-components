@@ -17,7 +17,7 @@ import AnyFieldLabel from './AnyFieldLabel';
 
 import { FIELD_TYPES } from '../constants';
 import { Box } from '@mui/material';
-import { isEmpty, isObject } from '../helpers';
+import { isObject } from '../helpers';
 
 const makeFilter = (checkedId) => {
   const checkId = isObject(checkedId) ? checkedId.id : checkedId;
@@ -42,25 +42,25 @@ const handleMultiSelectChange = (field, checkedId) => {
 /**
  * Icons for info icons
  * @typedef {Object} FieldIconOptions
- * @property {string} color - the color of the icon
- * @property {string} gap - the gap between the label and the icon
- * @property {boolean} beforeLabel - whether to display the icon before the label
- * @property {React.Component} iconComponent - a component to use instead of the default InfoIcon
- * @property {string} iconText - the text to display in the info icon
+ * @property {string} [color] - the color of the icon
+ * @property {string} [gap] - the gap between the label and the icon
+ * @property {boolean} [beforeLabel] - whether to display the icon before the label
+ * @property {React.Component} [iconComponent] - a component to use instead of the default InfoIcon
+ * @property {string} [iconText] - the text to display in the info icon
  */
 
 /**
  * Theme group for the label
  * @typedef {Object} FieldLabelThemeGroup
- * @property {object} anyFieldLabel - any theme properties to use for the box containing the label
- * @property {object} anyFieldLabel.helperText - any theme properties to use for the helper text
+ * @property {object} [anyFieldLabel] - any theme properties to use for the box containing the label
+ * @property {object} [anyFieldLabel.helperText] - any theme properties to use for the helper text
  */
 
 /**
  * Various options for the fields
  * @typedef {Object} FieldOptions
- * @property {FieldIconOptions} icon - the options to pass to the info icon
- * @property {FieldLabelThemeGroup} labelThemeGroup - the theme group to use for the label
+ * @property {FieldIconOptions} [icon] - the options to pass to the info icon
+ * @property {FieldLabelThemeGroup} [labelThemeGroup] - the theme group to use for the label
  */
 
 /**
@@ -70,16 +70,16 @@ const handleMultiSelectChange = (field, checkedId) => {
  * @property {string} name - the name of the field
  * @property {string} type - the type of the field
  * @property {string} label - the label of the field
- * @property {string} helperText - the helper text of the field
- * @property {string} placeholder - the placeholder of the field
- * @property {string} iconHelperText - the helper text of the info icon
- * @property {string} altHelperText - helper text to display in an alternate location
- * @property {boolean} required - whether the field is required
- * @property {boolean} disabled - whether the field is disabled
- * @property {boolean} hidden - whether the field is hidden
- * @property {array} choices - The choices for the field
- * @property {boolean} multiple - whether the field is multi select
- * @property {boolean} isMultiLine - whether the field is multiline
+ * @property {string} [helperText] - the helper text of the field
+ * @property {string} [placeholder] - the placeholder of the field
+ * @property {string} [iconHelperText] - the helper text of the info icon
+ * @property {string} [altHelperText] - helper text to display in an alternate location
+ * @property {boolean} [required] - whether the field is required
+ * @property {boolean} [disabled] - whether the field is disabled
+ * @property {boolean} [hidden] - whether the field is hidden
+ * @property {array} [choices] - The choices for the field
+ * @property {boolean} [multiple] - whether the field is multi select
+ * @property {boolean} [isMultiLine] - whether the field is multiline
  */
 
 /**
@@ -133,7 +133,7 @@ AnyField.propTypes = {
  * Return the correct renderer for the given type
  * @function
  * @param {FieldLayout} layout - the layout object for the field
- * @param {FieldOptions} fieldOptions - various options for the fields
+ * @param {FieldOptions} [fieldOptions] - various options for the fields
  * @returns {React.ReactElement} - the rendered field
  */
 const renderType = (layout, fieldOptions = {}) => {

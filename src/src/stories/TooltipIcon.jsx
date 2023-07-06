@@ -1,3 +1,4 @@
+/** @module TooltipIcon */
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -9,8 +10,8 @@ import IIcon from '@mui/icons-material/InfoOutlined';
 /**
  * TooltipIcon is a wrapper around the MUI InfoOutlined icon (default) that displays a tooltip when clicked
  * @param {object} props - any additional props are passed directly to the icon component
- * @param {React.ElementType} props.iconComponent - the component to use for the icon instead of the default InfoOutlined
- * @param {string} props.infoText - the text to display in the tooltip
+ * @param {React.ElementType} [props.iconComponent] - the component to use for the icon instead of the default InfoOutlined
+ * @param {string} [props.infoText] - the text to display in the tooltip
  * @returns {React.ReactElement} an icon that displays a tooltip when clicked
  */
 const TooltipIcon = ({ iconComponent, infoText, ...props }) => {

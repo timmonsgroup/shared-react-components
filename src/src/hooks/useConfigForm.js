@@ -292,7 +292,6 @@ export const useConfigForm = (formLayout, data, options) => {
           // We grab the "empty" value from the field and set it as the default value
           const resetValues = {};
           for (const field in resetFields) {
-            // debugger;
             const fieldToReset = formLayout.fields.get(field);
             const { value } = getFieldValue(fieldToReset, {});
             resetValues[field] = value;
