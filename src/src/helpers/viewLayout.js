@@ -298,7 +298,7 @@ export function getStaticProps(field) {
  * Get the conditional loadout for a field
  * @function getViewFieldValue
  * @param {object} inData - data object
- * @returns {string | []object} field value
+ * @returns {string | object[]} field value
  */
 export function getViewFieldValue(inData) {
   if (Array.isArray(inData)) {
