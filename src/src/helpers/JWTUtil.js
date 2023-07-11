@@ -5,7 +5,12 @@ import '../models/auth';
 
 export const decodeBase64Token = (tokenBase64String) => {
   try {
-    const token = JSON.parse(atob(tokenBase64String));
+    const token = 
+      JSON.parse(
+        Buffer.from(
+          tokenBase64String.replace(/-/g, '+').replace(/_/g, '/'), // The replace is needed because the token is base64url encoded and not base64 encoded
+          'base64'
+        ).toString('utf8'));
     return token;
   } catch (err) {
     return null;
@@ -14,7 +19,11 @@ export const decodeBase64Token = (tokenBase64String) => {
 
 export const decodeTokenToJWT = (token) => {
   const spilt = token.includes('.') ? token.split('.')[1] : token;
-  const jwt = JSON.parse(atob(spilt));
+  const jwt = JSON.parse(
+    Buffer.from(
+      spilt.replace(/-/g, '+').replace(/_/g, '/'), // The replace is needed because the token is base64url encoded and not base64 encoded 
+      'base64'
+    ).toString('utf8'));
   return jwt;
 };
 
