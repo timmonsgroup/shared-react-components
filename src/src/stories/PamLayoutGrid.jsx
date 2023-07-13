@@ -270,8 +270,7 @@ const addRendering = (column) => {
  * @returns {React.ReactElement}
  */
 const ActionWrapper = (props) => {
-  const { actionsComponent, themeGroup, useTypeVariant } =
-    useContext(gridContext);
+  const { actionsComponent, themeGroup, useTypeVariant } = useContext(gridContext);
   // Default to the GridActions component if no custom component is passed in
   const Actions = actionsComponent || GridActions;
   return (

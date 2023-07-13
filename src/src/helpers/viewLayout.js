@@ -181,6 +181,11 @@ export function parseViewField(field, data, key, nested = false) {
     return parsedField;
   }
 
+  if (type === FIELDS.OBJECT && field.linkFormat) {
+    parsedField.renderAsLinks = true;
+    parsedField.linkFormat = linkFormat;
+  }
+
   parsedField.value = getViewValue(field, inData, empty, key);
 
   return parsedField;
@@ -207,7 +212,15 @@ export const getViewValue = (field, inData, empty, key) => {
       if (!inData) {
         value = empty;
       } else if (Array.isArray(inData)) {
-        value = inData.map(extractName).join(', ');
+        if (type === FIELDS.OBJECT) {
+          console.log('inData', inData, field);
+          console.log('field', field);
+        }
+        if (type === FIELDS.OBJECT && field?.linkFormat) {
+          value = inData;
+        } else {
+          value = inData.map(extractName).join(', ');
+        }
       } else if (typeof inData === 'object') {
         value = extractName(inData);
       }

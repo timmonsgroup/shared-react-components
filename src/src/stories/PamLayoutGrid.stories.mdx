@@ -1,5 +1,7 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import Grid from './PamLayoutGrid';
+import {GRID_ACTION_TYPE} from '../constants';
+import { useTheme } from '@mui/material';
 
 <Meta
   title="Grid/PAM Layout Grid"
@@ -21,14 +23,44 @@ import Grid from './PamLayoutGrid';
 
 />
 
-export const Template = (args) => <Grid
-  layout={args.layout}
-  data={args.data}
-  onFilterModelChange={args.onFilterModelChange}
-  onSortModelChange={args.onSortModelChange}
-  rowsPerPageOptions={[20, 50, 100]}
-  initialRowCount={50}
-/>
+
+export const CustomActions = ({ muiGridColumn, actions, params, themeGroup, useTypeVariant }) => {
+  return (
+    <div
+      aria-label="action button group"
+      className="grid-actions"
+      size="small"
+      sx={{
+        margin: 'auto',
+      }}
+      variant="text"
+    >
+      {actions.map((action, index) => {
+        return (
+          <button
+            key={index}
+            size="small"
+          >
+            {action.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+export const Template = (args) => {
+  return (<Grid
+    layout={args.layout}
+    data={args.data}
+    onFilterModelChange={args.onFilterModelChange}
+    onSortModelChange={args.onSortModelChange}
+    rowsPerPageOptions={[20, 50, 100]}
+    initialRowCount={50}
+    actionsComponent={args.actionsComponent}
+    actions={args.actions}
+  />);
+}
 
 const log = [];
 
@@ -385,6 +417,59 @@ When there is data the data will be rendered
   </Story>
 </Canvas>
 
+## Custom Actions
+If you want to completely take over the actions column rendering you can pass in a custom actions component. This component will be passed the row data from MUI (this is in `params`). Row data is (`params.row`), actions array. You can then render the actions however you want.
+
+Create a custom actions component and pass it in as a prop `actionsComponent={CustomActions}` to the PamLayoutGrid component.
+
+```jsx
+export const CustomActions = ({ muiGridColumn, actions, params, themeGroup, useTypeVariant}) => {
+  return (
+    <div>
+      {actions.map((action, index) => {
+        return (
+          <button key={index}>{action.label}</button>
+        );
+      })}
+    </div>
+  );
+};
+
+const actions = [{
+  order: 0,
+  label: '',
+  actionList: [{
+    label: 'View',
+  }],
+}]
+
+<PamLayoutGrid
+  layout={layout}
+  data={data}
+  actionsComponent={CustomActions}
+  actions={actions}
+/>
+
+```
+
+
+<Canvas>
+  <Story name="Custom Actions"
+    args={{
+      layout: layout,
+      data: data,
+      actionsComponent: CustomActions,
+      actions: [{
+        order: 0,
+        label: '',
+        actionList: [{
+          label: 'View',
+        }],
+      }]
+    }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
 
 ## Grid null value override
 

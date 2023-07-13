@@ -1,0 +1,49 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs';
+import { HashRouter as Router } from 'react-router-dom';
+import { ConfigView } from './ConfigView';
+import { Skeleton } from '@mui/material';
+import { VIEW_PRESET, ViewLayoutData} from '../helpers/story-helpers/ViewLayoutPreset';
+import { parseViewLayout } from '../helpers/viewLayout';
+
+<Meta title="ConfigView" component={ConfigView} />
+export const Template = (args) => {
+  const sections = parseViewLayout(args.layout, ViewLayoutData)
+  // const dynamicComponents = {
+  //   'Encumr': <Skeleton variant="rectangular" width="100%" height={200} />,
+  // };
+
+  return (
+    <Router>
+      <ConfigView sections={sections} dynamicComponents={{}} />
+    </Router>
+  );
+};
+
+export const viewArgs = {
+  layout: {
+    control: 'object',
+    description: 'An object containing the layout options',
+  },
+};
+
+export const defaultProps = {
+  layout: VIEW_PRESET,
+};
+
+# ConfigView
+
+A `ConfigView` component incorporates a PAM style form layout to render.
+
+## Multi Section With Conditionals
+
+This example shows how to use the `ConfigView` component to render a multi section form with conditional fields.
+
+<Canvas>
+  <Story
+    name="Single Section"
+    argTypes={viewArgs}
+    args={defaultProps}
+  >
+    {Template.bind({})}
+  </Story>
+</Canvas>

@@ -4,8 +4,8 @@
 import React, { useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { SectionTop } from '@timmons-group/shared-react-components';
-import { FIELD_TYPES, STATIC_TYPES } from '@timmons-group/shared-react-components/constants';
+import { SectionTop } from '../Section';
+import { FIELD_TYPES, STATIC_TYPES } from '../../constants';
 
 // MUI imports
 import {
@@ -157,6 +157,22 @@ export const ViewRows = ({ areas }) => {
       }
     </>
   );
+};
+
+const FieldValue = ({field}) => {
+  if (field.renderAsLinks) {
+    console.log(field)
+    return (
+      <ul>
+        {field.value.map((link, index) => (
+          <li key={index}>
+            <a href={field.linkFormat.replace('{id}', link.id)} target="_blank" rel="noopener noreferrer">{link.label || link.name}</a>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  return <Typography variant="detailItem">{field.value}</Typography>;
 }
 
 ViewRows.propTypes = {
@@ -208,7 +224,8 @@ export const ViewField = ({ field }) => {
   return (
     <div>
       <Typography variant="detailItem" className="label">{field.label}: </Typography>
-      <Typography variant="detailItem">{field.value}</Typography>
+      <FieldValue field={field} />
+      {/* <Typography variant="detailItem">{field.value}</Typography> */}
     </div>
   );
 }
