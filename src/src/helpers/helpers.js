@@ -71,6 +71,10 @@ export function isObject(objValue) {
    * @returns {boolean} - true if empty, false if not
    */
 export const isEmpty = (value) => {
+  if (Array.isArray(value) && value.length === 0) {
+    return true;
+  }
+
   if (value === '' || value === null || value === undefined) {
     return true;
   }

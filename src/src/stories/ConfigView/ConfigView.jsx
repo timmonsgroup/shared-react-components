@@ -180,10 +180,11 @@ export const FieldValue = ({field}) => {
   const { options } =  useContext(ViewContext);
   // Default to the LinkValue component if no custom component is passed in
   const LinkComponent = options?.linkComponent || LinkValue;
-  if (field.renderAsLinks) {
+  if (field.renderAsLinks && field.value) {
+    const links = Array.isArray(field.value) ? field.value : [field.value];
     return (
       <>
-        {field.value.map((link, index) => (
+        {links.map((link, index) => (
           <LinkComponent key={index} field={field} link={link} index={index} />
         ))}
       </>
@@ -213,7 +214,7 @@ export const LinkValue = ({field, link, index}) => {
     <React.Fragment>
       {index > 0 && <Typography variant="detailItemSeparator">,</Typography>}
       <Typography variant="detailItem">
-        <Link to={field.linkFormat.replace('{id}', link.id)}>{link.label || link.name}</Link>
+        <Link to={field.linkFormat.replace('{id}', link?.id)}>{link?.label || link?.name}</Link>
       </Typography>
     </React.Fragment>
   );

@@ -1,3 +1,4 @@
+import { parse } from 'path';
 import {
   CONDITIONAL_RENDER,
   EMAIL, PHONE, ZIP,
@@ -188,6 +189,10 @@ export function parseViewField(field, data, key, nested = false) {
 
   parsedField.value = getViewValue(field, inData, empty, key);
 
+  if (parsedField.value === empty && parsedField.renderAsLinks) {
+    parsedField.renderAsLinks = false;
+  }
+
   return parsedField;
 }
 /**
@@ -206,23 +211,24 @@ export const getViewValue = (field, inData, empty, key) => {
   let value = inData;
   if (isEmpty(inData)) {
     value = empty;
+    console.log(field.label, 'is empty', value);
   } else {
     if (type === FIELDS.CHOICE || type === FIELDS.OBJECT) {
       // If data is an array get the label of each item
       if (!inData) {
         value = empty;
       } else if (Array.isArray(inData)) {
-        if (type === FIELDS.OBJECT) {
-          console.log('inData', inData, field);
-          console.log('field', field);
-        }
         if (type === FIELDS.OBJECT && field?.linkFormat) {
           value = inData;
         } else {
           value = inData.map(extractName).join(', ');
         }
       } else if (typeof inData === 'object') {
-        value = extractName(inData);
+        if (type === FIELDS.OBJECT && field?.linkFormat) {
+          value = inData;
+        } else {
+          value = extractName(inData);
+        }
       }
     }
 
