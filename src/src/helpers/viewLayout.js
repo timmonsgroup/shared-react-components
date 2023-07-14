@@ -211,7 +211,6 @@ export const getViewValue = (field, inData, empty, key) => {
   let value = inData;
   if (isEmpty(inData)) {
     value = empty;
-    console.log(field.label, 'is empty', value);
   } else {
     if (type === FIELDS.CHOICE || type === FIELDS.OBJECT) {
       // If data is an array get the label of each item
