@@ -5,5 +5,7 @@ export {
   ViewRows,
   ViewColumns,
   ViewField,
-  ClusterTable
+  ClusterTable,
+  FieldValue,
+  LinkValue
 } from './ConfigView';

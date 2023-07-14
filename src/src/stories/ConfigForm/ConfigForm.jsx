@@ -16,12 +16,12 @@ import { functionOrDefault } from '../../helpers';
  *
  * @function ConfigForm
  * @param {object} props
- * @param {object} props.formLayout - the layout of the form
- * @param {object} props.data - the data to populate the form with
- * @param {object} props.parseOptions - options to pass to the parser
- * @param {string} props.urlDomain - the domain to use for the API calls
+ * @param {object} props.formLayout - the layout of the form. This component should not be rendered until the formLayout is loaded
+ * @param {object} [props.data] - the data to populate the form with
+ * @param {object} [props.parseOptions] - options to pass to the parser
+ * @param {string} [props.urlDomain] - the domain to use for the API calls
+ * @param {function} [props.renderLoading] - the function to render while the form is loading
  * @param {object} props.children - the children to render
- * @param {function} props.renderLoading - the function to render while the form is loading
  * @returns {React.ReactElement} - the wrapped children
  * @example
  * <ConfigForm formLayout={formLayout} data={data} parseOptions={{ choiceFormatter: choiceFormatter2 }}>
@@ -36,7 +36,10 @@ const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, 
       const parsed = await parseFormLayout(formLayout, urlDomain, parseOptions);
       setParsed(parsed);
     };
-    parseIt();
+
+    if (formLayout) {
+      parseIt();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formLayout]);
 
@@ -66,8 +69,9 @@ ConfigForm.propTypes = {
  * @function ConfigFormProvider
  * @param {object} props - props object
  * @param {object} props.layout - the layout object (a parsed form layout)
- * @param {object} props.data - the data to populate the form with
- * @param {string} props.urlDomain - the domain to use for the API calls
+ * @param {object} [props.data] - the data to populate the form with
+ * @param {string} [props.urlDomain] - the domain to use for the API calls
+ * @param {object} [props.options] - options to pass to the parser
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement} - the wrapped children
  * @example <DynamicForm layout={layout} data={data}><MyForm /></DynamicForm>

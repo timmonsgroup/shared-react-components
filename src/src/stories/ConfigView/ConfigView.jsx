@@ -3,6 +3,7 @@
 // Third party libraries
 import React, { useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import { SectionTop } from '../Section';
 import { FIELD_TYPES, STATIC_TYPES } from '../../constants';
@@ -24,13 +25,17 @@ export const ViewContext = createContext();
  * @param {array} props.sections - array of sections to render
  * @param {object} [props.dynamicComponents] - object of dynamic components to render
  * @param {boolean} [props.isLoading] - boolean to indicate if the view is loading
+ * @param {object} [props.options] - options object
+ * @param {React.ReactElement} [props.options.fieldValueComponent] - component to use for field values. Use to completely control the rendering of field values
+ * @param {React.ReactElement} [props.options.linkComponent] - component to use for links. If fieldValueComponent this property will be ignored
  * @returns {React.ReactElement} - returns rendered view
  */
-export const ConfigView = ({ sections, dynamicComponents, isLoading }) => {
+export const ConfigView = ({ sections, dynamicComponents, isLoading, options }) => {
   // add dynamic components to the context
   const context = {
     dynamicComponents,
     isLoading,
+    options
   };
 
   return (
@@ -48,6 +53,7 @@ ConfigView.propTypes = {
   sections: PropTypes.array.isRequired,
   dynamicComponents: PropTypes.object,
   isLoading: PropTypes.bool,
+  options: PropTypes.object,
 };
 
 export default ConfigView;
@@ -66,7 +72,7 @@ export const ViewSection = ({ section, index, ...props }) => {
   const RenderFields = columns ? ViewColumns : ViewRows;
   const sx = {
     position: 'relative',
-  }
+  };
 
   if (index) {
     sx.marginTop = '16px';
@@ -95,7 +101,7 @@ export const ViewSection = ({ section, index, ...props }) => {
       </CardContent>
     </Card>
   );
-}
+};
 
 ViewSection.propTypes = {
   section: PropTypes.object.isRequired,
@@ -121,7 +127,7 @@ export const ViewColumns = ({ areas }) => {
       ))}
     </Grid>
   );
-}
+};
 
 ViewColumns.propTypes = {
   areas: PropTypes.array.isRequired
@@ -152,41 +158,84 @@ export const ViewRows = ({ areas }) => {
                 );
               })}
             </Grid>
-          )
+          );
         })
       }
     </>
   );
 };
 
-const FieldValue = ({field}) => {
-  if (field.renderAsLinks) {
-    console.log(field)
-    return (
-      <ul>
-        {field.value.map((link, index) => (
-          <li key={index}>
-            <a href={field.linkFormat.replace('{id}', link.id)} target="_blank" rel="noopener noreferrer">{link.label || link.name}</a>
-          </li>
-        ))}
-      </ul>
-    );
-  }
-  return <Typography variant="detailItem">{field.value}</Typography>;
-}
-
 ViewRows.propTypes = {
   areas: PropTypes.array.isRequired
 };
 
 /**
- * @function ViewField
+ * @function FieldValue
  * @param {object} props
  * @param {object} props.field - field object to render
  * @returns {React.ReactElement} - returns rendered field
+ * @description Render the value of a field
+ */
+export const FieldValue = ({field}) => {
+  const { options } =  useContext(ViewContext);
+  // Default to the LinkValue component if no custom component is passed in
+  const LinkComponent = options?.linkComponent || LinkValue;
+  if (field.renderAsLinks) {
+    return (
+      <>
+        {field.value.map((link, index) => (
+          <LinkComponent key={index} field={field} link={link} index={index} />
+        ))}
+      </>
+    );
+  }
+  return <Typography variant="detailItem">{field.value}</Typography>;
+};
+
+FieldValue.propTypes = {
+  field: PropTypes.object.isRequired
+};
+
+/**
+ * @function LinkValue
+ * @param {object} props
+ * @param {object} props.field - field object to render
+ * @param {object} props.link - link object to render
+ * @param {string} props.link.id - id of the link
+ * @param {string} props.link.label - label of the link
+ * @param {string} [props.link.name] - name of the link (fallback if label is not present)
+ * @param {number} props.index - index of the link
+ * @returns {React.ReactElement} - returns rendered link
+ * @description Render the value of a link
+ */
+export const LinkValue = ({field, link, index}) => {
+  return (
+    <React.Fragment>
+      {index > 0 && <Typography variant="detailItemSeparator">,</Typography>}
+      <Typography variant="detailItem">
+        <Link to={field.linkFormat.replace('{id}', link.id)}>{link.label || link.name}</Link>
+      </Typography>
+    </React.Fragment>
+  );
+};
+
+LinkValue.propTypes = {
+  field: PropTypes.object.isRequired,
+  link: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired
+};
+
+
+/**
+ * @function ViewField
+ * @param {object} props
+ * @param {object} props.field - field object to render
+ * @param {string} props.field.type - type of field to render
+ * @param {string} [props.field.label] - text to render
+ * @returns {React.ReactElement} - returns rendered field
  */
 export const ViewField = ({ field }) => {
-  const { dynamicComponents } = useContext(ViewContext);
+  const { dynamicComponents, options } = useContext(ViewContext);
 
   if (field.static) {
     switch (field.type) {
@@ -221,14 +270,16 @@ export const ViewField = ({ field }) => {
     return <ClusterTable field={field} />;
   }
 
+  // Default to the FieldValue component if no custom component is passed in
+  const ValueComponent = options?.fieldValueComponent || FieldValue;
+
   return (
     <div>
       <Typography variant="detailItem" className="label">{field.label}: </Typography>
-      <FieldValue field={field} />
-      {/* <Typography variant="detailItem">{field.value}</Typography> */}
+      <ValueComponent field={field} />
     </div>
   );
-}
+};
 
 ViewField.propTypes = {
   field: PropTypes.object.isRequired
@@ -249,6 +300,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
  * @function ClusterTable
  * @param {object} props
  * @param {object} props.field - field object to render
+ * @param {object} props.field.value - value of the field
+ * @param {object} props.field.value.headers - headers of the table
+ * @param {object} props.field.value.rows - rows of the table
+ * @param {object} [props.field.label] - label of the field
  * @returns {React.ReactElement} the cluster table
  */
 export const ClusterTable = ({ field }) => {
@@ -273,7 +328,7 @@ export const ClusterTable = ({ field }) => {
                     color: (theme) => theme.configView.clusterField.headerTextColor,
                     fontWeight: 'bold',
                   }}>{header}</TableCell>
-                )
+                );
               })}
             </TableRow>
           </TableHead>

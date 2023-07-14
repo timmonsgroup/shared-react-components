@@ -177,14 +177,6 @@ const baseThemeProperties = {
       headerTextColor: '#FFFFFF',
     },
   },
-  detailItem: {
-    fontSize: '0.875rem',
-    marginTop: '8px',
-    marginBottom: '8px',
-    '&.label': {
-      fontWeight: 'bold'
-    }
-  },
   filterableCard: {
     header: {
       display: 'flex',
@@ -273,6 +265,18 @@ const baseThemeProperties = {
     allVariants: {
       fontFamily: '"PT Sans", "Helvetica", "Arial", "sans-serif"',
     },
+    detailItem: {
+      fontSize: '0.875rem',
+      marginTop: '8px',
+      marginBottom: '8px',
+      '&.label': {
+        fontWeight: 'bold'
+      }
+    },
+    detailItemSeparator: {
+      fontSize: '0.875rem',
+      marginRight: '4px !important',
+    },
     navLink: {
       fontFamily: 'inherit',
       fontSize: '0.875rem',
@@ -350,7 +354,8 @@ const baseThemeProperties = {
           inspector: 'p',
           sectionDescription: 'p',
           clusterEmptyText: 'p',
-          navLink: 'a'
+          navLink: 'a',
+          detailItemSeparator: 'span'
         },
       },
     },
