@@ -417,6 +417,14 @@ export function zeroPad(num, size = 3) {
   return num.toString().padStart(size, '0');
 }
 
+export function dateStringNormalizer(dateString) {
+  if (!dateString) {
+    return null;
+  }
+
+  return dateString.replace(/-/g, '/').replace(/T.+/, '');
+}
+
 /**
  * Return a date string from either an ag grid cell object or string
  * @param {string | object} inc - The date string or ag grid cell object
@@ -431,7 +439,9 @@ export function dateFormatter(inc) {
     return '';
   }
 
-  const date = new Date(typeof inc === 'object' ? inc.value : inc);
+  const normalized = dateStringNormalizer(typeof inc === 'object' ? inc.value : inc);
+
+  const date = new Date(normalized);
   return dateToString(date);
 }
 

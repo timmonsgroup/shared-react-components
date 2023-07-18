@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
 import axios from 'axios';
+import { dateStringNormalizer } from '../helpers/helpers.js';
 
 const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
@@ -442,7 +443,7 @@ export function getFieldValue(field, formData) {
 
     case FIELDS.DATE: {
       if (inData) {
-        const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(inData);
+        const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(dateStringNormalizer(inData));
         inData = theDate.toDateString();
       }
       value = inData || null;

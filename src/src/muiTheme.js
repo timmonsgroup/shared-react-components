@@ -313,6 +313,14 @@ const baseThemeProperties = {
       marginTop: 2,
       marginBottom: 2,
     },
+    sectionHeaderSpaceAbove: {
+      fontFamily: 'inherit',
+      fontSize: '1rem',
+      fontWeight: 'bold',
+      color: darkBlue,
+      marginTop: 4,
+      marginBottom: 2,
+    },
     sectionDescription: {
       fontSize: '1rem',
       fontStyle: 'italic',
@@ -348,6 +356,7 @@ const baseThemeProperties = {
         fontFamily,
         variantMapping: {
           sectionHeader: 'h1',
+          sectionHeaderSpaceAbove: 'h1',
           subHeader: 'h2',
           modalTitle: 'h2',
           panelHeader: 'h2',

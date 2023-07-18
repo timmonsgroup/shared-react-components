@@ -1,6 +1,6 @@
 
 /** @module GridHelpers */
-import { dateFormatter, currencyFormatter } from './helpers.js';
+import { dateFormatter, currencyFormatter, dateStringNormalizer } from './helpers.js';
 /**
 * This is the base config for a column that is used by the MUIGrid component
 * It takes a column from the layout and converts it into a config that can be used by the MUIGrid component
@@ -97,7 +97,7 @@ export const getDateOrDefault = (value, defaultValue) => {
   if (!value)
     return defaultValue;
 
-  const val = new Date(value);
+  const val = value instanceof Date ? value : new Date(dateStringNormalizer(value));
 
   // If the date is invalid, return null
   if (isNaN(val.getTime())) {
