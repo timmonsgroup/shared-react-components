@@ -186,6 +186,15 @@ const ClusterField = ({ control, field, options, ...props }) => {
  */
 
 const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
+  const theme = useTheme();
+  const { clusterRowRemove } = theme;
+  const sx = clusterRowRemove || {
+    paddingTop:2,
+    paddingBottom:2,
+    paddingLeft:2,
+    paddingRight:0
+  };
+
   return (
     <>
       {
@@ -200,7 +209,7 @@ const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
                 />
               </Grid>
               <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }} style={{ maxWidth: '100px' }}>
-                <Grid>
+                <Grid sx={sx}>
                   {removeButton}
                 </Grid>
               </Grid>
@@ -291,6 +300,15 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
     colSize = parseInt(size);
   }
 
+  const theme = useTheme();
+  const { clusterRow } = theme;
+  const sx = clusterRow || {
+    paddingTop:2,
+    paddingBottom:2,
+    paddingLeft:1,
+    paddingRight:0
+  };
+
   return (
     <>
       {fields.map((field) => {
@@ -298,7 +316,7 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
         // At sm size, we do not allow more than 2 columns
         // At md size and up, we allow you to specify the number of columns
         return (
-          <Grid xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
+          <Grid sx={sx} xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
             <AnyField
               isNested={true}
               nestedName={`${layout?.name}.${index}.${field.render?.name}`}

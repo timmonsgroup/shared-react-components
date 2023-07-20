@@ -177,6 +177,18 @@ const baseThemeProperties = {
       headerTextColor: '#FFFFFF',
     },
   },
+  clusterRow: {
+    paddingTop:2,
+    paddingBottom:2,
+    paddingLeft:1,
+    paddingRight:0
+  },
+  clusterRowRemove: {
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 2,
+    paddingRight: 0
+  },
   filterableCard: {
     header: {
       display: 'flex',
