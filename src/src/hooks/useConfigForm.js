@@ -184,10 +184,11 @@ const createRenderSection = (section, fieldMap) => {
  * @function useConfigForm
  * @param {object} formLayout - Form layout object
  * @param {object} data - Data to pre-populate the form with
- * @param {object} options - any other options needed for the form
+ * @param {object} [options] - any other options needed for the form
+ * @param {function} [addCustomValidations] - function to add custom validations to the form MUST return an object
  * @returns {object} - Object containing the useFormObject, formProcessing, and sections
  */
-export const useConfigForm = (formLayout, data, options) => {
+export const useConfigForm = (formLayout, data, options, addCustomValidations) => {
   const { defaultValues, watchFields, validations: dynamicValidations } = processDynamicFormLayout(formLayout, data);
   const [sections, setSections] = useState([]);
   const [validations, setValidations] = useState({});
@@ -197,6 +198,13 @@ export const useConfigForm = (formLayout, data, options) => {
   // update the validation schema hookForm uses when the validation state changes
   const validationSchema = useMemo(
     () => {
+      if (addCustomValidations && typeof addCustomValidations === 'function') {
+        const newValids = addCustomValidations(validations);
+        if (newValids) {
+          return object({ ...newValids });
+        }
+        return object({ ...validations });
+      }
       return object({ ...validations });
     },
     [validations]

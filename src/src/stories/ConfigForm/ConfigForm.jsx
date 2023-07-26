@@ -21,6 +21,7 @@ import { functionOrDefault } from '../../helpers';
  * @param {object} [props.parseOptions] - options to pass to the parser
  * @param {string} [props.urlDomain] - the domain to use for the API calls
  * @param {function} [props.renderLoading] - the function to render while the form is loading
+ * @param {function} [props.addCustomValidations] - a function to add custom validations to the form - MUST be a function that returns an object of validation functions
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement} - the wrapped children
  * @example
@@ -28,7 +29,7 @@ import { functionOrDefault } from '../../helpers';
  *  <MyForm />
  * </ConfigForm>
  */
-const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading }) => {
+const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading, addCustomValidations }) => {
   const [parsed, setParsed] = useState(null);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, 
 
   if (parsed) {
     return (
-      <ConfigFormProvider layout={parsed} data={data} options={parseOptions}>
+      <ConfigFormProvider layout={parsed} data={data} options={parseOptions} addCustomValidations={addCustomValidations}>
         {children}
       </ConfigFormProvider>
     );
@@ -60,6 +61,7 @@ ConfigForm.propTypes = {
   urlDomain: PropTypes.string,
   parseOptions: PropTypes.object,
   renderLoading: PropTypes.func,
+  addCustomValidations: PropTypes.func,
   children: PropTypes.node,
 };
 
@@ -73,12 +75,13 @@ ConfigForm.propTypes = {
  * @param {string} [props.urlDomain] - the domain to use for the API calls
  * @param {object} [props.options] - options to pass to the parser
  * @param {object} props.children - the children to render
+ * @param {function} [props.addCustomValidations] - a function to add custom validations to the form - MUST be a function that returns an object of validation functions
  * @returns {React.ReactElement} - the wrapped children
  * @example <DynamicForm layout={layout} data={data}><MyForm /></DynamicForm>
  *
  */
-const ConfigFormProvider = ({ layout, data, urlDomain, children, options }) => {
-  const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options });
+const ConfigFormProvider = ({ layout, data, urlDomain, children, options, addCustomValidations }) => {
+  const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options }, addCustomValidations);
 
   return (
     <FormProvider useFormObject={useFormObject} {...rest}>
@@ -93,6 +96,7 @@ ConfigFormProvider.propTypes = {
   urlDomain: PropTypes.string,
   children: PropTypes.node,
   options: PropTypes.object,
+  addCustomValidations: PropTypes.func,
 };
 
 export {
