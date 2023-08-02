@@ -28,33 +28,6 @@ const defaultSX = {
   flexGrow: 1,
 };
 
-const addObjectReferenceRendering = (muiGridColumn, { render, path }) => {
-  let { linkFormat } = render;
-
-  if (linkFormat) {
-    muiGridColumn.renderCell = (params) => {
-      let path_parts = path.split('.');
-
-      let value = params.row;
-
-      for (const element of path_parts) {
-        value = value != null ? value[element] : null;
-      }
-
-      if (params && value) {
-        let link = linkFormat;
-        link = link
-          .replace('{id}', value.id)
-          .replace('${streamID}', value.streamID)
-          .replace('${name}', value.name);
-
-        return <Link to={`${link}`}>{params.value.name || 'No Name'}</Link>;
-      }
-      return muiGridColumn.nullValue;
-    };
-  }
-};
-
 /**
  * This is our default renderer function for external links
  * @function

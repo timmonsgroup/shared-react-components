@@ -102,12 +102,13 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
       disabled={disabled}
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
-      renderOption={(optProps, option) => (
+      renderOption={
+        (optProps, option) => (
         // We're generating a more verbose key here in the event of bad data
-        <Box component="li" {...optProps} key={`${option.id ?? option.value}-${option.label || option.name}`}>
-          {option.label ?? option.name}
-        </Box>
-      )
+          <Box component="li" {...optProps} key={`${option.id ?? option.value}-${option.label || option.name}`}>
+            {option.label ?? option.name}
+          </Box>
+        )
       }
       renderInput={(params) => {
         return (
@@ -128,7 +129,6 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
               {...textFieldProps}
               sx={textFieldSX || {}}
               inputProps={{
-
                 ...params.inputProps,
                 sx: inputSX || {},
                 autoComplete: 'new-password', // disable autocomplete and autofill

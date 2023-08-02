@@ -24,7 +24,7 @@ const makeFilter = (checkedId) => {
   return (option) => {
     const optId = isObject(option) ? option.id : option;
     return optId.toString() === checkId.toString();
-  }
+  };
 };
 
 
@@ -201,42 +201,47 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
   const isNumber = type === FIELD_TYPES.CURRENCY || type === FIELD_TYPES.INT || type === FIELD_TYPES.FLOAT;
   const prefix = readOnly ? '' : 'Enter';
 
-  const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
-    <>
-      <AnyFieldLabel
-        htmlFor={finalId || name}
-        error={!!error}
-        label={label}
-        required={!!required}
-        disabled={disabled}
-        iconText={iconHelperText}
-        fieldOptions={fieldOptions}
-        helperText={altHelperText}
-      />
-      <TextField sx={{ width: '100%' }}
-        inputProps={inputAttrs}
-        disabled={disabled}
-        type={isNumber ? 'number' : 'text'}
-        id={finalId || name}
-        error={!!error}
-        onChange={onChange}
-        onBlur={onBlur}
-        value={value}
-        multiline={isMultiLine}
-        minRows={isMultiLine ? 3 : 1}
-        placeholder={placeholder || `${prefix} ${label}`}
-        variant="outlined"
-      />
-      {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
-      <FormErrorMessage error={error} />
-    </>
-  );
+  const TextFieldWrapped = ({ field: { ref, value, onChange, onBlur }, fieldState: { error } }) => {
+    return (
+      <>
+        <AnyFieldLabel
+          htmlFor={finalId || name}
+          error={!!error}
+          label={label}
+          required={!!required}
+          disabled={disabled}
+          iconText={iconHelperText}
+          fieldOptions={fieldOptions}
+          helperText={altHelperText}
+        />
+        <TextField sx={{ width: '100%' }}
+          name={finalId || name}
+          inputProps={inputAttrs}
+          inputRef={ref}
+          disabled={disabled}
+          type={isNumber ? 'number' : 'text'}
+          id={finalId || name}
+          error={!!error}
+          onChange={onChange}
+          onBlur={onBlur}
+          value={value}
+          multiline={isMultiLine}
+          minRows={isMultiLine ? 3 : 1}
+          placeholder={placeholder || `${prefix} ${label}`}
+          variant="outlined"
+        />
+        {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
+        <FormErrorMessage error={error} />
+      </>
+    );
+  };
 
   TextFieldWrapped.propTypes = {
     field: PropTypes.shape({
       value: PropTypes.any,
       onChange: PropTypes.func,
-      onBlur: PropTypes.func
+      onBlur: PropTypes.func,
+      ref: PropTypes.any
     }),
     fieldState: PropTypes.shape({
       error: PropTypes.any
@@ -254,11 +259,11 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
 const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions, finalId) => {
-  const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
+  const DateField = ({ field: { value, onChange, ref }, fieldState: { error } }) => (
     <>
       <DatePicker
         id={finalId}
-        name={name}
+        name={finalId || name}
         disabled={disabled}
         value={value}
         onChange={onChange}
@@ -267,6 +272,8 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
           // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
           params.inputProps['data-src-field'] = finalId || name;
           params.inputProps.readOnly = readOnly;
+          params.name = finalId || name;
+          params.id = finalId || name;
           if (placeholder) {
             params.inputProps.placeholder = placeholder;
           }
@@ -315,7 +322,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
       // We need to manually connect a few props here for react hook form
       <Typeahead
         id={finalId}
-        name={name}
+        name={finalId || name}
         {...dataAttrs}
         {...field}
         multiple={multiple}
@@ -330,10 +337,11 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         iconHelperText={iconHelperText}
         // These are props that are passed to the MUI TextField rendered by Typeahead
         textFieldProps={{
-          id,
-          name,
+          id: finalId || name,
+          name: finalId || name,
           placeholder: placeholder || `Select ${label}`,
-          error: !!error
+          error: !!error,
+          inputRef: field.ref,
         }}
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
@@ -366,7 +374,8 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
     field: PropTypes.shape({
       id: PropTypes.string,
       value: PropTypes.any,
-      onChange: PropTypes.func
+      onChange: PropTypes.func,
+      ref: PropTypes.any
     }),
     fieldState: PropTypes.shape({
       error: PropTypes.any

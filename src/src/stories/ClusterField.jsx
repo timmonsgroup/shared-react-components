@@ -95,7 +95,9 @@ const ClusterField = ({ control, field, options, ...props }) => {
   const addClick = (layout, initValues, fields) => {
     // append should NOT be called with an empty object
     // If it is, there is a chance for zombie data.
-    append(initValues);
+    // Focus the first field in the newly appended cluster. This seems to only work with textfields at the moment.
+    // MUI Datepicker and Selects do not seem to work with this.
+    append(initValues, {focusName: `${layout.name}.${fields.length}.${subFields[1].id}`});
 
     if (layout?.name) {
       if (fields?.length === 0) {
