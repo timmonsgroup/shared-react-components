@@ -162,7 +162,7 @@ const ClusterField = ({ control, field, options, ...props }) => {
           </>
         )}
         {fields.length === 0 && (
-          <Typography variant="clusterEmptyText">{layout?.emptyText || 'You have not added any items.'}</Typography>
+          <Typography data-cluster={`${clusterName}-empty-text`} variant="clusterEmptyText">{layout?.emptyText || 'You have not added any items.'}</Typography>
         )
         }
       </Grid>
@@ -205,11 +205,9 @@ const InlineWrapper = ({ clusterName, clusterId, rows, rowProps, removeButton })
     <>
       {
         rows.map((rowItem, rIndex) => {
-          console.log('rowItem', rowItem, 'rIndex', rIndex)
-          console.log('Make Key', `${rIndex}-${clusterId}`);
           return (
             <Grid container key={`${rIndex}-${clusterId}`} data-cluster={`${clusterName}-wrapper`}>
-              <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }}>
+              <Grid container data-cluster={`${clusterName}-row-wrapper`} rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }}>
                 <ClusterRow
                   id={clusterId}
                   clusterName={clusterName}
@@ -217,7 +215,7 @@ const InlineWrapper = ({ clusterName, clusterId, rows, rowProps, removeButton })
                   {...rowProps}
                 />
               </Grid>
-              <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }} style={{ maxWidth: '100px' }}>
+              <Grid container data-cluster={`${clusterName}-row-remove-wrapper`} rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }} style={{ maxWidth: '100px' }}>
                 <Grid sx={sx} data-cluster-remove={`${clusterName}-remove`}>
                   {removeButton}
                 </Grid>
@@ -248,7 +246,7 @@ InlineWrapper.propTypes = WRAPPER_PROPS;
  */
 const Wrapper = ({ clusterId, clusterName, rows, rowProps, removeButton }) => {
   return (
-    <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={clusterId}>
+    <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={clusterId} data-cluster={`${clusterName}-wrapper`}>
       {rows.map((rowItem, rIndex) => {
         return (
           <ClusterRow
@@ -260,7 +258,7 @@ const Wrapper = ({ clusterId, clusterName, rows, rowProps, removeButton }) => {
           />
         );
       })}
-      <Grid xs={12}>
+      <Grid data-cluster={`${clusterName}-row-remove-wrapper`} xs={12}>
         {removeButton}
       </Grid>
     </Grid>
@@ -292,6 +290,7 @@ ClusterField.propTypes = {
  * @function ClusterRow
  * @param {object} props - props object
  * @param {string} props.id - id of the cluster
+ * @param {string} props.clusterName - name of the cluster
  * @param {number} props.index - index of the cluster
  * @param {object} props.row - row object
  * @param {object} props.row.fields - array of fields
@@ -305,7 +304,6 @@ ClusterField.propTypes = {
  * @returns {React.ReactElement} - React element
  */
 const ClusterRow = ({ id, clusterName, layout, row, control, index, options, otherProps }) => {
-  console.log('Wrapper: ClusterId', id)
   const { fields, solitary, size, maxColumns } = row;
   let colSize = 12 / fields.length;
   if (solitary && !isNaN(size)) {
@@ -328,7 +326,7 @@ const ClusterRow = ({ id, clusterName, layout, row, control, index, options, oth
         // At sm size, we do not allow more than 2 columns
         // At md size and up, we allow you to specify the number of columns
         return (
-          <Grid data-cluster={`${clusterName}-row`} sx={sx} xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
+          <Grid data-cluster={`${clusterName}-row`} data-cluster-row={`${clusterName}-${field.render?.name}`} sx={sx} xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
             <AnyField
               isNested={true}
               data-cluster={`${clusterName}-field`}
@@ -348,6 +346,7 @@ const ClusterRow = ({ id, clusterName, layout, row, control, index, options, oth
 ClusterRow.propTypes = {
   id: PropTypes.string,
   index: PropTypes.number,
+  clusterName: PropTypes.string,
   row: PropTypes.shape({
     fields: PropTypes.array,
     solitary: PropTypes.bool,
