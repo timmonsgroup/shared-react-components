@@ -210,11 +210,15 @@ export const addCurrencyFormatting = (muiGridColumn) => {
    */
 export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable) => {
   // single select
-  muiGridColumn.type = 'singleSelect';
-  muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => {
-    if (!c) return { value: null, label: null };
-    return { value: c.label || c.name, label: c.label || c.name };
-  });
+  if (layoutColumn.render.choices) {
+    muiGridColumn.type = 'singleSelect';
+    muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => {
+      if (!c) return { value: null, label: null };
+      return { value: c.label || c.name, label: c.label || c.name };
+    });
+  } else {
+    muiGridColumn.type = 'string';
+  }
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
 
   if (editable) {
@@ -222,7 +226,7 @@ export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable)
     muiGridColumn.valueSetter = ({ value, row }) => {
       // Update the row
       // Re-map the value to the object
-      const mapped = layoutColumn.render.choices.find(c => c?.label === value);
+      const mapped = layoutColumn.render.choices?.find(c => c?.label === value);
       if (mapped) {
         row[muiGridColumn.field] = mapped.source;
       }
