@@ -210,7 +210,7 @@ export const addCurrencyFormatting = (muiGridColumn) => {
    */
 export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable) => {
   // single select
-  if (layoutColumn.render.choices) {
+  if (layoutColumn.render.choices?.length > 0) {
     muiGridColumn.type = 'singleSelect';
     muiGridColumn.valueOptions = layoutColumn.render.choices.map(c => {
       if (!c) return { value: null, label: null };
