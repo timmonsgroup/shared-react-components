@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosRetry  from 'axios-retry';
+import { functionOrDefault } from '../helpers';
 
 // Use as persistent store to keep track of the state of the data and prevent refetching
 const CACHE = {};
@@ -170,10 +171,12 @@ export const useStaleData = (url, defaultValue = [], useDefault, clearCache, for
  * Hook to use Axios get request without caching
  * @function
  * @param {string} url - url to fetch
- * @param {object} defaultValue - default value of the data state
+ * @param {object} [defaultValue] - default value of the data state
+ * @param {object} [options] - options for various things
+ * @param {function} [options.resultMapper] - function to map the results
  * @returns {Array<object|boolean|function>} data, isLoading, setData
  */
-export const useGet = (url, defaultValue = null) => {
+export const useGet = (url, defaultValue = null, options) => {
   const [data, setData] = useState(defaultValue);
   const [isLoading, setLoading] = useState(true);
 
@@ -187,7 +190,8 @@ export const useGet = (url, defaultValue = null) => {
     const getData = () => {
       axios.get(url, { signal: controller.signal }).then(res => {
         if (mounted) {
-          setData(res.data);
+          const mapper = functionOrDefault(options?.resultMapper);
+          setData(mapper ? mapper(res.data) : res.data);
         }
       }
       ).catch(error => {
