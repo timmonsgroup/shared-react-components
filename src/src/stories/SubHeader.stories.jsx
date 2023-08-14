@@ -16,5 +16,6 @@ export const Default = Template.bind({});
 Default.args = {
   title: 'Sub Header',
   color: 'primary',
-  rightRender: () => <Button label="Add Community" color="secondary" />,
+  rightRenderProps: { testText: 'test' },
+  rightRender: ({ testText }) => <Button label={testText} color="secondary" />,
 };

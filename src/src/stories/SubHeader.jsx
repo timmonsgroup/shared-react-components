@@ -16,7 +16,7 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
  * @param {string} [props.color] - color of the header
  * @returns {React.ReactElement}
  */
-const SubHeader = ({ title, titleRender, rightRender, color = 'accent', ...props }) => {
+const SubHeader = ({ title, titleRender, rightRender, color = 'accent', rightRenderProps, ...props }) => {
   /**
    * if a titleRenderr is passed in, it will be used to render the title
    * otherwise, the title will be rendered as a Typography "subHeader" variant
@@ -48,7 +48,7 @@ const SubHeader = ({ title, titleRender, rightRender, color = 'accent', ...props
   const renderRight = () => {
     if (rightRender) {
       return (
-        <Box sx={{ flexGrow: 1, textAlign: 'right' }}>{rightRender()}</Box>
+        <Box sx={{ flexGrow: 1, textAlign: 'right' }}>{rightRender({ ...rightRenderProps })}</Box>
       );
     }
     return null;
