@@ -1,6 +1,9 @@
 
+
 /** @module GridHelpers */
-import { dateFormatter, currencyFormatter, dateStringNormalizer } from './helpers.js';
+import React from 'react';
+import { TextField } from '@mui/material';
+import { dateFormatter, currencyFormatter, dateStringNormalizer, caseless } from './helpers.js';
 /**
 * This is the base config for a column that is used by the MUIGrid component
 * It takes a column from the layout and converts it into a config that can be used by the MUIGrid component
@@ -33,6 +36,16 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
     let filterOperator = {
       label: 'Contains',
       value: 'contains',
+      InputComponent: ({ item, applyValue, ...rest }) => {
+        return <TextField
+          label="Value"
+          inputRef={input => input && input.focus()}
+          variant="standard" {...rest}
+          value={item.value}
+          placeholder='Filter value'
+          onChange={(e) => applyValue({ ...item, value: e.target.value })}
+        />;
+      },
       getApplyFilterFn: (filterItem) => {
         return (params) => {
           if (!filterItem.value && filterItem.value !== 0) return true;
@@ -217,6 +230,7 @@ export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable)
       return { value: c.label || c.name, label: c.label || c.name };
     });
   } else {
+    console.log('No choices for column', layoutColumn);
     muiGridColumn.type = 'string';
   }
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
@@ -267,21 +281,11 @@ const addObjectReferenceFormatting = (muiGridColumn, { path }) => {
     };
   } else {
     muiGridColumn.valueFormatter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
+    muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
   }
 
-  muiGridColumn.sortComparator = (A, B) => {
-    let compareValue = 0;
-    // If both values are not null, compare the names using the localeCompare function
-    if ((A !== null && A !== undefined) && (B !== null && B !== undefined)) {
-      compareValue = (A.name + '').localeCompare(B.name + '');
-    } else if (A === null || A === undefined) { // Otherwise if A is null, return -1 so it goes above when sorted
-      compareValue = -1;
-    } else { // Otherwise if B is null, return 1 so it goes to below when sorted
-      compareValue = 1;
-    }
-
-    return compareValue;
-  };
+  muiGridColumn.type = 'string';
+  muiGridColumn.sortComparator = (a, b) => caseless(getValueNameOrDefault(a), getValueNameOrDefault(b));
 };
 
 /**

@@ -1,6 +1,7 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
 import Grid from './PamLayoutGrid';
 import {GRID_ACTION_TYPE} from '../constants';
+import {DEFAULT_GRID, LAND_GRID, LANDS_GRID_LAYOUT} from '../helpers/story-helpers/GridBits';
 import { useTheme } from '@mui/material';
 
 <Meta
@@ -266,138 +267,6 @@ export const nullDataColumnLayout = { ...layout, data: { ...layout.data, nullVal
   }] }
 
 
-export const data = [
-  {
-    id: '1',
-    name: 'Name 1',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 1, name: 'Status1' },
-    initiatedOn: '2021-01-01',
-    initiatedBy: { id: 1, name: 'Initiated By 1' },
-    lastUpdatedOn: '2021-01-01',
-    lastUpdatedBy: { id: 1, name: 'Last Updated By 1' },
-    activeOn: '2021-01-01',
-    sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
-  },
-  {
-    id: '2',
-    name: 'Name 2',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 2, name: 'Status2' },
-    sampleLink: 'https://www.google.com',
-  },
-  {
-    id: '3',
-    name: 'Name 3',
-    type: null,
-    status: { id: 3, name: 'Status3' },
-  },
-  {
-    id: '4',
-    name: 'Name 4',
-    sampleLink: { label: 'Sample Link', link: 'doop' },
-  },
-  {
-    id: '5',
-    name: 'Name 5',
-    type: { id: 2, name: 'Type2' },
-    status: { id: 1, name: 'Status1' },
-  },
-  {
-    id: '6',
-    name: 'Name 6',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 2, name: 'Status2' },
-    sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
-  },
-  {
-    id: '7',
-    name: 'Name 7',
-    type: { id: 2, name: 'Type2' },
-    status: { id: 3, name: 'Status3' },
-  },
-  {
-    id: '8',
-    name: 'Name 8',
-    type: { id: 2, name: 'Type2' },
-    sampleLink: { label: 'Sample Link', link: 'doop' },
-  },
-  {
-    id: '9',
-    name: 'Name 9',
-    type: { id: 2, name: 'Type2' },
-    status: { id: 1, name: 'Status1' },
-  },
-  {
-    id: '10',
-    name: 'Name 10',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 2, name: 'Status2' },
-    sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
-  },
-  {
-    id: '11',
-    name: 'Name 11',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 3, name: 'Status3' },
-  },
-  {
-    id: '12',
-    name: 'Name 12',
-    sampleLink: { label: 'Sample Link', link: 'doop' },
-  },
-  {
-    id: '13',
-    name: 'Name 13',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 1, name: 'Status1' },
-  },
-  {
-    id: '14',
-    name: 'Name 14',
-    type: { id: 2, name: 'Type2' },
-    status: { id: 2, name: 'Status2' },
-    sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
-  },
-  {
-    id: '15',
-    name: 'Name 15',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 3, name: 'Status3' },
-  },
-  {
-    id: '16',
-    name: 'Name 16',
-    type: { id: 1, name: 'Type1' },
-    sampleLink: { label: 'Sample Link', link: 'doop' },
-  },
-  {
-    id: '17',
-    name: 'Name 17',
-    status: { id: 1, name: 'Status1' },
-  },
-  {
-    id: '18',
-    name: 'Name 18',
-    type: { id: 1, name: 'Type1' },
-    status: { id: 2, name: 'Status2' },
-    sampleLink: { label: 'Sample Link', url: 'https://www.google.com' },
-  },
-  {
-    id: '19',
-    name: 'Name 19',
-    type: { id: 2, name: 'Type2' },
-    status: { id: 3, name: 'Status3' },
-  },
-  {
-    id: '20',
-    name: 'Name 20',
-    type: { id: 2, name: 'Type2' },
-    sampleLink: { label: 'Sample Link', link: 'doop' },
-  }
-];
-
-
 A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
 
 
@@ -425,7 +294,7 @@ When there is data the data will be rendered
   <Story name="With Data"
     args={{
       layout: layout,
-      data: data,
+      data: DEFAULT_GRID,
     }}>
     {Template.bind({})}
   </Story>
@@ -471,7 +340,7 @@ const actions = [{
   <Story name="Custom Actions"
     args={{
       layout: layout,
-      data: data,
+      data: DEFAULT_GRID,
       actionsComponent: CustomActions,
       actions: [{
         order: 0,
@@ -493,7 +362,7 @@ If you wish to override the default value of 'N/A' for null values you can set t
   <Story name="Null Value Override"
     args={{
       layout: nullDataLayout,
-      data: data,
+      data: DEFAULT_GRID,
     }}>
     {Template.bind({})}
   </Story>
@@ -508,7 +377,7 @@ Additionally the nullValue can be set on the column level.
   <Story name="Column Null Value Override"
     args={{
       layout: nullDataColumnLayout,
-      data: data,
+      data: DEFAULT_GRID,
     }}>
     {Template.bind({})}
   </Story>
@@ -523,7 +392,7 @@ Change a filter and then check out the console. Note that the filter values now 
   <Story name="On Filter Model Change"
     args={{
       layout: nullDataColumnLayout,
-      data: data,
+      data: DEFAULT_GRID,
       onFilterModelChange: ((model)=>{ console.log("Filter Model Change story!", model) })
     }}>
     {Template.bind({})}
@@ -539,7 +408,7 @@ Change a sort and then check out the console. Note that the sort values now have
   <Story name="On Sort Model Change"
     args={{
       layout: nullDataColumnLayout,
-      data: data,
+      data: DEFAULT_GRID,
       onSortModelChange: ((model)=>{ console.log("Sort Model Change story!", model) })
     }}>
     {Template.bind({})}
@@ -555,8 +424,21 @@ If the layout has the editable flag set to true the grid will also be editable. 
   <Story name="Editable"
     args={{
       layout: { ...nullDataColumnLayout, editable: true },
-      data: data
+      data: DEFAULT_GRID
     }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+## Land Grid
+<Canvas>
+  <Story
+    name="Land Grid"
+    args={{
+      layout: { ...LANDS_GRID_LAYOUT},
+      data: LAND_GRID,
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
