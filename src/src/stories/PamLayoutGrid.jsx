@@ -384,7 +384,9 @@ const PamLayoutGrid = ({
   const { pamGrid } = theme;
 
   // If a theme group was passed in, use that instead of the default
-  const theming = themeGroup || pamGrid;
+  // const theming = themeGroup || pamGrid;
+  let theming = themeGroup ? {...pamGrid, ...themeGroup} : {...pamGrid};
+
   // We add several safeguard values to the theme group, they will be overriden if they are defined in the theme group
   // Not setting these values will cause the grid to render in less than ideal ways
   const sxProps = {
@@ -467,18 +469,6 @@ const PamLayoutGrid = ({
     },
   };
 
-  // If we have an initial sort column, then we set it in the initial state
-  if (initialSortColumn) {
-    initialState.sorting = {
-      sortModel: [
-        {
-          field: initialSortColumn,
-          sort: initialSortDirection === 'desc' ? 'desc' : 'asc',
-        },
-      ],
-    };
-  }
-
   // This is the start of our new generic layout processing
   if (processedLayout.data) {
     //Check if we have an idField and set the id column of the grid to that
@@ -504,6 +494,19 @@ const PamLayoutGrid = ({
         };
       }
     }
+  }
+
+  // Changed on 9.1.2023 to prefer the initialSortColumn and initialSortDirection props instead of the layout if they are set
+  // If we have an initial sort column, then we set it in the initial state
+  if (initialSortColumn) {
+    initialState.sorting = {
+      sortModel: [
+        {
+          field: initialSortColumn,
+          sort: initialSortDirection === 'desc' ? 'desc' : 'asc',
+        },
+      ],
+    };
   }
 
   // This is the handler for the filter model change event
