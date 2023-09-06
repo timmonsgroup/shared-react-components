@@ -240,9 +240,6 @@ const addObjectReferenceLinkRendering = (muiGridColumn) => {
 
 const addRendering = (column) => {
   const { source } = column || {};
-  if (source?.render?.linkFormat) {
-    console.log('AddRendering | linkFormat', source);
-  }
   switch (source.type) {
     case 0: {
       //Check for linkFormat

@@ -42,7 +42,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
           inputRef={input => input && input.focus()}
           variant="standard" {...rest}
           value={item.value}
-          placeholder='Filter value'
+          placeholder="Filter value"
           onChange={(e) => applyValue({ ...item, value: e.target.value })}
         />;
       },
