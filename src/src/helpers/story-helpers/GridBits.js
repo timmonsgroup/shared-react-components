@@ -9,6 +9,8 @@ const createColumn = (label, colId, type = FIELD_TYPES.TEXT, flex = 1) => (
   }
 );
 
+const landTitle = createColumn('Lands Title', 'name');
+landTitle.linkFormat = '/land/{id}';
 export const LANDS_GRID_LAYOUT = {
   'data': {
     'bulkList': '/api/joinRequest/all'
@@ -33,13 +35,15 @@ export const LANDS_GRID_LAYOUT = {
     'name': 'Properties',
     'order': 20,
     'layout': [
-      createColumn('Land Title', 'name'),
+      landTitle,
       createColumn('Land Type', 'type'),
       createColumn('Area', 'regions', FIELD_TYPES.OBJECT),
       createColumn('Counties', 'counties', FIELD_TYPES.OBJECT),
     ]
   }]
 };
+
+// GRID DATA
 
 export const DEFAULT_GRID = [
   {

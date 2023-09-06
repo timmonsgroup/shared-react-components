@@ -173,10 +173,41 @@ const addActionButtonRendering = (muiGridColumn, actionData) => {
  * @param {object} muiGridColumn - The column used by the MUIGrid component
  */
 const addExpandableRendering = (muiGridColumn) => {
-  const type = muiGridColumn.source.type;
   muiGridColumn.renderCell = (params) => {
     return <RenderExpandableCell muiGridColumn={muiGridColumn} {...params} />;
   };
+};
+
+const addNonObjectLinkRendering = (muiGridColumn) => {
+  const { render } = muiGridColumn.source || {};
+  const { linkFormat } = render || {};
+
+  if (linkFormat) {
+    muiGridColumn.renderCell = (params) => {
+      const { value, row } = params || {};
+      if (value) {
+        let link = linkFormat;
+        // Find all the properties in the linkFormat that are wrapped in curly braces
+        const regex = /(?<=\{)(.*?)(?=\})/g;
+        let matches = link.match(regex);
+        // For each match, replace the match with the value from the row
+        // Example linkFormat: /admin/streams/{streamID}/edit/{id}
+        // Example row: {id: 1, streamID: 2, name: 'Test'}
+        // Example result: /admin/streams/2/edit/1
+        if (matches.length > 0) {
+          matches.forEach((match) => {
+            link = link.replace(`{${match}}`, row[match]);
+          });
+        }
+        try {
+          return <Link to={`${link}`}>{value || 'No Name'}</Link>;
+        } catch (err) {
+          return params?.value || 'N/A';
+        }
+      }
+      return params?.value || 'N/A';
+    };
+  }
 };
 
 const addObjectReferenceLinkRendering = (muiGridColumn) => {
@@ -209,7 +240,19 @@ const addObjectReferenceLinkRendering = (muiGridColumn) => {
 
 const addRendering = (column) => {
   const { source } = column || {};
+  if (source?.render?.linkFormat) {
+    console.log('AddRendering | linkFormat', source);
+  }
   switch (source.type) {
+    case 0: {
+      //Check for linkFormat
+      if (source.render?.linkFormat) {
+        addNonObjectLinkRendering(column);
+      } else {
+        addExpandableRendering(column);
+      }
+      break;
+    }
     case 10: {
       //Check for linkFormat
       if (source.render?.linkFormat) {

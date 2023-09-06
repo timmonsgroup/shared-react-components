@@ -1,7 +1,12 @@
 import { Meta, Story, Canvas } from '@storybook/addon-docs';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Grid from './PamLayoutGrid';
-import {GRID_ACTION_TYPE} from '../constants';
-import {DEFAULT_GRID, LAND_GRID, LANDS_GRID_LAYOUT} from '../helpers/story-helpers/GridBits';
+import { GRID_ACTION_TYPE } from '../constants';
+import {
+  DEFAULT_GRID,
+  LAND_GRID,
+  LANDS_GRID_LAYOUT,
+} from '../helpers/story-helpers/GridBits';
 import { useTheme } from '@mui/material';
 
 <Meta
@@ -14,6 +19,9 @@ import { useTheme } from '@mui/material';
     layout: {
       control: 'object'
     },
+    themeGroup: {
+      control: 'object'
+    },
     onFilterModelChange: {
       control: 'function'
     },
@@ -24,8 +32,13 @@ import { useTheme } from '@mui/material';
 
 />
 
-
-export const CustomActions = ({ muiGridColumn, actions, params, themeGroup, useTypeVariant }) => {
+export const CustomActions = ({
+  muiGridColumn,
+  actions,
+  params,
+  themeGroup,
+  useTypeVariant,
+}) => {
   return (
     <div
       aria-label="action button group"
@@ -38,10 +51,7 @@ export const CustomActions = ({ muiGridColumn, actions, params, themeGroup, useT
     >
       {actions.map((action, index) => {
         return (
-          <button
-            key={index}
-            size="small"
-          >
+          <button key={index} size="small">
             {action.label}
           </button>
         );
@@ -51,237 +61,272 @@ export const CustomActions = ({ muiGridColumn, actions, params, themeGroup, useT
 };
 
 export const Template = (args) => {
-  return (<Grid
-    layout={args.layout}
-    data={args.data}
-    onFilterModelChange={args.onFilterModelChange}
-    onSortModelChange={args.onSortModelChange}
-    rowsPerPageOptions={[20, 50, 100]}
-    initialRowCount={50}
-    actionsComponent={args.actionsComponent}
-    actions={args.actions}
-  />);
-}
+  const themeGroup = {
+    '& .pam-grid-header': { // This is the header to the grid. We set the background color to match the theme from invision
+      backgroundColor: 'red',
+      color: 'white'
+    }
+  };
+  return (
+    <Router>
+      <Grid
+        layout={args.layout}
+        data={args.data}
+        themeGroup={themeGroup}
+        initialSortColumn="name"
+        initialSortDirection="desc"
+        onFilterModelChange={args.onFilterModelChange}
+        onSortModelChange={args.onSortModelChange}
+        rowsPerPageOptions={[20, 50, 100]}
+        initialRowCount={50}
+        actionsComponent={args.actionsComponent}
+        actions={args.actions}
+      />
+    </Router>
+  );
+};
 
 const log = [];
 
 # Grid
 
 export const layout = {
-  "data": {
-    "bulkList": "/api/joinRequest/all"
+  data: {
+    bulkList: '/api/joinRequest/all',
   },
-  "grid": {
-    "sort": {
-      "field": "createdOn",
-      "order": "asc"
+  grid: {
+    sort: {
+      field: 'createdOn',
+      order: 'asc',
     },
-    "idColumn": "streamID"
+    idColumn: 'streamID',
   },
-  "id": 12,
-  "modelId": 30,
-  "enabled": true,
-  "name": "Test Layout",
-  "editable": false,
-  "layoutKey": "list",
-  "type": 2,
-  "sections": [{
-    "editable": true,
-    "enabled": true,
-    "name": "Test Layout",
-    "order": 20,
-    "layout": [{
-      "label": "ID",
-      "path": "id",
-      "type": 2,
-      "model": {
-        "id": 1,
-        "modelid": 1,
-        "type": 2,
-        "name": "id"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Name",
-      "path": "name",
-      "type": 0,
-      "model": {
-        "id": 2,
-        "modelid": 1,
-        "type": 0,
-        "name": "name"
-      },
-      "sortable": false,
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Type",
-      "path": "type",
-      "type": 7,
-      "possibleChoices": [
+  id: 12,
+  modelId: 30,
+  enabled: true,
+  name: 'Test Layout',
+  editable: false,
+  layoutKey: 'list',
+  type: 2,
+  sections: [
+    {
+      editable: true,
+      enabled: true,
+      name: 'Test Layout',
+      order: 20,
+      layout: [
         {
-          "id": 1,
-          "name": "Type1"
+          label: 'ID',
+          path: 'id',
+          type: 2,
+          model: {
+            id: 1,
+            modelid: 1,
+            type: 2,
+            name: 'id',
+          },
+          required: false,
+          disabled: false,
+          flex: 1,
         },
         {
-          "id": 2,
-          "name": "Type2"
-        }
-      ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 2
-    }, {
-      "label": "Status",
-      "path": "status",
-      "type": 7,
-      "possibleChoices": [
-        {
-          "id": 1,
-          "name": "Active"
+          label: 'Name',
+          path: 'name',
+          type: 0,
+          model: {
+            id: 2,
+            modelid: 1,
+            type: 0,
+            name: 'name',
+          },
+          sortable: false,
+          required: false,
+          disabled: false,
+          flex: 1,
         },
         {
-          "id": 2,
-          "name": "Inactive"
-        }
+          label: 'Type',
+          path: 'type',
+          type: 7,
+          possibleChoices: [
+            {
+              id: 1,
+              name: 'Type1',
+            },
+            {
+              id: 2,
+              name: 'Type2',
+            },
+          ],
+          model: {
+            id: 3,
+            modelid: 1,
+            type: 7,
+            name: 'type',
+          },
+          required: false,
+          disabled: false,
+          flex: 2,
+        },
+        {
+          label: 'Status',
+          path: 'status',
+          type: 7,
+          possibleChoices: [
+            {
+              id: 1,
+              name: 'Active',
+            },
+            {
+              id: 2,
+              name: 'Inactive',
+            },
+          ],
+          model: {
+            id: 3,
+            modelid: 1,
+            type: 7,
+            name: 'type',
+          },
+          required: false,
+          disabled: false,
+          hidden: false,
+          flex: 2,
+        },
+        {
+          label: 'Date',
+          path: 'lastUpdatedOn',
+          type: 5,
+          model: {
+            id: 3,
+            modelid: 1,
+            type: 5,
+            name: 'lastUpdatedOn',
+          },
+          required: false,
+          disabled: false,
+          hidden: false,
+          flex: 2,
+        },
       ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "hidden": false,
-      "flex": 2
-    }, {
-      "label": "Date",
-      "path": "lastUpdatedOn",
-      "type": 5,
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 5,
-        "name": "lastUpdatedOn"
-      },
-      "required": false,
-      "disabled": false,
-      "hidden": false,
-      "flex": 2
-    }]
-  }]
+    },
+  ],
 };
 
-export const nullDataLayout = { ...layout, data: { ...layout.data, nullValue: "Empty" }, name: "Null Value" }
+export const nullDataLayout = {
+  ...layout,
+  data: { ...layout.data, nullValue: 'Empty' },
+  name: 'Null Value',
+};
 
-export const nullDataColumnLayout = { ...layout, data: { ...layout.data, nullValue: "Empty" }, name: "Null Value", "sections": [{
-    "editable": true,
-    "enabled": true,
-    "name": "Test Layout",
-    "order": 20,
-    "layout": [{
-      "label": "ID",
-      "path": "id",
-      "type": 2,
-      "model": {
-        "id": 1,
-        "modelid": 1,
-        "type": 2,
-        "name": "id"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Name",
-      "path": "name",
-      "type": 0,
-      "model": {
-        "id": 2,
-        "modelid": 1,
-        "type": 0,
-        "name": "name"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 1
-    }, {
-      "label": "Type",
-      "path": "type",
-      "type": 7,
-      "possibleChoices": [
+export const nullDataColumnLayout = {
+  ...layout,
+  data: { ...layout.data, nullValue: 'Empty' },
+  name: 'Null Value',
+  sections: [
+    {
+      editable: true,
+      enabled: true,
+      name: 'Test Layout',
+      order: 20,
+      layout: [
         {
-          "id": 1,
-          "name": "Type1"
+          label: 'ID',
+          path: 'id',
+          type: 2,
+          model: {
+            id: 1,
+            modelid: 1,
+            type: 2,
+            name: 'id',
+          },
+          required: false,
+          disabled: false,
+          flex: 1,
         },
         {
-          "id": 2,
-          "name": "Type2"
-        }
-      ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "flex": 2
-    }, {
-      "label": "Status",
-      "path": "status",
-      "nullValue":"No Value",
-      "type": 7,
-      "possibleChoices": [
-        {
-          "id": 1,
-          "name": "Active"
+          label: 'Name',
+          path: 'name',
+          type: 0,
+          model: {
+            id: 2,
+            modelid: 1,
+            type: 0,
+            name: 'name',
+          },
+          required: false,
+          disabled: false,
+          flex: 1,
         },
         {
-          "id": 2,
-          "name": "Inactive"
-        }
+          label: 'Type',
+          path: 'type',
+          type: 7,
+          possibleChoices: [
+            {
+              id: 1,
+              name: 'Type1',
+            },
+            {
+              id: 2,
+              name: 'Type2',
+            },
+          ],
+          model: {
+            id: 3,
+            modelid: 1,
+            type: 7,
+            name: 'type',
+          },
+          required: false,
+          disabled: false,
+          flex: 2,
+        },
+        {
+          label: 'Status',
+          path: 'status',
+          nullValue: 'No Value',
+          type: 7,
+          possibleChoices: [
+            {
+              id: 1,
+              name: 'Active',
+            },
+            {
+              id: 2,
+              name: 'Inactive',
+            },
+          ],
+          model: {
+            id: 3,
+            modelid: 1,
+            type: 7,
+            name: 'type',
+          },
+          required: false,
+          disabled: false,
+          hidden: false,
+          flex: 2,
+        },
       ],
-      "model": {
-        "id": 3,
-        "modelid": 1,
-        "type": 7,
-        "name": "type"
-      },
-      "required": false,
-      "disabled": false,
-      "hidden": false,
-      "flex": 2
-    }]
-  }] }
-
+    },
+  ],
+};
 
 A `PamLayoutGrid` component takes a [PamLayout](/?path=/dataStructures/pamLayout) and a `data` as props. The `PamLayout` is used to define the columns and the `data` is used to populate the rows.
-
-
-
 
 ## No Data
 
 When there is no data the columns will still be rendered but the data will say no rows. This can show wehn you have a data source that has no results.
 
 <Canvas>
-  <Story name="No Data"
+  <Story
+    name="No Data"
     args={{
       layout: layout,
       data: [],
-    }}>
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
@@ -291,16 +336,19 @@ When there is no data the columns will still be rendered but the data will say n
 When there is data the data will be rendered
 
 <Canvas>
-  <Story name="With Data"
+  <Story
+    name="With Data"
     args={{
       layout: layout,
       data: DEFAULT_GRID,
-    }}>
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
 
 ## Custom Actions
+
 If you want to completely take over the actions column rendering you can pass in a custom actions component. This component will be passed the row data from MUI (this is in `params`). Row data is (`params.row`), actions array. You can then render the actions however you want.
 
 Create a custom actions component and pass it in as a prop `actionsComponent={CustomActions}` to the PamLayoutGrid component.
@@ -324,7 +372,7 @@ const actions = [{
   actionList: [{
     label: 'View',
   }],
-}]
+}];
 
 <PamLayoutGrid
   layout={layout}
@@ -335,21 +383,26 @@ const actions = [{
 
 ```
 
-
 <Canvas>
-  <Story name="Custom Actions"
+  <Story
+    name="Custom Actions"
     args={{
       layout: layout,
       data: DEFAULT_GRID,
       actionsComponent: CustomActions,
-      actions: [{
-        order: 0,
-        label: '',
-        actionList: [{
-          label: 'View',
-        }],
-      }]
-    }}>
+      actions: [
+        {
+          order: 0,
+          label: '',
+          actionList: [
+            {
+              label: 'View',
+            },
+          ],
+        },
+      ],
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
@@ -359,78 +412,89 @@ const actions = [{
 If you wish to override the default value of 'N/A' for null values you can set the nullValue property in data to what you want to display instead. For example we provide "Empty" for nullValue below.
 
 <Canvas>
-  <Story name="Null Value Override"
+  <Story
+    name="Null Value Override"
     args={{
       layout: nullDataLayout,
       data: DEFAULT_GRID,
-    }}>
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
-
 
 ## Grid null value override on a column
 
 Additionally the nullValue can be set on the column level.
 
 <Canvas>
-  <Story name="Column Null Value Override"
+  <Story
+    name="Column Null Value Override"
     args={{
       layout: nullDataColumnLayout,
       data: DEFAULT_GRID,
-    }}>
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
-
 
 ## Filter Model Change returns source field as well
 
 Change a filter and then check out the console. Note that the filter values now have a "field" property pointing back to the source field!
 
 <Canvas>
-  <Story name="On Filter Model Change"
+  <Story
+    name="On Filter Model Change"
     args={{
       layout: nullDataColumnLayout,
       data: DEFAULT_GRID,
-      onFilterModelChange: ((model)=>{ console.log("Filter Model Change story!", model) })
-    }}>
+      onFilterModelChange: (model) => {
+        console.log('Filter Model Change story!', model);
+      },
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
-
 
 ## Sort Model Change returns source field as well
 
 Change a sort and then check out the console. Note that the sort values now have a "field" property pointing back to the source field!
 
 <Canvas>
-  <Story name="On Sort Model Change"
+  <Story
+    name="On Sort Model Change"
     args={{
       layout: nullDataColumnLayout,
       data: DEFAULT_GRID,
-      onSortModelChange: ((model)=>{ console.log("Sort Model Change story!", model) })
-    }}>
+      onSortModelChange: (model) => {
+        console.log('Sort Model Change story!', model);
+      },
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
-
 
 ## Editable
 
 If the layout has the editable flag set to true the grid will also be editable. This will allow you to edit the data in the grid.
 
 <Canvas>
-  <Story name="Editable"
+  <Story
+    name="Editable"
     args={{
       layout: { ...nullDataColumnLayout, editable: true },
-      data: DEFAULT_GRID
-    }}>
+      data: DEFAULT_GRID,
+    }}
+  >
     {Template.bind({})}
   </Story>
 </Canvas>
 
 ## Land Grid
+
 <Canvas>
   <Story
     name="Land Grid"
