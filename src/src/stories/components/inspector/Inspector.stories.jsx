@@ -7,7 +7,13 @@ export default {
   title: 'Common/components/Inspector',
   component: Inspector,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  decorators: [(Story) => <MemoryRouter><Story /></MemoryRouter>],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 
   argTypes: {
     backgroundColor: { control: 'color' },
@@ -20,10 +26,10 @@ const orange = '#D16400';
 
 const themeGroup = {
   singleFlexRow: {
-    display: 'flex', 
-    flexDirection: 'row', 
-    flexWrap: 'nowrap', 
-    justifyContent: 'space-between'    
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    justifyContent: 'space-between',
   },
   actionLinkRow: {
     color: orange,
@@ -51,9 +57,9 @@ const themeGroup = {
     icon: {
       color: orange,
       fontSize: '16px',
-      marginRight: '2px'
+      marginRight: '2px',
     },
-    noData:{
+    noData: {
       color: '#C8C8C8',
       display: 'flex',
       flexDirection: 'row',
@@ -68,7 +74,7 @@ const themeGroup = {
     },
     clearButton: {
       fontSize: '12px',
-      marginBottom: '5px'
+      marginBottom: '5px',
     },
     cardHeader: {
       lineHeight: '1.75',
@@ -89,9 +95,21 @@ const themeGroup = {
       display: 'inline-block',
     },
     featuredCard: {
-      heading: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
-      legend: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
-    }
+      heading: {
+        fontFamily: 'sans-serif',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        color: darkBlue,
+        marginTop: '10px',
+      },
+      legend: {
+        fontFamily: 'sans-serif',
+        fontWeight: 'bold',
+        fontSize: '32px',
+        color: '#434343',
+        marginBottom: '20px',
+      },
+    },
   },
   filterableCard: {
     header: {
@@ -99,109 +117,133 @@ const themeGroup = {
       flexDirection: 'row',
       justifyContent: 'space-between',
       paddingBottom: '4px',
-      borderBottom: '2px solid #C8C8C8'
-    }
-  }
-};
-
-
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Inspector {...args} />;
-
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  theme: themeGroup,
-  heading: 'Sample',
-  featuredCard: {
-    heading: 'Featured',
-    legendLabel: 'Legend',
-    legendColor: 'green',
+      borderBottom: '2px solid #C8C8C8',
+    },
   },
-  cardData: [
-    { heading: 'Heading', legendLabel: 'Legend', legendColor: 'red',
-      toolTip: 'A Sample tooltip',
-      footerLabel: 'Link To Somewhere',
-      footerLink: '//www.google.com',
-      lines:[
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' }
-      ]} ,
-    { heading: 'Heading2', legendLabel: 'Legend2', legendColor: 'blue',
-      footerLabel: 'Link To Somewhere Different',
-      footerLink: '//www.google.com',
-      lines:[
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' }
-      ]}
-  ],
 };
 
-export const NoHeading = Template.bind({});
-NoHeading.args = {
-  theme: themeGroup,
-  heading: null,
-  featuredCard: {
-    heading: 'Featured',
-    legendLabel: 'Legend',
-    legendColor: 'green',
+export const Primary = {
+  args: {
+    theme: themeGroup,
+    heading: 'Sample',
+    featuredCard: {
+      heading: 'Featured',
+      legendLabel: 'Legend',
+      legendColor: 'green',
+    },
+    cardData: [
+      {
+        heading: 'Heading',
+        legendLabel: 'Legend',
+        legendColor: 'red',
+        toolTip: 'A Sample tooltip',
+        footerLabel: 'Link To Somewhere',
+        footerLink: '//www.google.com',
+        lines: [
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+        ],
+      },
+      {
+        heading: 'Heading2',
+        legendLabel: 'Legend2',
+        legendColor: 'blue',
+        footerLabel: 'Link To Somewhere Different',
+        footerLink: '//www.google.com',
+        lines: [
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+        ],
+      },
+    ],
   },
-  cardData: [
-    { heading: 'Heading', legendLabel: 'Legend', legendColor: 'red',
-      toolTip: 'A Sample tooltip',
-      footerLabel: 'Link To Somewhere',
-      footerLink: '//www.google.com',
-      lines:[
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' }
-      ]} ,
-    { heading: 'Heading2', legendLabel: 'Legend2', legendColor: 'blue',
-      footerLabel: 'Link To Somewhere',
-      footerLink: '//www.google.com',
-      lines:[
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' }
-      ]}
-  ],
 };
 
-export const NoFeaturedCard = Template.bind({});
-NoFeaturedCard.args = {
-  theme: themeGroup,
-  heading: 'Sample',
-  featuredCard: null,
-  cardData: [
-    { heading: 'Heading', legendLabel: 'Legend', legendColor: 'red',
-      toolTip: 'A Sample tooltip',
-      footerLabel: 'Link To Somewhere',
-      footerLink: '//www.google.com',
-      lines:[
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' },
-        { label: 'Label', value: 'Value', units: 'Units' }
-      ]} ,
-    { heading: 'Heading2', legendLabel: 'Legend2', legendColor: 'blue', lines:[
-      { label: 'Label', value: 'Value', units: 'Units' },
-      { label: 'Label', value: 'Value', units: 'Units' },
-      { label: 'Label', value: 'Value', units: 'Units' },
-      { label: 'Label', value: 'Value', units: 'Units' }
-    ]}
-  ],
+export const NoHeading = {
+  args: {
+    theme: themeGroup,
+    heading: null,
+    featuredCard: {
+      heading: 'Featured',
+      legendLabel: 'Legend',
+      legendColor: 'green',
+    },
+    cardData: [
+      {
+        heading: 'Heading',
+        legendLabel: 'Legend',
+        legendColor: 'red',
+        toolTip: 'A Sample tooltip',
+        footerLabel: 'Link To Somewhere',
+        footerLink: '//www.google.com',
+        lines: [
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+        ],
+      },
+      {
+        heading: 'Heading2',
+        legendLabel: 'Legend2',
+        legendColor: 'blue',
+        footerLabel: 'Link To Somewhere',
+        footerLink: '//www.google.com',
+        lines: [
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+        ],
+      },
+    ],
+  },
 };
 
-export const NoData = Template.bind({});
-NoData.args = {
-  theme: themeGroup,
-  heading: null,
-  featuredCard: null,
-  cardData: [],
+export const NoFeaturedCard = {
+  args: {
+    theme: themeGroup,
+    heading: 'Sample',
+    featuredCard: null,
+    cardData: [
+      {
+        heading: 'Heading',
+        legendLabel: 'Legend',
+        legendColor: 'red',
+        toolTip: 'A Sample tooltip',
+        footerLabel: 'Link To Somewhere',
+        footerLink: '//www.google.com',
+        lines: [
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+        ],
+      },
+      {
+        heading: 'Heading2',
+        legendLabel: 'Legend2',
+        legendColor: 'blue',
+        lines: [
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+          { label: 'Label', value: 'Value', units: 'Units' },
+        ],
+      },
+    ],
+  },
+};
+
+export const NoData = {
+  args: {
+    theme: themeGroup,
+    heading: null,
+    featuredCard: null,
+    cardData: [],
+  },
 };

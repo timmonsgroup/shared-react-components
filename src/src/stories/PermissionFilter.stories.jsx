@@ -1,8 +1,6 @@
 import React from 'react';
 import PermissionFilter from './PermissionFilter';
-import {
-  BrowserRouter as Router
-} from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 import { authContext } from '../hooks/useAuth';
 import { authMock } from '../mocks/authMock';
@@ -17,26 +15,26 @@ export default {
       name: 'ACL',
       control: {
         type: 'array',
-      }
+      },
     },
     permission: {
       name: 'Permission',
       control: {
         type: 'string',
-      }
+      },
     },
     any: {
       name: 'Any',
       control: {
         type: 'array',
-      }
+      },
     },
     all: {
       name: 'All',
       control: {
         type: 'array',
-      }
-    }
+      },
+    },
   },
 };
 
@@ -60,55 +58,71 @@ const Template = (args) => {
 
 const sampleACL = ['user', 'admin'];
 
-export const LoggedOut = Template.bind({});
-LoggedOut.args = {};
-
-export const PermissionWhereMatches = Template.bind({});
-PermissionWhereMatches.args = {
-  acl: sampleACL,
-  permission: 'admin'
+export const LoggedOut = {
+  render: Template,
+  args: {},
 };
 
-export const AnyWhereMatches = Template.bind({});
-AnyWhereMatches.args = {
-  acl: sampleACL,
-  any: ['admin']
+export const PermissionWhereMatches = {
+  render: Template,
+
+  args: {
+    acl: sampleACL,
+    permission: 'admin',
+  },
 };
 
-export const AllWhereMatches = Template.bind({});
-AllWhereMatches.args = {
-  acl: sampleACL,
-  all: ['admin', 'user']
+export const AnyWhereMatches = {
+  render: Template,
+
+  args: {
+    acl: sampleACL,
+    any: ['admin'],
+  },
 };
 
-export const PermissionWhereNoMatch = Template.bind({});
-PermissionWhereNoMatch.args = {
-  acl: sampleACL,
-  permission: 'This Does Not Exist'
+export const AllWhereMatches = {
+  render: Template,
+
+  args: {
+    acl: sampleACL,
+    all: ['admin', 'user'],
+  },
 };
 
-export const AnyWhereNoMatch = Template.bind({});
-AnyWhereNoMatch.args = {
-  acl: sampleACL,
-  any: ['This Does Not Exist']
+export const PermissionWhereNoMatch = {
+  render: Template,
+
+  args: {
+    acl: sampleACL,
+    permission: 'This Does Not Exist',
+  },
 };
 
-export const AllWhereOneDoesNotMatch = Template.bind({});
-AllWhereOneDoesNotMatch.args = {
-  acl: sampleACL,
-  all: ['admin', 'user', 'This Does Not Exist']
+export const AnyWhereNoMatch = {
+  render: Template,
+
+  args: {
+    acl: sampleACL,
+    any: ['This Does Not Exist'],
+  },
 };
 
+export const AllWhereOneDoesNotMatch = {
+  render: Template,
 
-// This needs to be called on load for the story
-// authMock.setAuthState({
-//   user: null,
-//   state: 'LOGGING_IN',
-// });
+  args: {
+    acl: sampleACL,
+    all: ['admin', 'user', 'This Does Not Exist'],
+  },
+};
 
-export const ShowLoggingIn = Template.bind({});
-ShowLoggingIn.args = {
-  acl: sampleACL,
-  all: ['admin', 'user', 'This Does Not Exist'],
-  showLoggingIn: true
+export const ShowLoggingIn = {
+  render: Template,
+
+  args: {
+    acl: sampleACL,
+    all: ['admin', 'user', 'This Does Not Exist'],
+    showLoggingIn: true,
+  },
 };

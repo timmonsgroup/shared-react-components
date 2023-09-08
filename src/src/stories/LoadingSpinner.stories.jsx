@@ -8,11 +8,9 @@ export default {
   component: LoadingSpinner,
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <LoadingSpinner {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-  variant: 'accent',
-  isActive: true,
+export const Default = {
+  args: {
+    variant: 'accent',
+    isActive: true,
+  },
 };

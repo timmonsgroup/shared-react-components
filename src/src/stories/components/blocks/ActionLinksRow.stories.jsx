@@ -6,7 +6,13 @@ import ActionLinksRow from './ActionLinksRow';
 export default {
   title: 'Common/components/blocks/Action Links Row',
   component: ActionLinksRow,
-  decorators: [(Story) => <MemoryRouter><Story /></MemoryRouter>],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     backgroundColor: { control: 'color' },
@@ -20,7 +26,7 @@ const tg = {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   actionLinkRow: {
     color: orange,
@@ -36,7 +42,7 @@ const tg = {
     icon: {
       color: orange,
       fontSize: '16px',
-      marginRight: '2px'
+      marginRight: '2px',
     },
     cardContent: {
       fontSize: '12px',
@@ -51,7 +57,7 @@ const tg = {
     },
     clearButton: {
       fontSize: '12px',
-      marginBottom: '5px'
+      marginBottom: '5px',
     },
     cardHeader: {
       lineHeight: '1.75',
@@ -72,109 +78,123 @@ const tg = {
       display: 'inline-block',
     },
     featuredCard: {
-      heading: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
-      legend: { fontFamily: 'sans-serif', fontWeight:'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
-    }
-  }
+      heading: {
+        fontFamily: 'sans-serif',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        color: darkBlue,
+        marginTop: '10px',
+      },
+      legend: {
+        fontFamily: 'sans-serif',
+        fontWeight: 'bold',
+        fontSize: '32px',
+        color: '#434343',
+        marginBottom: '20px',
+      },
+    },
+  },
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <ActionLinksRow {...args} />;
-
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  links: [
-    {
-      label: 'Link 1',
-      url: '//www.google.com',
-      target: '_blank',
-    },
-    {
-      label: 'Link 2',
-      url: '//www.google.com',
-      target: '_blank',
-    },
-  ],
-  themeGroup: tg,
+export const Primary = {
+  args: {
+    links: [
+      {
+        label: 'Link 1',
+        url: '//www.google.com',
+        target: '_blank',
+      },
+      {
+        label: 'Link 2',
+        url: '//www.google.com',
+        target: '_blank',
+      },
+    ],
+    themeGroup: tg,
+  },
 };
 
-export const NoLinks = Template.bind({});
-NoLinks.args = {
-  links: null,
-  themeGroup: tg
+export const NoLinks = {
+  args: {
+    links: null,
+    themeGroup: tg,
+  },
 };
 
-export const OneLink = Template.bind({});
-OneLink.args = {
-  links: [
-    {
-      label: 'Link 1',
-      url: '//www.google.com',
-      target: '_blank',
-    }
-  ],
-  themeGroup: tg,
+export const OneLink = {
+  args: {
+    links: [
+      {
+        label: 'Link 1',
+        url: '//www.google.com',
+        target: '_blank',
+      },
+    ],
+    themeGroup: tg,
+  },
 };
 
-export const TwoLinks = Template.bind({});
-TwoLinks.args = {
-  links: [
-    {
-      label: 'Link 1',
-      url: '//www.google.com',
-      target: '_blank',
-    },
-    {
-      label: 'Link 2',
-      url: '//www.timmons.com',
-      target: '_blank',
-    },
-  ],
-  themeGroup: tg,
+export const TwoLinks = {
+  args: {
+    links: [
+      {
+        label: 'Link 1',
+        url: '//www.google.com',
+        target: '_blank',
+      },
+      {
+        label: 'Link 2',
+        url: '//www.timmons.com',
+        target: '_blank',
+      },
+    ],
+    themeGroup: tg,
+  },
 };
 
-export const ThreeLinks = Template.bind({});
-ThreeLinks.args = {
-  links: [
-    {
-      label: 'Link 1',
-      url: '//www.google.com',
-      target: '_blank',
-    },
-    {
-      label: 'Link 2',
-      url: '//www.timmons.com',
-      target: '_blank',
-    },
-    {
-      label: 'Link 3',
-      url: '//www.yahoo.com',
-      target: '_self',
-    },
-  ],
-  themeGroup: tg,
+export const ThreeLinks = {
+  args: {
+    links: [
+      {
+        label: 'Link 1',
+        url: '//www.google.com',
+        target: '_blank',
+      },
+      {
+        label: 'Link 2',
+        url: '//www.timmons.com',
+        target: '_blank',
+      },
+      {
+        label: 'Link 3',
+        url: '//www.yahoo.com',
+        target: '_self',
+      },
+    ],
+    themeGroup: tg,
+  },
 };
 
-export const WithoutDivider = Template.bind({});
-WithoutDivider.args = {
-  links: [
-    {
-      label: 'Link 1',
-      url: '//www.google.com',
-      target: '_blank',
-    },
-    {
-      label: 'Link 2',
-      url: '//www.timmons.com',
-      target: '_blank',
-    },
-    {
-      label: 'Link 3',
-      url: '//www.yahoo.com',
-      target: '_self',
-    },
-  ],
-  includeDivider: false,
-  themeGroup: tg,
+export const WithoutDivider = {
+  args: {
+    links: [
+      {
+        label: 'Link 1',
+        url: '//www.google.com',
+        target: '_blank',
+      },
+      {
+        label: 'Link 2',
+        url: '//www.timmons.com',
+        target: '_blank',
+      },
+      {
+        label: 'Link 3',
+        url: '//www.yahoo.com',
+        target: '_self',
+      },
+    ],
+    includeDivider: false,
+    themeGroup: tg,
+  },
 };

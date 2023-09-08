@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import { addDecorator } from '@storybook/react';
 import theme from '../src/muiTheme';
 import { SnackbarProvider } from 'notistack';
 
@@ -20,6 +19,5 @@ const ThemeProviderFn = (storyFn) => {
     </LocalizationProvider>);
 };
 
-// addDecorator(ThemeProviderFn);
 // Migration to Storybook 7
 export const decorators = [ThemeProviderFn];

@@ -6,25 +6,21 @@ export default {
   title: 'Common/components/blocks/Line Item',
   component: LineItem,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {
+  argTypes: {},
+};
+
+export const Primary = {
+  args: {
+    label: 'Length of Roads',
+    value: '1,000',
+    units: 'Miles',
   },
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <LineItem {...args} />;
-
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  label: 'Length of Roads',
-  value: '1,000',
-  units: 'Miles',
-};
-
-export const NoUnits = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-NoUnits.args = {
-  label: 'Length of Roads',
-  value: '1,000',
-  units: null,
+export const NoUnits = {
+  args: {
+    label: 'Length of Roads',
+    value: '1,000',
+    units: null,
+  },
 };

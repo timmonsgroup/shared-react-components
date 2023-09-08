@@ -10,12 +10,11 @@ export default {
   // },
 };
 
-const Template = (args) => <SubHeader {...args} />;
-export const Default = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-  title: 'Sub Header',
-  color: 'primary',
-  rightRenderProps: { testText: 'test' },
-  rightRender: ({ testText }) => <Button label={testText} color="secondary" />,
+export const Default = {
+  args: {
+    title: 'Sub Header',
+    color: 'primary',
+    rightRenderProps: { testText: 'test' },
+    rightRender: ({ testText }) => <Button label={testText} color="secondary" />,
+  },
 };
