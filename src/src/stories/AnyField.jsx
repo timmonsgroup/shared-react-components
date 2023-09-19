@@ -23,7 +23,7 @@ const makeFilter = (checkedId) => {
   const checkId = isObject(checkedId) ? checkedId.id : checkedId;
   return (option) => {
     const optId = isObject(option) ? option.id : option;
-    return optId.toString() === checkId.toString();
+    return optId.toString() !== checkId.toString();
   };
 };
 
