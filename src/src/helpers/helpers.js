@@ -588,3 +588,25 @@ export function objectsToString(items, key = 'name', separator = ', ') {
   }
   return items.map((item) => item[key]).join(separator) || '';
 }
+
+/**
+ * Replaces placeholders in a link format string with values from a data node object.
+ * @param {string} linkFormat - The link format string with placeholders wrapped in curly braces.
+ * @param {Object} dataNode - The data node object containing values to replace the placeholders.
+ * @returns {string} The link format string with placeholders replaced with values from the data node object.
+ */
+export function convertToLinkFormat(linkFormat, dataNode) {
+  let link = linkFormat;
+  // Find all the properties in the linkFormat that are wrapped in curly braces
+  const regex = /(?<=\{)(.*?)(?=\})/g;
+  let matches = link.match(regex);
+  // For each match, replace the match with the value from the row
+  // Example linkFormat: /admin/streams/{streamID}/edit/{id}
+  // Example row: {id: 1, streamID: 2, name: 'Test'}
+  // Example result: /admin/streams/2/edit/1
+  if (matches.length > 0) {
+    matches.forEach((match) => {
+      link = link.replace(`{${match}}`, dataNode[match]);
+    });
+  }
+}

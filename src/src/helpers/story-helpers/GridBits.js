@@ -9,7 +9,7 @@ const createColumn = (label, colId, type = FIELD_TYPES.TEXT, flex = 1) => (
   }
 );
 
-const landTitle = createColumn('Lands Title', 'name');
+const landTitle = createColumn('Lands Title', 'name', FIELD_TYPES.LONG_TEXT);
 landTitle.linkFormat = '/land/{id}';
 export const LANDS_GRID_LAYOUT = {
   'data': {

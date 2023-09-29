@@ -52,7 +52,7 @@ const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, 
     );
   }
 
-  return functionOrDefault(renderLoading, () => (<LoadingSpinner />))();
+  return functionOrDefault(renderLoading, () => (<LoadingSpinner isActive={true} />))();
 };
 
 ConfigForm.propTypes = {

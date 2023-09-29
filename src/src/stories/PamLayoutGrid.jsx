@@ -12,7 +12,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { processLayout, processGenericLayout } from '../helpers/helpers.js';
+import { processLayout, processGenericLayout, convertToLinkFormat } from '../helpers/helpers.js';
 
 import { convertLayoutColumnToMuiColumn } from '../helpers/gridHelpers.js';
 import RenderExpandableCell from './RenderExpandableCell';
@@ -186,19 +186,7 @@ const addNonObjectLinkRendering = (muiGridColumn) => {
     muiGridColumn.renderCell = (params) => {
       const { value, row } = params || {};
       if (value) {
-        let link = linkFormat;
-        // Find all the properties in the linkFormat that are wrapped in curly braces
-        const regex = /(?<=\{)(.*?)(?=\})/g;
-        let matches = link.match(regex);
-        // For each match, replace the match with the value from the row
-        // Example linkFormat: /admin/streams/{streamID}/edit/{id}
-        // Example row: {id: 1, streamID: 2, name: 'Test'}
-        // Example result: /admin/streams/2/edit/1
-        if (matches.length > 0) {
-          matches.forEach((match) => {
-            link = link.replace(`{${match}}`, row[match]);
-          });
-        }
+        const link = convertToLinkFormat(linkFormat, row);
         try {
           return <Link to={`${link}`}>{value || 'No Name'}</Link>;
         } catch (err) {
@@ -241,7 +229,8 @@ const addObjectReferenceLinkRendering = (muiGridColumn) => {
 const addRendering = (column) => {
   const { source } = column || {};
   switch (source.type) {
-    case 0: {
+    case 0:
+    case 1: {
       //Check for linkFormat
       if (source.render?.linkFormat) {
         addNonObjectLinkRendering(column);

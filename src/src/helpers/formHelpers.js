@@ -539,7 +539,7 @@ export const attemptFormSubmit = async (formData, isEdit, {
   formatSubmitMessage, suppressSuccessToast, suppressErrorToast
 }) => {
   if (!submitUrl) {
-    console.log('No submit url provided. Data to submit:', formData);
+    console.warn('No submit url provided. Data to submit:', formData);
     return;
   }
 

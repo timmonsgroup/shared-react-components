@@ -24,6 +24,8 @@ export const VIEW_PRESET = {
             'label': 'Permit Number',
             'path': 'encumbranceId',
             'type': 0,
+            'renderAsLinks': true,
+            'linkFormat': 'properties/{id}',
             'model': {
               'id': 23,
               'modelid': 2,
@@ -40,14 +42,14 @@ export const VIEW_PRESET = {
             'flex': 1
           },
           {
-            'label': 'Legacy ID',
-            'path': 'legacyId',
-            'type': 0,
+            'label': 'A Link',
+            'path': 'someLink',
+            'type': 100,
             'model': {
               'id': 11,
               'modelid': 2,
-              'type': 0,
-              'name': 'legacyId',
+              'type': 100,
+              'name': 'someLink',
               'data': {
                 'maxLength': 50,
                 'minLength': 1
@@ -870,7 +872,7 @@ export const ViewLayoutData = {
   'aliquot': '',
   'section': '',
   'zipCode': '',
-  'legacyId': 'Some old thing',
+  'someLink': 'https://www.google.com',
   'township': '',
   'legalName': 'This is very legal',
   'expiration': '2023-07-07T04:00:00.000Z',
@@ -880,7 +882,7 @@ export const ViewLayoutData = {
   'managementUnits': '',
   'originalExpiration': '2023-07-07T04:00:00.000Z',
   'originalCommencement': '2023-07-07T04:00:00.000Z',
-  'sovereignLandsBodies': [],
+  'sovereignLandsBodies': [{id:1, name:'Bill'}],
   'name': null,
   'version': 1,
   'id': 6,
