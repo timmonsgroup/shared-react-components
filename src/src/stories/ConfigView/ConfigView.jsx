@@ -180,7 +180,8 @@ export const FieldValue = ({field}) => {
   const { options } =  useContext(ViewContext);
   // Default to the LinkValue component if no custom component is passed in
   const LinkComponent = options?.linkComponent || LinkValue;
-  if (field.type === FIELD_TYPES.LINK || (field.renderAsLinks && field.value)) {
+  const isEmpty = field.empty === field.value;
+  if (!isEmpty && (field.type === FIELD_TYPES.LINK || (field.renderAsLinks && field.value))) {
     const links = Array.isArray(field.value) ? field.value : [field.value];
     return (
       <>
@@ -210,6 +211,12 @@ FieldValue.propTypes = {
  * @description Render the value of a link
  */
 export const LinkValue = ({field, link, index}) => {
+  const isEmpty = field.empty === field.value;
+
+  if (isEmpty) {
+    return <Typography variant="detailItem">{field.empty}</Typography>;
+  }
+
   const theUrl = field.type === FIELD_TYPES.LINK ? link : field.linkFormat.replace('{id}', link?.id);
   const label = field.type === FIELD_TYPES.LINK ? link : link?.label || link?.name;
 

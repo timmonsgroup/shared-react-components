@@ -1,4 +1,3 @@
-import { parse } from 'path';
 import {
   CONDITIONAL_RENDER,
   EMAIL, PHONE, ZIP,
