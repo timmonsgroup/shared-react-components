@@ -609,4 +609,6 @@ export function convertToLinkFormat(linkFormat, dataNode) {
       link = link.replace(`{${match}}`, dataNode[match]);
     });
   }
+
+  return link;
 }
