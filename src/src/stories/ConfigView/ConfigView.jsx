@@ -217,14 +217,17 @@ export const LinkValue = ({field, link, index}) => {
     return <Typography variant="detailItem">{field.empty}</Typography>;
   }
 
-  const theUrl = field.type === FIELD_TYPES.LINK ? link : field.linkFormat.replace('{id}', link?.id);
-  const label = field.type === FIELD_TYPES.LINK ? link : link?.label || link?.name;
+  const isLink = field.type === FIELD_TYPES.LINK;
+  const external = isLink && link.startsWith('http');
+
+  const theUrl = isLink ? link : field.linkFormat.replace('{id}', link?.id);
+  const label = isLink ? link : link?.label ?? link?.name;
 
   return (
     <React.Fragment>
       {index > 0 && <Typography variant="detailItemSeparator">,</Typography>}
       <Typography variant="detailItem">
-        <Link to={theUrl}>{label}</Link>
+        <Link to={theUrl} target={external ? '_blank' : '_self'}>{label}</Link>
       </Typography>
     </React.Fragment>
   );
