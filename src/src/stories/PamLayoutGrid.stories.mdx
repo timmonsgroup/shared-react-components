@@ -67,6 +67,11 @@ export const Template = (args) => {
       color: 'white'
     }
   };
+
+  const extraGridProps = {
+    disableColumnSelector: false,
+  }
+
   return (
     <Router>
       <Grid
@@ -77,8 +82,10 @@ export const Template = (args) => {
         initialSortDirection="desc"
         onFilterModelChange={args.onFilterModelChange}
         onSortModelChange={args.onSortModelChange}
-        rowsPerPageOptions={[20, 50, 100]}
+        rowsPerPageOptions={[10, 50, 100]}
         initialRowCount={50}
+        showToolbar={args.showToolbar}
+        extraGridProps={extraGridProps}
         actionsComponent={args.actionsComponent}
         actions={args.actions}
       />

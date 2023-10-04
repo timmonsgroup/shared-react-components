@@ -64,6 +64,15 @@ const baseThemeProperties = {
     '& .row-odd': { // Odd rows are slightly darker
       backgroundColor: '#e6ecf2',
     },
+    '.MuiDataGrid-toolbarContainer': {
+      // This is the container for the toolbar.
+      button: {
+        marginRight: '10px',
+      },
+      'button:last-of-type': {
+        marginRight: '0px',
+      },
+    }
   },
   anyFieldLabel: {
     marginBottom: '0.5rem',

@@ -154,6 +154,9 @@ const addActionButtonRendering = (muiGridColumn, actionData) => {
   const actions = actionData?.actionList || [];
   actions.sort((a, b) => a.order - b.order);
 
+  // Disable export
+  muiGridColumn.disableExport = true;
+
   // Return the action wrapper component
   // This allows us to use hooks inside the component
   muiGridColumn.renderCell = (params) => {
@@ -378,6 +381,7 @@ GridLink.propTypes = {
  * @param {String} [props.initialSortColumn] - The initial sort column for the grid
  * @param {String} [props.initialSortDirection] - The initial sort direction for the grid
  * @param {Boolean} [props.showToolbar] - Whether to show the toolbar
+ * @param {Object} [props.extraGridProps] - Any extra props to pass to the grid. Ideal for tinkering with toolbar options
  * @param {Array} [props.actions] - The actions column for the grid
  * @param {Object} [props.themeGroup] - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
  * @param {Object} [props.actionsComponent] - The component to use for the actions column
@@ -393,6 +397,7 @@ const PamLayoutGrid = ({
   initialSortColumn,
   initialSortDirection,
   showToolbar,
+  extraGridProps,
   actions,
   themeGroup,
   linkComponent,
@@ -477,7 +482,6 @@ const PamLayoutGrid = ({
       // Four buttons appear on the MUI grid by default, we want to hide them
       disableColumnSelector: true,
       disableDensitySelector: true,
-      disableExportSelector: true,
       componentsProps: {
         toolbar: {
           // Quick filter is a search box that appears in the toolbar
@@ -594,6 +598,7 @@ const PamLayoutGrid = ({
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
         }
         editMode="row"
+        {...extraGridProps}
       />
     </gridContext.Provider>
   );
@@ -607,6 +612,7 @@ PamLayoutGrid.propTypes = {
   initialSortColumn: PropTypes.string,
   initialSortDirection: PropTypes.oneOf(['asc', 'desc']),
   showToolbar: PropTypes.bool,
+  extraGridProps: PropTypes.object,
   useTypeVariant: PropTypes.bool,
   themeGroup: PropTypes.object,
   linkComponent: PropTypes.elementType,
