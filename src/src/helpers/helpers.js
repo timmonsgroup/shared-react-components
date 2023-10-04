@@ -130,7 +130,7 @@ export function caseless(valueA, valueB) {
     return -1;
   }
 
-  return (valueA).toLowerCase().localeCompare((valueB).toLowerCase());
+  return (valueA)?.toLowerCase().localeCompare((valueB)?.toLowerCase());
 }
 
 /**
