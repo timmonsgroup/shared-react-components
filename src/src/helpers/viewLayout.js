@@ -4,7 +4,7 @@ import {
   FIELD_TYPES as FIELDS,
   STATIC_TYPES
 } from '../constants.js';
-import { currencyFormatter, dateFormatter, isEmpty, sortOn, isObject } from './helpers.js';
+import { currencyFormatter, dateFormatter, isEmpty, sortOn, isObject, formatPhoneNumber } from './helpers.js';
 
 /**
  * Create an error section
@@ -140,12 +140,13 @@ export function parseViewField(field, data, key, nested = false) {
   delete conditionalProps.hidden;
 
   const { label, type, model, linkFormat, defaultValue } = field;
-  let name = model?.name || `unknown${model?.id || ''}`;
+  const fieldId = model?.name || field.path;
+  let name = fieldId || `unknown${model?.id || ''}`;
   let inData = data?.[name];
 
   // Check if the field is static and generate a unique id / name
   const isStatic = valueExists(type, STATIC_TYPES);
-  if (isStatic || !model?.name) {
+  if (isStatic || !fieldId) {
     inData = null;
     name = `${type}-${Date.now()}`;
   }
@@ -157,6 +158,7 @@ export function parseViewField(field, data, key, nested = false) {
     label,
     type,
     empty,
+    className: field.className,
     ...conditionalProps,
   };
 
@@ -187,6 +189,7 @@ export function parseViewField(field, data, key, nested = false) {
   }
 
   parsedField.value = getViewValue(field, inData, empty, key);
+  parsedField.rawValue = inData;
 
   if (parsedField.value === empty && parsedField.renderAsLinks) {
     parsedField.renderAsLinks = false;
@@ -244,6 +247,12 @@ export const getViewValue = (field, inData, empty, key) => {
 
     if (type === FIELDS.DATE) {
       value = dateFormatter(value);
+    }
+
+    if (type === FIELDS.TEXT || type === FIELDS.LONG_TEXT) {
+      if (field[PHONE]) {
+        value = formatPhoneNumber(value);
+      }
     }
 
     // Special case for cluster fields

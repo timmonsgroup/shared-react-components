@@ -181,17 +181,18 @@ export const FieldValue = ({field}) => {
   // Default to the LinkValue component if no custom component is passed in
   const LinkComponent = options?.linkComponent || LinkValue;
   const isEmpty = field.empty === field.value;
+  const className = `${field.id}-value`;
   if (!isEmpty && (field.type === FIELD_TYPES.LINK || (field.renderAsLinks && field.value))) {
     const links = Array.isArray(field.value) ? field.value : [field.value];
     return (
       <>
         {links.map((link, index) => (
-          <LinkComponent key={index} field={field} link={link} index={index} />
+          <LinkComponent key={index} field={field} link={link} index={index} className={className} />
         ))}
       </>
     );
   }
-  return <Typography variant="detailItem">{field.value}</Typography>;
+  return <Typography variant="detailItem" className={className}>{field.value}</Typography>;
 };
 
 FieldValue.propTypes = {
@@ -202,7 +203,7 @@ FieldValue.propTypes = {
  * @function LinkValue
  * @param {object} props
  * @param {object} props.field - field object to render
- * @param {object} props.link - link object to render
+ * @param {object | string} props.link - link object to render
  * @param {string} props.link.id - id of the link
  * @param {string} props.link.label - label of the link
  * @param {string} [props.link.name] - name of the link (fallback if label is not present)
@@ -235,7 +236,7 @@ export const LinkValue = ({field, link, index}) => {
 
 LinkValue.propTypes = {
   field: PropTypes.object.isRequired,
-  link: PropTypes.object.isRequired,
+  link: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   index: PropTypes.number.isRequired
 };
 
@@ -252,9 +253,10 @@ export const ViewField = ({ field }) => {
   const { dynamicComponents, options } = useContext(ViewContext);
 
   if (field.static) {
+    const baseClass = field.className || '';
     switch (field.type) {
       case STATIC_TYPES.DIVIDER: {
-        return <Divider />;
+        return <Divider className={baseClass}/>;
       }
       case STATIC_TYPES.COMPONENT: {
         const Component = dynamicComponents[field.component];
@@ -262,17 +264,17 @@ export const ViewField = ({ field }) => {
           console.warn(`Component ${field.component} not found. Rendering null.`);
           return null;
         }
-        return <Component {...field.componentProps} />;
+        return <Component className={baseClass} {...field.componentProps} />;
       }
       case STATIC_TYPES.IMAGE: {
-        return <img src={field.src} alt={field.alt} />;
+        return <img src={field.src} alt={field.alt} className={baseClass}/>;
       }
       case STATIC_TYPES.TEXT: {
         const props = field.variant ? { variant: field.variant } : {};
-        return <Typography {...props}>{field.text}</Typography>;
+        return <Typography className={baseClass} {...props}>{field.text}</Typography>;
       }
       case STATIC_TYPES.HEADER: {
-        return <Typography variant={field.variant || 'sectionHeader'} className="label">{field.text}</Typography>;
+        return <Typography variant={field.variant || 'sectionHeader'} className={'label' + (field.className ? ` ${field.className}` : '')}>{field.text}</Typography>;
       }
       default: {
         return null;
@@ -286,10 +288,9 @@ export const ViewField = ({ field }) => {
 
   // Default to the FieldValue component if no custom component is passed in
   const ValueComponent = options?.fieldValueComponent || FieldValue;
-
   return (
-    <div>
-      <Typography variant="detailItem" className="label">{field.label}: </Typography>
+    <div className={`${field.id}-field` + (field.className ? ` ${field.className}` : '')}>
+      <Typography variant="detailItem" className={`label ${field.id}-label`}>{field.label}: </Typography>
       <ValueComponent field={field} />
     </div>
   );
@@ -332,7 +333,7 @@ export const ClusterTable = ({ field }) => {
       {(field.label && field.label !== '') &&
         <Typography variant="sectionHeader">{field.label}</Typography>
       }
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className={`cluster-table-${field.name}`}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead sx={{ background: (theme) => theme.configView.clusterField.headerColor }}>
             <TableRow>

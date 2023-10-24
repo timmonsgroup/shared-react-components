@@ -1,19 +1,19 @@
 export const VIEW_PRESET = {
-  'layoutKey': 'details',
-  'sections': [
+  layoutKey: 'details',
+  sections: [
     {
-      'editable': true,
-      'enabled': true,
-      'name': 'Encumbrance Summary',
-      'description': null,
-      'order': 1,
-      'columns': true,
-      'layout': [
+      editable: true,
+      enabled: true,
+      name: 'Encumbrance Summary',
+      description: null,
+      order: 1,
+      columns: true,
+      layout: [
         [
           {
             type: 'component',
             component: 'EncumbranceDetailMap',
-          }
+          },
         ],
         [
           {
@@ -21,741 +21,85 @@ export const VIEW_PRESET = {
             text: 'Encumbrance Details',
           },
           {
-            'label': 'Permit Number',
-            'path': 'encumbranceId',
-            'type': 0,
-            'renderAsLinks': true,
-            'linkFormat': 'properties/{id}',
-            'model': {
-              'id': 23,
-              'modelid': 2,
-              'type': 0,
-              'name': 'encumbranceId',
-              'data': {
-                'maxLength': 10,
-                'minLength': 9
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Permit Number',
+            path: 'encumbranceId',
+            type: 0,
+            renderAsLinks: true,
+            linkFormat: 'properties/{id}',
           },
           {
-            'label': 'A Link',
-            'path': 'someLink',
-            'type': 100,
-            'model': {
-              'id': 11,
-              'modelid': 2,
-              'type': 100,
-              'name': 'someLink',
-              'data': {
-                'maxLength': 50,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'A Link',
+            path: 'someLink',
+            type: 100
           },
           {
-            'label': 'Legal Name',
-            'path': 'legalName',
-            'type': 0,
-            'model': {
-              'id': 12,
-              'modelid': 2,
-              'type': 0,
-              'name': 'legalName',
-              'data': {
-                'maxLength': 50,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Legal Name',
+            path: 'legalName',
+            type: 0
           },
           {
-            'label': 'Sovereign Lands Bodies',
-            'path': 'sovereignLandsBodies',
-            'type': 10,
-            'model': {
-              'id': 6,
-              'modelid': 2,
-              'type': 10,
-              'name': 'sovereignLandsBodies',
-              'data': {
-                'dynamic': true,
-                'multiple': true,
-                'objectTypeId': 1
-              },
-              'possibleChoices': []
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1,
-            'linkFormat': 'properties/{id}'
+            label: 'Sovereign Lands Bodies',
+            path: 'sovereignLandsBodies',
+            type: 10,
+            linkFormat: 'properties/{id}',
           },
           {
-            'label': 'Description',
-            'path': 'description',
-            'type': 1,
-            'model': {
-              'id': 13,
-              'modelid': 2,
-              'type': 1,
-              'name': 'description',
-              'data': {
-                'maxLength': 250,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Description',
+            path: 'description',
+            type: 1
           },
           {
-            'label': 'Management Units',
-            'path': 'managementUnits',
-            'type': 1,
-            'model': {
-              'id': 14,
-              'modelid': 2,
-              'type': 1,
-              'name': 'managementUnits',
-              'data': {
-                'maxLength': 250,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Management Units',
+            path: 'managementUnits',
+            type: 1
           },
           {
-            'label': 'Commencement',
-            'path': 'commencement',
-            'type': 5,
-            'model': {
-              'id': 7,
-              'modelid': 2,
-              'type': 5,
-              'name': 'commencement',
-              'data': null
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Commencement',
+            path: 'commencement',
+            type: 5
           },
           {
-            'label': 'Expiration',
-            'path': 'expiration',
-            'type': 5,
-            'model': {
-              'id': 8,
-              'modelid': 2,
-              'type': 5,
-              'name': 'expiration',
-              'data': null
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Expiration',
+            path: 'expiration',
+            type: 5
           },
           {
-            'label': 'Original Commencement',
-            'path': 'originalCommencement',
-            'type': 5,
-            'model': {
-              'id': 9,
-              'modelid': 2,
-              'type': 5,
-              'name': 'originalCommencement',
-              'data': null
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Original Commencement',
+            path: 'originalCommencement',
+            type: 5
           },
           {
-            'label': 'Original Expiration',
-            'path': 'originalExpiration',
-            'type': 5,
-            'model': {
-              'id': 10,
-              'modelid': 2,
-              'type': 5,
-              'name': 'originalExpiration',
-              'data': null
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Original Expiration',
+            path: 'originalExpiration',
+            type: 5
           },
           {
-            'label': 'Street',
-            'path': 'street',
-            'type': 0,
-            'model': {
-              'id': 15,
-              'modelid': 2,
-              'type': 0,
-              'name': 'street',
-              'data': {
-                'maxLength': 50,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Street',
+            path: 'street',
+            type: 0
           },
           {
-            'label': 'City',
-            'path': 'city',
-            'type': 0,
-            'model': {
-              'id': 16,
-              'modelid': 2,
-              'type': 0,
-              'name': 'city',
-              'data': {
-                'maxLength': 50,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'City',
+            path: 'city',
+            type: 0
           },
           {
-            'label': 'State',
-            'path': 'state',
-            'type': 7,
-            'model': {
-              'id': 17,
-              'modelid': 2,
-              'type': 7,
-              'name': 'state',
-              'data': {
-                'configLookupReference': 'encumbrance:state'
-              },
-              'possibleChoices': [
-                {
-                  'id': 1,
-                  'name': 'Alabama'
-                },
-                {
-                  'id': 2,
-                  'name': 'Alaska'
-                },
-                {
-                  'id': 3,
-                  'name': 'Arizona'
-                },
-                {
-                  'id': 4,
-                  'name': 'Arkansas'
-                },
-                {
-                  'id': 5,
-                  'name': 'California'
-                },
-                {
-                  'id': 6,
-                  'name': 'Colorado'
-                },
-                {
-                  'id': 7,
-                  'name': 'Connecticut'
-                },
-                {
-                  'id': 8,
-                  'name': 'Delaware'
-                },
-                {
-                  'id': 9,
-                  'name': 'Florida'
-                },
-                {
-                  'id': 10,
-                  'name': 'Georgia'
-                },
-                {
-                  'id': 11,
-                  'name': 'Hawaii'
-                },
-                {
-                  'id': 12,
-                  'name': 'Idaho'
-                },
-                {
-                  'id': 13,
-                  'name': 'Illinois'
-                },
-                {
-                  'id': 14,
-                  'name': 'Indiana'
-                },
-                {
-                  'id': 15,
-                  'name': 'Iowa'
-                },
-                {
-                  'id': 16,
-                  'name': 'Kansas'
-                },
-                {
-                  'id': 17,
-                  'name': 'Kentucky'
-                },
-                {
-                  'id': 18,
-                  'name': 'Louisiana'
-                },
-                {
-                  'id': 19,
-                  'name': 'Maine'
-                },
-                {
-                  'id': 20,
-                  'name': 'Maryland'
-                },
-                {
-                  'id': 56,
-                  'name': 'Massachusetts'
-                },
-                {
-                  'id': 21,
-                  'name': 'Michigan'
-                },
-                {
-                  'id': 22,
-                  'name': 'Minnesota'
-                },
-                {
-                  'id': 23,
-                  'name': 'Mississippi'
-                },
-                {
-                  'id': 24,
-                  'name': 'Missouri'
-                },
-                {
-                  'id': 25,
-                  'name': 'Montana'
-                },
-                {
-                  'id': 26,
-                  'name': 'Nebraska'
-                },
-                {
-                  'id': 27,
-                  'name': 'Nevada'
-                },
-                {
-                  'id': 28,
-                  'name': 'New Hampshire'
-                },
-                {
-                  'id': 29,
-                  'name': 'New Jersey'
-                },
-                {
-                  'id': 30,
-                  'name': 'New Mexico'
-                },
-                {
-                  'id': 31,
-                  'name': 'New York'
-                },
-                {
-                  'id': 32,
-                  'name': 'North Carolina'
-                },
-                {
-                  'id': 33,
-                  'name': 'North Dakota'
-                },
-                {
-                  'id': 34,
-                  'name': 'Ohio'
-                },
-                {
-                  'id': 35,
-                  'name': 'Oklahoma'
-                },
-                {
-                  'id': 36,
-                  'name': 'Oregon'
-                },
-                {
-                  'id': 37,
-                  'name': 'Pennsylvania'
-                },
-                {
-                  'id': 38,
-                  'name': 'Rhode Island'
-                },
-                {
-                  'id': 39,
-                  'name': 'South Carolina'
-                },
-                {
-                  'id': 40,
-                  'name': 'South Dakota'
-                },
-                {
-                  'id': 41,
-                  'name': 'Tennessee'
-                },
-                {
-                  'id': 42,
-                  'name': 'Texas'
-                },
-                {
-                  'id': 43,
-                  'name': 'Utah'
-                },
-                {
-                  'id': 44,
-                  'name': 'Vermont'
-                },
-                {
-                  'id': 45,
-                  'name': 'Virginia'
-                },
-                {
-                  'id': 46,
-                  'name': 'Washington'
-                },
-                {
-                  'id': 47,
-                  'name': 'West Virginia'
-                },
-                {
-                  'id': 48,
-                  'name': 'Wisconsin'
-                },
-                {
-                  'id': 49,
-                  'name': 'Wyoming'
-                },
-                {
-                  'id': 50,
-                  'name': 'District of Columbia'
-                },
-                {
-                  'id': 51,
-                  'name': 'American Samoa'
-                },
-                {
-                  'id': 52,
-                  'name': 'Guam'
-                },
-                {
-                  'id': 53,
-                  'name': 'Northern Mariana Islands'
-                },
-                {
-                  'id': 54,
-                  'name': 'Puerto Rico'
-                },
-                {
-                  'id': 55,
-                  'name': 'U.S. Virgin Islands'
-                },
-                {
-                  'id': 0,
-                  'name': 'Unknown'
-                }
-              ]
-            },
-            'required': false,
-            'disabled': false,
-            'possibleChoices': [
-              {
-                'id': 1,
-                'name': 'Alabama'
-              },
-              {
-                'id': 2,
-                'name': 'Alaska'
-              },
-              {
-                'id': 3,
-                'name': 'Arizona'
-              },
-              {
-                'id': 4,
-                'name': 'Arkansas'
-              },
-              {
-                'id': 5,
-                'name': 'California'
-              },
-              {
-                'id': 6,
-                'name': 'Colorado'
-              },
-              {
-                'id': 7,
-                'name': 'Connecticut'
-              },
-              {
-                'id': 8,
-                'name': 'Delaware'
-              },
-              {
-                'id': 9,
-                'name': 'Florida'
-              },
-              {
-                'id': 10,
-                'name': 'Georgia'
-              },
-              {
-                'id': 11,
-                'name': 'Hawaii'
-              },
-              {
-                'id': 12,
-                'name': 'Idaho'
-              },
-              {
-                'id': 13,
-                'name': 'Illinois'
-              },
-              {
-                'id': 14,
-                'name': 'Indiana'
-              },
-              {
-                'id': 15,
-                'name': 'Iowa'
-              },
-              {
-                'id': 16,
-                'name': 'Kansas'
-              },
-              {
-                'id': 17,
-                'name': 'Kentucky'
-              },
-              {
-                'id': 18,
-                'name': 'Louisiana'
-              },
-              {
-                'id': 19,
-                'name': 'Maine'
-              },
-              {
-                'id': 20,
-                'name': 'Maryland'
-              },
-              {
-                'id': 56,
-                'name': 'Massachusetts'
-              },
-              {
-                'id': 21,
-                'name': 'Michigan'
-              },
-              {
-                'id': 22,
-                'name': 'Minnesota'
-              },
-              {
-                'id': 23,
-                'name': 'Mississippi'
-              },
-              {
-                'id': 24,
-                'name': 'Missouri'
-              },
-              {
-                'id': 25,
-                'name': 'Montana'
-              },
-              {
-                'id': 26,
-                'name': 'Nebraska'
-              },
-              {
-                'id': 27,
-                'name': 'Nevada'
-              },
-              {
-                'id': 28,
-                'name': 'New Hampshire'
-              },
-              {
-                'id': 29,
-                'name': 'New Jersey'
-              },
-              {
-                'id': 30,
-                'name': 'New Mexico'
-              },
-              {
-                'id': 31,
-                'name': 'New York'
-              },
-              {
-                'id': 32,
-                'name': 'North Carolina'
-              },
-              {
-                'id': 33,
-                'name': 'North Dakota'
-              },
-              {
-                'id': 34,
-                'name': 'Ohio'
-              },
-              {
-                'id': 35,
-                'name': 'Oklahoma'
-              },
-              {
-                'id': 36,
-                'name': 'Oregon'
-              },
-              {
-                'id': 37,
-                'name': 'Pennsylvania'
-              },
-              {
-                'id': 38,
-                'name': 'Rhode Island'
-              },
-              {
-                'id': 39,
-                'name': 'South Carolina'
-              },
-              {
-                'id': 40,
-                'name': 'South Dakota'
-              },
-              {
-                'id': 41,
-                'name': 'Tennessee'
-              },
-              {
-                'id': 42,
-                'name': 'Texas'
-              },
-              {
-                'id': 43,
-                'name': 'Utah'
-              },
-              {
-                'id': 44,
-                'name': 'Vermont'
-              },
-              {
-                'id': 45,
-                'name': 'Virginia'
-              },
-              {
-                'id': 46,
-                'name': 'Washington'
-              },
-              {
-                'id': 47,
-                'name': 'West Virginia'
-              },
-              {
-                'id': 48,
-                'name': 'Wisconsin'
-              },
-              {
-                'id': 49,
-                'name': 'Wyoming'
-              },
-              {
-                'id': 50,
-                'name': 'District of Columbia'
-              },
-              {
-                'id': 51,
-                'name': 'American Samoa'
-              },
-              {
-                'id': 52,
-                'name': 'Guam'
-              },
-              {
-                'id': 53,
-                'name': 'Northern Mariana Islands'
-              },
-              {
-                'id': 54,
-                'name': 'Puerto Rico'
-              },
-              {
-                'id': 55,
-                'name': 'U.S. Virgin Islands'
-              },
-              {
-                'id': 0,
-                'name': 'Unknown'
-              }
-            ],
-            'width': 100,
-            'flex': 1
+            label: 'State',
+            path: 'state',
+            type: 7
           },
           {
-            'label': 'Zip/Postal Code',
-            'path': 'zipCode',
-            'type': 0,
-            'model': {
-              'id': 18,
-              'modelid': 2,
-              'type': 0,
-              'name': 'zipCode',
-              'data': {
-                'maxLength': 6,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Zip/Postal Code',
+            path: 'zipCode',
+            variant: 'zip',
+            type: 0
           },
           {
-            'label': 'Section',
-            'path': 'section',
-            'type': 0,
-            'model': {
-              'id': 19,
-              'modelid': 2,
-              'type': 0,
-              'name': 'section',
-              'data': {
-                'maxLength': 3,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Phone Number',
+            path: 'phoneNumber',
+            type: 0,
+            className: 'baconBits',
+            phone: true
           },
         ],
         [
@@ -764,140 +108,121 @@ export const VIEW_PRESET = {
             text: '',
           },
           {
-            'label': 'Permit Name',
-            'path': 'permitName',
-            'type': 0,
-            'model': {
-              'id': 5,
-              'modelid': 2,
-              'type': 0,
-              'name': 'permitName',
-              'data': {
-                'maxLength': 50,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Permit Name',
+            path: 'permitName',
+            type: 0
           },
           {
-            'label': 'Township',
-            'path': 'township',
-            'type': 0,
-            'model': {
-              'id': 20,
-              'modelid': 2,
-              'type': 0,
-              'name': 'township',
-              'data': {
-                'maxLength': 3,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Township',
+            path: 'township',
+            type: 0
           },
           {
-            'label': 'Range',
-            'path': 'range',
-            'type': 0,
-            'model': {
-              'id': 21,
-              'modelid': 2,
-              'type': 0,
-              'name': 'range',
-              'data': {
-                'maxLength': 3,
-                'minLength': 1
-              }
-            },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
+            label: 'Range',
+            path: 'range',
+            type: 0
           },
           {
-            'label': 'Aliquot',
-            'path': 'aliquot',
-            'type': 1,
-            'model': {
-              'id': 22,
-              'modelid': 2,
-              'type': 1,
-              'name': 'aliquot',
-              'data': {
-                'maxLength': 500,
-                'minLength': 1
-              }
+            label: 'Aliquot',
+            path: 'aliquot',
+            type: 1
+          },
+        ],
+      ],
+    },
+    {
+      name: 'Clustered Section',
+      layout: [
+        {
+          label: 'Invoice Items',
+          type: 120,
+          path: 'invoiceItems',
+          layout: [
+            {
+              label: 'Description',
+              type: 0,
+              path: 'description',
             },
-            'required': false,
-            'disabled': false,
-            'width': 100,
-            'flex': 1
-          }
-        ]
-      ]
-    }
-  ]
+            {
+              label: 'Amount',
+              type: 4,
+              path: 'amount',
+            },
+          ],
+        },
+        {
+          label: 'Total',
+          type: 4,
+          path: 'total',
+          className: 'textAlignRight',
+        }
+      ],
+    },
+  ],
 };
-
 
 const slbArray = [
   {
-    'id': 8,
-    'name': 'Galena Property'
+    id: 8,
+    name: 'Galena Property',
   },
   {
-    'id': 11,
-    'name': 'Department of Transportation'
+    id: 11,
+    name: 'Department of Transportation',
   },
   {
-    'id': 10,
-    'name': 'Fremont Island',
-  }
+    id: 10,
+    name: 'Fremont Island',
+  },
 ];
 
 const slbObj = {
-  'id': 8,
-  'name': 'Galena Property'
+  id: 8,
+  name: 'Galena Property',
 };
 
 export const ViewLayoutData = {
-  'range': '',
-  'street': '',
-  'aliquot': '',
-  'section': '',
-  'zipCode': '',
-  'someLink': 'https://www.google.com',
-  'township': '',
-  'legalName': 'This is very legal',
-  'expiration': '2023-07-07T04:00:00.000Z',
-  'permitName': 'Mud',
-  'description': '',
-  'commencement': '2023-07-07T04:00:00.000Z',
-  'managementUnits': '',
-  'originalExpiration': '2023-07-07T04:00:00.000Z',
-  'originalCommencement': '2023-07-07T04:00:00.000Z',
-  'sovereignLandsBodies': [{id:1, name:'Bill'}],
-  'name': null,
-  'version': 1,
-  'id': 6,
-  'createdBy': {
-    'id': '90306d20-5b57-4528-a3dd-90423ca01c31',
-    'name': 'nathan.grant@timmons.com',
-    'email': 'nathan.grant@timmons.com'
+  range: '',
+  street: '',
+  aliquot: '',
+  phoneNumber: '5671129045',
+  zipCode: '',
+  someLink: 'https://www.google.com',
+  township: '',
+  legalName: 'This is very legal',
+  expiration: '2023-07-07T04:00:00.000Z',
+  permitName: 'Mud',
+  description: '',
+  commencement: '2023-07-07T04:00:00.000Z',
+  managementUnits: '',
+  originalExpiration: '2023-07-07T04:00:00.000Z',
+  originalCommencement: '2023-07-07T04:00:00.000Z',
+  sovereignLandsBodies: [{ id: 1, name: 'Bill' }],
+  name: null,
+  version: 1,
+  id: 6,
+  createdBy: {
+    id: '90306d20-5b57-4528-a3dd-90423ca01c31',
+    name: 'nathan.grant@timmons.com',
+    email: 'nathan.grant@timmons.com',
   },
-  'lastModifiedOn': '2023-07-07T20:47:52.930Z',
-  'lastModifiedBy': {
-    'id': '90306d20-5b57-4528-a3dd-90423ca01c31',
-    'name': 'nathan.grant@timmons.com',
-    'email': 'nathan.grant@timmons.com'
+  lastModifiedOn: '2023-07-07T20:47:52.930Z',
+  lastModifiedBy: {
+    id: '90306d20-5b57-4528-a3dd-90423ca01c31',
+    name: 'nathan.grant@timmons.com',
+    email: 'nathan.grant@timmons.com',
   },
-  'type_id': 1,
-  'permit_number': '410-00006',
-  'state': null
+  type_id: 1,
+  permit_number: '410-00006',
+  state: null,
+  invoiceItems: [
+    {
+      amount: 123,
+      description: 'Crickets',
+    },
+    {
+      amount: 34,
+      description: 'A fresh description',
+    },
+  ],
 };

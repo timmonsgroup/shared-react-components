@@ -151,14 +151,12 @@ const fireDepartmentField = {
 };
 
 const clusterField = {
-  label: 'Cluster Field',
+  label: 'Invoice Items',
   path: 'amCluster',
   type: 120,
-  helperText: 'I are a cluster field and I HELPED!!!',
-  altHelperText: 'I am your woeful alternative',
-  placeholder: 'A child of moMoney',
-  addLabel: 'Add a pair',
-  removeLabel: 'Remove a pair',
+  helperText: 'Add items and amounts',
+  addLabel: 'Add an item',
+  removeLabel: 'Remove an item',
   solitary: true,
   inline: true,
   model: {
@@ -182,10 +180,9 @@ const clusterField = {
   ],
   layout: [
     {
-      label: 'Bob',
+      label: 'Description',
       path: 'bob',
-      type: 4,
-      helperText: 'Bob Helper',
+      type: 0,
       hidden: false,
       model: {
         id: 8,
@@ -193,15 +190,14 @@ const clusterField = {
         type: 4,
         name: 'bob',
       },
-      minValue: 2.01,
+      // minValue: 2.01,
       required: true,
       disabled: false,
     },
     {
-      label: 'Bob Two',
+      label: 'Amount',
       path: 'bobTwo',
       type: 4,
-      helperText: 'Bob Helper',
       hidden: false,
       model: {
         id: 8,

@@ -417,6 +417,21 @@ export function zeroPad(num, size = 3) {
   return num.toString().padStart(size, '0');
 }
 
+/**
+ * Format a phone number
+ * @param {string} phoneNumberString
+ * @returns {string} The formatted phone number
+ * @example formatPhoneNumber('1234567890') => '(123) 456-7890'
+ */
+export const formatPhoneNumber = (phoneNumberString) => {
+  var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+  var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+  }
+  return null;
+};
+
 export function dateStringNormalizer(dateString) {
   if (!dateString) {
     return null;
