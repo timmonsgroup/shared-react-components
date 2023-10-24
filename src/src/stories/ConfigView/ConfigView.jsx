@@ -331,9 +331,9 @@ export const ClusterTable = ({ field }) => {
   return (
     <>
       {(field.label && field.label !== '') &&
-        <Typography variant="sectionHeader">{field.label}</Typography>
+        <Typography variant="sectionHeader" className={`${field.id}-label`}>{field.label}</Typography>
       }
-      <TableContainer component={Paper} className={`cluster-table-${field.name}`}>
+      <TableContainer component={Paper} className={`cluster-table-${field.id}` + (field.className ? ` ${field.className}` : '')}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead sx={{ background: (theme) => theme.configView.clusterField.headerColor }}>
             <TableRow>
