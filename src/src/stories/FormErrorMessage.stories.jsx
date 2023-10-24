@@ -6,12 +6,11 @@ export default {
   component: FormErrorMessage,
 };
 
-const Template = (args) => <FormErrorMessage {...args} />;
-export const Required = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Required.args = {
-  error: {
-    type: 'required',
-    message: 'This field is required'
+export const Required = {
+  args: {
+    error: {
+      type: 'required',
+      message: 'This field is required',
+    },
   },
 };

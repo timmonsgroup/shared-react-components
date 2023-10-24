@@ -71,6 +71,10 @@ export function isObject(objValue) {
    * @returns {boolean} - true if empty, false if not
    */
 export const isEmpty = (value) => {
+  if (Array.isArray(value) && value.length === 0) {
+    return true;
+  }
+
   if (value === '' || value === null || value === undefined) {
     return true;
   }
@@ -126,7 +130,7 @@ export function caseless(valueA, valueB) {
     return -1;
   }
 
-  return (valueA).toLowerCase().localeCompare((valueB).toLowerCase());
+  return (valueA)?.toLowerCase().localeCompare((valueB)?.toLowerCase());
 }
 
 /**
@@ -414,6 +418,29 @@ export function zeroPad(num, size = 3) {
 }
 
 /**
+ * Format a phone number
+ * @param {string} phoneNumberString
+ * @returns {string} The formatted phone number
+ * @example formatPhoneNumber('1234567890') => '(123) 456-7890'
+ */
+export const formatPhoneNumber = (phoneNumberString) => {
+  var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+  var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+  }
+  return null;
+};
+
+export function dateStringNormalizer(dateString) {
+  if (!dateString) {
+    return null;
+  }
+
+  return dateString.replace(/-/g, '/').replace(/T.+/, '');
+}
+
+/**
  * Return a date string from either an ag grid cell object or string
  * @param {string | object} inc - The date string or ag grid cell object
  * @returns {string} The date as a string
@@ -427,7 +454,9 @@ export function dateFormatter(inc) {
     return '';
   }
 
-  const date = new Date(typeof inc === 'object' ? inc.value : inc);
+  const normalized = dateStringNormalizer(typeof inc === 'object' ? inc.value : inc);
+
+  const date = new Date(normalized);
   return dateToString(date);
 }
 
@@ -573,4 +602,28 @@ export function objectsToString(items, key = 'name', separator = ', ') {
     return '';
   }
   return items.map((item) => item[key]).join(separator) || '';
+}
+
+/**
+ * Replaces placeholders in a link format string with values from a data node object.
+ * @param {string} linkFormat - The link format string with placeholders wrapped in curly braces.
+ * @param {Object} dataNode - The data node object containing values to replace the placeholders.
+ * @returns {string} The link format string with placeholders replaced with values from the data node object.
+ */
+export function convertToLinkFormat(linkFormat, dataNode) {
+  let link = linkFormat;
+  // Find all the properties in the linkFormat that are wrapped in curly braces
+  const regex = /(?<=\{)(.*?)(?=\})/g;
+  let matches = link.match(regex);
+  // For each match, replace the match with the value from the row
+  // Example linkFormat: /admin/streams/{streamID}/edit/{id}
+  // Example row: {id: 1, streamID: 2, name: 'Test'}
+  // Example result: /admin/streams/2/edit/1
+  if (matches.length > 0) {
+    matches.forEach((match) => {
+      link = link.replace(`{${match}}`, dataNode[match]);
+    });
+  }
+
+  return link;
 }

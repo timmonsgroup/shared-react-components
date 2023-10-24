@@ -91,7 +91,8 @@ const initialState = {
  */
 export const authContext = createContext();
 
-let META_WHITE_LIST = [];
+let _metaWhileList = [];
+let _staleCheckSeconds = 60;
 
 // If multiple apps are using the same cookie, we need to be able to differentiate which one logged out
 let APP_ID = '123-456';
@@ -104,16 +105,18 @@ let APP_ID = '123-456';
  * @param {object} props.config - The config object
  * @param {string} [props.config.cookieReference] - The cookie reference
  * @param {array} [props.whitelist] - The whitelist array
+ * @param {object} [props.options] - Additional options
+ * @param {number} [props.options.staleCheckSeconds] - The stale check seconds
  * @param {object} [props.children] - The children
  * @function ProvideAuth
  * @returns {React.Context} The auth context provider
  */
-export const ProvideAuth = ({ config, whitelist, children }) => {
+export const ProvideAuth = ({ config, whitelist, options, children }) => {
   if (config?.cookieReference) {
     APP_ID = config.cookieReference;
   }
 
-  const auth = useProvideAuth(config, whitelist);
+  const auth = useProvideAuth(config, whitelist, options);
   // We are providing the object returned by useProvideAuth as the value of the authContext
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 };
@@ -121,6 +124,7 @@ export const ProvideAuth = ({ config, whitelist, children }) => {
 ProvideAuth.propTypes = {
   config: PropTypes.object.isRequired,
   whitelist: PropTypes.array,
+  options: PropTypes.object,
   children: PropTypes.element,
 };
 
@@ -146,9 +150,10 @@ export const useAuth = () => {
  * We are providing the auth state, login, and logout methods
  * @param {object} config The configuration for the component
  * @param {String[]} [whitelist] The whitelist array
+ * @param {object} [options] Additional options
  * @returns {AuthContext} The auth context object
  */
-const useProvideAuth = (config, whitelist) => {
+const useProvideAuth = (config, whitelist, options) => {
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
   const [authState, dispatch] = useReducer(authReducer, initialState);
@@ -161,7 +166,11 @@ const useProvideAuth = (config, whitelist) => {
     }
 
     if (whitelist?.length > 0) {
-      META_WHITE_LIST = whitelist;
+      _metaWhileList = whitelist;
+    }
+
+    if (options?.staleCheckSeconds) {
+      _staleCheckSeconds = options?.staleCheckSeconds;
     }
     // Check to see if the config is valid
     if (isValidConfig(config)) {
@@ -370,7 +379,7 @@ const useProvideAuth = (config, whitelist) => {
           }
         }
       } else {
-        scheduleStaleCheck(60);
+        scheduleStaleCheck(_staleCheckSeconds);
         return;
       }
     }
@@ -441,7 +450,7 @@ const useProvideAuth = (config, whitelist) => {
 
     window.isExpired = isExpired;
 
-    scheduleStaleCheck(30);
+    scheduleStaleCheck(_staleCheckSeconds);
 
 
     //TODO: Check if a token is expired
@@ -463,8 +472,8 @@ const useProvideAuth = (config, whitelist) => {
     // Dispatch the finish login action
 
     const meta = {};
-    if (META_WHITE_LIST?.length && maybeUser) {
-      META_WHITE_LIST.forEach((key) => {
+    if (_metaWhileList?.length && maybeUser) {
+      _metaWhileList.forEach((key) => {
         if (maybeUser[key]) {
           meta[key] = maybeUser[key];
         }

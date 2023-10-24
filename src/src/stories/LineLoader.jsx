@@ -6,10 +6,9 @@ import PropTypes from 'prop-types';
 /**
  * @function
  * @param {object} props - props object
- * @param {string} props.message - message to display
- * @param {string} props.messageAlign - left, right, or center
- * @param {string} props.width - width of the loader
- * @param {object} props.props - props for LinearProgress
+ * @param {string} [props.message] - message to display
+ * @param {string} [props.messageAlign] - left, right, or center
+ * @param {string} [props.width] - width of the loader
  * @returns {React.ReactElement} - React component
  * @example
  * <LineLoader message="Loading..." />

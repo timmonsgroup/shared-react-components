@@ -64,6 +64,15 @@ const baseThemeProperties = {
     '& .row-odd': { // Odd rows are slightly darker
       backgroundColor: '#e6ecf2',
     },
+    '.MuiDataGrid-toolbarContainer': {
+      // This is the container for the toolbar.
+      button: {
+        marginRight: '10px',
+      },
+      'button:last-of-type': {
+        marginRight: '0px',
+      },
+    }
   },
   anyFieldLabel: {
     marginBottom: '0.5rem',
@@ -73,7 +82,7 @@ const baseThemeProperties = {
   },
   inlineForm: {
     container: {
-      position: 'relative', 
+      position: 'relative',
       marginTop: '16px'
     },
     buttonContainer: {
@@ -170,6 +179,25 @@ const baseThemeProperties = {
       legend: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
     }
   },
+  configView: {
+    clusterField: {
+      alternateRowColor: '#F6F6F6',
+      headerColor: darkBlue,
+      headerTextColor: '#FFFFFF',
+    },
+  },
+  clusterRow: {
+    paddingTop:2,
+    paddingBottom:2,
+    paddingLeft:1,
+    paddingRight:0
+  },
+  clusterRowRemove: {
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 2,
+    paddingRight: 0
+  },
   filterableCard: {
     header: {
       display: 'flex',
@@ -258,6 +286,18 @@ const baseThemeProperties = {
     allVariants: {
       fontFamily: '"PT Sans", "Helvetica", "Arial", "sans-serif"',
     },
+    detailItem: {
+      fontSize: '0.875rem',
+      marginTop: '8px',
+      marginBottom: '8px',
+      '&.label': {
+        fontWeight: 'bold'
+      }
+    },
+    detailItemSeparator: {
+      fontSize: '0.875rem',
+      marginRight: '4px !important',
+    },
     navLink: {
       fontFamily: 'inherit',
       fontSize: '0.875rem',
@@ -292,6 +332,14 @@ const baseThemeProperties = {
       fontWeight: 'bold',
       color: darkBlue,
       marginTop: 2,
+      marginBottom: 2,
+    },
+    sectionHeaderSpaceAbove: {
+      fontFamily: 'inherit',
+      fontSize: '1rem',
+      fontWeight: 'bold',
+      color: darkBlue,
+      marginTop: 4,
       marginBottom: 2,
     },
     sectionDescription: {
@@ -329,13 +377,15 @@ const baseThemeProperties = {
         fontFamily,
         variantMapping: {
           sectionHeader: 'h1',
+          sectionHeaderSpaceAbove: 'h1',
           subHeader: 'h2',
           modalTitle: 'h2',
           panelHeader: 'h2',
           inspector: 'p',
           sectionDescription: 'p',
           clusterEmptyText: 'p',
-          navLink: 'a'
+          navLink: 'a',
+          detailItemSeparator: 'span'
         },
       },
     },

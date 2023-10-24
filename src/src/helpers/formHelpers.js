@@ -481,7 +481,7 @@ export function createFieldValidation(type, label, validationMap, field) {
 
       const disableFutureDates = !!validationMap.get(VALIDATIONS.DISABLE_FUTURE);
       if (disableFutureDates) {
-        const today = new Date().toDateString()
+        const today = new Date().toDateString();
 
         validation = validation.max(today, disableFutureErrorText);
       }
@@ -539,7 +539,7 @@ export const attemptFormSubmit = async (formData, isEdit, {
   formatSubmitMessage, suppressSuccessToast, suppressErrorToast
 }) => {
   if (!submitUrl) {
-    console.log('No submit url provided. Data to submit:', formData);
+    console.warn('No submit url provided. Data to submit:', formData);
     return;
   }
 

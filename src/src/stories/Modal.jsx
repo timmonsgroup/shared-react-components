@@ -13,7 +13,9 @@ import { Close } from '@mui/icons-material';
  * @param {boolean} props.open - whether the dialog is open or not
  * @param {string} [props.title] - the title of the dialog
  * @param {string} [props.okLabel] - the label for the OK button
+ * @param {boolean} [props.disableOk] - disable the OK button
  * @param {string} [props.cancelLabel] - the label for the Cancel button
+ * @param {boolean} [props.disableCancel] - disable the OK button
  * @param {boolean} [props.showX] - whether to show the X in the top right corner
  * @param {boolean} [props.hideActions] - whether to hide the actions (OK and Cancel buttons)
  * @param {boolean} [props.hideCancel] - whether to hide the Cancel button
@@ -25,7 +27,10 @@ import { Close } from '@mui/icons-material';
  * @param {string} [props.cancelColor] - the color of the Cancel button
  * @returns {React.ReactElement} - React component
  */
-const Modal = ({ open, okLabel, cancelLabel, title, onOk, onCancel, handleClose, showX, children, hideActions, hideCancel, hideOk, okColor = 'primary', cancelColor = 'regressive', ...props }) => {
+const Modal = ({
+  open, okLabel, cancelLabel, title, onOk, onCancel, handleClose, showX, children, hideActions, hideCancel, hideOk,
+  disableOk, disableCancel, okColor = 'primary', cancelColor = 'regressive', ...props
+}) => {
   const titleRender = () => {
     if (showX) {
       return (
@@ -62,8 +67,8 @@ const Modal = ({ open, okLabel, cancelLabel, title, onOk, onCancel, handleClose,
       <DialogContent>{children}</DialogContent>
       {hideActions ? null : (
         <DialogActions>
-          <ShowHidden hide={hideCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={cancelColor}/>
-          <ShowHidden hide={hideOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} color={okColor} />
+          <ShowHidden hide={hideCancel} disabled={disableCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={cancelColor}/>
+          <ShowHidden hide={hideOk} disabled={disableOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} color={okColor} />
         </DialogActions>
       )
       }
@@ -75,7 +80,9 @@ Modal.propTypes = {
   open: PropTypes.bool.isRequired,
   showX: PropTypes.bool,
   okLabel: PropTypes.string,
+  disableOk: PropTypes.bool,
   cancelLabel: PropTypes.string,
+  disableCancel: PropTypes.bool,
   title: PropTypes.string,
   children: PropTypes.node,
   onOk: PropTypes.func,

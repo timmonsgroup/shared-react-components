@@ -8,10 +8,9 @@ import {Card, CardContent, Container} from '@mui/material';
  * A helper component to render a Container with a Card and CardContent
  * @function ContainerWithCard
  * @param {object} props - props object
- * @param {object} props.cardProps - props for the Card component
- * @param {object} props.cardContentProps - props for the CardContent component
+ * @param {object} [props.cardProps] - props for the Card component
+ * @param {object} [props.cardContentProps] - props for the CardContent component
  * @param {object} props.children - children to render
- * @param {object} props.props - props for the Container component
  * @returns {React.ReactElement} - React component
  * @example
  * <ContainerWithCard>

@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
 import axios from 'axios';
+import { dateStringNormalizer } from '../helpers/helpers.js';
 
 const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
@@ -227,7 +228,7 @@ export function parseField(field, asyncFieldsMap) {
     hidden,
     specialProps: {},
     [DEFAULT_VALUE]: field[DEFAULT_VALUE],
-    modelData: model.data || {},
+    modelData: model?.data || {},
     // Note any validation that are needed for a trigger field should be added here
     // The triggerfield logic will parse the base field first then the trigger field (which allows for overrides via "then")
     render: {
@@ -282,13 +283,15 @@ export function parseField(field, asyncFieldsMap) {
     parsedField.render[DISABLE_FUTURE_ERROR_TEXT] = field[DISABLE_FUTURE_ERROR_TEXT];
   }
 
-  // map special props to the field
-
-  specialProps.forEach((prop) => {
-    if (data[prop]) {
-      parsedField.specialProps[prop] = data[prop];
-    }
-  });
+  // it is possible for data to be null if the data object in the model is null
+  if (data) {
+    // map special props to the field
+    specialProps.forEach((prop) => {
+      if (data[prop]) {
+        parsedField.specialProps[prop] = data[prop];
+      }
+    });
+  }
 
   if (type === FIELDS.LONG_TEXT) {
     parsedField.render.isMultiLine = true;
@@ -440,7 +443,7 @@ export function getFieldValue(field, formData) {
 
     case FIELDS.DATE: {
       if (inData) {
-        const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(inData);
+        const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(dateStringNormalizer(inData));
         inData = theDate.toDateString();
       }
       value = inData || null;

@@ -17,29 +17,50 @@ import AnyFieldLabel from './AnyFieldLabel';
 
 import { FIELD_TYPES } from '../constants';
 import { Box } from '@mui/material';
+import { isObject } from '../helpers';
+
+const makeFilter = (checkedId) => {
+  const checkId = isObject(checkedId) ? checkedId.id : checkedId;
+  return (option) => {
+    const optId = isObject(option) ? option.id : option;
+    return optId.toString() !== checkId.toString();
+  };
+};
+
+
+const handleMultiSelectChange = (field, checkedId) => {
+  const ids = field.value;
+  const checkId = isObject(checkedId) ? checkedId.id : checkedId;
+  // If the id is in the array, remove it, otherwise add it
+  const filterFunc = makeFilter(checkId);
+  const newIds = ids?.includes(checkId)
+    ? ids?.filter(filterFunc)
+    : [...(ids ?? []), checkId];
+  return newIds;
+};
 
 /**
  * Icons for info icons
  * @typedef {Object} FieldIconOptions
- * @property {string} color - the color of the icon
- * @property {string} gap - the gap between the label and the icon
- * @property {boolean} beforeLabel - whether to display the icon before the label
- * @property {React.Component} iconComponent - a component to use instead of the default InfoIcon
- * @property {string} iconText - the text to display in the info icon
+ * @property {string} [color] - the color of the icon
+ * @property {string} [gap] - the gap between the label and the icon
+ * @property {boolean} [beforeLabel] - whether to display the icon before the label
+ * @property {React.Component} [iconComponent] - a component to use instead of the default InfoIcon
+ * @property {string} [iconText] - the text to display in the info icon
  */
 
 /**
  * Theme group for the label
  * @typedef {Object} FieldLabelThemeGroup
- * @property {object} anyFieldLabel - any theme properties to use for the box containing the label
- * @property {object} anyFieldLabel.helperText - any theme properties to use for the helper text
+ * @property {object} [anyFieldLabel] - any theme properties to use for the box containing the label
+ * @property {object} [anyFieldLabel.helperText] - any theme properties to use for the helper text
  */
 
 /**
  * Various options for the fields
  * @typedef {Object} FieldOptions
- * @property {FieldIconOptions} icon - the options to pass to the info icon
- * @property {FieldLabelThemeGroup} labelThemeGroup - the theme group to use for the label
+ * @property {FieldIconOptions} [icon] - the options to pass to the info icon
+ * @property {FieldLabelThemeGroup} [labelThemeGroup] - the theme group to use for the label
  */
 
 /**
@@ -49,15 +70,16 @@ import { Box } from '@mui/material';
  * @property {string} name - the name of the field
  * @property {string} type - the type of the field
  * @property {string} label - the label of the field
- * @property {string} helperText - the helper text of the field
- * @property {string} placeholder - the placeholder of the field
- * @property {string} iconHelperText - the helper text of the info icon
- * @property {string} altHelperText - helper text to display in an alternate location
- * @property {boolean} required - whether the field is required
- * @property {boolean} disabled - whether the field is disabled
- * @property {boolean} hidden - whether the field is hidden
- * @property {array} choices - The choices for the field
- * @property {boolean} isMultiLine - whether the field is multiline
+ * @property {string} [helperText] - the helper text of the field
+ * @property {string} [placeholder] - the placeholder of the field
+ * @property {string} [iconHelperText] - the helper text of the info icon
+ * @property {string} [altHelperText] - helper text to display in an alternate location
+ * @property {boolean} [required] - whether the field is required
+ * @property {boolean} [disabled] - whether the field is disabled
+ * @property {boolean} [hidden] - whether the field is hidden
+ * @property {array} [choices] - The choices for the field
+ * @property {boolean} [multiple] - whether the field is multi select
+ * @property {boolean} [isMultiLine] - whether the field is multiline
  */
 
 /**
@@ -79,11 +101,11 @@ const AnyField = ({ control, layout, rules, options, nestedName, isNested, ...pr
     return null;
   }
 
-  const renderState = renderType(layout, options);
+  const name = (isNested && nestedName) ? nestedName : layout.name;
+  const renderState = renderType(layout, options, nestedName);
   // Per react-hook-form docs, we should not unregister fields in a field Array at this level
   // It is done via the useFieldArray hook in ClusterField component
   const shouldUnregister = !isNested;
-  const name = (isNested && nestedName) ? nestedName : layout.name;
 
   return (
     <Box {...props}>
@@ -111,19 +133,21 @@ AnyField.propTypes = {
  * Return the correct renderer for the given type
  * @function
  * @param {FieldLayout} layout - the layout object for the field
- * @param {FieldOptions} fieldOptions - various options for the fields
+ * @param {FieldOptions} [fieldOptions] - various options for the fields
+ * @param {string} [nestedName] - the name of the field if it is nested
  * @returns {React.ReactElement} - the rendered field
  */
-const renderType = (layout, fieldOptions = {}) => {
+const renderType = (layout, fieldOptions = {}, nestedName) => {
   if (layout.iconHelperText) {
     fieldOptions.icon = fieldOptions.icon || {};
     fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
   }
 
   const { id, type, label, options } = layout;
+  const finalId = nestedName || id;
   switch (type) {
     case FIELD_TYPES.DATE: {
-      return dateRenderer(layout, fieldOptions);
+      return dateRenderer(layout, fieldOptions, finalId);
     }
     case FIELD_TYPES.TEXT:
     case FIELD_TYPES.LONG_TEXT:
@@ -131,14 +155,14 @@ const renderType = (layout, fieldOptions = {}) => {
     case FIELD_TYPES.LINK:
     case FIELD_TYPES.CURRENCY:
     case FIELD_TYPES.FLOAT: {
-      return textRenderer(layout, fieldOptions);
+      return textRenderer(layout, fieldOptions, finalId);
     }
     case FIELD_TYPES.CHOICE:
     case FIELD_TYPES.OBJECT: {
       if (layout.multiple && layout.checkbox) {
-        return checkboxRenderer(layout, fieldOptions);
+        return checkboxRenderer(layout, fieldOptions, finalId);
       }
-      return typeaheadRenderer(layout, fieldOptions);
+      return typeaheadRenderer(layout, fieldOptions, finalId);
     }
     case 'radio': {
       const renderRadio = ({ field: { value, onChange }, fieldState: { error } }) => {
@@ -147,7 +171,7 @@ const renderType = (layout, fieldOptions = {}) => {
           <RadioOptions
             items={options}
             isRequired={true}
-            id={id}
+            id={finalId}
             label={label}
             value={value}
             onChange={onChange}
@@ -168,51 +192,56 @@ const renderType = (layout, fieldOptions = {}) => {
  * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type }, fieldOptions) => {
+const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type }, fieldOptions, finalId) => {
   const inputAttrs = {
-    'data-src-field': name,
+    'data-src-field': finalId,
     readOnly: readOnly,
   };
 
   const isNumber = type === FIELD_TYPES.CURRENCY || type === FIELD_TYPES.INT || type === FIELD_TYPES.FLOAT;
   const prefix = readOnly ? '' : 'Enter';
 
-  const TextFieldWrapped = ({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
-    <>
-      <AnyFieldLabel
-        htmlFor={id || name}
-        error={!!error}
-        label={label}
-        required={!!required}
-        disabled={disabled}
-        iconText={iconHelperText}
-        fieldOptions={fieldOptions}
-        helperText={altHelperText}
-      />
-      <TextField sx={{ width: '100%' }}
-        inputProps={inputAttrs}
-        disabled={disabled}
-        type={isNumber ? 'number' : 'text'}
-        id={id || name}
-        error={!!error}
-        onChange={onChange}
-        onBlur={onBlur}
-        value={value}
-        multiline={isMultiLine}
-        minRows={isMultiLine ? 3 : 1}
-        placeholder={placeholder || `${prefix} ${label}`}
-        variant="outlined"
-      />
-      {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
-      <FormErrorMessage error={error} />
-    </>
-  );
+  const TextFieldWrapped = ({ field: { ref, value, onChange, onBlur }, fieldState: { error } }) => {
+    return (
+      <>
+        <AnyFieldLabel
+          htmlFor={finalId || name}
+          error={!!error}
+          label={label}
+          required={!!required}
+          disabled={disabled}
+          iconText={iconHelperText}
+          fieldOptions={fieldOptions}
+          helperText={altHelperText}
+        />
+        <TextField sx={{ width: '100%' }}
+          name={finalId || name}
+          inputProps={inputAttrs}
+          inputRef={ref}
+          disabled={disabled}
+          type={isNumber ? 'number' : 'text'}
+          id={finalId || name}
+          error={!!error}
+          onChange={onChange}
+          onBlur={onBlur}
+          value={value}
+          multiline={isMultiLine}
+          minRows={isMultiLine ? 3 : 1}
+          placeholder={placeholder || `${prefix} ${label}`}
+          variant="outlined"
+        />
+        {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
+        <FormErrorMessage error={error} />
+      </>
+    );
+  };
 
   TextFieldWrapped.propTypes = {
     field: PropTypes.shape({
       value: PropTypes.any,
       onChange: PropTypes.func,
-      onBlur: PropTypes.func
+      onBlur: PropTypes.func,
+      ref: PropTypes.any
     }),
     fieldState: PropTypes.shape({
       error: PropTypes.any
@@ -229,26 +258,28 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions) => {
-  const DateField = ({ field: { value, onChange }, fieldState: { error } }) => (
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions, finalId) => {
+  const DateField = ({ field: { value, onChange, ref }, fieldState: { error } }) => (
     <>
       <DatePicker
-        id={id}
-        name={name}
+        id={finalId}
+        name={finalId || name}
         disabled={disabled}
         value={value}
         onChange={onChange}
         disableFuture={disableFuture}
         renderInput={(params) => {
           // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
-          params.inputProps['data-src-field'] = name;
+          params.inputProps['data-src-field'] = finalId || name;
           params.inputProps.readOnly = readOnly;
+          params.name = finalId || name;
+          params.id = finalId || name;
           if (placeholder) {
             params.inputProps.placeholder = placeholder;
           }
           return (
             <>
-              <AnyFieldLabel htmlFor={id || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
+              <AnyFieldLabel htmlFor={finalId || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
               <TextField sx={{ width: '100%' }} {...params} />
             </>
           );
@@ -279,7 +310,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
  * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText }, fieldOptions) => {
+const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText, multiple }, fieldOptions, finalId) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
@@ -290,10 +321,11 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
     return (
       // We need to manually connect a few props here for react hook form
       <Typeahead
-        id={id}
-        name={name}
+        id={finalId}
+        name={finalId || name}
         {...dataAttrs}
         {...field}
+        multiple={multiple}
         sx={{ width: '100%' }}
         disabled={disabled}
         items={choices || []}
@@ -305,20 +337,33 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
         iconHelperText={iconHelperText}
         // These are props that are passed to the MUI TextField rendered by Typeahead
         textFieldProps={{
-          id,
-          name,
+          id: finalId || name,
+          name: finalId || name,
           placeholder: placeholder || `Select ${label}`,
-          error: !!error
+          error: !!error,
+          inputRef: field.ref,
         }}
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
-          let nextValue = newValue?.id;
-          // We need to set the value to null if it is empty string or undefined to correctly set 'unselected' state
-          // a value of 0 is valid
-          if (nextValue === '' || nextValue === undefined) {
-            nextValue = null;
+          // Need slightly different logic for multiple.
+          if (multiple) {
+            // The internal autocomplete component returns the ENTIRE object. So we map it consistently to just the id / value
+            const nextValue = newValue.map((v) => {
+              if (isObject(v)) {
+                return v.id || v.value;
+              }
+              return v;
+            });
+            onChange(nextValue);
+          } else {
+            let nextValue = newValue?.id || newValue?.value || newValue;
+            // We need to set the value to null if it is empty string or undefined to correctly set 'unselected' state
+            // a value of 0 is valid
+            if (nextValue === '' || nextValue === undefined) {
+              nextValue = null;
+            }
+            onChange(nextValue);
           }
-          onChange(nextValue);
         }}
         error={error}
       />
@@ -329,7 +374,8 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
     field: PropTypes.shape({
       id: PropTypes.string,
       value: PropTypes.any,
-      onChange: PropTypes.func
+      onChange: PropTypes.func,
+      ref: PropTypes.any
     }),
     fieldState: PropTypes.shape({
       error: PropTypes.any
@@ -346,25 +392,16 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
  * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI Checkbox component
  */
-const checkboxRenderer = (layout, fieldOptions) => {
+const checkboxRenderer = (layout, fieldOptions, finalId) => {
   const { label, disabled, choices = [], required, helperText, iconHelperText, altHelperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
-    const handleCheck = (checkedId) => {
-      const ids = field.value;
-      // If the id is in the array, remove it, otherwise add it
-      const newIds = ids?.includes(checkedId)
-        ? ids?.filter((id) => id.toString() !== checkedId.toString())
-        : [...(ids ?? []), checkedId];
-      return newIds;
-    };
-
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
     return (
       <>
         <FormControl
-          data-src-field={field.id}
+          data-src-field={finalId || field.id}
           error={!!error}
           disabled={disabled}
           component="fieldset"
@@ -372,7 +409,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
         >
           <AnyFieldLabel
             asFormInput={true}
-            htmlFor={field.id || field.name}
+            htmlFor={finalId || field.name}
             error={!!error}
             label={label}
             required={!!required}
@@ -391,7 +428,7 @@ const checkboxRenderer = (layout, fieldOptions) => {
                   onBlur={field.onBlur}
                   checked={field?.value?.includes(item.id)}
                   onChange={(e) => {
-                    field.onChange(handleCheck(item.id));
+                    field.onChange(handleMultiSelectChange(field, item.id));
                   }}
                 />}
                 label={item.label}

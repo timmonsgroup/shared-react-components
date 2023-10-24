@@ -52,6 +52,8 @@ const ClusterField = ({ control, field, options, ...props }) => {
     clusterColumnCount = options.clusterColumnCount || 1;
   }
 
+  const clusterName = field.render.name;
+
   const rows = createRowFields(subFields, clusterColumnCount, inline);
 
   // Create an object with the default values set for each field in the cluster
@@ -95,7 +97,9 @@ const ClusterField = ({ control, field, options, ...props }) => {
   const addClick = (layout, initValues, fields) => {
     // append should NOT be called with an empty object
     // If it is, there is a chance for zombie data.
-    append(initValues);
+    // Focus the first field in the newly appended cluster. This seems to only work with textfields at the moment.
+    // MUI Datepicker and Selects do not seem to work with this.
+    append(initValues, {focusName: `${layout.name}.${fields.length}.${subFields[1].id}`});
 
     if (layout?.name) {
       if (fields?.length === 0) {
@@ -135,6 +139,7 @@ const ClusterField = ({ control, field, options, ...props }) => {
       </Grid>
       <Grid
         data-what="all the clusters"
+        data-cluster={`${clusterName}-container`}
         spacing={2}
         xs={12}
         sx={{ paddingTop: '0px' }}
@@ -151,17 +156,17 @@ const ClusterField = ({ control, field, options, ...props }) => {
 
                 const removeButton = removeButtonRender({ layout, remove, trigger, index, inlineAllowed, onClick: () => removeClick(layout, index, fields) });
 
-                return <WrapperType key={cluster.id} rows={rows} rowProps={rowProps} removeButton={removeButton} />;
+                return <WrapperType clusterName={clusterName} clusterId={cluster.id} key={cluster.id} rows={rows} rowProps={rowProps} removeButton={removeButton} />;
               })
             }
           </>
         )}
         {fields.length === 0 && (
-          <Typography variant="clusterEmptyText">{layout?.emptyText || 'You have not added any items.'}</Typography>
+          <Typography data-cluster={`${clusterName}-empty-text`} variant="clusterEmptyText">{layout?.emptyText || 'You have not added any items.'}</Typography>
         )
         }
       </Grid>
-      <Grid xs={12} sx={{ paddingTop: '0px' }}>
+      <Grid xs={12} sx={{ paddingTop: '0px' }} data-cluster={`${clusterName}-add-area`}>
         <Divider sx={{ width: '100%', marginBottom: '8px' }} />
         {addButtonRender({ layout, append, trigger, initValues, onClick: () => addClick(layout, initValues, fields) })}
       </Grid>
@@ -172,7 +177,8 @@ const ClusterField = ({ control, field, options, ...props }) => {
 
 /**
  * @typedef {Object} ClusterRowWrapperProps
- * @property {string} clusterId - The id of the cluster
+ * @property {string} clusterName - The name of the cluster (i.e. the name of the field)
+ * @property {string} clusterId - The unique id of the cluster created by react-hook-form
  * @property {Array} rows - An array of row objects
  * @property {Object} rowProps - The props to pass to the ClusterRow component
  * @property {React.ReactElement} removeButton - The remove button to render
@@ -185,22 +191,32 @@ const ClusterField = ({ control, field, options, ...props }) => {
  * @returns {React.ReactElement} - The rendered component
  */
 
-const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
+const InlineWrapper = ({ clusterName, clusterId, rows, rowProps, removeButton }) => {
+  const theme = useTheme();
+  const { clusterRowRemove } = theme;
+  const sx = clusterRowRemove || {
+    paddingTop:2,
+    paddingBottom:2,
+    paddingLeft:2,
+    paddingRight:0
+  };
+
   return (
     <>
       {
         rows.map((rowItem, rIndex) => {
           return (
-            <Grid container key={`${rIndex}-${clusterId}`}>
-              <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }}>
+            <Grid container key={`${rIndex}-${clusterId}`} data-cluster={`${clusterName}-wrapper`}>
+              <Grid container data-cluster={`${clusterName}-row-wrapper`} rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }}>
                 <ClusterRow
                   id={clusterId}
+                  clusterName={clusterName}
                   row={rowItem}
                   {...rowProps}
                 />
               </Grid>
-              <Grid container rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }} style={{ maxWidth: '100px' }}>
-                <Grid>
+              <Grid container data-cluster={`${clusterName}-row-remove-wrapper`} rowSpacing={1} columnSpacing={2} xs sx={{ paddingLeft: '0px', paddingRight: '0px' }} style={{ maxWidth: '100px' }}>
+                <Grid sx={sx} data-cluster-remove={`${clusterName}-remove`}>
                   {removeButton}
                 </Grid>
               </Grid>
@@ -214,6 +230,7 @@ const InlineWrapper = ({ clusterId, rows, rowProps, removeButton }) => {
 
 const WRAPPER_PROPS = {
   clusterId: PropTypes.string,
+  clusterName: PropTypes.string,
   rows: PropTypes.array,
   rowProps: PropTypes.object,
   removeButton: PropTypes.node,
@@ -227,20 +244,21 @@ InlineWrapper.propTypes = WRAPPER_PROPS;
  * @param {ClusterRowWrapperProps}
  * @returns {React.ReactElement} - The rendered component
  */
-const Wrapper = ({ clusterId, rows, rowProps, removeButton }) => {
+const Wrapper = ({ clusterId, clusterName, rows, rowProps, removeButton }) => {
   return (
-    <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={clusterId}>
+    <Grid container spacing={2} xs={12} sx={{ padding: '0px' }} key={clusterId} data-cluster={`${clusterName}-wrapper`}>
       {rows.map((rowItem, rIndex) => {
         return (
           <ClusterRow
             id={clusterId}
+            clusterName={clusterName}
             row={rowItem}
             key={`${clusterId}-row-${rIndex}`}
             {...rowProps}
           />
         );
       })}
-      <Grid xs={12}>
+      <Grid data-cluster={`${clusterName}-row-remove-wrapper`} xs={12}>
         {removeButton}
       </Grid>
     </Grid>
@@ -272,6 +290,7 @@ ClusterField.propTypes = {
  * @function ClusterRow
  * @param {object} props - props object
  * @param {string} props.id - id of the cluster
+ * @param {string} props.clusterName - name of the cluster
  * @param {number} props.index - index of the cluster
  * @param {object} props.row - row object
  * @param {object} props.row.fields - array of fields
@@ -284,12 +303,21 @@ ClusterField.propTypes = {
  * @param {object} [props.otherProps] - otherProps object
  * @returns {React.ReactElement} - React element
  */
-const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) => {
+const ClusterRow = ({ id, clusterName, layout, row, control, index, options, otherProps }) => {
   const { fields, solitary, size, maxColumns } = row;
   let colSize = 12 / fields.length;
   if (solitary && !isNaN(size)) {
     colSize = parseInt(size);
   }
+
+  const theme = useTheme();
+  const { clusterRow } = theme;
+  const sx = clusterRow || {
+    paddingTop:2,
+    paddingBottom:2,
+    paddingLeft:1,
+    paddingRight:0
+  };
 
   return (
     <>
@@ -298,10 +326,12 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
         // At sm size, we do not allow more than 2 columns
         // At md size and up, we allow you to specify the number of columns
         return (
-          <Grid xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
+          <Grid data-cluster={`${clusterName}-row`} data-cluster-row={`${clusterName}-${field.render?.name}`} sx={sx} xs={Math.max(colSize, 12)} sm={Math.max(colSize, 6)} md={colSize} key={`${id}.${field.render?.name}`}>
             <AnyField
               isNested={true}
-              nestedName={`${layout?.name}.${index}.${field.render?.name}`}
+              data-cluster={`${clusterName}-field`}
+              data-cluster-field={`${clusterName}-${field.render?.name}`}
+              nestedName={`${clusterName}.${index}.${field.render?.name}`}
               control={control}
               layout={field.render}
               options={options} {...otherProps}
@@ -316,6 +346,7 @@ const ClusterRow = ({ id, layout, row, control, index, options, otherProps }) =>
 ClusterRow.propTypes = {
   id: PropTypes.string,
   index: PropTypes.number,
+  clusterName: PropTypes.string,
   row: PropTypes.shape({
     fields: PropTypes.array,
     solitary: PropTypes.bool,
@@ -352,7 +383,7 @@ const renderDefaultAddButton = ({ layout, onClick }) => {
   const { addLabel } = layout || {};
 
   return (
-    <Button variant="clusterAdd" onClick={onClick}>{addLabel || '+ Add Row'}</Button>
+    <Button data-cluster-add={`${layout?.name}-add-button`} variant="clusterAdd" onClick={onClick}>{addLabel || '+ Add Row'}</Button>
   );
 };
 
@@ -406,7 +437,7 @@ const renderDefaultRemoveButton = ({ layout, onClick, inlineAllowed }) => {
     <>
       {!canInline && <Divider />}
       {canInline && <AnyFieldLabel sx={{ opacity: 0 }} label="Remove" htmlFor="" />}
-      <Button {...buttonProps}>{renderLabel}</Button>
+      <Button data-cluster-remove={layout?.name} {...buttonProps}>{renderLabel}</Button>
     </>
   );
 };

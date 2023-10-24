@@ -8,13 +8,13 @@ import { Button as MUIButton} from '@mui/material';
  * All props are passed to the base button
  * @function
  * @param {object} props
- * @param {string} props.backgroundColor - the background color of the button
- * @param {string} props.variant - the variant of the button
- * @param {string} props.size - the size of the button
- * @param {string} props.color - the color of the button
- * @param {string} props.label - the label of the button if provided children will be ignored
- * @param {string} props.children - the children of the button if label is not provided
- * @param {function} props.onClick - the onClick handler of the button
+ * @param {string} [props.backgroundColor] - the background color of the button
+ * @param {string} [props.variant] - the variant of the button
+ * @param {string} [props.size] - the size of the button
+ * @param {string} [props.color] - the color of the button
+ * @param {string} [props.label] - the label of the button if provided children will be ignored
+ * @param {function} [props.onClick] - the onClick handler of the button
+ * @param {string} [props.children] - the children of the button if label is not provided
  * @returns {React.ReactElement}
  * @example
  * <Button variant="contained" label="Click me" />

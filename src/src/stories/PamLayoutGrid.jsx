@@ -12,7 +12,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Button from './Button';
 
-import { processLayout, processGenericLayout } from '../helpers/helpers.js';
+import { processLayout, processGenericLayout, convertToLinkFormat } from '../helpers/helpers.js';
 
 import { convertLayoutColumnToMuiColumn } from '../helpers/gridHelpers.js';
 import RenderExpandableCell from './RenderExpandableCell';
@@ -26,33 +26,6 @@ const defaultSX = {
   minHeight: '500px',
   minWidth: '700px',
   flexGrow: 1,
-};
-
-const addObjectReferenceRendering = (muiGridColumn, { render, path }) => {
-  let { linkFormat } = render;
-
-  if (linkFormat) {
-    muiGridColumn.renderCell = (params) => {
-      let path_parts = path.split('.');
-
-      let value = params.row;
-
-      for (const element of path_parts) {
-        value = value != null ? value[element] : null;
-      }
-
-      if (params && value) {
-        let link = linkFormat;
-        link = link
-          .replace('{id}', value.id)
-          .replace('${streamID}', value.streamID)
-          .replace('${name}', value.name);
-
-        return <Link to={`${link}`}>{params.value.name || 'No Name'}</Link>;
-      }
-      return muiGridColumn.nullValue;
-    };
-  }
 };
 
 /**
@@ -181,6 +154,9 @@ const addActionButtonRendering = (muiGridColumn, actionData) => {
   const actions = actionData?.actionList || [];
   actions.sort((a, b) => a.order - b.order);
 
+  // Disable export
+  muiGridColumn.disableExport = true;
+
   // Return the action wrapper component
   // This allows us to use hooks inside the component
   muiGridColumn.renderCell = (params) => {
@@ -200,10 +176,29 @@ const addActionButtonRendering = (muiGridColumn, actionData) => {
  * @param {object} muiGridColumn - The column used by the MUIGrid component
  */
 const addExpandableRendering = (muiGridColumn) => {
-  const type = muiGridColumn.source.type;
   muiGridColumn.renderCell = (params) => {
     return <RenderExpandableCell muiGridColumn={muiGridColumn} {...params} />;
   };
+};
+
+const addNonObjectLinkRendering = (muiGridColumn) => {
+  const { render } = muiGridColumn.source || {};
+  const { linkFormat } = render || {};
+
+  if (linkFormat) {
+    muiGridColumn.renderCell = (params) => {
+      const { value, row } = params || {};
+      if (value) {
+        const link = convertToLinkFormat(linkFormat, row);
+        try {
+          return <Link to={`${link}`}>{value || 'No Name'}</Link>;
+        } catch (err) {
+          return params?.value || 'N/A';
+        }
+      }
+      return params?.value || 'N/A';
+    };
+  }
 };
 
 const addObjectReferenceLinkRendering = (muiGridColumn) => {
@@ -237,6 +232,16 @@ const addObjectReferenceLinkRendering = (muiGridColumn) => {
 const addRendering = (column) => {
   const { source } = column || {};
   switch (source.type) {
+    case 0:
+    case 1: {
+      //Check for linkFormat
+      if (source.render?.linkFormat) {
+        addNonObjectLinkRendering(column);
+      } else {
+        addExpandableRendering(column);
+      }
+      break;
+    }
     case 10: {
       //Check for linkFormat
       if (source.render?.linkFormat) {
@@ -270,8 +275,7 @@ const addRendering = (column) => {
  * @returns {React.ReactElement}
  */
 const ActionWrapper = (props) => {
-  const { actionsComponent, themeGroup, useTypeVariant } =
-    useContext(gridContext);
+  const { actionsComponent, themeGroup, useTypeVariant } = useContext(gridContext);
   // Default to the GridActions component if no custom component is passed in
   const Actions = actionsComponent || GridActions;
   return (
@@ -374,14 +378,17 @@ GridLink.propTypes = {
  * @param {Object} props - The props for the component
  * @param {Object} props.data - The data for the grid
  * @param {Object} props.layout - The layout for the grid
- * @param {String} props.initialSortColumn - The initial sort column for the grid
- * @param {String} props.initialSortDirection - The initial sort direction for the grid
- * @param {Boolean} props.showToolbar - Whether to show the toolbar
- * @param {Array} props.actions - The actions column for the grid
- * @param {Object} props.themeGroup - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
- * @param {Object} props.actionsComponent - The component to use for the actions column
- * @param {Object} props.linkComponent - The component to use for the link column
- * @param {Boolean} props.useTypeVariant - Whether to use the type variant for the grid
+ * @param {String} [props.initialSortColumn] - The initial sort column for the grid
+ * @param {String} [props.initialSortDirection] - The initial sort direction for the grid
+ * @param {Boolean} [props.showToolbar] - Whether to show the toolbar
+ * @param {Object} [props.extraGridProps] - Any extra props to pass to the grid. Ideal for tinkering with toolbar options
+ * @param {Array} [props.actions] - The actions column for the grid
+ * @param {Object} [props.themeGroup] - The theme group for the grid use this to override the default theme group found in "pamGrid" of muiTheme.js
+ * @param {Object} [props.actionsComponent] - The component to use for the actions column
+ * @param {Object} [props.linkComponent] - The component to use for the link column
+ * @param {Boolean} [props.useTypeVariant] - Whether to use the type variant for the grid
+ * @param {Number} [props.initialRowCount] - The initial row count for the grid
+ * @param {Array} [props.rowsPerPageOptions] - The rows per page options for the grid
  */
 // eslint-disable-next-line
 const PamLayoutGrid = ({
@@ -390,11 +397,14 @@ const PamLayoutGrid = ({
   initialSortColumn,
   initialSortDirection,
   showToolbar,
+  extraGridProps,
   actions,
   themeGroup,
   linkComponent,
   actionsComponent,
   useTypeVariant,
+  rowsPerPageOptions,
+  initialRowCount,
   ...props
 }) => {
   // memo of shared values
@@ -408,7 +418,9 @@ const PamLayoutGrid = ({
   const { pamGrid } = theme;
 
   // If a theme group was passed in, use that instead of the default
-  const theming = themeGroup || pamGrid;
+  // const theming = themeGroup || pamGrid;
+  let theming = themeGroup ? {...pamGrid, ...themeGroup} : {...pamGrid};
+
   // We add several safeguard values to the theme group, they will be overriden if they are defined in the theme group
   // Not setting these values will cause the grid to render in less than ideal ways
   const sxProps = {
@@ -470,7 +482,6 @@ const PamLayoutGrid = ({
       // Four buttons appear on the MUI grid by default, we want to hide them
       disableColumnSelector: true,
       disableDensitySelector: true,
-      disableExportSelector: true,
       componentsProps: {
         toolbar: {
           // Quick filter is a search box that appears in the toolbar
@@ -484,23 +495,12 @@ const PamLayoutGrid = ({
     }
     : {};
 
+  const rPPOpts = rowsPerPageOptions || [10, 25, 50, 100];
   const initialState = {
     pagination: {
-      pageSize: 10,
+      pageSize: initialRowCount || rPPOpts[0] || 10,
     },
   };
-
-  // If we have an initial sort column, then we set it in the initial state
-  if (initialSortColumn) {
-    initialState.sorting = {
-      sortModel: [
-        {
-          field: initialSortColumn,
-          sort: initialSortDirection === 'desc' ? 'desc' : 'asc',
-        },
-      ],
-    };
-  }
 
   // This is the start of our new generic layout processing
   if (processedLayout.data) {
@@ -527,6 +527,19 @@ const PamLayoutGrid = ({
         };
       }
     }
+  }
+
+  // Changed on 9.1.2023 to prefer the initialSortColumn and initialSortDirection props instead of the layout if they are set
+  // If we have an initial sort column, then we set it in the initial state
+  if (initialSortColumn) {
+    initialState.sorting = {
+      sortModel: [
+        {
+          field: initialSortColumn,
+          sort: initialSortDirection === 'desc' ? 'desc' : 'asc',
+        },
+      ],
+    };
   }
 
   // This is the handler for the filter model change event
@@ -580,11 +593,12 @@ const PamLayoutGrid = ({
         columns={renderColumns}
         sx={sxProps}
         initialState={initialState}
-        rowsPerPageOptions={props.rowsPerPageOptions || [10, 25, 50, 100]}
+        rowsPerPageOptions={rPPOpts}
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'row-even' : 'row-odd'
         }
         editMode="row"
+        {...extraGridProps}
       />
     </gridContext.Provider>
   );
@@ -593,10 +607,12 @@ const PamLayoutGrid = ({
 PamLayoutGrid.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
+  initialRowCount: PropTypes.number,
   layout: PropTypes.object.isRequired,
   initialSortColumn: PropTypes.string,
   initialSortDirection: PropTypes.oneOf(['asc', 'desc']),
   showToolbar: PropTypes.bool,
+  extraGridProps: PropTypes.object,
   useTypeVariant: PropTypes.bool,
   themeGroup: PropTypes.object,
   linkComponent: PropTypes.elementType,

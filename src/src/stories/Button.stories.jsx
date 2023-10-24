@@ -11,30 +11,30 @@ export default {
   },
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Button {...args} />;
-
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  color: 'primary',
-  label: 'Primary',
+export const Primary = {
+  args: {
+    color: 'primary',
+    label: 'Primary',
+  },
 };
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: 'Seconded',
-  color: 'secondary',
+export const Secondary = {
+  args: {
+    label: 'Seconded',
+    color: 'secondary',
+  },
 };
 
-export const Large = Template.bind({});
-Large.args = {
-  size: 'large',
-  label: 'Big Thing',
+export const Large = {
+  args: {
+    size: 'large',
+    label: 'Big Thing',
+  },
 };
 
-export const Small = Template.bind({});
-Small.args = {
-  size: 'small',
-  label: 'Button',
+export const Small = {
+  args: {
+    size: 'small',
+    label: 'Button',
+  },
 };
