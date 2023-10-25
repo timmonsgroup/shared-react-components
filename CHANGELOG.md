@@ -1,4 +1,190 @@
 # Change Log #
+## Release 0.9.5 - 10/24/2023 ##
+Introducing ConfigView. Similar to our other configurable blackboxes this allows you quickly assemble a Data view page with a
+layout object.
+
+### New Functionality ###
+#### Constants ####
+- `STATIC_TYPES` constants
+  - Structure:
+    ```javascript
+      export const STATIC_TYPES = Object.freeze({
+        HEADER: 'header',
+        TEXT: 'text',
+        DIVIDER: 'divider',
+        COMPONENT: 'component',
+        IMAGE: 'image',
+      });
+    ```
+  - Usage in a ConfigView layout object:
+    ```javascript
+      import { STATIC_TYPES } from '@timmons-group/shared-react-components/constants';
+      {
+        type: STATIC_TYPES.HEADER,
+        text: 'This is a header',
+      },
+    ```
+#### Helpers ####
+* `dateStringNormalizer` - normalize a UNIX date stamp to prevent day off by one
+  * Found in the `helpers/helpers.js`
+  * Accepts one argument: `dateString`
+    * `dateString` - The string to normalize
+  * Usage:
+    ```javascript
+    import { dateStringNormalizer } from '@timmons-group/shared-react-components/helpers';
+    const normalizedDate = dateStringNormalizer('2021-10-24T04:00:00.000Z');
+    // normalizedDate = 2021-10-24T00:00:00.000Z
+    ```
+* `formatPhoneNumber` - convert a string into a phone number format
+  * Found in the `helpers/helpers.js`
+  * Accepts one argument: `phoneNumberString`
+    * `phoneNumberString` - The string to convert
+  * Usage:
+    ```javascript
+    import { formatPhoneNumber } from '@timmons-group/shared-react-components/helpers';
+    const formattedNumber = formatPhoneNumber('1234567890');
+    // formattedNumber = (123) 456-7890
+    ```
+* `convertToLinkFormat` - used to convert a string into a useable link
+  * Found in the `helpers/helpers.js`
+  * Accepts two arguments: `linkFormat` and `dataNode`
+    * `linkFormat` - The string to convert
+      * Any property in the `dataNode` can be used in the string by wrapping it in curly braces
+    * `dataNode` - The data to use to hydrate the string
+  * Usage:
+    ```javascript
+    import { convertToLinkFormat } from '@timmons-group/shared-react-components/helpers';
+    const link = convertToLinkFormat('/admin/streams/{streamID}/edit/{id}', {id: 1, streamID: 2, name: 'Test'});
+    // link = /admin/streams/2/edit/1
+    ```
+* `parseViewLayout` - used to parse a layout object and data into a format that can be consumed by the `ConfigView` component
+  * Found in the `helpers/viewLayout.js`
+  * Accepts two arguments: `layout` and `data`
+    * `layout` - The layout object to parse
+      * Each layout object needs a `type` property.
+          * The standard FIELD types are supported along with several "static" ones (see above for the constants)
+      * If the layout object needs to use a custom component the `type` must be 'component' (`STATIC_TYPES.COMPONENT`) AND it needs a `component` property.
+        * This is a string that is the name of the component
+        * This component needs to be passed into the `ConfigView` component via the `dynamicComponents` prop
+        * Example:
+          ```json
+          {
+            "type": 'component',
+            "component": "MyCustomComponent",
+          }
+          ```
+          ```jsx
+          import { ConfigView } from '@timmons-group/shared-react-components';
+          import MyCustomComponent from './MyCustomComponent';
+          const dynamicComponents = {
+            MyCustomComponent,
+          };
+          <ConfigView sections={theData} dynamicComponents={dynamicComponents} />
+          ```
+      * If the layout object needs to use data from the `data` object it needs a `path` property
+        * most likely ignored by static types
+      * If the layout object needs a label it needs a `label` property
+        * most likely ignored by static types
+      * `className` property is a string that will be added to the className of the component
+        * most likely ignored by static types
+      * Example:
+        ```json
+        {
+          "type": FIELD_TYPES.TEXT_FIELD,
+          "path": "myData",
+          "label": "My Data",
+          "className": "my-class",
+        }
+        ```
+    * `data` - The data to use to hydrate the layout
+      * Example:
+        ```json
+        {
+          "myData": "This is my data",
+        }
+        ```
+  * Usage:
+    ```javascript
+    import { parseViewLayout } from '@timmons-group/shared-react-components/helpers';
+    const sections = parseViewLayout(layout, data);
+    ```
+#### Components ####
+* `ConfigView`
+  * ```jsx
+       <ConfigView sections={theData} dynamicComponents={dynamicComponents} />
+    ```
+  * Accepts four props: `sections`, `dynamicComponents`, `isLoading`, and `options`
+    * sections - An array of all the sections with any data. Each section is an object consisting of three properties
+      * The sections should be created by the parseViewLayout helper found in the `viewLayout` module
+        * ```javascript
+            import { parseViewLayout } from '@timmons-group/shared-react-components/helpers';
+            const sections = parseViewLayout(layout, data);
+          ```
+      * `name` - Name for the section
+      * `areas` - An array of arrays. Each nested array is a row of components to render
+      * `columns` - Boolean. If true nested arrays will be rendered as a column instead of row
+
+    * dynamicComponents - An object of components that can be used in the layout object
+    * isLoading - Boolean. If true a loading indicator will be rendered
+    * options - Object
+  * Advanced Dynamic Component Example with useMemo:
+      ```jsx
+      import { ConfigView } from '@timmons-group/shared-react-components';
+      import ViewMap from './ViewMap';
+      import { LAND_DETAIL } from '../../configs/mapConfigs';
+      const LandContent = ({ land, isLoading, layout }) => {
+        const theSections = parseViewLayout(layout, land)
+        const dynamicComponents = useMemo(() => {
+          return {
+            'MyCustomComponent': () => {
+              return (
+                <ViewMap data={land} config={LAND_DETAIL} />
+              );
+            },
+          }
+        }, [land?.id]);
+        return (
+          <ConfigView sections={theSections} dynamicComponents={dynamicComponents} isLoading={isLoading} />
+        );
+      };
+      ```
+#### Assorted ####
+- `Modal` Disable props for disableOk and disableCancel
+- `Typeahead` - Propertly enable multiselect. Conditional logic in Anyfield to handle it.
+- `PamLayoutGrid`
+  - Allow for multi properties when constructing Grid links
+  - theme cascading greatly improved
+  - Much more link rendering flexibility via implementation of `convertToLinkFormat` helper
+- `useGet` can now pass a `resultMapper` function via options
+  - Example:
+    ```javascript
+    const fetchUrl = `/api/layout/get?objectType=invoice&layoutKey=list`;
+    const [layout, layoutLoading] = useGet(fetchUrl,{}, {resultMapper: (result) => {
+      // loop through the sections and remove the column with the path of 'encumbranceNumber'
+      result.sections.forEach((section) => {
+        section.layout = section.layout.filter((layout) => {
+          return layout.path !== 'encumbranceNumber';
+        });
+      });
+      return result;
+    }});
+    ```
+- `ClusterField` - Add data attributes to  rendered elements to allow for fine tuning custom form functionality
+- `Subheader` - allow right render props to be passed in
+
+### Fixes ###
+- Fix an error on PamLayoutGrid if defining rowsPerPageOptions array that does not contain "10" as an option.
+- Fix jsdoc optionals in more places
+- Allow initialRowCount to be passed in to PamLayoutGrid.
+- Allow Typeahead to use label OR name in hydrating choices. Add a failsafe on layout model.
+- Null check if the incoming model.data is null in useFormLayout’s parseField function
+- All (we hope) the components should now have properly set optional props so this library can be better consumed with TS projects
+- FilterOperater on Grid when using type of Object column
+- Multiselect on Typeahead now works _fancy that_
+- Day off by one when using certain date formats on the Grid
+
+**Full Changelog**: https://github.com/timmonsgroup/shared-react-components/compare/v0.9.2...v0.9.5
+
 ## Release 0.8.0 - 4/12/2023 ##
 ### New Functionality ###
 #### Components ####
