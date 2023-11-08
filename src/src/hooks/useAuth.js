@@ -200,8 +200,7 @@ const useProvideAuth = (config, whitelist, options) => {
       }
     } else {
       // If the config is not valid, we will set the state to be error
-      console.warn('useProvideAuth: config is invalid');
-      //dispatch({ type: ACTIONS.SET_ERROR, errorMessage: 'Invalid config' });
+      // Or we are starting up and dont have a config
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initInfo, config]);
@@ -877,7 +876,7 @@ const getBootTokenFromSession = async () => {
     let session = window.sessionStorage.getItem('bootToken');
 
     if (session) {
-      window.sessionStorage.removeItem('bootToken');
+      //window.sessionStorage.removeItem('bootToken');
       return session;
     }
   } catch (ex) { }
