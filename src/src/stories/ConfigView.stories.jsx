@@ -2,7 +2,7 @@ import React from 'react';
 import { ConfigView } from './ConfigView';
 import { HashRouter as Router } from 'react-router-dom';
 import { parseViewLayout } from '../helpers/viewLayout';
-import { VIEW_PRESET, ViewLayoutData} from '../helpers/story-helpers/ViewLayoutPreset';
+import { VIEW_PRESET, ViewLayoutData, BIG_VIEW_PRESET, BigViewLayoutData} from '../helpers/story-helpers/ViewLayoutPreset';
 
 
 const meta = {
@@ -23,5 +23,13 @@ export const BasicView = {
   args: {
     layout: VIEW_PRESET,
     data: ViewLayoutData
+  },
+};
+
+export const BigView = {
+  render,
+  args: {
+    layout: BIG_VIEW_PRESET,
+    data: BigViewLayoutData
   },
 };
