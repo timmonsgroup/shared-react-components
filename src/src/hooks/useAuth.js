@@ -561,6 +561,7 @@ const useProvideAuth = (config, whitelist, options) => {
     try {
       axios.post(url, refreshToken, { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(res => {
         parseTokenAndUpdateState(res.data.token, res.data.user);
+        setBootTokenInSession(res.data.token);
       }
       ).catch(error => {
         if (error.name !== 'CanceledError') {
@@ -623,7 +624,7 @@ const useProvideAuth = (config, whitelist, options) => {
    */
   const getPermissions = async (bearerToken) => {
     // We will; call to the /api/user/echo with our bearer token in order to get a response of the current ACLs
-    let url = `/api/user/permissions`;
+    let url = config?.endpoints?.permissions || `/api/user/permissions`;
     bearerToken = bearerToken || authState.bearerToken;
     let response = await fetch(url, {
       method: 'GET',
@@ -882,6 +883,16 @@ const getBootTokenFromSession = async () => {
   } catch (ex) { }
   return null;
 };
+
+/**
+ * Set the boot token info in the session, when we refresh we need to keep track of our tokens in the session storage. This makes page loads faster as we dont have to wait for the api to respond
+ * @function
+ * @param {String} bootToken
+ */
+const setBootTokenInSession = (bootToken) => {
+  window.sessionStorage.setItem('bootToken', bootToken);
+}
+
 
 /**
  * This function will attempt to get the bootUser from session storage
