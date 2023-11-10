@@ -235,7 +235,7 @@ const useProvideAuth = (config, whitelist, options) => {
       const nextInit = {
         refreshToken: await getRefreshTokenFromSession(),
         subject: await getSubjectFromCookie(),
-        bootToken: await getBootTokenFromSession(),
+        bootToken: config.useSession ? await getBootTokenFromSession() : await getBootTokenFromLocalStorage(),
         bootUser: await getBootUserFromSession(),
       };
       setInitInfo(nextInit);
@@ -561,7 +561,8 @@ const useProvideAuth = (config, whitelist, options) => {
     try {
       axios.post(url, refreshToken, { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(res => {
         parseTokenAndUpdateState(res.data.token, res.data.user);
-        setBootTokenInSession(res.data.token);
+        if(config.useSession) setBootTokenInSession(res.data.token);
+        else setBootTokenInLocalStorage(res.data.token);
       }
       ).catch(error => {
         if (error.name !== 'CanceledError') {
@@ -885,12 +886,41 @@ const getBootTokenFromSession = async () => {
 };
 
 /**
+ * This function will attempt to get the boot token from session storage
+ * When we authenticate, if we are given a refresh token, we will store it in session storage
+ * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
+ * @function
+ * @async
+ * @returns {String} the boot token
+ */
+const getBootTokenFromLocalStorage = async () => {
+  try {
+    let session = window.localStorage.getItem('bootToken');
+
+    if (session) {
+      //window.sessionStorage.removeItem('bootToken');
+      return session;
+    }
+  } catch (ex) { }
+  return null;
+};
+
+/**
  * Set the boot token info in the session, when we refresh we need to keep track of our tokens in the session storage. This makes page loads faster as we dont have to wait for the api to respond
  * @function
  * @param {String} bootToken
  */
 const setBootTokenInSession = (bootToken) => {
   window.sessionStorage.setItem('bootToken', bootToken);
+}
+
+/**
+ * Set the boot token info in the local storage, when we refresh we need to keep track of our tokens in the session storage. This makes page loads faster as we dont have to wait for the api to respond
+ * @function
+ * @param {String} bootToken
+ */
+const setBootTokenInLocalStorage = (bootToken) => {
+  window.localStorage.setItem('bootToken', bootToken);
 }
 
 
