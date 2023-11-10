@@ -1,4 +1,10 @@
 # Change Log #
+## Release 0.9.6 - 11/09/2023 ##
+Small release to fix a bug in the `viewLayout` hook.
+
+### Fixes ###
+- Fix a bug in the `viewLayout` hook's `getConditionalLoadout` that was causing an error if a condition's `when` id's data object was null or undefined. Don't call `.toString()` on null or undefined data objects ya big ninny.
+
 ## Release 0.9.5 - 10/24/2023 ##
 Introducing ConfigView. Similar to our other configurable blackboxes this allows you quickly assemble a Data view page with a
 layout object.

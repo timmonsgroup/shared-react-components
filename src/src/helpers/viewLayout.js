@@ -352,15 +352,17 @@ export function getViewFieldValue(inData) {
  */
 export const getConditionalLoadout = (field, data) => {
   const { conditions } = field || {};
-  let props = {}
+  let props = {};
   if (conditions?.length) {
     conditions.forEach((condition) => {
       const { when: triggerId, is: value, isValid, then: loadOut } = condition;
       let triggerData = data[triggerId];
+
       if (!isEmpty(triggerData)) {
         triggerData = getViewFieldValue(triggerData);
       }
-      if (isValid || triggerData.toString() === value.toString()) {
+
+      if (isValid || triggerData?.toString() === value?.toString()) {
         props = { ...props, ...loadOut };
       }
     });
