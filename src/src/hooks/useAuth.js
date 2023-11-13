@@ -355,8 +355,8 @@ const useProvideAuth = (config, whitelist, options) => {
   * @function
   * @async
   */
-  const checkIfStale = async () => {
-    if (authState.staleCheckState === STALE_CHECK_STATES.STALE_CHECK_REQUESTED) {
+  const checkIfStale = async (override_check) => {
+    if (authState.staleCheckState === STALE_CHECK_STATES.STALE_CHECK_REQUESTED || override_check) {
       dispatch({ type: ACTIONS.SET_STALE_CHECK_STATE, staleCheckState: STALE_CHECK_STATES.STALE_CHECK_IN_PROGRESS });
       const timeToExpired = getTimeToExpired();
 
@@ -450,7 +450,8 @@ const useProvideAuth = (config, whitelist, options) => {
     window.isExpired = isExpired;
 
     //Immediatly check if the token is stale
-    checkIfStale();
+    console.log("Checking if the token is stale")
+    checkIfStale(true);
     scheduleStaleCheck(_staleCheckSeconds);
 
 
