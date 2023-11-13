@@ -450,7 +450,8 @@ const useProvideAuth = (config, whitelist, options) => {
     window.isExpired = isExpired;
 
     //Immediatly check if the token is stale
-    scheduleStaleCheck(0);
+    checkIfStale();
+    scheduleStaleCheck(_staleCheckSeconds);
 
 
     //TODO: Check if a token is expired
