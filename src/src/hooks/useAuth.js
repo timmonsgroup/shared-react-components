@@ -83,6 +83,7 @@ const initialState = {
     id: '',
     raw: {},
   },
+  lastRequestTime: new Date(),
 };
 
 /**
@@ -450,9 +451,7 @@ const useProvideAuth = (config, whitelist, options) => {
     window.isExpired = isExpired;
 
     //Immediatly check if the token is stale
-    console.log("Checking if the token is stale")
-    checkIfStale(true);
-    scheduleStaleCheck(_staleCheckSeconds);
+    scheduleStaleCheck(0.25);
 
 
     //TODO: Check if a token is expired
