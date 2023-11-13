@@ -235,7 +235,7 @@ const useProvideAuth = (config, whitelist, options) => {
       const nextInit = {
         refreshToken: await getRefreshTokenFromSession(),
         subject: await getSubjectFromCookie(),
-        bootToken: config.useSession ? await getBootTokenFromSession() : await getBootTokenFromLocalStorage(),
+        bootToken: await getBootTokenFromSession() || await getBootTokenFromLocalStorage(),
         bootUser: await getBootUserFromSession(),
       };
       setInitInfo(nextInit);
@@ -449,7 +449,8 @@ const useProvideAuth = (config, whitelist, options) => {
 
     window.isExpired = isExpired;
 
-    scheduleStaleCheck(_staleCheckSeconds);
+    //Immediatly check if the token is stale
+    scheduleStaleCheck(0);
 
 
     //TODO: Check if a token is expired
