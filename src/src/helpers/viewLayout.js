@@ -86,14 +86,7 @@ export const parseSection = (section, data, key) => {
     }
   });
 
-  const hasNonStaticFields = areas.some((area) => {
-    if (Array.isArray(area)) {
-      return area.some((field) => !valueExists(field.type, STATIC_TYPES));
-    }
-    return !valueExists(area.type, STATIC_TYPES);
-  });
-
-  return hasNonStaticFields ? { name: section.name, areas, columns: !!section.columns } : null;
+  return areas.length ? { name: section.name, areas, columns: !!section.columns } : null;
 }
 
 /**
