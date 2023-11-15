@@ -355,14 +355,86 @@ export const getConditionalLoadout = (field, data) => {
   let props = {};
   if (conditions?.length) {
     conditions.forEach((condition) => {
-      const { when: triggerId, is: value, isValid, then: loadOut } = condition;
+      const { when: triggerId, is: value, exists, not, isValid, then: loadOut } = condition;
+
       let triggerData = data[triggerId];
+      const triggerDataIsNotEmpty = !isEmpty(triggerData)
+      if (triggerDataIsNotEmpty) triggerData = getViewFieldValue(triggerData);
 
-      if (!isEmpty(triggerData)) {
-        triggerData = getViewFieldValue(triggerData);
-      }
+      /**  
+       * By default, if the condition is configured just as:
+        {
+          when: 'property',
+          then: ...stuff happens
+        } 
+        It should satisfy the conditional if the when property is true.
+      */
+      let conditionMet = !!triggerData
 
-      if (isValid || triggerData?.toString() === value?.toString()) {
+      /**
+       * {
+       * when: 'property',
+       * exists: true,
+       * then: ...stuff happens
+       * }
+       * The conditional should be satisfied if the when property has any value
+       */
+      // We follow up with (exists === false) instead of doing an else statement because we don't want the negative case to trigger
+      // if exists is null or undefined
+      if (exists === true || exists === 'true') conditionMet = triggerDataIsNotEmpty
+      if (exists === false || exists === 'false') conditionMet = !triggerDataIsNotEmpty
+
+      /**
+      * {
+      * when: 'property',
+      * is: 5
+      * then: ...stuff happens
+      * }
+      * The conditional should be satisfied if the when property has the value of 5
+      */
+      //if (value || value === false) guarentees the condition will only fail if value is undefined or null.
+      //if value is false, we would still want to check if the trigger data value is a false value or not.
+      if (value || value === false) conditionMet = triggerData?.toString() === value?.toString()
+
+      /**
+      * {
+      * when: 'property',
+      * isValid: true
+      * then: ...stuff happens
+      * }
+      * The conditional should be satisfied automatically.
+      * If isValid: false, the conditional should fail automatically
+      */
+      if (typeof isValid === 'boolean') conditionMet = isValid
+
+      /**
+      * {
+      * when: 'property',
+      * is: 5,
+      * not: true
+      * then: ...stuff happens
+      * }
+      * The conditional should be satisfied if the when property does not have the value of 5
+      *
+      * {
+      * when: 'property',
+      * exists: true,
+      * not: true
+      * then: ...stuff happens
+      * }
+      * The conditional should be satisfied if the when property does not have a value
+      * 
+      * {
+      * when: 'property',
+      * not: true
+      * then: ...stuff happens
+      * }
+      * The conditional should be satisfied if the when property is not true
+      */
+      // Let's not rely on truthiness just in case someone thinks they're supposed to configure this with a string
+      if (not === true || true === 'true') conditionMet = !conditionMet
+
+      if (conditionMet) {
         props = { ...props, ...loadOut };
       }
     });
