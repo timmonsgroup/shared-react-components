@@ -62,7 +62,7 @@ export const parseSection = (section, data, key) => {
   const { layout } = section;
   const areas = [];
 
-  layout.forEach((area, index) => {
+  layout.forEach((area) => {
     // check if the element is an array
     const areaFields = [];
     if (Array.isArray(area)) {
@@ -94,7 +94,7 @@ export const parseSection = (section, data, key) => {
   });
 
   return hasNonStaticFields ? { name: section.name, areas, columns: !!section.columns } : null;
-}
+};
 
 /**
  * Check if a value is in the object
@@ -287,7 +287,7 @@ export const getViewValue = (field, inData, empty, key) => {
   }
 
   return value;
-}
+};
 
 /**
  * Parse and set various properties for supported static fields
@@ -358,8 +358,10 @@ export const getConditionalLoadout = (field, data) => {
       const { when: triggerId, is: value, exists, not, isValid, then: loadOut } = condition;
 
       let triggerData = data[triggerId];
-      const triggerDataIsNotEmpty = !isEmpty(triggerData)
-      if (triggerDataIsNotEmpty) triggerData = getViewFieldValue(triggerData);
+      const triggerDataIsNotEmpty = !isEmpty(triggerData);
+      if (triggerDataIsNotEmpty) {
+        triggerData = getViewFieldValue(triggerData);
+      }
 
       /**  
        * By default, if the condition is configured just as:
@@ -369,7 +371,7 @@ export const getConditionalLoadout = (field, data) => {
         } 
         It should satisfy the conditional if the when property is true.
       */
-      let conditionMet = !!triggerData
+      let conditionMet = !!triggerData;
 
       /**
        * {
@@ -381,8 +383,12 @@ export const getConditionalLoadout = (field, data) => {
        */
       // We follow up with (exists === false) instead of doing an else statement because we don't want the negative case to trigger
       // if exists is null or undefined
-      if (exists === true || exists === 'true') conditionMet = triggerDataIsNotEmpty
-      if (exists === false || exists === 'false') conditionMet = !triggerDataIsNotEmpty
+      if (exists === true || exists === 'true') {
+        conditionMet = triggerDataIsNotEmpty;
+      }
+      if (exists === false || exists === 'false') {
+        conditionMet = !triggerDataIsNotEmpty;
+      }
 
       /**
       * {
@@ -394,7 +400,9 @@ export const getConditionalLoadout = (field, data) => {
       */
       //if (value || value === false) guarentees the condition will only fail if value is undefined or null.
       //if value is false, we would still want to check if the trigger data value is a false value or not.
-      if (value || value === false) conditionMet = triggerData?.toString() === value?.toString()
+      if (value || value === false) {
+        conditionMet = triggerData?.toString() === value?.toString();
+      }
 
       /**
       * {
@@ -405,7 +413,9 @@ export const getConditionalLoadout = (field, data) => {
       * The conditional should be satisfied automatically.
       * If isValid: false, the conditional should fail automatically
       */
-      if (typeof isValid === 'boolean') conditionMet = isValid
+      if (typeof isValid === 'boolean') {
+        conditionMet = isValid;
+      }
 
       /**
       * {
@@ -432,7 +442,9 @@ export const getConditionalLoadout = (field, data) => {
       * The conditional should be satisfied if the when property is not true
       */
       // Let's not rely on truthiness just in case someone thinks they're supposed to configure this with a string
-      if (not === true || not === 'true') conditionMet = !conditionMet;
+      if (not === true || not === 'true') {
+        conditionMet = !conditionMet;
+      }
       //trigger linter
       if (conditionMet) {
         props = { ...props, ...loadOut };
