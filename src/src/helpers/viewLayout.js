@@ -433,7 +433,7 @@ export const getConditionalLoadout = (field, data) => {
       */
       // Let's not rely on truthiness just in case someone thinks they're supposed to configure this with a string
       if (not === true || not === 'true') conditionMet = !conditionMet
-
+      //trigger linter
       if (conditionMet) {
         props = { ...props, ...loadOut };
       }
