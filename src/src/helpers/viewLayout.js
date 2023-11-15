@@ -432,7 +432,7 @@ export const getConditionalLoadout = (field, data) => {
       * The conditional should be satisfied if the when property is not true
       */
       // Let's not rely on truthiness just in case someone thinks they're supposed to configure this with a string
-      if (not === true || true === 'true') conditionMet = !conditionMet
+      if (not === true || not === 'true') conditionMet = !conditionMet
 
       if (conditionMet) {
         props = { ...props, ...loadOut };
