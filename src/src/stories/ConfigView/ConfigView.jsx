@@ -192,7 +192,7 @@ export const FieldValue = ({field}) => {
       </>
     );
   }
-  return <Typography variant="detailItem" className={className}>{field.value}</Typography>;
+  return <Typography variant="detailItem" className={className}>{field.value?.toString()}</Typography>;
 };
 
 FieldValue.propTypes = {
