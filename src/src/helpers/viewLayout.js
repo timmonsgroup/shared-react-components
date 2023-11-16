@@ -373,8 +373,8 @@ const getTriggerIdValue = (triggerId, data) => {
     triggerData = getViewFieldValue(triggerData);
   }
 
-  return triggerData
-}
+  return triggerData;
+};
 
 const isConditionMet = (condition, triggerData, fieldId) => {
   const { is: value, exists, not } = condition;
@@ -382,12 +382,12 @@ const isConditionMet = (condition, triggerData, fieldId) => {
   if (Object.hasOwn(condition, 'is') && Object.hasOwn(condition, 'exists')) {
     console.log(`Warning: You have provided "is" and "exist" in the field configuration for the ${fieldId} field. "is" takes precedence over "exists" inside of a conditional configuration`)
   }
-  /**  
+  /**
    * By default, if the condition is configured just as:
     {
       when: 'property',
       then: ...stuff happens
-    } 
+    }
     It should satisfy the conditional if the when property is true.
   */
   let conditionMet = !!triggerData;
@@ -438,7 +438,7 @@ const isConditionMet = (condition, triggerData, fieldId) => {
   * then: ...stuff happens
   * }
   * The conditional should be satisfied if the when property does not have a value
-  * 
+  *
   * {
   * when: 'property',
   * not: true
@@ -451,5 +451,5 @@ const isConditionMet = (condition, triggerData, fieldId) => {
     conditionMet = !conditionMet;
   }
 
-  return conditionMet
-}
+  return conditionMet;
+};
