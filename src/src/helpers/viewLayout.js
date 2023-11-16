@@ -351,14 +351,14 @@ export function getViewFieldValue(inData) {
  * @returns {object} returns the conditional loadout for the field
  */
 export const getConditionalLoadout = (field, data) => {
-  const { conditions } = field || {};
+  const { conditions, label } = field || {};
   let props = {};
   if (conditions?.length) {
     conditions.forEach((condition) => {
       const { when: triggerId, then: loadOut } = condition;
       const triggerData = getTriggerIdValue(triggerId, data);
 
-      if (isConditionMet(condition, triggerData)) {
+      if (isConditionMet(condition, triggerData, label)) {
         props = { ...props, ...loadOut };
       }
     });
@@ -376,9 +376,12 @@ const getTriggerIdValue = (triggerId, data) => {
   return triggerData
 }
 
-const isConditionMet = (condition, triggerData) => {
-  const { is: value, exists, not, isValid } = condition;
+const isConditionMet = (condition, triggerData, fieldId) => {
+  const { is: value, exists, not } = condition;
 
+  if (Object.hasOwn(condition, 'is') && Object.hasOwn(condition, 'exists')) {
+    console.log(`Warning: You have provided "is" and "exist" in the field configuration for the ${fieldId} field. "is" takes precedence over "exists" inside of a conditional configuration`)
+  }
   /**  
    * By default, if the condition is configured just as:
     {
@@ -402,7 +405,7 @@ const isConditionMet = (condition, triggerData) => {
   if (exists === true || exists === 'true') {
     conditionMet = !isEmpty(triggerData);
   }
-  if (exists === false || exists === 'false') {
+  else if (exists === false || exists === 'false') {
     conditionMet = isEmpty(triggerData);
   }
 
@@ -414,23 +417,9 @@ const isConditionMet = (condition, triggerData) => {
   * }
   * The conditional should be satisfied if the when property has the value of 5
   */
-  //if (value || value === false) guarentees the condition will only fail if value is undefined or null.
-  //if value is false, we would still want to check if the trigger data value is a false value or not.
-  if (value || value === false || value === 0) {
-    conditionMet = triggerData?.toString() === value?.toString();
-  }
 
-  /**
-  * {
-  * when: 'property',
-  * isValid: true
-  * then: ...stuff happens
-  * }
-  * The conditional should be satisfied automatically.
-  * If isValid: false, the conditional should fail automatically
-  */
-  if (typeof isValid === 'boolean') {
-    conditionMet = isValid;
+  if (Object.hasOwn(condition, 'is')) {
+    conditionMet = triggerData?.toString() === value?.toString();
   }
 
   /**

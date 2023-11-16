@@ -44,7 +44,7 @@ export const BIG_VIEW_PRESET = {
             label: 'Genetics Data Collected',
             path: 'geneticsDataCollected',
             type: 0,
-            defaultValue:'Don\'t need genetics'
+            defaultValue: 'Don\'t need genetics'
           },
           {
             label: 'CWD Private Lands',
@@ -165,19 +165,14 @@ export const BIG_VIEW_PRESET = {
       name: 'Valid Information',
       editable: true,
       enabled: true,
+      allowStaticOnlySection: true,
       layout: [
-        // [
-        //  {
-        //      type: 'text',
-        //      text: 'This sample record is invalid',
-        //      hidden: true,
-        //      conditions: [{
-        //          when: 'invalid',
-        //          is: true,
-        //          then: { hidden: false }
-        //      }]
-        //  }
-        // ],
+        [
+          {
+            type: 'text',
+            text: 'This sample record is invalid',
+          }
+        ],
         [
           {
             label: 'First Name',
@@ -187,7 +182,9 @@ export const BIG_VIEW_PRESET = {
             conditions: [
               {
                 when: 'sampleType',
-                is: 'Hunter Harvested',
+                exists: true,
+                // is: true,
+                // not: true,
                 then: { hidden: false },
               },
             ],
@@ -506,13 +503,6 @@ export const BIG_VIEW_PRESET = {
             type: 'component',
             component: 'EmptyField',
             hidden: true,
-            conditions: [
-              {
-                when: 'cwdSampleStatus',
-                is: 'Positive',
-                then: { hidden: false },
-              },
-            ],
           },
           {
             path: 'cwdSampleStatus',
@@ -530,7 +520,8 @@ export const BIG_VIEW_PRESET = {
           {
             label: 'Zone',
             path: 'utmZone',
-            type: 7,          },
+            type: 7,
+          },
           {
             label: 'Easting',
             path: 'utmEasting',
@@ -768,6 +759,7 @@ export const BigViewLayoutData = {
   cwdPrivateLands: 'undefined',
   dMap: 'undefined',
   meatReplacementTagRequested: 'undefined',
+  sampleType: true
 };
 
 export const ViewLayoutData = {
