@@ -400,10 +400,10 @@ const isConditionMet = (condition, triggerData) => {
   // We follow up with (exists === false) instead of doing an else statement because we don't want the negative case to trigger
   // if exists is null or undefined
   if (exists === true || exists === 'true') {
-    conditionMet = isEmpty(triggerData);
+    conditionMet = !isEmpty(triggerData);
   }
   if (exists === false || exists === 'false') {
-    conditionMet = !isEmpty(triggerData);
+    conditionMet = isEmpty(triggerData);
   }
 
   /**
@@ -416,7 +416,7 @@ const isConditionMet = (condition, triggerData) => {
   */
   //if (value || value === false) guarentees the condition will only fail if value is undefined or null.
   //if value is false, we would still want to check if the trigger data value is a false value or not.
-  if (value || value === false) {
+  if (value || value === false || value === 0) {
     conditionMet = triggerData?.toString() === value?.toString();
   }
 
