@@ -59,7 +59,7 @@ export const parseViewLayout = (layout, data, key) => {
  * @returns {object} - parsed section
  */
 export const parseSection = (section, data, key) => {
-  const { layout } = section;
+  const { layout, allowStaticOnlySection } = section;
   const areas = [];
 
   layout.forEach((area) => {
@@ -85,6 +85,10 @@ export const parseSection = (section, data, key) => {
       areas.push(areaFields);
     }
   });
+
+  if (allowStaticOnlySection) {
+    return areas.length ? { name: section.name, areas, columns: !!section.columns } : null;
+  }
 
   const hasNonStaticFields = areas.some((area) => {
     if (Array.isArray(area)) {
