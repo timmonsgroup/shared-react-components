@@ -1,4 +1,13 @@
 # Change Log #
+## Release 1.0.0 - 11/21/2023 ##
+The big reworks
+### Breaking Changes ###
+#### Hooks ####
+- useAuth will *probably* no longer call the "refresh" endpoint of your api.
+  - We are doing things differently with the bootToken and the refresh token.
+  - If you are using the `useAuth` hook and you are using the `refresh` endpoint of your api, you will need to update your api and create a new endpoint that will return a user's permissions.
+    - The default endpoint is `/api/user/permissions`
+
 ## Release 0.9.6 - 11/09/2023 ##
 Small release to fix a bug in the `viewLayout` hook.
 
