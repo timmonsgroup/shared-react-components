@@ -59,10 +59,10 @@ export const parseViewLayout = (layout, data, key) => {
  * @returns {object} - parsed section
  */
 export const parseSection = (section, data, key) => {
-  const { layout } = section;
+  const { layout, allowStaticOnlySection } = section;
   const areas = [];
 
-  layout.forEach((area, index) => {
+  layout.forEach((area) => {
     // check if the element is an array
     const areaFields = [];
     if (Array.isArray(area)) {
@@ -86,6 +86,10 @@ export const parseSection = (section, data, key) => {
     }
   });
 
+  if (allowStaticOnlySection) {
+    return areas.length ? { name: section.name, areas, columns: !!section.columns } : null;
+  }
+
   const hasNonStaticFields = areas.some((area) => {
     if (Array.isArray(area)) {
       return area.some((field) => !valueExists(field.type, STATIC_TYPES));
@@ -94,7 +98,7 @@ export const parseSection = (section, data, key) => {
   });
 
   return hasNonStaticFields ? { name: section.name, areas, columns: !!section.columns } : null;
-}
+};
 
 /**
  * Check if a value is in the object
@@ -287,7 +291,7 @@ export const getViewValue = (field, inData, empty, key) => {
   }
 
   return value;
-}
+};
 
 /**
  * Parse and set various properties for supported static fields
@@ -351,21 +355,105 @@ export function getViewFieldValue(inData) {
  * @returns {object} returns the conditional loadout for the field
  */
 export const getConditionalLoadout = (field, data) => {
-  const { conditions } = field || {};
+  const { conditions, label } = field || {};
   let props = {};
   if (conditions?.length) {
     conditions.forEach((condition) => {
-      const { when: triggerId, is: value, isValid, then: loadOut } = condition;
-      let triggerData = data[triggerId];
+      const { when: triggerId, then: loadOut } = condition;
+      const triggerData = getTriggerIdValue(triggerId, data);
 
-      if (!isEmpty(triggerData)) {
-        triggerData = getViewFieldValue(triggerData);
-      }
-
-      if (isValid || triggerData?.toString() === value?.toString()) {
+      if (isConditionMet(condition, triggerData, label)) {
         props = { ...props, ...loadOut };
       }
     });
   }
   return props;
+};
+
+const getTriggerIdValue = (triggerId, data) => {
+  let triggerData = data[triggerId];
+
+  if (!isEmpty(triggerData)) {
+    triggerData = getViewFieldValue(triggerData);
+  }
+
+  return triggerData;
+};
+
+const isConditionMet = (condition, triggerData, fieldId) => {
+  const { is: value, exists, not } = condition;
+
+  if (Object.hasOwn(condition, 'is') && Object.hasOwn(condition, 'exists')) {
+    console.log(`Warning: You have provided "is" and "exist" in the field configuration for the ${fieldId} field. "is" takes precedence over "exists" inside of a conditional configuration`)
+  }
+  /**
+   * By default, if the condition is configured just as:
+    {
+      when: 'property',
+      then: ...stuff happens
+    }
+    It should satisfy the conditional if the when property is true.
+  */
+  let conditionMet = !!triggerData;
+
+  /**
+   * {
+   * when: 'property',
+   * exists: true,
+   * then: ...stuff happens
+   * }
+   * The conditional should be satisfied if the when property has any value
+   */
+  // We follow up with (exists === false) instead of doing an else statement because we don't want the negative case to trigger
+  // if exists is null or undefined
+  if (exists === true || exists === 'true') {
+    conditionMet = !isEmpty(triggerData);
+  }
+  else if (exists === false || exists === 'false') {
+    conditionMet = isEmpty(triggerData);
+  }
+
+  /**
+  * {
+  * when: 'property',
+  * is: 5
+  * then: ...stuff happens
+  * }
+  * The conditional should be satisfied if the when property has the value of 5
+  */
+
+  if (Object.hasOwn(condition, 'is')) {
+    conditionMet = triggerData?.toString() === value?.toString();
+  }
+
+  /**
+  * {
+  * when: 'property',
+  * is: 5,
+  * not: true
+  * then: ...stuff happens
+  * }
+  * The conditional should be satisfied if the when property does not have the value of 5
+  *
+  * {
+  * when: 'property',
+  * exists: true,
+  * not: true
+  * then: ...stuff happens
+  * }
+  * The conditional should be satisfied if the when property does not have a value
+  *
+  * {
+  * when: 'property',
+  * not: true
+  * then: ...stuff happens
+  * }
+  * The conditional should be satisfied if the when property is not true
+  */
+  // Let's not rely on truthiness just in case someone thinks they're supposed to configure this with a string
+  if (not === true || not === 'true') {
+    conditionMet = !conditionMet;
+  }
+
+  return conditionMet;
 };

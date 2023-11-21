@@ -27,5 +27,6 @@ module.exports = {
     'no-debugger': 'warn',
     'no-empty': 'off',
     'no-extra-semi': 'warn',
+    'curly': 'warn'
   },
 };

@@ -217,6 +217,14 @@ const addObjectReferenceLinkRendering = (muiGridColumn) => {
 
       if (params && value) {
         let link = linkFormat;
+        if (typeof value !== 'object') {
+          console.warn(`${muiGridColumn.field} addObjectReferenceLinkRendering: is not an object`, value)
+          value = {
+            id: value,
+            name: value,
+            streamID: value
+          };
+        }
         link = link
           .replace('{id}', value.id)
           .replace('${streamID}', value.streamID)
