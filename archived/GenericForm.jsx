@@ -7,14 +7,14 @@ import { Card, CardContent, Container, Grid, Stack, Typography } from '@mui/mate
 
 // Shared components
 import LineLoader from './LineLoader';
-import SubHeader from './SubHeader';
+import SubHeader from '../src/stories/SubHeader';
 import Button from './Button';
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from '../src/stories/LoadingSpinner';
 import ContainerWithCard from './ContainerWithCard';
 import AnyField from './AnyField';
 
 // Custom hooks
-import { useDynamicForm } from '../hooks';
+import { useDynamicForm } from '../src/hooks';
 
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';

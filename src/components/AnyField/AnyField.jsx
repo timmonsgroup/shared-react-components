@@ -10,14 +10,14 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import RadioOptions from './RadioOptions';
-import Typeahead from './Typeahead';
-import FormErrorMessage from './FormErrorMessage';
-import AnyFieldLabel from './AnyFieldLabel';
+import RadioOptions from '../../stories/RadioOptions';
+import Typeahead from '../../stories/Typeahead';
+import FormErrorMessage from '../../stories/FormErrorMessage';
+import AnyFieldLabel from '../AnyFieldLabel/AnyFieldLabel';
 
-import { FIELD_TYPES } from '../constants';
+import { FIELD_TYPES } from '../../constants';
 import { Box } from '@mui/material';
-import { isObject } from '../helpers';
+import { isObject } from '../../helpers';
 
 const makeFilter = (checkedId) => {
   const checkId = isObject(checkedId) ? checkedId.id : checkedId;

@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 import { Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import Button from './Button';
-import UserMenu from './UserMenu';
+import Button from '../../stories/Button';
+import UserMenu from '../../stories/UserMenu';
 
-import PermissionFilter from './PermissionFilter';
+import PermissionFilter from '../../stories/PermissionFilter';
 //We are making the bold and, hopefully, correct assumption that your application will always use 'Can Sign In' as the permission string
-import { ACLS } from '../constants';
-import { functionOrDefault } from '../helpers';
+import { ACLS } from '../../constants';
+import { functionOrDefault } from '../../helpers';
 
 /**
  * The default theme for the app bar

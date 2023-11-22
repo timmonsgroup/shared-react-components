@@ -1,9 +1,9 @@
 import React from 'react';
 import AppBar from './AppBar';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { authContext } from '../hooks/useAuth';
-import { authMock } from '../mocks/authMock';
-import { AUTH_STATES } from '../constants';
+import { authContext } from '../../hooks/useAuth';
+import { authMock } from '../../mocks/authMock';
+import { AUTH_STATES } from '../../constants';
 import { Box, Stack } from '@mui/material';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

@@ -3,7 +3,7 @@ import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, TextField, Autocomplete, FormHelperText } from '@mui/material';
-import AnyFieldLabel from './AnyFieldLabel';
+import AnyFieldLabel from '../components/AnyFieldLabel/AnyFieldLabel';
 import FormErrorMessage from './FormErrorMessage';
 import { isEmpty } from '../helpers';
 

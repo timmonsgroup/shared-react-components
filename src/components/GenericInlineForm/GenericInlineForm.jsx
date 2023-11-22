@@ -282,6 +282,4 @@ GenericInlineForm.propTypes = {
 };
 
 
-export {
-  GenericInlineForm
-};
+export default GenericInlineForm;

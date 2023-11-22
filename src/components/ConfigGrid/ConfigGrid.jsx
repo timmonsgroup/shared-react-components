@@ -1,4 +1,4 @@
-/** @module PamLayoutGrid **/
+/** @module ConfigGrid **/
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
@@ -399,7 +399,7 @@ GridLink.propTypes = {
  * @param {Array} [props.rowsPerPageOptions] - The rows per page options for the grid
  */
 // eslint-disable-next-line
-const PamLayoutGrid = ({
+const ConfigGrid = ({
   data,
   layout,
   initialSortColumn,
@@ -612,7 +612,7 @@ const PamLayoutGrid = ({
   );
 };
 
-PamLayoutGrid.propTypes = {
+ConfigGrid.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowsPerPageOptions: PropTypes.arrayOf(PropTypes.number),
   initialRowCount: PropTypes.number,
@@ -644,8 +644,8 @@ PamLayoutGrid.propTypes = {
   onSortModelChange: PropTypes.func,
 };
 
-PamLayoutGrid.defaultProps = {
+ConfigGrid.defaultProps = {
   showToolbar: false,
 };
 
-export { PamLayoutGrid as default };
+export default ConfigGrid;

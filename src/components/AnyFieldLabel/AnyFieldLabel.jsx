@@ -2,12 +2,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TooltipIcon from './TooltipIcon';
+import TooltipIcon from '../../stories/TooltipIcon';
 
 import {
   InputLabel, Box, FormLabel, FormHelperText, useTheme
 } from '@mui/material';
-import RequiredIndicator from './RequiredIndicator';
+import RequiredIndicator from '../../stories/RequiredIndicator';
 
 /**
  * Icons for info icons
