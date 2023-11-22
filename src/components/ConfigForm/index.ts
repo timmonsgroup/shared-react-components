@@ -1,1 +1,1 @@
-export {ConfigForm, ConfigFormProvider} from './ConfigForm';
+export {ConfigForm, ConfigFormProvider} from './ConfigForm.jsx';

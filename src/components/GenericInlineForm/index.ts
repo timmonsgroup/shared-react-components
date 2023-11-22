@@ -1,1 +1,1 @@
-export { default } from './GenericInlineForm';
+export { default } from './GenericInlineForm.jsx';

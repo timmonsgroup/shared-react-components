@@ -1,1 +1,1 @@
-export { default } from './RadioOptions';
+export { default } from './RadioOptions.jsx';

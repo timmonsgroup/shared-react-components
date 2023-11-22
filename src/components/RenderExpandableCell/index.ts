@@ -1,1 +1,1 @@
-export { default } from './RenderExpandableCell';
+export { default } from './RenderExpandableCell.jsx';

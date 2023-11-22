@@ -5,7 +5,7 @@ import React, { useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { SectionTop } from '../Section';
+import { SectionTop } from '../../components/SectionTop';
 import { FIELD_TYPES, STATIC_TYPES } from '../../constants';
 
 // MUI imports

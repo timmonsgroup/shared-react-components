@@ -2,13 +2,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material';
+import { Button, Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import Button from '../../stories/Button';
-import UserMenu from '../../stories/UserMenu';
+import UserMenu from '../../components/UserMenu';
+import PermissionFilter from '../../components/PermissionFilter';
 
-import PermissionFilter from '../../stories/PermissionFilter';
 //We are making the bold and, hopefully, correct assumption that your application will always use 'Can Sign In' as the permission string
 import { ACLS } from '../../constants';
 import { functionOrDefault } from '../../helpers';

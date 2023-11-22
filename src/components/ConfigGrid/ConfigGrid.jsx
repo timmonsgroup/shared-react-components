@@ -2,7 +2,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 import {
   DataGrid as MUIGrid,
   GridToolbar as MUIGridToolbar,
@@ -10,12 +10,10 @@ import {
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
-import Button from './Button';
+import { processLayout, processGenericLayout, convertToLinkFormat } from '../../helpers';
 
-import { processLayout, processGenericLayout, convertToLinkFormat } from '../helpers/helpers.js';
-
-import { convertLayoutColumnToMuiColumn } from '../helpers/gridHelpers.js';
-import RenderExpandableCell from './RenderExpandableCell';
+import { convertLayoutColumnToMuiColumn } from '../../helpers/gridHelpers';
+import RenderExpandableCell from '../../components/RenderExpandableCell';
 
 const gridContext = React.createContext();
 

@@ -5,17 +5,16 @@ import PropTypes from 'prop-types';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 // MUI components
-import { Divider, FormHelperText, useTheme, useMediaQuery, Typography } from '@mui/material';
+import { Button, Divider, FormHelperText, useTheme, useMediaQuery, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
-import AnyField from './AnyField';
-import Button from './Button';
-import AnyFieldLabel from './AnyFieldLabel';
+import AnyField from '../../components/AnyField';
+import AnyFieldLabel from '../../components/AnyFieldLabel';
 
 // Hooks, helpers, and constants
-import { getFieldValue } from '../hooks';
-import { createRowFields } from '../helpers';
+import { getFieldValue } from '../../hooks';
+import { createRowFields } from '../../helpers';
 
 /**
  * ClusterField component will render a field that contains a list of subfields

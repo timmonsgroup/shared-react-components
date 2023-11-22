@@ -1,1 +1,1 @@
-export { default } from './LineLoader';
+export { default } from './LineLoader.jsx';

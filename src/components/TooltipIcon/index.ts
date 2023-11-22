@@ -1,1 +1,1 @@
-export {default} from './TooltipIcon';
+export {default} from './TooltipIcon.jsx';

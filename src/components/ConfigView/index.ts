@@ -8,4 +8,4 @@ export {
   ClusterTable,
   FieldValue,
   LinkValue
-} from './ConfigView';
+} from './ConfigView.jsx';

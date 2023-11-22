@@ -2,4 +2,4 @@ export {
   defaultDescriptionRenderer,
   defaultTitleRenderer,
   SectionTop
-} from './SectionTop';
+} from './SectionTop.jsx';

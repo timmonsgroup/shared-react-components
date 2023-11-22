@@ -1,1 +1,1 @@
-export { default } from './PermissionFilter';
+export { default } from './PermissionFilter.jsx';

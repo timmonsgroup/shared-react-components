@@ -2,4 +2,4 @@ export {
   FormSections,
   SectionRow,
   GenericConfigForm
-} from './GenericConfigForm';
+} from './GenericConfigForm.jsx';

@@ -1,1 +1,1 @@
-export { default } from './RequiredIndicator';
+export { default } from './RequiredIndicator.jsx';

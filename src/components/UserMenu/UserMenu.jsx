@@ -1,7 +1,6 @@
 /** @module UserMenu */
 import React, { useState } from 'react';
-import Button from './Button';
-import { Menu, MenuItem } from '@mui/material';
+import { Button, Menu, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
 import Link from '@mui/material/Link';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';

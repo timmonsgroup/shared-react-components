@@ -6,16 +6,13 @@ import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 
 // Third party components
-import { CardContent, Container, Stack, Box, Skeleton, useTheme } from '@mui/material';
+import { Button, CardContent, Container, Stack, Box, Skeleton, useTheme } from '@mui/material';
 
 // Internal bits
-import Button from '../Button';
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import {SectionTop} from '../../components/SectionTop';
+import {SectionRow} from '../../components/GenericConfigForm';
 import { functionOrDefault, createRowFields } from '../../helpers';
-import { SectionTop } from '../Section';
-import { SectionRow } from './GenericConfigForm';
-
-
 
 /**
  * Renderer for a section with

@@ -1,1 +1,1 @@
-export { default } from './ContainerWithCard';
+export { default } from './ContainerWithCard.jsx';

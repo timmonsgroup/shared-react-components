@@ -1,1 +1,1 @@
-export { default } from './ClusterField';
+export { default } from './ClusterField.jsx';

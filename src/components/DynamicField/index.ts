@@ -1,1 +1,1 @@
-export { default } from './DynamicField';
+export { default } from './DynamicField.jsx';

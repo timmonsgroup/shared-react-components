@@ -1,1 +1,1 @@
-export { default } from './AnyFieldLabel';
+export { default } from './AnyFieldLabel.jsx';

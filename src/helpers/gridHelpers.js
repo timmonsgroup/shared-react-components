@@ -37,14 +37,17 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
       label: 'Contains',
       value: 'contains',
       InputComponent: ({ item, applyValue, ...rest }) => {
-        return <TextField
+        return (
+        <TextField
           label="Value"
           inputRef={input => input && input.focus()}
-          variant="standard" {...rest}
+          variant="standard"
           value={item.value}
           placeholder="Filter value"
           onChange={(e) => applyValue({ ...item, value: e.target.value })}
-        />;
+          {...rest}
+        />
+        )
       },
       getApplyFilterFn: (filterItem) => {
         return (params) => {

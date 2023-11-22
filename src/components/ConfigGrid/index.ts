@@ -1,1 +1,1 @@
-export { default } from './ConfigGrid';
+export { default } from './ConfigGrid.jsx';

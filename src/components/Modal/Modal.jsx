@@ -1,8 +1,7 @@
 /** @module Modal */
 import React from 'react';
-import Button from './Button';
 import PropTypes from 'prop-types';
-import { Dialog, DialogActions, DialogContent, IconButton, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, IconButton, Typography } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
 /**

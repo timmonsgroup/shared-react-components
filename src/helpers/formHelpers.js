@@ -1,7 +1,7 @@
 /** @module formHelpers */
 import '../models/form';
 import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
-import { functionOrDefault, isObject } from './helpers.js';
+import { functionOrDefault, isObject } from './helpers';
 import {
   string, array, date, number, object
 } from 'yup';

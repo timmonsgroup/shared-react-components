@@ -5,17 +5,16 @@ import PropTypes from 'prop-types';
 import { useFormContext } from 'react-hook-form';
 
 // Third party components
-import { Card, CardContent, Container, Stack, Skeleton } from '@mui/material';
+import { Button, Card, CardContent, Container, Stack, Skeleton } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 
 // Internal bits
-import Button from '../Button';
-import DynamicField from '../DynamicField';
-import SubHeader from '../SubHeader';
+import DynamicField from '../../components/DynamicField';
+import SubHeader from '../../components/SubHeader';
 import LoadingSpinner from '../LoadingSpinner';
 import { createRowFields, functionOrDefault } from '../../helpers';
 import { FIELD_TYPES } from '../../constants';
-import { SectionTop } from '../Section';
+import { SectionTop } from '../../components/SectionTop';
 
 /** @module FormSections */
 /**

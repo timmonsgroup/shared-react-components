@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Navigate } from 'react-router-dom';
-import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../helpers/helpers.js';
-import { useAuth } from '../hooks/useAuth';
+import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../../helpers';
+import { useAuth } from '../../hooks/useAuth';
 
 import { CircularProgress } from '@mui/material';
-import { AUTH_STATES } from '../constants.js';
+import { AUTH_STATES } from '../../constants.js';
 
 /**
  * @description Component that checks if the user has the required permissions
