@@ -46,7 +46,7 @@ export const parseViewLayout = (layout, data, key) => {
       'There is no data to display for this view. This may be a bad link or the data may not exist.'
     );
   }
-  const sections = layout.sections.map((section) => parseSection(section, data, key)).filter((section) => section);
+  const sections = layout.sections.map((section) => parseLayoutSection(section, data, key)).filter((section) => section);
   return sections;
 };
 
@@ -58,7 +58,7 @@ export const parseViewLayout = (layout, data, key) => {
  * @param {string} key - key
  * @returns {object} - parsed section
  */
-export const parseSection = (section, data, key) => {
+export const parseLayoutSection = (section, data, key) => {
   const { layout, allowStaticOnlySection } = section;
   const areas = [];
 

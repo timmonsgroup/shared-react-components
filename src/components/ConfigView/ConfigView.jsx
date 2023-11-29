@@ -10,11 +10,10 @@ import { FIELD_TYPES, STATIC_TYPES } from '../../constants';
 
 // MUI imports
 import {
-  Typography, Card, CardContent,
+  Typography, Card, CardContent, Box,
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Divider, styled
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Box } from '@mui/system';
 
 //create a context for the application data
 export const ViewContext = createContext();

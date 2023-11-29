@@ -8,6 +8,9 @@ The big reworks
   - If you are using the `useAuth` hook and you are using the `refresh` endpoint of your api, you will need to update your api and create a new endpoint that will return a user's permissions.
     - The default endpoint is `/api/user/permissions`
 
+#### Helpers ####
+- the `parseSection` function of `viewLayout` was had the same name as the `parseSection` function of `formHelpers`. This has been renamed to `parseViewSection` to avoid conflicts as there will no longer be subFolder exports...for now.
+
 #### Components ####
 - `PamLayoutGrid` is now name `ConfigGrid`
 - `Button` has been removed. Use the MUI Button component.
