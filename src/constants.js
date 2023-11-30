@@ -1,3 +1,27 @@
+/*
+const MY_THING = 'MY_CONSTANT'
+const SOMETHING_ELSE = 'SOMETHING_ELSE'
+const AUTH_STATES = {
+    INITIALIZING: 'initMEBruh'
+} as const;
+type MyType = typeof MY_THING | typeof SOMETHING_ELSE | typeof AUTH_STATES[keyof typeof AUTH_STATES]
+
+export type ObjectValues<T extends Record<string, unknown>> = T[keyof T];
+type Values = ObjectValues<typeof AUTH_STATES>
+
+let x: MyType;
+x = ""  // error
+x = "MY_CONSTANT"
+x = AUTH_STATES.INITIALIZING;
+x = 'initial'; // error
+x = 'initMEBruh';
+
+let y: Values;
+y = 'b';
+y = AUTH_STATES.INITIALIZING;
+*/
+
+
 export const AUTH_STATES = Object.freeze({
   INITIALIZING: 'INITIALIZING',
   LOGGED_OUT: 'LOGGED_OUT',
