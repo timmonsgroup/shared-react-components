@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-gamma.0",
   "private": false,
   "main": "dist/cjs/bundle.js",
   "module": "dist/esm/bundle.js",
@@ -8,12 +8,6 @@
   "files": [
     "dist"
   ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./hooks": "./dist/hooks/index.js",
-    "./helpers": "./dist/helpers/index.js",
-    "./constants": "./dist/constants.js"
-  },
   "scripts": {
     "build": "rimraf dist && rollup -c",
     "dev": "rollup -c -w",
