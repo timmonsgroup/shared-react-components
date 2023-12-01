@@ -1,6 +1,6 @@
 {
   "name": "@timmons-group/shared-react-components",
-  "version": "1.0.0-gamma.0",
+  "version": "1.0.0-gamma.1",
   "private": false,
   "main": "dist/cjs/bundle.js",
   "module": "dist/esm/bundle.js",
