@@ -2,6 +2,21 @@
 ## Release 1.0.0 - 11/21/2023 ##
 The big reworks
 ### Breaking Changes ###
+#### All Non Component Exports ####
+- Everything is now exported from the `@timmons-group/shared-react-components` package.
+  - This includes all constants, hooks, muiTheme, and helpers.
+    - Example:
+      ```javascript
+      // Old
+      import { FIELD_TYPES } from '@timmons-group/shared-react-components/constants';
+      import { useLayout, useGet } from '@timmons-group/shared-react-components/hooks';
+      import { attemptFormSubmit, useFormSubmit, functionOrDefault } from '@timmons-group/shared-react-components/helpers';
+      // New
+      import {
+        FIELD_TYPES, useLayout, useGet, attemptFormSubmit,
+        useFormSubmit, functionOrDefault
+      } from '@timmons-group/shared-react-components';
+      ```
 #### Hooks ####
 - useAuth will *probably* no longer call the "refresh" endpoint of your api.
   - We are doing things differently with the bootToken and the refresh token.
