@@ -44,12 +44,17 @@ const theTheme = {
  * @param {object} [props.user] - The user object from the authState
  * @param {function} [props.onLogout] - A logout function to call when the user clicks the logout button
  * @param {function} [props.onLogin] - The login function to call when the user clicks the login button
- * @param {array} [props.navLinks] - An array of objects to render as nav links
+ * @param {object[]} [props.navLinks] - An array of objects to render as nav links
  * @param {string} [props.navLinks[].title] - The label for the nav link
  * @param {string} [props.navLinks[].href] - The path for the nav link
  * @param {string} [props.logoUrl] - The url for the logo
  * @param {string} [props.buttonVariant] - The MUI variant name for the buttons creating by navLinks
  * @param {string} [props.logoText] - The text to place next to the logo on the app bar
+ * @param {object} [props.themeGroup] - A theme group to use instead of the default
+ * @param {object[]} [props.userLinks] - An array of objects to render as user links
+ * @param {string} [props.userLinks[].title] - The label for the user link
+ * @param {string} [props.userLinks[].href] - The path for the user link
+ * @param {boolean} [props.showLoggingIn] - A boolean to indicate if the app should show the logging in message
  * @param {function} [props.renderLogo] - A function to overwrite the default renderer for the logo section - Optional
  */
 const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props }) => {

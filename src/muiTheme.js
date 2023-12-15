@@ -6,14 +6,34 @@ import { mergeDeep } from './helpers/helpers';
 import { GRID_ACTION_TYPE } from './constants';
 
 // function LinkBehaviour avoids having to do LinkBehavior.displayName = 'LinkBehavior';
-const LinkBehavior = forwardRef(function LinkBehavior(props, ref) {
-  const { href, ...other } = props;
+/**
+ * @typedef {object} LinkBehaviorHref
+ * @property {string} hash - The hash to use for the link
+ * @property {string} pathname - The pathname to use for the link
+ * @property {string} search - The search to use for the link
+ */
+
+/**
+ * @typedef {object} LinkBehaviorProps
+ * @property {string | LinkBehaviorHref} href - The href to use for the link
+ * @property {object} [props] - The props to use for the link
+ */
+
+/**
+ * A component to be used as the LinkComponent for MUI components
+ * @param {LinkBehaviorProps} props
+ * @param {string} [props.href] - The href to use for the link
+ * @param {object} [props.props] - The props to use for the link
+ * @param {object} ref - The ref to use for the link
+ * @returns {JSX.Element}
+ */
+const LinkBehavior = forwardRef(function LinkBehavior({href, ...props}, ref) {
   // Map href (MUI) -> to (react-router)
   //If href starts with http or https, then it is an external link
   if (href.startsWith('http')) {
-    return <a href={href} ref={ref} {...other} />;
+    return <a href={href} ref={ref} {...props} />;
   }
-  return <NavLink end ref={ref} to={href} {...other} />;
+  return <NavLink end ref={ref} to={href} {...props} />;
 });
 
 LinkBehavior.propTypes = {
