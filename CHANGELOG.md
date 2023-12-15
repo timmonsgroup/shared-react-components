@@ -1,6 +1,11 @@
 # Change Log #
-## Release 1.0.0 - 11/21/2023 ##
-The big reworks
+## Release 1.0.0 (gamma) - 11/21/2023 ##
+## The big rework
+Create React App is going away as a dependency
+Almost everything has moved. Each component has their own folder to lump their stories, css, and etc together.
+We're using rollup to build this thing now
+Now outputting commonJS and ES Modules
+Typescript is now supported and we can opt in to converting / updating files and components as time permits
 ### Breaking Changes ###
 #### All Non Component Exports ####
 - Everything is now exported from the `@timmons-group/shared-react-components` package.
@@ -24,7 +29,7 @@ The big reworks
     - The default endpoint is `/api/user/permissions`
 
 #### Helpers ####
-- the `parseSection` function of `viewLayout` was had the same name as the `parseSection` function of `formHelpers`. This has been renamed to `parseViewSection` to avoid conflicts as there will no longer be subFolder exports...for now.
+- the `parseSection` function of `viewLayout` had the same name as the `parseSection` function of `formHelpers`. This has been renamed to `parseViewSection` to avoid conflicts as there will no longer be subFolder exports...for now.
 
 #### Components ####
 - `PamLayoutGrid` is now name `ConfigGrid`
