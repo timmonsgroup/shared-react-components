@@ -2,8 +2,8 @@ import React from 'react';
 import PermissionFilter from './PermissionFilter';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { authContext } from '../hooks/useAuth';
-import { authMock } from '../mocks/authMock';
+import { authContext } from '../../hooks/useAuth';
+import { authMock } from '../../mocks/authMock';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

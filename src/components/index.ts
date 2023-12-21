@@ -21,6 +21,7 @@ export { default as RequiredIndicator } from './RequiredIndicator';
 export { default as TooltipIcon } from './TooltipIcon';
 export { default as Typeahead } from './Typeahead';
 export { default as UserMenu } from './UserMenu';
+export { default as LinkBehavior } from './LinkBehavior';
 export * from './SectionTop';
 export * from './GenericConfigForm';
 export * from './ConfigView';

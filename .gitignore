@@ -28,3 +28,4 @@ yarn-error.log*
 **/__snapshots__/**
 **/storybook-dist
 types
+storybook-static/

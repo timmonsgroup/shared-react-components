@@ -1,31 +1,7 @@
-import React, { forwardRef } from 'react';
-import PropTypes from 'prop-types';
 import { createTheme } from '@mui/material/styles';
-import { NavLink } from 'react-router-dom';
 import { mergeDeep } from './helpers/helpers';
 import { GRID_ACTION_TYPE } from './constants';
-
-// function LinkBehaviour avoids having to do LinkBehavior.displayName = 'LinkBehavior';
-const LinkBehavior = forwardRef(function LinkBehavior(props, ref) {
-  const { href, ...other } = props;
-  // Map href (MUI) -> to (react-router)
-  //If href starts with http or https, then it is an external link
-  if (href.startsWith('http')) {
-    return <a href={href} ref={ref} {...other} />;
-  }
-  return <NavLink end ref={ref} to={href} {...other} />;
-});
-
-LinkBehavior.propTypes = {
-  href: PropTypes.oneOfType([
-    PropTypes.shape({
-      hash: PropTypes.string,
-      pathname: PropTypes.string,
-      search: PropTypes.string,
-    }),
-    PropTypes.string,
-  ]).isRequired,
-};
+import LinkBehavior from './components/LinkBehavior';
 
 const darkBlue = '#1F4765';
 const lightBlue = '#2b5c92';

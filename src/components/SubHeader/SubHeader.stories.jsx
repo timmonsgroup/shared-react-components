@@ -1,6 +1,6 @@
 import React from 'react';
 import SubHeader from './SubHeader';
-import Button from './Button';
+import Button from '@mui/material/Button';
 
 export default {
   title: 'Components/Sub Header',
