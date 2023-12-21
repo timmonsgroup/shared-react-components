@@ -66,8 +66,8 @@ const Modal = ({
       <DialogContent>{children}</DialogContent>
       {hideActions ? null : (
         <DialogActions>
-          <ShowHidden hide={hideCancel} disabled={disableCancel} onClick={onCancel} label={cancelLabel || 'Cancel'} color={cancelColor}/>
-          <ShowHidden hide={hideOk} disabled={disableOk} onClick={onOk} autoFocus label={okLabel || 'Ok'} color={okColor} />
+          <ShowHidden hide={hideCancel} disabled={disableCancel} onClick={onCancel} color={cancelColor}>{cancelLabel || 'Cancel'}</ShowHidden>
+          <ShowHidden hide={hideOk} disabled={disableOk} onClick={onOk} autoFocus color={okColor}>{okLabel || 'Ok'}</ShowHidden>
         </DialogActions>
       )
       }
@@ -103,12 +103,13 @@ Modal.propTypes = {
  * @param {object} props - props object
  * @param {boolean} props.hide - whether to hide the button or not
  * @param {object} props.props - props for the Button component
+ * @param {object | string} props.children - the children to render
  * @returns {React.ReactElement | null} - React component
  */
-const ShowHidden = ({ hide, ...props }) => {
+const ShowHidden = ({ hide, children, ...props }) => {
   return hide ? null :
     (
-      <Button {...props} />
+      <Button {...props}>{children}</Button>
     );
 };
 ShowHidden.propTypes = {

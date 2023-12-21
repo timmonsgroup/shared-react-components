@@ -171,11 +171,11 @@ const GenericConfigForm = ({
         rightRender={
           () =>
             <Stack spacing={2} direction="row" justifyContent="flex-end">
-              <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl} label={cancelLabel || 'Cancel'} />
+              <Button data-src-form-button="cancel" color={cancelColor} href={cancelUrl}>{cancelLabel || 'Cancel'}</Button>
               {isEdit &&
-                <Button data-src-form-button="reset" color={resetColor} onClick={forceReset} label={resetLabel || 'Reset'} />
+                <Button data-src-form-button="reset" color={resetColor} onClick={forceReset}>{resetLabel || 'Reset'}</Button>
               }
-              <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit} label={submitLabel || 'Save'} />
+              <Button data-src-form-button="submit" color={submitColor} onClick={preSubmit}>{submitLabel || 'Save'}</Button>
             </Stack>
         }
       />

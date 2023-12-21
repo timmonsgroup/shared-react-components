@@ -104,7 +104,7 @@ const UserMenu = ({ user, onLogin, onLogout, links, hideArrow }) => {
   } else if(onLogin) {
     return (
       <>
-        <Button onClick={onLogin} disableElevation={true} label="Sign in" />
+        <Button onClick={onLogin} disableElevation={true}>Sign In</Button>
       </>
     );
   }

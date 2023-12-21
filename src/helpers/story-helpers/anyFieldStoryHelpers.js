@@ -7,7 +7,7 @@ import { object } from 'yup';
 
 import { getFieldValue, parseFormLayout } from '../../hooks';
 import AnyField from '../../stories/AnyField';
-import Button from '../../stories/Button';
+import Button from '../../../archived/StorybookTemplates/Button';
 import { StoryInfoBlock } from './infoBlocks/StoryInfoBlock';
 
 
@@ -185,7 +185,7 @@ export const AnyFieldStoryTemplate = (args, { loaded: { field } }) => {
   return (
     <>
       <AnyField control={control} layout={field.render} key={field.render.name} />
-      <Button sx={{ marginTop: '16px' }} onClick={() => trigger()} label="Trigger Validation" />
+      <Button sx={{ marginTop: '16px' }} onClick={() => trigger()}>Trigger Validation</Button>
       <StoryInfoBlock infoBlockName={args.infoBlock} options={args.infoBlockOptions} />
     </>
   );

@@ -15,6 +15,6 @@ export const Default = {
     title: 'Sub Header',
     color: 'primary',
     rightRenderProps: { testText: 'test' },
-    rightRender: ({ testText }) => <Button label={testText} color="secondary" />,
+    rightRender: ({ testText }) => <Button color="secondary">{testText}</Button>,
   },
 };
