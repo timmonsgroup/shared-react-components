@@ -1,7 +1,13 @@
-/**@module LineLoader */
-import React from 'react';
-import { Box, LinearProgress } from '@mui/material';
+/** @module LineLoader */
+import React, { ReactElement } from 'react';
+import { Box, LinearProgress, LinearProgressProps } from '@mui/material';
 import PropTypes from 'prop-types';
+
+interface LineLoaderProps {
+  message?: string;
+  messageAlign?: 'left' | 'right' | 'center';
+  width?: string;
+}
 
 /**
  * @function
@@ -13,12 +19,15 @@ import PropTypes from 'prop-types';
  * @example
  * <LineLoader message="Loading..." />
  */
-const LineLoader = ({ width, message, messageAlign, ...props }) => {
+const LineLoader: React.FC<LineLoaderProps & LinearProgressProps> = ({
+  width,
+  message,
+  messageAlign = 'center',
+  ...props
+}): ReactElement => {
   return (
     <Box sx={{ width }}>
-      { message &&
-          <Box component="p" sx={{ textAlign: messageAlign }}>{message}</Box>
-      }
+      {message && <Box component="p" sx={{ textAlign: messageAlign }}>{message}</Box>}
       <LinearProgress {...props} />
     </Box>
   );
