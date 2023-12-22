@@ -240,8 +240,8 @@ const GenericInlineForm = ({
           </Box>
           <Box>
             <Box sx={inlineFormGroup?.buttonContainer}>
-              <Button sx={inlineFormGroup?.submitButton} data-src-form-button="submit" color={submitColor} onClick={preSubmit} label={submitLabel || 'Submit'} />
-              <Button sx={inlineFormGroup?.resetButton} data-src-form-button="reset" color={resetColor} onClick={forceReset} label={resetLabel || 'Clear'} />
+              <Button sx={inlineFormGroup?.submitButton} data-src-form-button="submit" color={submitColor} onClick={preSubmit}>{submitLabel || 'Submit'}</Button>
+              <Button sx={inlineFormGroup?.resetButton} data-src-form-button="reset" color={resetColor} onClick={forceReset}>{resetLabel || 'Clear'}</Button>
             </Box>
           </Box>
         </Stack>

@@ -1,6 +1,6 @@
 import React from 'react';
 import SubHeader from './SubHeader';
-import Button from './Button';
+import Button from '@mui/material/Button';
 
 export default {
   title: 'Components/Sub Header',
@@ -15,6 +15,6 @@ export const Default = {
     title: 'Sub Header',
     color: 'primary',
     rightRenderProps: { testText: 'test' },
-    rightRender: ({ testText }) => <Button label={testText} color="secondary" />,
+    rightRender: ({ testText }) => <Button color="secondary">{testText}</Button>,
   },
 };

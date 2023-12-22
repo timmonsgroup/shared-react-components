@@ -5,7 +5,7 @@ module.exports = {
     jest: true,
     es2021: true,
   },
-  extends: ['eslint:recommended'],
+  extends: ['eslint:recommended', 'plugin:storybook/recommended'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true

@@ -87,8 +87,7 @@ const AppBar = ({ user, onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'a
         disableElevation={true}
         key={index}
         href={item.href}
-        label={item.title}
-      ></Button>
+      >{item.title}</Button>
     );
 
     if (item.permission) {

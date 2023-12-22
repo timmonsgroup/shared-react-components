@@ -113,6 +113,8 @@ export const valueExists = (value, obj) => Object.values(obj).includes(value);
  * @function
  * @param {object} field - field object
  * @param {Map<string, string>} asyncFieldsMap - map of async fields
+ * @param {object} data - data object
+ * @param {string} [key] - key
  * @returns {ParsedField} parsed field
  */
 export function parseViewField(field, data, key, nested = false) {
