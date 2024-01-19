@@ -89,21 +89,14 @@ export default {
         '.ts': 'tsx',
       },
     }),
-    // Needed for esbuild
-    // esbuild(),
-    // Needed for common things like a?.b?.c
-    commonjs(),    
-    // We also want the build to include the package.json file
-
+    commonjs(),
     resolve(),
-    // Add JSX support
-    //jsx({factory: 'React.createElement'}),
-    // Add typescript support
-    // dts(),
     copy({
       targets: [
         { src: 'src/shared-auth-config/package.json', dest: 'build/shared-auth-config' },
+        { src: 'src/shared-auth-config/README.md', dest: 'build/shared-auth-config' },
         { src: 'src/shared-react-auth/package.json', dest: 'build/shared-react-auth' },
+        { src: 'src/shared-react-auth/README.md', dest: 'build/shared-react-auth' },
       ],
     }),
 
