@@ -11,6 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@timmons-group/shared-auth-config": "workspace:*"
+    "@timmons-group/shared-auth-config": "*"
   }
 }

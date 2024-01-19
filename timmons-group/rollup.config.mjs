@@ -26,6 +26,65 @@ import typescript from '@rollup/plugin-typescript';
 
 import copy from 'rollup-plugin-copy';
 
+import * as packageJSON from './package.json' with { type: "json" };
+
+import rollupJson from '@rollup/plugin-json';
+
+
+// This function is used as a rollup plugin to transform package.json files
+// to fix dependencies. Dependencies for the internal packages start with
+// @timmons-group/. We want to update the version of the dependency to
+// Match the version of the package we are building. We also want to change
+// the dependency to a file dependency. This is because we are building
+// all of the packages at the same time and we want to use the local
+// version of the package instead of the version from npm.
+
+// Read the package.json in the build directory and update the dependencies
+const getMainVersion = (packageJson) => {
+  const version = packageJson.version;
+  const versionParts = version.split('.');
+  return `${versionParts[0]}.${versionParts[1]}.${versionParts[2]}`;
+}
+
+const mainVersion = getMainVersion(packageJSON.default);
+console.log('mainVersion', mainVersion);
+
+const packageJsonTransform = (contents, id) => {
+  let code = contents;
+  console.log('id', id);
+  if (id.endsWith('package.json')) {
+    const packageJson = JSON.parse(code);
+    for (const [key, value] of Object.entries(packageJson.dependencies)) {
+      if (key.startsWith('@timmons-group/')) {
+        packageJson.dependencies[key] = `${mainVersion}`;
+      }
+    }
+
+    // Now set the version to the main version
+    packageJson.version = mainVersion;
+    
+    return JSON.stringify(packageJson, null, 2);
+  }
+}
+
+const replaceFileDependencies = () => ({
+  name: 'replace-file-dependencies',
+  async transform(code, id) {
+    console.log('id', id);
+    if (id.endsWith('package.json')) {
+      const packageJson = JSON.parse(code);
+      for (const [key, value] of Object.entries(packageJson.dependencies)) {
+        if (key.startsWith('@timmons-group/')) {
+          packageJson.dependencies[key] = `${mainVersion}`;
+        }
+      }
+      return JSON.stringify(packageJson, null, 2);
+    }
+  }
+});
+
+
+
 // THe command line to output the .d.ts files is:
 // npx -p typescript tsc shared-auth-config/*.mjs --declaration --allowJs --emitDeclarationOnly --outDir types
 
@@ -49,7 +108,9 @@ export default {
 			),
 			// This expands the relative paths to absolute paths, so e.g.
 			// src/nested/foo becomes /project/src/nested/foo.js
-			fileURLToPath(new URL(file, import.meta.url))
+			fileURLToPath(new URL(file, import.meta.url)),
+      // We dont want to transform the package.json files
+
 		])
 	),
   // We want to output each module to a subdirectory of dist/
@@ -65,6 +126,11 @@ export default {
 
   },
   plugins: [
+    resolve({
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
+      preferBuiltins: false,
+      moduleDirectories: ['src','node_modules'],
+    }),
     typescript(),
     esbuild({
       // All options are optional
@@ -90,15 +156,16 @@ export default {
       },
     }),
     commonjs(),
-    resolve(),
     copy({
       targets: [
-        { src: 'src/shared-auth-config/package.json', dest: 'build/shared-auth-config' },
+        { src: 'src/shared-auth-config/package.json', dest: 'build/shared-auth-config', transform: packageJsonTransform },
         { src: 'src/shared-auth-config/README.md', dest: 'build/shared-auth-config' },
-        { src: 'src/shared-react-auth/package.json', dest: 'build/shared-react-auth' },
+        { src: 'src/shared-react-auth/package.json', dest: 'build/shared-react-auth', transform: packageJsonTransform },
         { src: 'src/shared-react-auth/README.md', dest: 'build/shared-react-auth' },
       ],
     }),
+    // Transform package.json files to fix dependencies
+    replaceFileDependencies(),
 
   ],
   external: [
