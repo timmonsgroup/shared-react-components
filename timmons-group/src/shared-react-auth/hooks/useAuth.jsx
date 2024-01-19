@@ -23,7 +23,7 @@ const timeToStale = 5 * 60; // The time from the token expiration when we should
   TODO: More documentation!
 */
 
-import AuthConfig from './authConfig';
+import { getConfigBuilder } from '@timmons-group/shared-auth-config';
 
 // This constant is a template for a logged out user
 // It gets used when a user is not logged in or when the logged in user selects to logout
@@ -178,7 +178,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       _staleCheckSeconds = options?.staleCheckSeconds;
     }
     // Parse and set the config
-    let cfg = AuthConfig.getConfigBuilder()
+    let cfg = getConfigBuilder()
       .withRawConfiguration(config)
       .build();
 
