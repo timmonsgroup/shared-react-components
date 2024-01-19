@@ -3,23 +3,29 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "test": "tests"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "tsx": "tsc"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-typescript": "^11.1.6",
     "rollup": "^4.9.5",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-esbuild": "^6.1.0",
-    "rollup-plugin-jsx": "^1.0.3"
+    "rollup-plugin-jsx": "^1.0.3",
+    "tslib": "^2.6.2"
   },
-  "dependencies": {
+  "peerDependencies": {
     "axios": "^1.6.5"
   }
 }

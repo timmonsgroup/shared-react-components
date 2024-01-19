@@ -2,7 +2,9 @@
   "name": "@timmons-group/shared-auth-config",
   "version": "0.0.1",
   "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
-  "main": "index.js",
+  "main": "authConfig.js",
+  "type": "module",
+  "types": "authConfig.d.mts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

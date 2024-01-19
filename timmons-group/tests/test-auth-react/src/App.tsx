@@ -3,14 +3,17 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-import auth from '../../../dist/shared-react-auth'
+
+import { ProvideAuth, useAuth } from '../../../build/shared-react-auth'
+
+import { getConfigBuilder } from '../../../build/shared-auth-config'
 
 
-function App() {
+const Main = () => {
   const [count, setCount] = useState(0)
-  
 
-  const { isAuthenticated, login, logout } = auth.useAuth()
+  const { login } = useAuth()
+
   return (
     <>
       <div>
@@ -34,6 +37,36 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+    </>
+  )
+}
+
+function App() {
+
+  // Auth config will cause the auth provider to re-render when it changes
+
+  const [authConfig, setAuthConfig] = useState(null)
+
+  const fetchAuthConfig = async () => {
+    // This is just a fake config for testing
+    let builder = getConfigBuilder()
+    builder.build()
+  }
+
+
+  if (!authConfig) {
+    return (
+      <div>
+        <button onClick={() => fetchAuthConfig()}>Load Auth Config</button>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <ProvideAuth config={fakeConf} >
+        <Main />
+      </ProvideAuth>
     </>
   )
 }

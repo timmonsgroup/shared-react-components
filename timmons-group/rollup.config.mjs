@@ -4,6 +4,8 @@
 // shared-react-auth
 
 import { fileURLToPath } from 'node:url';
+import glob from 'glob';
+import path from 'path';
 
 // JSX plugin
 import jsx from 'rollup-plugin-jsx'
@@ -16,30 +18,61 @@ import resolve from '@rollup/plugin-node-resolve';
 import esbuild from 'rollup-plugin-esbuild';
 
 
+// This plugin converts jsdoc types to typescript types
+import { dts } from 'rollup-plugin-dts';
+
+// And for typescript
+import typescript from '@rollup/plugin-typescript';
+
+import copy from 'rollup-plugin-copy';
+
+// THe command line to output the .d.ts files is:
+// npx -p typescript tsc shared-auth-config/*.mjs --declaration --allowJs --emitDeclarationOnly --outDir types
 
 // This is for rollup
 export default {
-  input: {
-    'shared-auth-config': './shared-auth-config/authConfig.mjs',
-    'shared-react-auth': './shared-react-auth/index.jsx'
-  },
+  // input: {
+  //   'shared-auth-config': './src/shared-auth-config/authConfig.mjs',
+  //   'shared-react-auth': './src/shared-react-auth/index.jsx'
+  // },
+  input: Object.fromEntries(
+		glob
+      .sync('src/**/*')
+      // Only include files ending with .js, .jsx, .ts, and .tsx
+      .filter(file => /\.(js|jsx|ts|tsx|mjs)$/.test(file))
+    .map(file => [
+			// This remove `src/` as well as the file extension from each
+			// file, so e.g. src/nested/foo.js becomes nested/foo
+			path.relative(
+				'src',
+				file.slice(0, file.length - path.extname(file).length)
+			),
+			// This expands the relative paths to absolute paths, so e.g.
+			// src/nested/foo becomes /project/src/nested/foo.js
+			fileURLToPath(new URL(file, import.meta.url))
+		])
+	),
   // We want to output each module to a subdirectory of dist/
   output: {
-    dir: 'dist',
+    dir: 'build',
     format: 'esm',
-    entryFileNames: '[name]/index.js',
-    chunkFileNames: '[name]/index.js',
-    sourcemap: true,
+    // We want to keep the directory structure of the source code
+    // Also the file names should be the same as the source code
+    // entryFileNames: '[name]/index.mjs',
+    // chunkFileNames: '[name]/index.js',
+    // sourcemap: true,
+    // preserveModules: true,
 
   },
   plugins: [
+    typescript(),
     esbuild({
       // All options are optional
       include: /\.[jt]sx?$/, // default, inferred from `loaders` option
       exclude: /node_modules/, // default
       sourceMap: true, // default
       minify: process.env.NODE_ENV === 'production',
-      target: 'es2017', // default, or 'es20XX', 'esnext'
+      target: 'esnext', // default, or 'es20XX', 'esnext'
       jsxFactory: 'React.createElement',
       jsxFragment: 'React.Fragment',
       // Like @rollup/plugin-replace
@@ -53,15 +86,26 @@ export default {
         '.json': 'json',
         // Enable JSX in .js files too
         '.js': 'jsx',
+        '.ts': 'tsx',
       },
     }),
     // Needed for esbuild
     // esbuild(),
     // Needed for common things like a?.b?.c
     commonjs(),    
+    // We also want the build to include the package.json file
+
     resolve(),
     // Add JSX support
     //jsx({factory: 'React.createElement'}),
+    // Add typescript support
+    // dts(),
+    copy({
+      targets: [
+        { src: 'src/shared-auth-config/package.json', dest: 'build/shared-auth-config' },
+        { src: 'src/shared-react-auth/package.json', dest: 'build/shared-react-auth' },
+      ],
+    }),
 
   ],
   external: [

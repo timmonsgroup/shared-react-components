@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+        "jsx": "react-jsx", /* Specify what JSX code is generated. */
+        "target": "es5",
+        "module": "esnext",
+        "noImplicitAny": false,
+        "removeComments": false,
+        "declaration": true,
+        "noLib": false,
+        "sourceMap": true,
+        "allowJs": true,
+        "emitDeclarationOnly": true,
+        "outDir": "build",
+        "declarationDir": "build/",
+        "esModuleInterop":true,
+        "skipLibCheck":false,
+        "strict": false,
+        "rootDir": "./src",
+    },
+    
+    "exclude": [
+        "tests",
+        "node_modules",
+        "*/node_modules",
+        "*/**/node_modules",
+        "build",
+    ],
+    "include": [
+        "src/**/*"
+    ],
+    "buildOptions": {
+        "outDir": "./build",
+        "declaration": true,
+        "declarationMap": true,
+        "allowJs": true,
+        "emitDeclarationOnly": true,
+        "declarationDir": "./build"
+    },
+    "compileOnSave": true,
+    "typeAcquisition": {
+        "enable": true
+    }
+}
