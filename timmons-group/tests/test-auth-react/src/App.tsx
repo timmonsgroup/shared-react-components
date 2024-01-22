@@ -50,7 +50,18 @@ function App() {
   const fetchAuthConfig = async () => {
     // This is just a fake config for testing
     let builder = getConfigBuilder()
-    builder.build()
+    .withOAuth({
+      clientId: '8blul8b4i95t5c5bva97ehvbv',
+      redirectUri: 'http://localhost:5173',
+      scopes: ['openid', 'profile', 'email'],
+      host: 'https://national-wildfiresuite-dev-auth.auth.us-east-1.amazoncognito.com',
+      endpoints: {
+        "refresh": "http://localhost:5173/refresh",
+        "logout": "http://localhost:5173/logout"
+      }
+    })
+    .withLocalStorage()
+    .build()
   }
 
 

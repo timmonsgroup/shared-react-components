@@ -454,6 +454,11 @@ export const getConfigBuilder = () => {
         return builder();
       },
 
+      withNoAuthorization: () => {
+        configuration.authorization.mode = AUTHORIZATION_MODES.NONE;
+        return builder();
+      },
+
       /**
        * @param {string} authorizationSource
        * @returns {ConfigurationBuilder}
