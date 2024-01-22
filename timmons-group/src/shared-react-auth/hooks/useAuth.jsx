@@ -178,6 +178,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       case 'local':
         const boot = window.localStorage.getItem('combinedToken')
         if(boot) {
+          console.log("Got a boot token", boot)
           initInfo = {
             combinedToken: boot
           }
