@@ -42,8 +42,7 @@ import rollupJson from '@rollup/plugin-json';
 // Read the package.json in the build directory and update the dependencies
 const getMainVersion = (packageJson) => {
   const version = packageJson.version;
-  const versionParts = version.split('.');
-  return `${versionParts[0]}.${versionParts[1]}.${versionParts[2]}`;
+  return version;
 }
 
 const mainVersion = getMainVersion(packageJSON.default);
@@ -55,6 +54,11 @@ const packageJsonTransform = (contents, id) => {
   if (id.endsWith('package.json')) {
     const packageJson = JSON.parse(code);
     for (const [key, value] of Object.entries(packageJson.dependencies)) {
+      if (key.startsWith('@timmons-group/')) {
+        packageJson.dependencies[key] = `${mainVersion}`;
+      }
+    }
+    for (const [key, value] of Object.entries(packageJson.peerDependencies)) {
       if (key.startsWith('@timmons-group/')) {
         packageJson.dependencies[key] = `${mainVersion}`;
       }
@@ -128,7 +132,7 @@ export default {
     {
       dir: 'build',
       format: 'es',
-      preserveModules: true,
+      //preserveModules: true,
       entryFileNames: '[name].mjs',
     },
   ],
@@ -228,5 +232,6 @@ export default {
     'jwt-decode',
     'js-cookie',
     'js-cookie',
+    "@timmons-group/shared-auth-config",
   ],
 };
