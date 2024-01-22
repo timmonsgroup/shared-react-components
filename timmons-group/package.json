@@ -31,7 +31,9 @@
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-esbuild": "^6.1.0",
     "rollup-plugin-jsx": "^1.0.3",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "@timmons-group/shared-auth-config": "file://../../build/shared-auth-config",
+    "@timmons-group/shared-reacr-auth": "file://../../build/shared-react-auth"
   },
   "peerDependencies": {
     "axios": "^1.6.5"

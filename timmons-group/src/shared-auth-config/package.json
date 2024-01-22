@@ -2,7 +2,7 @@
   "name": "@timmons-group/shared-auth-config",
   "version": "0.0.1",
   "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
-  "main": "authConfig.js",
+  "main": "authConfig.mjs",
   "type": "module",
   "types": "authConfig.d.mts",
   "scripts": {

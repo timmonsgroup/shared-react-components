@@ -62,7 +62,7 @@ const packageJsonTransform = (contents, id) => {
 
     // Now set the version to the main version
     packageJson.version = mainVersion;
-    
+
     return JSON.stringify(packageJson, null, 2);
   }
 }
@@ -83,7 +83,26 @@ const replaceFileDependencies = () => ({
   }
 });
 
+const input = Object.fromEntries(
+  glob
+    .sync('src/**/*')
+    // Only include files ending with .js, .jsx, .ts, and .tsx
+    .filter(file => /\.(js|jsx|ts|tsx|mjs)$/.test(file))
+    .map(file => [
+      // This remove `src/` as well as the file extension from each
+      // file, so e.g. src/nested/foo.js becomes nested/foo
+      path.relative(
+        'src',
+        file.slice(0, file.length - path.extname(file).length)
+      ),
+      // This expands the relative paths to absolute paths, so e.g.
+      // src/nested/foo becomes /project/src/nested/foo.js
+      fileURLToPath(new URL(file, import.meta.url)),
 
+    ])
+);
+
+console.log('input', input);
 
 // THe command line to output the .d.ts files is:
 // npx -p typescript tsc shared-auth-config/*.mjs --declaration --allowJs --emitDeclarationOnly --outDir types
@@ -94,44 +113,32 @@ export default {
   //   'shared-auth-config': './src/shared-auth-config/authConfig.mjs',
   //   'shared-react-auth': './src/shared-react-auth/index.jsx'
   // },
-  input: Object.fromEntries(
-		glob
-      .sync('src/**/*')
-      // Only include files ending with .js, .jsx, .ts, and .tsx
-      .filter(file => /\.(js|jsx|ts|tsx|mjs)$/.test(file))
-    .map(file => [
-			// This remove `src/` as well as the file extension from each
-			// file, so e.g. src/nested/foo.js becomes nested/foo
-			path.relative(
-				'src',
-				file.slice(0, file.length - path.extname(file).length)
-			),
-			// This expands the relative paths to absolute paths, so e.g.
-			// src/nested/foo becomes /project/src/nested/foo.js
-			fileURLToPath(new URL(file, import.meta.url)),
-      // We dont want to transform the package.json files
-
-		])
-	),
+  input: input,
   // We want to output each module to a subdirectory of dist/
-  output: {
-    dir: 'build',
-    format: 'esm',
-    // We want to keep the directory structure of the source code
-    // Also the file names should be the same as the source code
-    // entryFileNames: '[name]/index.mjs',
-    // chunkFileNames: '[name]/index.js',
-    // sourcemap: true,
-    // preserveModules: true,
+  output: [
+    // { // This ends up renaming the file to have a .js extension instead of preserving the .mjs extension when set. Who knows why.
+    //   dir: 'build/esm',
+    //   format: 'esm',
+    //   // We want to keep the directory structure of the source code
+    //   // Also the file names should be the same as the source code
+    //   // And maintain the .mjs extension if it exists
+    //   preserveModules: true,
 
-  },
+    // },
+    {
+      dir: 'build',
+      format: 'es',
+      preserveModules: true,
+      entryFileNames: '[name].mjs',
+    },
+  ],
   plugins: [
     resolve({
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
       preferBuiltins: false,
-      moduleDirectories: ['src','node_modules'],
+      moduleDirectories: ['src', 'node_modules'],
     }),
-    typescript(),
+    //typescript(),
     esbuild({
       // All options are optional
       include: /\.[jt]sx?$/, // default, inferred from `loaders` option

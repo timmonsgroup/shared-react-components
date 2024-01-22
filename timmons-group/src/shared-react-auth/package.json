@@ -2,7 +2,7 @@
   "name": "@timmons-group/shared-react-auth",
   "version": "0.0.1",
   "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
-  "main": "index.js",
+  "main": "index.mjs",
   "types": "index.d.ts",
   "type": "module",
   "scripts": {
