@@ -41,7 +41,7 @@ if (code) {
 
   // Exchange the code for a token
 
-  const fetchToken = async (code) => {
+  const fetchToken = async (code:string) => {
     const response = await fetch(`https://${cfg.authentication.oAuth.host}/oauth2/token`, {
       method: 'POST',
       headers: {
@@ -63,6 +63,9 @@ if (code) {
 
     // remove the code from the URL
     window.history.replaceState({}, document.title, "/")
+
+    // And reload the page
+    window.location.reload()
 
   }
 

@@ -135,13 +135,46 @@ ProvideAuth.propTypes = {
   initInfo: PropTypes.object,
 };
 
+/**
+ * @typedef {object} AuthContext
+ * @property {function} login - The login function
+ * @property {function} logout - The logout function
+ * @property {function} refresh - The refresh function
+ * @property {function} getPermissions - The getPermissions function
+ * @property {function} getBearerToken - The getBearerToken function
+ * @property {object} authState - The authState object
+ * @property {string} authState.state - The authState.state
+ * @property {string} authState.refreshToken - The authState.refreshToken
+ * @property {string} authState.bearerToken - The authState.bearerToken
+ * @property {object} authState.user - The authState.user
+ * @property {string} authState.user.name - The authState.user.name
+ * @property {string} authState.user.id - The authState.user.id
+ * @property {object} authState.user.raw - The authState.user.raw
+ * @property {string} authState.user.acl - The authState.user.acl
+ * @property {string} authState.user.permissions - The authState.user.permissions
+ * @property {string} authState.user.isAuthenticated - The authState.user.isAuthenticated
+ * @property {string} authState.user.isSignedIn - The authState.user.isSignedIn
+ * @property {string} authState.user.email - The authState.user.email
+ * @property {string} authState.user.groups - The authState.user.groups
+ * @property {string} authState.user.roles - The authState.user.roles
+ * @property {string} authState.user.meta - The authState.user.meta
+ * @property {string} authState.user.meta.displayName - The authState.user.meta.displayName
+ * @property {string} authState.user.meta.email - The authState.user.meta.email
+ * @property {string} authState.user.meta.firstName - The authState.user.meta.firstName
+ * @property {string} authState.user.meta.lastName - The authState.user.meta.lastName
+ * @property {string} authState.user.meta.groups - The authState.user.meta.groups
+ * @property {string} authState.user.meta.roles - The authState.user.meta.roles
+ * @property {string} authState.user.meta.permissions - The authState.user.meta.permissions
+ * @property {string} authState.user.meta.company - The authState.user.meta.company
+ */
+
 // Hook for child components to get the auth object ...
 // ... and re-render when it changes.
 /**
  * This hook provides the auth state and methods to its consumers
  * It is used to manage the auth state and provide the auth state to its consumers
  * @function useAuth
- * @returns {object} The auth object
+ * @returns {AuthContext} The auth object
  */
 export const useAuth = () => {
   // The context object will contain anything returned by useProvideAuth
