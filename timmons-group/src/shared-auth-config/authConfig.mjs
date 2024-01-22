@@ -216,16 +216,6 @@ const validateConfigurationAuthorization = (authorization) => {
       throw new Error('The authorization acl endpoint must be a string');
     }
   }
-
-  // The endpoints must be an object
-  if (typeof authorization.endpoints !== 'object') {
-    throw new Error('The authorization endpoints must be an object');
-  }
-
-  // If the acl endpoint is set, it must be a string
-  if (authorization.endpoints.acl && typeof authorization.endpoints.acl !== 'string') {
-    throw new Error('The authorization acl endpoint must be a string');
-  }
 }
 
 /**

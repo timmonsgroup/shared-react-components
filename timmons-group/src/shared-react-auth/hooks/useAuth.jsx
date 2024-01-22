@@ -167,6 +167,28 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
   const [authState, dispatch] = useReducer(authReducer, initialState);
   const intercept = useRef();
 
+  if(authState.state === AUTH_STATES.INITIALIZING && !initInfo) {
+    console.log("No init info provided, attempting to read from our configured storage mode");
+    switch(config?.storage.mode) {
+      case 'session':
+        initInfo = {
+          combinedToken: window.sessionStorage.getItem('combinedToken')
+        }
+        break;
+      case 'local':
+        const boot = window.localStorage.getItem('combinedToken')
+        if(boot) {
+          initInfo = {
+            combinedToken: boot
+          }
+        }
+        break;
+      default:
+        console.error("No storage mode configured, unable to read init info");
+        break;
+    }
+  }
+
   // Any time config changes make sure we update the state
   useEffect(() => {
     console.log('useProvideAuth, config changed', config);
@@ -193,17 +215,23 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     if (initInfo) {
       if (initInfo.combinedToken) {
         // We need to parse and exteract the id_token, access_token, and maybe refresh_token
-        const { valid, id_token, access_token, refresh_token } = parseCombinedToken(initInfo.combinedToken);
-        if (!valid) {
-          console.error('Invalid combined token');
-          // If the refresh token is set we should try to refresh
-          if (refresh_token) {
-            startWithRefreshToken(refresh_token);
+        try {
+          const { valid, id_token, access_token, refresh_token } = parseCombinedToken(initInfo.combinedToken);
+          if (!valid) {
+            console.error('Invalid combined token');
+            // If the refresh token is set we should try to refresh
+            if (refresh_token) {
+              startWithRefreshToken(refresh_token);
+            } else {
+              logout_internal('combined token invalid');
+            }
           } else {
-            logout_internal('combined token invalid');
+            dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: access_token, refreshToken: refresh_token, id_token: id_token });
           }
-        } else {
-          dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: access_token, refreshToken: refresh_token, id_token: id_token });
+        } catch (ex) {
+          console.error('Error parsing combined token', ex);
+          logout_internal('combined token error');
+          window.localStorage.removeItem('bootToken');
         }
       }
 
