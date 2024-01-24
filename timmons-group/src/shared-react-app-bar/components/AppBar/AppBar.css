@@ -1,0 +1,9 @@
+/*
+    We need this so that the desired logo image doesnt expand the appbar
+    There may be another better way to do this but this works for now
+*/
+.appbar-logo {
+    height: 100%;
+    max-height: 55px;
+    width: auto;
+}

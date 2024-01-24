@@ -53,12 +53,12 @@ const packageJsonTransform = (contents, id) => {
   console.log('id', id);
   if (id.endsWith('package.json')) {
     const packageJson = JSON.parse(code);
-    for (const [key, value] of Object.entries(packageJson.dependencies)) {
+    for (const [key, value] of Object.entries(packageJson.dependencies||{})) {
       if (key.startsWith('@timmons-group/')) {
         packageJson.dependencies[key] = `${mainVersion}`;
       }
     }
-    for (const [key, value] of Object.entries(packageJson.peerDependencies)) {
+    for (const [key, value] of Object.entries(packageJson.peerDependencies||{})) {
       if (key.startsWith('@timmons-group/')) {
         packageJson.dependencies[key] = `${mainVersion}`;
       }
@@ -173,6 +173,10 @@ export default {
         { src: 'src/shared-auth-config/README.md', dest: 'build/shared-auth-config' },
         { src: 'src/shared-react-auth/package.json', dest: 'build/shared-react-auth', transform: packageJsonTransform },
         { src: 'src/shared-react-auth/README.md', dest: 'build/shared-react-auth' },
+        { src: 'src/shared-react-permission-filter/package.json', dest: 'build/shared-react-permission-filter', transform: packageJsonTransform },
+        { src: 'src/shared-react-permission-filter/README.md', dest: 'build/shared-react-permission-filter' },
+        { src: 'src/shared-react-app-bar/package.json', dest: 'build/shared-react-app-bar', transform: packageJsonTransform },
+        { src: 'src/shared-react-app-bar/README.md', dest: 'build/shared-react-app-bar' },
       ],
     }),
     // Transform package.json files to fix dependencies
@@ -181,6 +185,8 @@ export default {
   ],
   external: [
     'react',
+    'react/jsx-runtime',
+    'prop-types',
     'react-dom',
     'react-router-dom',
     'react-redux',
@@ -232,6 +238,18 @@ export default {
     'jwt-decode',
     'js-cookie',
     'js-cookie',
+    '@mui/material',
+    '@mui/icons-material',
+    '@mui/material/styles',
+    '@mui/material/CircularProgress',
+    '@mui/material/Link',
+    '@mui/icons-material/ArrowDropDown',
+    '@mui/icons-material/ArrowDropUp',
+    '@emotion/styled',
+    'jsx-runtime',
     "@timmons-group/shared-auth-config",
+    "@timmons-group/shared-react-auth",
+    "@timmons-group/shared-react-permission-filter",
+    "@timmons-group/shared-react-app-bar",
   ],
 };

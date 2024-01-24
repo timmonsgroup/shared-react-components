@@ -8,6 +8,10 @@ import { ProvideAuth, useAuth } from '../../../build/shared-react-auth'
 
 import { getConfigBuilder } from '../../../build/shared-auth-config'
 
+import PermissionFilter from '../../../build/shared-react-permission-filter'
+
+import AppBar from '../../../build/shared-react-app-bar'
+
 let cfg = getConfigBuilder()
     .withOAuth({
       clientId: '8blul8b4i95t5c5bva97ehvbv',
@@ -83,6 +87,14 @@ const RenderUser = ({ user }) => {
   )
 }
 
+const navLinks = [
+  { title: 'Home', href: '/' }
+];
+
+const GARP_LOGO_URL = 'https://s3.amazonaws.com/garp-website-images/garp-logo.png'
+const logout = () => {
+}
+
 const Main = () => {
   const [count, setCount] = useState(0)
 
@@ -91,6 +103,15 @@ const Main = () => {
   return (
     <>
       <div>
+        AB B4
+      <AppBar
+        navLinks={navLinks}
+        user={authState?.user}
+        onLogin={() => login()}
+        onLogout={logout}
+        logoUrl={GARP_LOGO_URL}
+      />
+      AB AF
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
@@ -109,6 +130,10 @@ const Main = () => {
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
+        Pre Permission Filter
+        <PermissionFilter showIfLoggedIn>
+          <p>Permission Filter</p>
+        </PermissionFilter>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more

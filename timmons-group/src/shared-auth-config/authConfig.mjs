@@ -12,7 +12,8 @@ export const STORAGE_MODES = {
 // If the user has the permission in their acl, they have access
 export const AUTHORIZATION_MODES = {
   ACCESS_CONTROL_LIST: 'acl',
-  COGNITO_GROUPS: 'cognito_groups',
+  ID_TOKEN_CLAIM: 'id_token_claim',
+  ACCESS_TOKEN_CLAIM: 'access_token_claim',
   NONE: 'none',
 }
 
@@ -176,6 +177,11 @@ const validateConfigurationStorage = (storage) => {
   if (!Object.values(STORAGE_MODES).includes(storage.mode)) {
     throw new Error(`The storage mode must be one of the following: ${Object.values(STORAGE_MODES).join(', ')}`);
   }
+
+  // If the startup source key is set, it must be a string
+  if (storage.startupSourceKey && typeof storage.startupSourceKey !== 'string') {
+    throw new Error('The storage startup source key must be a string');
+  }
 }
 
 /**
@@ -282,12 +288,14 @@ const getEmptyConfiguration = () => {
  * @property {function} withSessionStorage
  * @property {function} withLocalStorage
  * @property {function} withCookieStorage
+ * @property {function} withStartupSourceKey
  * @property {function} withAuthorization
  * @property {function} withAuthorizationMode
  * @property {function} withAuthorizationSource
  * @property {function} withAuthorizationEndpoints
  * @property {function} withAuthorizationAclEndpoint
  * @property {function} withRawConfiguration
+ * @property {function} withDefaultPermissions
  * @property {function} build
  * 
  */
@@ -425,6 +433,15 @@ export const getConfigBuilder = () => {
       },
 
       /**
+       * @param {string} startupSourceKey
+       * @returns {ConfigurationBuilder}
+       */
+      withStartupSourceKey: (startupSourceKey) => {
+        configuration.storage.startupSourceKey = startupSourceKey;
+        return builder();
+      },
+
+      /**
        * @param {AuthorizationConfiguration} authorizationConfiguration
        * @returns {ConfigurationBuilder}
        */
@@ -482,6 +499,15 @@ export const getConfigBuilder = () => {
        */
       withRawConfiguration: (rawConfiguration) => {
         configuration = rawConfiguration;
+        return builder();
+      },
+
+      /**
+       * @param {string[]} defaultPermissions
+       * @returns {ConfigurationBuilder}
+       */
+      withDefaultPermissions: (defaultPermissions) => {
+        configuration.authorization.defaultPermissions = defaultPermissions;
         return builder();
       },
       

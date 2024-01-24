@@ -3,7 +3,7 @@
   "workspaces": [
     "src/*"
   ],
-  "version": "0.0.1-alpha.5",
+  "version": "0.0.1-alpha.6",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -25,17 +25,23 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@timmons-group/shared-auth-config": "file://../../build/shared-auth-config",
+    "@timmons-group/shared-reacr-auth": "file://../../build/shared-react-auth",
     "lerna": "^8.0.2",
     "rollup": "^4.9.5",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-esbuild": "^6.1.0",
     "rollup-plugin-jsx": "^1.0.3",
-    "tslib": "^2.6.2",
-    "@timmons-group/shared-auth-config": "file://../../build/shared-auth-config",
-    "@timmons-group/shared-reacr-auth": "file://../../build/shared-react-auth"
+    "tslib": "^2.6.2"
   },
   "peerDependencies": {
     "axios": "^1.6.5"
+  },
+  "dependencies": {
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.6",
+    "@mui/material": "^5.15.6",
+    "prop-types": "^15.8.1"
   }
 }

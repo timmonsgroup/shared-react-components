@@ -23,7 +23,7 @@ const timeToStale = 5 * 60; // The time from the token expiration when we should
   TODO: More documentation!
 */
 
-import { getConfigBuilder } from '@timmons-group/shared-auth-config';
+import { getConfigBuilder, AUTHORIZATION_MODES, ACCESS_CONTROL_LIST_SOURCE } from '@timmons-group/shared-auth-config';
 
 // This constant is a template for a logged out user
 // It gets used when a user is not logged in or when the logged in user selects to logout
@@ -200,27 +200,131 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
   const [authState, dispatch] = useReducer(authReducer, initialState);
   const intercept = useRef();
 
-  if(authState.state === AUTH_STATES.INITIALIZING && !initInfo) {
-    console.log("No init info provided, attempting to read from our configured storage mode");
-    switch(config?.storage.mode) {
-      case 'session':
-        initInfo = {
-          combinedToken: window.sessionStorage.getItem('combinedToken')
-        }
-        break;
-      case 'local':
-        const boot = window.localStorage.getItem('combinedToken')
-        if(boot) {
-          console.log("Got a boot token", boot)
-          initInfo = {
-            combinedToken: boot
-          }
-        }
-        break;
-      default:
-        console.error("No storage mode configured, unable to read init info");
-        break;
+  let store = null;
+
+  switch (config?.storage.mode) {
+    case 'session':
+      console.log("Using session store")
+      store = window.sessionStorage;
+      break;
+    case 'local':
+      console.log("Using local store")
+      store = window.localStorage;
+      break;
+    default:
+      console.error("No storage mode configured, unable to read init info");
+      break;
+  }
+
+  const getACL = async (authorization) => {
+    console.log("Get ACL")
+    // The configuration needs to have a source
+    // The source can be:
+    // 1. API
+
+    // If the source is API we need to have an endpoint configuration
+    if (authorization.source === ACCESS_CONTROL_LIST_SOURCE.API) {
+      if (!authorization?.endpoints?.acl) {
+        console.error("Authorization source is API but no endpoint was provided")
+        return;
+      }
+      console.log("Authorization source is API, getting permissions from endpoint", authorization.endpoints.acl)
+
+      // Get the endpoint
+      const endpoint = authorization.endpoints.acl;
+
+      // Get the permissions from the endpoint
+      const permissions = await axios.get(endpoint);
+
+      // Return the permissions
+      return permissions.data;
     }
+  }
+
+
+  const beginAuthorization = async () => {
+    console.log("Begin authorization")
+    const { authorization } = config;
+    console.log("Authorization", authorization)
+
+    // There are four currently supported authorization modes
+    // 1. Access Control List (ACL)
+    // 2. ID Token Claim
+    // 3. Access Token Claim
+    // 4. None
+
+    // If the type is none we will not attempt to get permissions
+    if (authorization.mode === AUTHORIZATION_MODES.NONE) {
+      console.log("Authorization type is none, skipping")
+      return;
+    }
+
+    // If the type is Access Token Claim the configuration must contain a claim name
+    if (authorization.mode === AUTHORIZATION_MODES.ACCESS_TOKEN_CLAIM) {
+      if(!authorization.claimName) {
+        console.error("Authorization type is access token claim but no claim name was provided")
+        return;
+      }
+
+      // Try to get the claim from the access token
+      const claim = getClaimFromToken(authState.access_token, authorization.claimName);
+
+      // Set the permissions
+      dispatch({ type: ACTIONS.SET_PERMISSIONS, acl: claim });
+    }
+
+    // If the type is ID Token Claim the configuration must contain a claim name
+    if (authorization.mode === AUTHORIZATION_MODES.ID_TOKEN_CLAIM) {
+      if(!authorization.claimName) {
+        console.error("Authorization type is id token claim but no claim name was provided")
+        return;
+      }
+
+      // Try to get the claim from the id token
+      const claim = getClaimFromToken(authState.id_token, authorization.claimName);
+      
+      // Set the permissions
+      dispatch({ type: ACTIONS.SET_PERMISSIONS, acl: claim });
+    }
+
+    // If the type is ACL the configuration must contain a source
+    if (authorization.mode === AUTHORIZATION_MODES.ACCESS_CONTROL_LIST) {
+      if(!authorization.source) {
+        console.error("Authorization type is acl but no source was provided")
+        return;
+      }
+
+      console.log("Authorization source is", authorization.source)
+      // Try to get the acl from the source
+      const acl = await getACL(authorization);
+
+      // Set the permissions
+      dispatch({ type: ACTIONS.SET_PERMISSIONS, acl });
+    }
+  }
+
+
+
+  if (authState.state === AUTH_STATES.INITIALIZING && !initInfo) {
+    console.log("No init info provided, attempting to read from our configured storage mode");
+
+
+    if (store) {
+
+      const key = config?.storage?.startupSourceKey || 'combinedToken';
+      console.log("Attempting to read from store", key)
+      const boot = store.getItem(key)
+      if (boot) {
+        console.log("Got a boot token", boot)
+        initInfo = {
+          combinedToken: boot
+        }
+      }
+      else {
+        console.log("No boot token found")
+      }
+    }
+
   }
 
   // Any time config changes make sure we update the state
@@ -260,7 +364,11 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
               logout_internal('combined token invalid');
             }
           } else {
+            console.log('Combined token is valid');
             dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: access_token, refreshToken: refresh_token, id_token: id_token });
+
+            // TODO get permissions
+            console.log("TODO do authorization")
           }
         } catch (ex) {
           console.error('Error parsing combined token', ex);
@@ -309,6 +417,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
   }, []);
 
   useEffect(() => {
+    console.log("Access token changed", authState.access_token)
     intercept.current = axios.interceptors.request.use((request) => {
       const token = authState.access_token;
       if (token) {
@@ -321,6 +430,11 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       dispatch({ type: ACTIONS.SET_LAST_REQUEST_TIME, time: Date.now() });
       return request;
     });
+
+    if(authState.access_token){
+      console.log("Access token set, getting permissions")
+      beginAuthorization();
+    }
   }, [authState.access_token]);
 
 
@@ -639,12 +753,12 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     try {
       let typeOfRefreshToken = typeof refreshToken;
       console.log('startWithRefreshToken', refreshToken, typeOfRefreshToken);
-      if(typeOfRefreshToken !== 'string') {
-        refreshToken = ""+refreshToken;
+      if (typeOfRefreshToken !== 'string') {
+        refreshToken = "" + refreshToken;
         // REFRESH TOKENES MUST BE STRINGS
       }
       // I swear to god axios if you ignore the content type one more time
-      let res = await axios.post(url, refreshToken, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'content-type':  'application/x-www-form-urlencoded'} })
+      let res = await axios.post(url, refreshToken, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'content-type': 'application/x-www-form-urlencoded' } })
       parseTokenAndUpdateState(res.data.token, res.data.user);
       if (config.useSession) setBootTokenInSession(res.data.token);
       else setBootTokenInLocalStorage(res.data.token);
@@ -806,6 +920,16 @@ const authReducer = (nextState, action) => {
           acl: anonUser.acl || anonUser.permissions,
         };
       }
+      else if (action.config?.authorization?.defaultPermissions) {
+        anonUser = {
+          id: 'anonymous',
+          name: 'Anonymous',
+          email: 'anonymous',
+          isSignedIn: false,
+          isAuthenticated: false,
+          acl: action.config?.authorization?.defaultPermissions,
+        };
+      }
 
       return {
         ...nextState,
@@ -882,6 +1006,7 @@ const authReducer = (nextState, action) => {
         state: AUTH_STATES.LOGGED_OUT,
       };
     case ACTIONS.SET_PERMISSIONS:
+      console.log('authReducer, setting permissions', action.acl);
       return {
         ...nextState,
         state: AUTH_STATES.LOGGED_IN,

@@ -1,0 +1,16 @@
+{
+  "name": "@timmons-group/shared-react-app-bar",
+  "version": "0.0.1",
+  "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
+  "main": "index.mjs",
+  "types": "index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@timmons-group/shared-auth-config": "*"
+  }
+}
