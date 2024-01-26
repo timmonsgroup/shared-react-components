@@ -296,6 +296,7 @@ const getEmptyConfiguration = () => {
  * @property {function} withAuthorizationAclEndpoint
  * @property {function} withRawConfiguration
  * @property {function} withDefaultPermissions
+ * @property {function} withAppAuthorization
  * @property {function} build
  * 
  */
@@ -498,6 +499,7 @@ export const getConfigBuilder = () => {
        * @returns {ConfigurationBuilder}
        */
       withRawConfiguration: (rawConfiguration) => {
+        console.log("Using raw configuration", rawConfiguration)
         configuration = rawConfiguration;
         return builder();
       },
@@ -508,6 +510,16 @@ export const getConfigBuilder = () => {
        */
       withDefaultPermissions: (defaultPermissions) => {
         configuration.authorization.defaultPermissions = defaultPermissions;
+        return builder();
+      },
+
+      /**
+       * @param {string} Application application name for dealing with authorization. Primarily used for storage
+       * @returns {ConfigurationBuiler}
+       */
+      withAppAuthorization: (Application) => {
+        console.log("Using expirimintal feature: withAppAuthorization", Application)
+        configuration.authorization.application = Application;
         return builder();
       },
       

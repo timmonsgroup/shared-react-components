@@ -83,8 +83,8 @@ export const parseCombinedToken = (base64Value) => {
   const parsed = JSON.parse(strinValue);
 
   // now we should validate that the access_token and id_token are valid JWT tokens
-  const { id_token, access_token } = parsed;
-  const idToken = decodeTokenToJWT(id_token || access_token) || {};
+  const { id_token, access_token, refresh_token } = parsed;
+  const idToken = decodeTokenToJWT(id_token) || {};
   const accessToken = decodeTokenToJWT(access_token) || {};
 
   // Now validate that they are not expired
@@ -92,6 +92,6 @@ export const parseCombinedToken = (base64Value) => {
 
   // If it is expired return that it is invalid
 
-  return { ... parsed, valid: !isExpired() };
+  return { id_token: idToken, access_token: accessToken, bearer_token: access_token, refresh_token, valid: !isExpired() };
 
 }

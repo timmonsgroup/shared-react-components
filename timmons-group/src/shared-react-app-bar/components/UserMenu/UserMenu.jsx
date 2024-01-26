@@ -15,11 +15,16 @@ import { useAuth } from '@timmons-group/shared-react-auth';
  * @param {boolean} props.open - boolean to indicate if the menu is open
  * @returns {React.ReactElement} - the menu arrow
  */
-const MenuArrow = ({ open }) => {
+export const MenuArrow = ({ open }) => {
+  debugger;
   if (open) {
-    return <ArrowDropUp />;
+    let ret = <ArrowDropUp />;
+    console.log(ret);
+    return ret
   }
-  return <ArrowDropDownIcon />;
+  let rets = <ArrowDropDownIcon />;
+  console.log(rets);
+  return rets
 };
 
 MenuArrow.propTypes = {
@@ -38,7 +43,7 @@ MenuArrow.propTypes = {
  * @param {boolean} [props.hideArrow] - boolean to indicate if the arrow should be hidden
  * @returns {React.ReactElement} - the user menu
  */
-const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
+export const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
   const { authState } = useAuth();
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
@@ -67,6 +72,8 @@ const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  console.log(typeof open)
 
   if (user?.isSignedIn) {
     return (

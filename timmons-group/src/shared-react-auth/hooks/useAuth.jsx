@@ -23,7 +23,7 @@ const timeToStale = 5 * 60; // The time from the token expiration when we should
   TODO: More documentation!
 */
 
-import { getConfigBuilder, AUTHORIZATION_MODES, ACCESS_CONTROL_LIST_SOURCE } from '@timmons-group/shared-auth-config';
+import { getConfigBuilder, AUTHORIZATION_MODES, ACCESS_CONTROL_LIST_SOURCE, STORAGE_MODES } from '@timmons-group/shared-auth-config';
 
 // This constant is a template for a logged out user
 // It gets used when a user is not logged in or when the logged in user selects to logout
@@ -51,6 +51,8 @@ const ACTIONS = {
   SET_STALE_CHECK_STATE: 'set_stale_check_state',
   SET_LAST_REQUEST_TIME: 'set_last_request_time',
   SET_REFRESHING: 'set_refreshing',
+  SET_GLOBAL_STATE: 'set_global_state',
+  SET_CONFIG_STATE: 'set_config_state',
 };
 
 /**
@@ -63,6 +65,20 @@ const STALE_CHECK_STATES = {
   STALE_CHECK_COMPLETE: 'STALE_CHECK_COMPLETE',
   STALE_CHECK_IN_PROGRESS: 'STALE_CHECK_IN_PROGRESS',
 };
+
+const GLOBAL_STATES = {
+  IDLE: 'IDLE',
+  INITIALIZING: 'INITIALIZING',
+  AUTHENTICATING: 'AUTHENTICATING',
+  AUTHORIZING: 'AUTHORIZING',
+  READY: 'READY',
+}
+
+const CONFIG_STATES = {
+  MISSING: 'MISSING',
+  INVALID: 'INVALID',
+  VALID: 'VALID',
+}
 
 /**
  * Valid states that allow logins to occur
@@ -78,6 +94,8 @@ const VALID_LOGIN_STATES = [AUTH_STATES.INITIALIZING, AUTH_STATES.LOGGED_OUT, AU
  */
 const initialState = {
   state: AUTH_STATES.INITIALIZING,
+  globalState: GLOBAL_STATES.IDLE,
+  configState: CONFIG_STATES.MISSING,
   refreshToken: null,
   bearerToken: null,
   user: {
@@ -116,13 +134,13 @@ let APP_ID = '123-456';
  * @returns {React.Context} The auth context provider
  */
 export const ProvideAuth = ({ config, whitelist, options, children, initInfo }) => {
-  console.log('ProvideAuth', config, initInfo);
+
   if (config?.cookieReference) {
     APP_ID = config.cookieReference;
   }
 
   const auth = useProvideAuth(config, whitelist, options, initInfo);
-  console.log('ProvideAuth, auth', config, whitelist, options, initInfo);
+
   // We are providing the object returned by useProvideAuth as the value of the authContext
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 };
@@ -168,6 +186,194 @@ ProvideAuth.propTypes = {
  * @property {string} authState.user.meta.company - The authState.user.meta.company
  */
 
+/**
+ * This class wraps the cookie store and provides an interface identical to the session and local storage interfaces
+ */
+class CookieWrapper {
+  constructor() {
+    this.storedValue = {};
+    this.parseCookie();
+  }
+
+  parseCookie() {
+    // Cookies are weird so we need to parse all the values from a single cookie
+    const cookie = document.cookie.split(';').reduce((res, c) => {
+      const [key, val] = c.trim().split('=').map(decodeURIComponent);
+      try {
+        return Object.assign(res, { [key]: JSON.parse(val) });
+      } catch (e) {
+        return Object.assign(res, { [key]: val });
+      }
+    }, {});
+
+    this.storedValue = cookie;
+  }
+
+  getItem(key) {
+    return this.storedValue[key];
+  }
+
+  setItem(key, value) {
+    this.storedValue[key] = value;
+    this.putCookie();
+  }
+
+  removeItem(key) {
+    delete this.storedValue[key];
+    this.putCookie();
+  }
+
+  encodeCookie() {
+    // Cookies are weird so we need to encode all the values into a single cookie
+
+    const cookie = this.storedValue;
+
+    return Object.keys(cookie).map((key) => {
+      // URL encode the key and value
+      key = encodeURIComponent(key);
+      let value = encodeURIComponent(cookie[key]);
+      return `${key}=${value}`;
+    }).join(';');
+  }
+
+  putCookie() {
+    document.cookie = `${this.encodeCookie()}`;
+  }
+}
+
+class StorageDriver {
+  constructor(storeType, initKey) {
+    this.storeType = storeType;
+    this.initKey = initKey;
+    this.initStore();
+    console.log('StorageDriver', this.storeType, this.initKey);
+  }
+
+  initStore() {
+    switch (this.storeType) {
+      case STORAGE_MODES.SESSION:
+        this.store = window.sessionStorage;
+        break;
+      case STORAGE_MODES.LOCAL:
+        this.store = window.localStorage;
+        break;
+      case STORAGE_MODES.COOKIE:
+        this.store = new CookieWrapper();
+      default:
+        console.error("No storage mode configured, unable to read init info");
+        break;
+    }
+
+  }
+
+  putAccessToken(token) {
+    if (typeof token !== 'string') {
+      token = JSON.stringify(token);
+    }
+
+    this.store.setItem('access_token', token);
+  }
+
+  putIdToken(token) {
+    if (typeof token !== 'string') {
+      token = JSON.stringify(token);
+    }
+
+    this.store.setItem('id_token', token);
+  }
+
+  putRefreshToken(token) {
+    if (typeof token !== 'string') {
+      token = JSON.stringify(token);
+    }
+
+    this.store.setItem('refresh_token', token);
+  }
+
+  putCombinedToken(token) {
+    if (typeof token !== 'string') {
+      token = JSON.stringify(token);
+    }
+
+    this.store.setItem(this.initKey, token);
+  }
+
+  putAuthorization(authorization, maybeApplication) {
+    if (typeof authorization !== 'string') {
+      authorization = JSON.stringify(authorization);
+    }
+
+    let key = maybeApplication ? `${maybeApplication}_authorization` : 'authorization';
+
+    this.store.setItem(key, authorization);
+  }
+  
+
+
+  getAccessToken() {
+    let item = this.store.getItem('access_token');
+    if (item) {
+      try {
+        return JSON.parse(item);
+      }
+      catch (ex) {
+        return item;
+      }
+    }
+    return item;
+
+  }
+
+  getIdToken() {
+
+    let item = this.store.getItem('id_token');
+    if (item) {
+      try {
+        return JSON.parse(item);
+      }
+      catch (ex) {
+        return item;
+      }
+    }
+    return item;
+  }
+
+  getRefreshToken() {
+    let item = this.store.getItem('refresh_token');
+    if (item) {
+      try {
+        return JSON.parse(item);
+      }
+      catch (ex) {
+        return item;
+      }
+    }
+    return item;
+  }
+
+  getCombinedToken() {
+    let item = this.store.getItem(this.initKey);
+    if (item) {
+      try {
+        return JSON.parse(item);
+      }
+      catch (ex) {
+        return item;
+      }
+    }
+    return item;
+  }
+
+  clear() {
+    this.store.removeItem('access_token');
+    this.store.removeItem('id_token');
+    this.store.removeItem('refresh_token');
+    this.store.removeItem(this.initKey);
+    this.store.removeItem('authorization');
+  }
+
+}
+
 // Hook for child components to get the auth object ...
 // ... and re-render when it changes.
 /**
@@ -194,30 +400,21 @@ export const useAuth = () => {
  * @returns {AuthContext} The auth context object
  */
 const useProvideAuth = (config, whitelist, options, initInfo) => {
-  console.log('useProvideAuth', config);
+
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
   const [authState, dispatch] = useReducer(authReducer, initialState);
   const intercept = useRef();
+  const configIsValid = useRef(false);
+  const store = useRef(null);
+  const init = useRef(null);
 
-  let store = null;
+  useEffect(() => {
+    console.debug("Global State Changed", authState.globalState);
+  }, [authState.globalState]);
 
-  switch (config?.storage.mode) {
-    case 'session':
-      console.log("Using session store")
-      store = window.sessionStorage;
-      break;
-    case 'local':
-      console.log("Using local store")
-      store = window.localStorage;
-      break;
-    default:
-      console.error("No storage mode configured, unable to read init info");
-      break;
-  }
 
   const getACL = async (authorization) => {
-    console.log("Get ACL")
     // The configuration needs to have a source
     // The source can be:
     // 1. API
@@ -228,7 +425,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
         console.error("Authorization source is API but no endpoint was provided")
         return;
       }
-      console.log("Authorization source is API, getting permissions from endpoint", authorization.endpoints.acl)
 
       // Get the endpoint
       const endpoint = authorization.endpoints.acl;
@@ -243,9 +439,8 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
 
   const beginAuthorization = async () => {
-    console.log("Begin authorization")
+    dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.AUTHORIZING });
     const { authorization } = config;
-    console.log("Authorization", authorization)
 
     // There are four currently supported authorization modes
     // 1. Access Control List (ACL)
@@ -255,13 +450,13 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // If the type is none we will not attempt to get permissions
     if (authorization.mode === AUTHORIZATION_MODES.NONE) {
-      console.log("Authorization type is none, skipping")
+      console.warn("Authorization type is none, skipping")
       return;
     }
 
     // If the type is Access Token Claim the configuration must contain a claim name
     if (authorization.mode === AUTHORIZATION_MODES.ACCESS_TOKEN_CLAIM) {
-      if(!authorization.claimName) {
+      if (!authorization.claimName) {
         console.error("Authorization type is access token claim but no claim name was provided")
         return;
       }
@@ -275,57 +470,36 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // If the type is ID Token Claim the configuration must contain a claim name
     if (authorization.mode === AUTHORIZATION_MODES.ID_TOKEN_CLAIM) {
-      if(!authorization.claimName) {
+      if (!authorization.claimName) {
         console.error("Authorization type is id token claim but no claim name was provided")
         return;
       }
 
       // Try to get the claim from the id token
       const claim = getClaimFromToken(authState.id_token, authorization.claimName);
-      
+
       // Set the permissions
       dispatch({ type: ACTIONS.SET_PERMISSIONS, acl: claim });
     }
 
     // If the type is ACL the configuration must contain a source
     if (authorization.mode === AUTHORIZATION_MODES.ACCESS_CONTROL_LIST) {
-      if(!authorization.source) {
+      if (!authorization.source) {
         console.error("Authorization type is acl but no source was provided")
         return;
       }
 
-      console.log("Authorization source is", authorization.source)
       // Try to get the acl from the source
       const acl = await getACL(authorization);
 
       // Set the permissions
       dispatch({ type: ACTIONS.SET_PERMISSIONS, acl });
+      dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.READY });
+      store.current.putAuthorization(acl, authorization.application);
     }
   }
 
 
-
-  if (authState.state === AUTH_STATES.INITIALIZING && !initInfo) {
-    console.log("No init info provided, attempting to read from our configured storage mode");
-
-
-    if (store) {
-
-      const key = config?.storage?.startupSourceKey || 'combinedToken';
-      console.log("Attempting to read from store", key)
-      const boot = store.getItem(key)
-      if (boot) {
-        console.log("Got a boot token", boot)
-        initInfo = {
-          combinedToken: boot
-        }
-      }
-      else {
-        console.log("No boot token found")
-      }
-    }
-
-  }
 
   // Any time config changes make sure we update the state
   useEffect(() => {
@@ -337,48 +511,88 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     if (options?.staleCheckSeconds) {
       _staleCheckSeconds = options?.staleCheckSeconds;
     }
-    // Parse and set the config
-    let cfg = getConfigBuilder()
-      .withRawConfiguration(config)
-      .build();
 
-    console.log('useProvideAuth, config was valid', cfg);
-    // Push the config into the state, we probably dont need the full config but it contains the anonymous user info at a minimum
-    dispatch({ type: ACTIONS.SET_CONFIG, config: cfg });
+    if (!config) {
+      dispatch({ type: ACTIONS.SET_CONFIG_STATE, configState: CONFIG_STATES.MISSING });
+      return;
+    }
+
+    // Parse and set the config
+    try {
+      let cfg = getConfigBuilder()
+        .withRawConfiguration(config)
+        .build();
+
+      console.log('useProvideAuth, config was valid', cfg);
+      // Push the config into the state, we probably dont need the full config but it contains the anonymous user info at a minimum
+      dispatch({ type: ACTIONS.SET_CONFIG, config: cfg });
+
+      // Set the configIsValid flag to true
+      configIsValid.current = true;
+
+      dispatch({ type: ACTIONS.SET_CONFIG_STATE, configState: CONFIG_STATES.VALID });
+
+    }
+    catch (ex) {
+      console.error('useProvideAuth, config was invalid', ex);
+      // Set the configIsValid flag to false
+      configIsValid.current = false;
+      dispatch({ type: ACTIONS.SET_CONFIG_STATE, configState: CONFIG_STATES.INVALID });
+    }
+
   }, [config]);
+
+  useEffect(() => {
+    dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.INITIALIZING });
+
+    if (configIsValid.current === true && config) {
+      const key = config?.storage?.startupSourceKey || 'combinedToken';
+      store.current = new StorageDriver(config?.storage?.mode || STORAGE_MODES.SESSION, key);
+    }
+
+    if (!init.current) {
+      if (store.current) {
+        const boot = store.current.getCombinedToken();
+        console.log('useProvideAuth, boot token', boot);
+        if (boot) {
+          init.current = {
+            combinedToken: boot
+          }
+        }
+        else {
+        }
+      }
+    }
+
+  }, [configIsValid, config]);
 
   // And if the initInfo changes make sure we update the state
   useEffect(() => {
-    console.log('useProvideAuth, initInfo changed', initInfo);
-    if (initInfo) {
-      if (initInfo.combinedToken) {
+    if (init.current) {
+      if (init.current.combinedToken) {
         // We need to parse and exteract the id_token, access_token, and maybe refresh_token
         try {
-          const { valid, id_token, access_token, refresh_token } = parseCombinedToken(initInfo.combinedToken);
-          if (!valid) {
-            console.error('Invalid combined token');
-            // If the refresh token is set we should try to refresh
-            if (refresh_token) {
-              startWithRefreshToken(refresh_token);
-            } else {
-              logout_internal('combined token invalid');
-            }
-          } else {
-            console.log('Combined token is valid');
-            dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: access_token, refreshToken: refresh_token, id_token: id_token });
-
-            // TODO get permissions
-            console.log("TODO do authorization")
-          }
+          // const { valid, id_token, access_token, refresh_token } = parseCombinedToken(init.current.combinedToken);
+          // if (!valid) {
+          //   console.error('Invalid combined token');
+          //   // If the refresh token is set we should try to refresh
+          //   if (refresh_token) {
+          //     startWithRefreshToken(refresh_token);
+          //   } else {
+          //     logout_internal('combined token invalid');
+          //   }
+          // } else {
+          //   dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: access_token, refreshToken: refresh_token, id_token: id_token });
+          // }
+          parseTokenAndUpdateState(init.current.combinedToken);
         } catch (ex) {
           console.error('Error parsing combined token', ex);
           logout_internal('combined token error');
-          window.localStorage.removeItem('bootToken');
         }
       }
 
     }
-  }, [initInfo]);
+  }, [init]);
 
 
 
@@ -417,22 +631,19 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
   }, []);
 
   useEffect(() => {
-    console.log("Access token changed", authState.access_token)
     intercept.current = axios.interceptors.request.use((request) => {
       const token = authState.access_token;
       if (token) {
         request.headers.Authorization = `Bearer ${token}`;
       }
       else {
-        console.log('no token');
         delete request.headers.Authorization;
       }
       dispatch({ type: ACTIONS.SET_LAST_REQUEST_TIME, time: Date.now() });
       return request;
     });
 
-    if(authState.access_token){
-      console.log("Access token set, getting permissions")
+    if (authState.access_token) {
       beginAuthorization();
     }
   }, [authState.access_token]);
@@ -454,8 +665,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * @returns {boolean|Promise<void>} True if the login was started, false if the login was not started
    */
   const login = async (state) => {
-    console.log("Login")
-    // This method only works with oAuth config 
+    // This method only works with oAuth config
     let { authentication } = config;
     let { oAuth } = authentication;
     // Check to see if the auth state is valid for a login
@@ -467,6 +677,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // Dispatch the begin login action
     dispatch({ type: ACTIONS.BEGIN_LOGIN });
+    dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.AUTHENTICATING });
 
     // Check if we have a refresh token
     // If we do, we will use it to get a new access token
@@ -528,7 +739,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * @async
    */
   const refresh = async () => {
-    const refreshToken = authState.refreshToken || await getRefreshTokenFromSession();
+    const refreshToken = authState.refreshToken || await store.current.getRefreshToken();
     if (refreshToken) {
       dispatch({ type: ACTIONS.SET_REFRESHING });
       return startWithRefreshToken(refreshToken);
@@ -558,7 +769,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
         if (!userActive) {
           logout_internal_soft();
         } else {
-          const refreshToken = authState.refreshToken || await getRefreshTokenFromSession();
+          const refreshToken = authState.refreshToken || await store.current.getRefreshToken();
           if (refreshToken) {
             return startWithRefreshToken(refreshToken);
           } else if (authState.bootToken) {
@@ -580,7 +791,16 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * @returns {integer} the time in seconds until the token expires
    */
   const getTimeToExpired = () => {
-    let decodedToken = decodeTokenToJWT(authState.bearerToken);
+    if (!authState.access_token) {
+      return 0;
+    }
+    let decodedToken = null;
+    if (typeof authState.access_token === 'string') {
+      decodedToken = decodeTokenToJWT(authState.access_token);
+    }
+    else {
+      decodedToken = authState.access_token;
+    }
     let expiresAt = decodedToken.exp;
     let currentTime = Math.floor(Date.now() / 1000);
     return expiresAt - currentTime;
@@ -608,7 +828,8 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * @function
    * @returns {object}
    */
-  const parseTokenAndUpdateState = async (tokenData, maybeUser) => {
+  const parseTokenAndUpdateState = async (tokenData) => {
+    console.log('parseTokenAndUpdateState', tokenData);
     // Check to see if we have a token
     // If it is null or empty we will logout
     if (!tokenData || tokenData.length === 0) {
@@ -618,66 +839,40 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     }
 
     // Pull the info out of the token
-    const { token, isExpired, user, refresh_token } = parseTokens(tokenData);
+    //const { token, isExpired, user, refresh_token } = parseTokens(tokenData);
+    const { id_token, access_token, bearer_token, refresh_token, valid } = parseCombinedToken(tokenData);
 
-    const subject = await getSubjectFromCookie();
-
-    //If we have a prior subject and it is different from the current subject we will logout
-    // We need to check against the APP_ID to allow an application that logged itself out to log back in
-    // If another application using this 'sub' cookie on the same domain logged out we will insure this session logs out
-    if (subject && subject !== APP_ID && subject !== user.sub) {
-      logout_internal('parseTokenAndUpdateState subject mismatch');
-
-      if (config.autoLogin) {
-        login();
-      }
-
+    if (!valid) {
+      console.error('Invalid combined token');
+      logout_internal('parseTokenAndUpdateState invalid combined token');
       return;
     }
 
-    const bearerToken = token.access_token;
+    //const user = decodeTokenToJWT(id_token);
 
-    window.isExpired = isExpired;
+    //window.isExpired = isExpired;
 
     //Immediatly check if the token is stale
     scheduleStaleCheck(0.25);
 
-
-    //TODO: Check if a token is expired
-
-    // If we have a refresh tokem we will set it in the session so it can be used when the page is refreshed
-    if (refresh_token) {
-      setRefreshTokenInSession(refresh_token);
-    }
     // If the result doesnt contain the access control list set it to an empty list
-    if (!user.acl) user.acl = [];
+    //if (!user.acl) user.acl = [];
 
     // This may be a hack but if we have logged in we need to be sure the use can see the user menu
-    user.acl.push('Can Sign In');
+    //user.acl.push('Can Sign In');
 
     // Set the isSignedIn on the user object to true
     // TODO: This may be redundant to isAuthenticated
-    user.isSignedIn = true;
+    //user.isSignedIn = true;
 
-    // Dispatch the finish login action
 
-    const meta = {};
-    if (_metaWhileList?.length && maybeUser) {
-      _metaWhileList.forEach((key) => {
-        if (maybeUser[key]) {
-          meta[key] = maybeUser[key];
-        }
-      });
-    }
 
     dispatch({
       type: ACTIONS.SET_TOKEN_INFO,
-      user,
-      meta,
-      access_token: token.access_token,
-      id_token: token.id_token,
-      refreshToken: refresh_token || await getRefreshTokenFromSession(),
-      permissions: maybeUser?.permissions,
+      access_token: access_token,
+      id_token: id_token,
+      refresh_token: refresh_token || store.current.getRefreshToken(),
+      bearer_token: bearer_token,
     });
 
     dispatch({
@@ -686,9 +881,9 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     });
 
     // Now we need to get the permissions for the user
-    if (!maybeUser || !maybeUser?.permissions) {
-      getPermissions(bearerToken); // The parameter is a hack because our state isnt updated yet. Tomorrow me problem.
-    }
+    // if (!maybeUser || !maybeUser?.permissions) {
+    //   getPermissions(bearerToken); // The parameter is a hack because our state isnt updated yet. Tomorrow me problem.
+    // }
 
     /**
       * This is a bear to remind us to set the bearer token in subsiquent api calls that need to be authenticated
@@ -711,6 +906,11 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
                                  '.     /
                                    `"~"`
     */
+
+    store.current.putCombinedToken(tokenData);
+    store.current.putAccessToken(access_token);
+    store.current.putIdToken(id_token);
+    if(refresh_token) store.current.putRefreshToken(refresh_token);
   };
 
   /**
@@ -722,9 +922,10 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     // Dispatch the begin logout action
     dispatch({ type: ACTIONS.BEGIN_LOGOUT });
     // Reset our session
-    clearRefreshTokenInSession();
+    //clearRefreshTokenInSession();
     // Clear the cookie
-    await clearSubjectCookie();
+    //await clearSubjectCookie();
+    store.current.clear();
 
     // Dispatch the finish logout action
     dispatch({ type: ACTIONS.FINISH_LOGOUT });
@@ -752,7 +953,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     try {
       let typeOfRefreshToken = typeof refreshToken;
-      console.log('startWithRefreshToken', refreshToken, typeOfRefreshToken);
       if (typeOfRefreshToken !== 'string') {
         refreshToken = "" + refreshToken;
         // REFRESH TOKENES MUST BE STRINGS
@@ -760,8 +960,8 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       // I swear to god axios if you ignore the content type one more time
       let res = await axios.post(url, refreshToken, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'content-type': 'application/x-www-form-urlencoded' } })
       parseTokenAndUpdateState(res.data.token, res.data.user);
-      if (config.useSession) setBootTokenInSession(res.data.token);
-      else setBootTokenInLocalStorage(res.data.token);
+      // if (config.useSession) setBootTokenInSession(res.data.token);
+      // else setBootTokenInLocalStorage(res.data.token);
     } catch (ex) {
       debugger
       console.error(`Failed to refresh token: ${ex}`);
@@ -873,7 +1073,14 @@ const getActiveBearerToken = () => {
 };
 
 const userFromIdToken = (id_token) => {
-  const decoded = decodeTokenToJWT(id_token);
+  let decoded = null;
+  if (typeof id_token === 'string') {
+    decoded = decodeTokenToJWT(id_token);
+  }
+  else {
+    decoded = id_token;
+  }
+
   const user = {
     id: decoded.sub,
     name: decoded.name,
@@ -903,11 +1110,9 @@ const setActiveBearerToken = (bearerToken) => {
  * @returns {object}
  */
 const authReducer = (nextState, action) => {
-  console.log('authReducer', action, nextState)
   switch (action.type) {
     // Maintain the rest of the current state, only update the refresh token
     case ACTIONS.SET_CONFIG: {
-      console.log('authReducer, setting auth config', action.cfg);
       let anonUser = action.config?.anonUser;
       if (anonUser) {
         // Migrate from the backend model to the frontend model
@@ -948,20 +1153,15 @@ const authReducer = (nextState, action) => {
     case ACTIONS.SET_TOKEN_INFO:
 
       // We've moved setting the "LOGGED_IN" state to the ACTIONS.SET_PERMISSIONS login action
-      setActiveBearerToken(action.access_token);
-
-      if (action.refresh_token) {
-        setRefreshTokenInSession(action.refresh_token);
-      }
-
+      setActiveBearerToken(action.bearer_token || action.access_token);
 
       return {
         ...nextState,
         id_token: action.id_token,
         access_token: action.access_token,
         user: userFromIdToken(action.id_token),
-        bearerToken: action.access_token,
-        refreshToken: action.refreshToken,
+        bearerToken: action.bearer_token,
+        refreshToken: action.refresh_token,
         state: AUTH_STATES.LOGGED_IN,
       };
     case ACTIONS.TOKEN_STALE: {
@@ -1006,7 +1206,6 @@ const authReducer = (nextState, action) => {
         state: AUTH_STATES.LOGGED_OUT,
       };
     case ACTIONS.SET_PERMISSIONS:
-      console.log('authReducer, setting permissions', action.acl);
       return {
         ...nextState,
         state: AUTH_STATES.LOGGED_IN,
@@ -1019,237 +1218,19 @@ const authReducer = (nextState, action) => {
         error: action.error,
         state: AUTH_STATES.ERROR,
       };
+    case ACTIONS.SET_GLOBAL_STATE:
+      return {
+        ...nextState,
+        globalState: action.globalState,
+      };
+    case ACTIONS.SET_CONFIG_STATE:
+      console.debug("Setting config state", action.configState)
+      return {
+        ...nextState,
+        configState: action.configState,
+      };
     default:
       console.error(`Unknown action type: ${action.type}`);
       return nextState;
   }
-};
-
-/**
- * This function will attempt to get the refresh token from session storage
- * When we authenticate, if we are given a refresh token, we will store it in session storage
- * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
- * @function
- * @async
- * @returns {String} the refresh token
- */
-const getRefreshTokenFromSession = async () => {
-  try {
-    let session = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
-
-    if (session) {
-      return session;
-    }
-  } catch (ex) { }
-  return null;
-};
-
-/**
- * This will attempt to get the subject from the cookie
- * @function
- * @async
- * @returns {String} the subject
- */
-const getSubjectFromCookie = async () => {
-  // Check to see if there is a cookie containing the sub
-  let subject = null;
-
-  try {
-    // FireFox doesn't support cookieStore
-    if (window.cookieStore) {
-      const cookie = await window.cookieStore.get('sub');
-      if (cookie) {
-        subject = cookie.value;
-      }
-    } else {
-      subject = document.cookie.split(';').find((c) => c.trim().startsWith('sub=')).split('=')[1];
-    }
-
-  }
-  catch (ex) {
-    console.debug('Error getting sub from cookie', ex);
-  }
-
-  return subject;
-};
-
-/**
- * This function will attempt to get the boot token from session storage
- * When we authenticate, if we are given a refresh token, we will store it in session storage
- * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
- * @function
- * @async
- * @returns {String} the boot token
- */
-const getBootTokenFromSession = async () => {
-  try {
-    let session = window.sessionStorage.getItem('bootToken');
-
-    if (session) {
-      //window.sessionStorage.removeItem('bootToken');
-      return session;
-    }
-  } catch (ex) { }
-  return null;
-};
-
-/**
- * This function will attempt to get the boot token from session storage
- * When we authenticate, if we are given a refresh token, we will store it in session storage
- * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
- * @function
- * @async
- * @returns {String} the boot token
- */
-const getBootTokenFromLocalStorage = async () => {
-  try {
-    let session = window.localStorage.getItem('bootToken');
-
-    if (session) {
-      //window.sessionStorage.removeItem('bootToken');
-      return session;
-    }
-  } catch (ex) { }
-  return null;
-};
-
-/**
- * Set the boot token info in the session, when we refresh we need to keep track of our tokens in the session storage. This makes page loads faster as we dont have to wait for the api to respond
- * @function
- * @param {String} bootToken
- */
-const setBootTokenInSession = (bootToken) => {
-  window.sessionStorage.setItem('bootToken', bootToken);
-}
-
-/**
- * Set the boot token info in the local storage, when we refresh we need to keep track of our tokens in the session storage. This makes page loads faster as we dont have to wait for the api to respond
- * @function
- * @param {String} bootToken
- */
-const setBootTokenInLocalStorage = (bootToken) => {
-  window.localStorage.setItem('bootToken', bootToken);
-}
-
-
-/**
- * This function will attempt to get the bootUser from session storage
- * When we authenticate, if we are given a refresh token, we will store it in session storage
- * This way we can use it to get a new access token when the page is reloaded or the user navigates to a new page
- * @function
- * @async
- */
-const getBootUserFromSession = async () => {
-  try {
-    let session = window.sessionStorage.getItem('bootUser');
-
-    try {
-      session = JSON.parse(session);
-    } catch (ex) { }
-
-    if (session) {
-      window.sessionStorage.removeItem('bootUser');
-      return session;
-    }
-  } catch (ex) { }
-  return null;
-};
-
-/**
- * Checks to see if the config object is valid
- * @param {object} config
- * @function
- * @returns {boolean} true if the all the required bits of config are present
- */
-const isValidConfig = (config) => {
-  let keys = Object.keys(config);
-
-  let hasClientId = keys.includes('clientId');
-  let hasRedirectUri = keys.includes('redirectUri');
-  let hasScopes = keys.includes('scopes');
-  let hasHost = keys.includes('host');
-
-  // TODO: Other checks?
-
-  return hasClientId && hasRedirectUri && hasScopes && hasHost;
-};
-
-/**
- * This function will store the refresh token in session storage
- * Later on we can retrieve it and use it to get a new access token
- * @function
- * @param {String} refreshToken
- */
-const setRefreshTokenInSession = (refreshToken) => {
-  window.localStorage.setItem('refreshToken', refreshToken);
-};
-
-/**
- * This function will set the subject in the cookie
- * @function
- * @param {String} subject
- */
-const setSubjectInCookie = (subject) => {
-  // Set our subject cookie
-  try {
-    // FireFox doesn't support cookieStore
-    if (window.cookieStore) {
-      let domain = window.location.hostname;
-      domain = domain.split('.').slice(1).join('.');
-
-
-      let cookie = { name: 'sub', value: subject, sameSite: 'lax' };
-
-      if (domain && domain !== 'localhost') {
-        cookie.domain = domain;
-      }
-
-      window.cookieStore.set(cookie);
-    } else {
-      // Set or replace the cookie so that sub is set to the subject
-      const oldValue = document.cookie.split(';');
-      const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
-      newValue.push(`sub=${subject}`);
-      document.cookie = newValue.join(';');
-    }
-  } catch (ex) {
-    console.debug('Error setting refreshToken cookie', ex);
-  }
-};
-
-/**
- * This function will clear the refresh token from session storage
- * @function
- */
-const clearRefreshTokenInSession = () => {
-  window.sessionStorage.removeItem('refreshToken');
-  window.localStorage.removeItem('refreshToken');
-
-};
-
-/**
- * This will clear the subject cookie
- * @function
- * @async
- */
-const clearSubjectCookie = async () => {
-  let domain = window.location.hostname.split('.').slice(1).join('.');
-  try {
-    // FireFox doesn't support cookieStore
-    if (window.cookieStore) {
-      await window.cookieStore.delete('sub', { domain });
-    } else {
-      // Set or replace the cookie so that sub is set to the subject
-      const oldValue = document.cookie.split(';');
-      const newValue = oldValue.filter((c) => !c.trim().startsWith('sub='));
-      document.cookie = newValue.join(';');
-    }
-  } catch (ex) {
-    console.debug('Error clearing refreshToken cookie', ex);
-  }
-
-  // Sometimes the cookie wont delete, who knows why
-  // So we will set it to an empty string
-  // Setting to special string so the application can check it if logged itself out of it if another app did it
-  setSubjectInCookie(APP_ID);
 };
