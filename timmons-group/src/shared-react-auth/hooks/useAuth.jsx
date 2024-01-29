@@ -306,7 +306,7 @@ class StorageDriver {
 
     this.store.setItem(key, authorization);
   }
-  
+
 
 
   getAccessToken() {
@@ -419,21 +419,19 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     // 1. API
 
     // If the source is API we need to have an endpoint configuration
-    if (authorization.source === ACCESS_CONTROL_LIST_SOURCE.API) {
-      if (!authorization?.endpoints?.acl) {
-        console.error("Authorization source is API but no endpoint was provided")
-        return;
-      }
-
-      // Get the endpoint
-      const endpoint = authorization.aclEndpoint;
-
-      // Get the permissions from the endpoint
-      const permissions = await axios.get(endpoint);
-
-      // Return the permissions
-      return permissions.data;
+    if (!authorization?.aclEndpoint) {
+      console.error("Authorization source is API but no endpoint was provided")
+      return;
     }
+
+    // Get the endpoint
+    const endpoint = authorization.aclEndpoint;
+
+    // Get the permissions from the endpoint
+    const permissions = await axios.get(endpoint);
+
+    // Return the permissions
+    return permissions.data;
   }
 
   /**
@@ -528,11 +526,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // If the type is ACL the configuration must contain a source
     if (authorization.mode === AUTHORIZATION_MODES.ACCESS_CONTROL_LIST) {
-      if (!authorization.source) {
-        console.error("Authorization type is acl but no source was provided")
-        return;
-      }
-
+     
       // Try to get the acl from the source
       const acl = await getACL(authorization);
 
@@ -758,7 +752,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // TODO this isnt always the case and so we will need to support templates
     let fetchUrl = null;
-    if(config?.authentication?.oAuth?.endpoints?.logout)
+    if (config?.authentication?.oAuth?.endpoints?.logout)
       fetchUrl = config?.authentication?.oAuth?.endpoints?.logout;
     else
       fetchUrl = `${config?.authentication?.oAuth?.host}/oauth2/logout?client_id=${config.authentication.oAuth.clientId}&logout_uri=${redirect}`;
@@ -945,7 +939,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     store.current.putCombinedToken(tokenData);
     store.current.putAccessToken(access_token);
     store.current.putIdToken(id_token);
-    if(refresh_token) store.current.putRefreshToken(refresh_token);
+    if (refresh_token) store.current.putRefreshToken(refresh_token);
   };
 
   /**

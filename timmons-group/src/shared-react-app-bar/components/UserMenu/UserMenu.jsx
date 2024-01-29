@@ -70,8 +70,6 @@ export const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
     setAnchorEl(null);
   };
 
-  console.log(typeof open)
-
   if (user?.isSignedIn) {
     return (
       <>
