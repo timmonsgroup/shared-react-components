@@ -426,7 +426,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       }
 
       // Get the endpoint
-      const endpoint = authorization.endpoints.acl;
+      const endpoint = authorization.aclEndpoint;
 
       // Get the permissions from the endpoint
       const permissions = await axios.get(endpoint);

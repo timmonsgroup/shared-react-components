@@ -17,15 +17,6 @@ export const AUTHORIZATION_MODES = {
   NONE: 'none',
 }
 
-// The source of the access control list
-// Can be an api endpoint, a cookie, or the id token
-// When using the id token, the acl claim will be used from the id token (NOT THE ACCESS TOKEN)
-// When using the api endpoint, the acl claim will be used from the response of the api endpoint (MUST BE AN ARRAY OF STRINGS)
-export const ACCESS_CONTROL_LIST_SOURCE = {
-  API: 'api', // An api endpoint that returns a list of permissions
-  ID_TOKEN: 'id_token', // The id token contains a list of permissions in the 'acl' claim
-}
-
 /**
  * This type defines the configuration for the authentication
   * @typedef {Object} Configuration
@@ -76,16 +67,8 @@ export const ACCESS_CONTROL_LIST_SOURCE = {
  * This type defines the configuration for the authorization
  * @typedef {Object} AuthorizationConfiguration
  * @property {string} mode - The authorization mode
- * @property {string} source - The source of the access control list (only used for acl authorization mode)
- * @property {tokenClaimName} tokenClaimName - The name of the claim to use for authorization (only used for id_token_claim and access_token_claim authorization modes)
- * @property {AuthorizationEndpoints} endpoints - The endpoints to use for authorization (only used for acl authorization mode)
- * 
- */
-
-/**
- * This type defines the configuration for the authorization endpoints
- * @typedef {Object} AuthorizationEndpoints
- * @property {string} acl
+ * @property {tokenClaimName} tokenClaimName - The name of the claim to use for authorization. Used for id_token_claim and access_token_claim authorization modes
+ * @property {string} aclEndpoint - The endpoints to use for acl authorization
  * 
  */
 
@@ -174,29 +157,6 @@ const validateConfigurationAuthorization = (authorization) => {
   if (!Object.values(AUTHORIZATION_MODES).includes(authorization.mode)) {
     throw new Error(`The authorization mode must be one of the following: ${Object.values(AUTHORIZATION_MODES).join(', ')}`);
   }
-
-  if(authorization.mode === AUTHORIZATION_MODES.ACCESS_CONTROL_LIST) {
-    // The authorization source must be a string
-    if (typeof authorization.source !== 'string') {
-      throw new Error('The authorization source must be a string');
-    }
-
-    // The authorization source must be one of the authorization sources
-    if (!Object.values(ACCESS_CONTROL_LIST_SOURCE).includes(authorization.source)) {
-      throw new Error(`The authorization source must be one of the following: ${Object.values(ACCESS_CONTROL_LIST_SOURCE).join(', ')}`);
-    }
-  }
-
-  // If the source is an api endpoint, the endpoints must be an object and the acl endpoint must be a string
-  if (authorization.source === ACCESS_CONTROL_LIST_SOURCE.API) {
-    if (typeof authorization.endpoints !== 'object') {
-      throw new Error('The authorization endpoints must be an object');
-    }
-
-    if (typeof authorization.endpoints.acl !== 'string') {
-      throw new Error('The authorization acl endpoint must be a string');
-    }
-  }
 }
 
 /**
@@ -251,7 +211,9 @@ const getEmptyConfiguration = () => {
 /**
  * This type defines the configuration builder
  * @typedef {Object} ConfigurationBuilder
+ * 
  * @property {function} withAuthentication
+ * 
  * @property {function} withOAuth
  * @property {function} withOAuthClientId
  * @property {function} withOAuthRedirectUri
@@ -259,17 +221,21 @@ const getEmptyConfiguration = () => {
  * @property {function} withOAuthHost
  * @property {function} withOAuthRefreshEndpoint
  * @property {function} withOAuthLogoutEndpoint
+ * 
  * @property {function} withStorage
  * @property {function} withSessionStorage
  * @property {function} withLocalStorage
  * @property {function} withCookieStorage
  * @property {function} withStartupSourceKey
+ * 
+ * 
  * @property {function} withAuthorization
  * @property {function} withAuthorizationMode
- * @property {function} withAuthorizationSource
- * @property {function} withAccessControllListAuthorization
- * @property {function} withAuthorizationEndpoints
- * @property {function} withAuthorizationAclEndpoint
+ * @property {function} withNoAuthorization
+ * @property {function} withAccessControlListAuthorization
+ * @property {function} withIdTokenClaimAuthorization
+ * @property {function} withAccessTokenClaimAuthorization
+ * 
  * @property {function} withRawConfiguration
  * @property {function} withDefaultPermissions
  * @property {function} withAppAuthorization
@@ -432,6 +398,7 @@ export const getConfigBuilder = () => {
       /**
        * @param {string} authorizationMode
        * @returns {ConfigurationBuilder}
+       * @deprecated Use withNoAuthorization, withAccessControlListAuthorization, withIdTokenClaimAuthorization, or withAccessTokenClaimAuthorization
        */
       withAuthorizationMode: (authorizationMode) => {
         configuration.authorization.mode = authorizationMode;
@@ -444,21 +411,13 @@ export const getConfigBuilder = () => {
       },
 
       /**
-       * @param {string} authorizationSource
-       * @returns {ConfigurationBuilder}
-       */
-      withAuthorizationSource: (authorizationSource) => {
-        configuration.authorization.source = authorizationSource;
-        return builder();
-      },
-
-      /**
        * Authorize using an access control list
+       * @param {string} endpoint The endpoint to use for the acl (optional)
        * @returns {ConfigurationBuilder}
        */
-      withAccessControllListAuthorization: () => {
+      withAccessControlListAuthorization: (endpoint) => {
         configuration.authorization.mode = AUTHORIZATION_MODES.ACCESS_CONTROL_LIST;
-        configuration.authorization.tokenClaimName = tokenClaimName;
+        configuration.authorization.aclEndpoint = endpoint;
         return builder();
       },
 
@@ -480,34 +439,7 @@ export const getConfigBuilder = () => {
        */
       withAccessTokenClaimAuthorization: (tokenClaimName) => {
         configuration.authorization.mode = AUTHORIZATION_MODES.ACCESS_TOKEN_CLAIM;
-        
-        return builder();
-      },
-
-      /**
-       * @param {AuthorizationEndpoints} authorizationEndpoints
-       * @returns {ConfigurationBuilder}
-       */
-      withAuthorizationEndpoints: (authorizationEndpoints) => {
-        configuration.authorization.endpoints = authorizationEndpoints;
-        return builder();
-      },
-
-      /**
-       * Set the name of the claim to use for authorization
-       * @param {string} tokenClaimName The name of the claim to use for authorization
-       */
-      withTokenClaimName: (tokenClaimName) => {
-        configuration.authorization.tokenClaimName = tokenClaimName;
-        return builder();
-      },
-
-      /**
-       * @param {string} authorizationAclEndpoint
-       * @returns {ConfigurationBuilder}
-       */
-      withAuthorizationAclEndpoint: (authorizationAclEndpoint) => {
-        configuration.authorization.endpoints.acl = authorizationAclEndpoint;
+        configuration.authorization.tokenClaimName = tokenClaimName;        
         return builder();
       },
 
@@ -521,6 +453,13 @@ export const getConfigBuilder = () => {
       },
 
       /**
+       * Alias for withRawConfiguration
+       */
+      fromConfiguration: (rawConfiguration) => {
+        return withRawConfiguration(rawConfiguration);
+      },
+
+      /**
        * @param {string[]} defaultPermissions
        * @returns {ConfigurationBuilder}
        */
@@ -530,12 +469,12 @@ export const getConfigBuilder = () => {
       },
 
       /**
-       * @param {string} Application application name for dealing with authorization. Primarily used for storage
+       * @param {string} application application name for dealing with authorization. Primarily used for storage
        * @returns {ConfigurationBuiler}
        */
-      withAppAuthorization: (Application) => {
+      withAppAuthorization: (application) => {
         console.log("Using expirimintal feature: withAppAuthorization", Application)
-        configuration.authorization.application = Application;
+        configuration.authorization.application = application;
         return builder();
       },
       
