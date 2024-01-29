@@ -26,32 +26,6 @@ export const ACCESS_CONTROL_LIST_SOURCE = {
   ID_TOKEN: 'id_token', // The id token contains a list of permissions in the 'acl' claim
 }
 
-// This is an example configuration
-const exampleConfiguration = {
-  authentication: {
-    oAuth: {
-      clientId: 'my-client-id',
-      redirectUri: 'https://my-app.com/oauth/callback',
-      scopes: ['openid', 'profile', 'email', 'offline_access'],
-      host: 'my-auth-server.com',
-      endpoints: {
-        refresh: '/api/oauth/refresh',
-        logout: '/api/oauth/logout',
-      },
-    },
-  },
-  storage: {
-    mode: STORAGE_MODES.SESSION,
-  },
-  authorization: {
-    mode: AUTHORIZATION_MODES.ACCESS_CONTROL_LIST,
-    source: ACCESS_CONTROL_LIST_SOURCE.API,
-    endpoints: {
-      acl: '/api/user/permissions',
-    },
-  }
-}
-
 /**
  * This type defines the configuration for the authentication
   * @typedef {Object} Configuration
@@ -101,9 +75,10 @@ const exampleConfiguration = {
 /**
  * This type defines the configuration for the authorization
  * @typedef {Object} AuthorizationConfiguration
- * @property {string} mode
- * @property {string} source
- * @property {AuthorizationEndpoints} endpoints
+ * @property {string} mode - The authorization mode
+ * @property {string} source - The source of the access control list (only used for acl authorization mode)
+ * @property {tokenClaimName} tokenClaimName - The name of the claim to use for authorization (only used for id_token_claim and access_token_claim authorization modes)
+ * @property {AuthorizationEndpoints} endpoints - The endpoints to use for authorization (only used for acl authorization mode)
  * 
  */
 
@@ -292,6 +267,7 @@ const getEmptyConfiguration = () => {
  * @property {function} withAuthorization
  * @property {function} withAuthorizationMode
  * @property {function} withAuthorizationSource
+ * @property {function} withAccessControllListAuthorization
  * @property {function} withAuthorizationEndpoints
  * @property {function} withAuthorizationAclEndpoint
  * @property {function} withRawConfiguration
@@ -477,11 +453,52 @@ export const getConfigBuilder = () => {
       },
 
       /**
+       * Authorize using an access control list
+       * @returns {ConfigurationBuilder}
+       */
+      withAccessControllListAuthorization: () => {
+        configuration.authorization.mode = AUTHORIZATION_MODES.ACCESS_CONTROL_LIST;
+        configuration.authorization.tokenClaimName = tokenClaimName;
+        return builder();
+      },
+
+      /**
+       * Authorize using an id token claim
+       * @param {string} tokenClaimName The name of the claim to use for authorization
+       * @returns {ConfigurationBuilder}
+       */
+      withIdTokenClaimAuthorization: (tokenClaimName) => {
+        configuration.authorization.mode = AUTHORIZATION_MODES.ID_TOKEN_CLAIM;
+        configuration.authorization.tokenClaimName = tokenClaimName;
+        return builder();
+      },
+
+      /**
+       * Authorize using an access token claim
+       * @param {string} tokenClaimName The name of the claim to use for authorization
+       * @returns {ConfigurationBuilder}
+       */
+      withAccessTokenClaimAuthorization: (tokenClaimName) => {
+        configuration.authorization.mode = AUTHORIZATION_MODES.ACCESS_TOKEN_CLAIM;
+        
+        return builder();
+      },
+
+      /**
        * @param {AuthorizationEndpoints} authorizationEndpoints
        * @returns {ConfigurationBuilder}
        */
       withAuthorizationEndpoints: (authorizationEndpoints) => {
         configuration.authorization.endpoints = authorizationEndpoints;
+        return builder();
+      },
+
+      /**
+       * Set the name of the claim to use for authorization
+       * @param {string} tokenClaimName The name of the claim to use for authorization
+       */
+      withTokenClaimName: (tokenClaimName) => {
+        configuration.authorization.tokenClaimName = tokenClaimName;
         return builder();
       },
 
@@ -499,7 +516,6 @@ export const getConfigBuilder = () => {
        * @returns {ConfigurationBuilder}
        */
       withRawConfiguration: (rawConfiguration) => {
-        console.log("Using raw configuration", rawConfiguration)
         configuration = rawConfiguration;
         return builder();
       },

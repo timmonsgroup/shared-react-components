@@ -246,7 +246,6 @@ class StorageDriver {
     this.storeType = storeType;
     this.initKey = initKey;
     this.initStore();
-    console.log('StorageDriver', this.storeType, this.initKey);
   }
 
   initStore() {
@@ -437,6 +436,47 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     }
   }
 
+  /**
+   * Get a claim from a token and parse it if necessary
+   * @param {JWT} token 
+   * @param {string} claimName 
+   * @returns 
+   */
+  const getClaimFromToken = (token, claimName) => {
+    if (!token) {
+      return null;
+    }
+
+    let decodedToken = null;
+
+    if (typeof token === 'string') {
+      decodedToken = decodeTokenToJWT(token);
+    } else {
+      decodedToken = token;
+    }
+
+    if (!decodedToken) {
+      return null;
+    }
+
+    let claim = decodedToken[claimName];
+
+    if (!claim) {
+      return null;
+    }
+
+    if (typeof claim === 'string') {
+      try {
+        claim = JSON.parse(claim);
+      } catch (ex) {
+      }
+    }
+
+    return claim;
+  }
+
+
+
 
   const beginAuthorization = async () => {
     dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.AUTHORIZING });
@@ -456,30 +496,34 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // If the type is Access Token Claim the configuration must contain a claim name
     if (authorization.mode === AUTHORIZATION_MODES.ACCESS_TOKEN_CLAIM) {
-      if (!authorization.claimName) {
-        console.error("Authorization type is access token claim but no claim name was provided")
+      if (!authorization.tokenClaimName) {
+        console.error("Authorization type is access token claim but no token claim name was provided")
         return;
       }
 
       // Try to get the claim from the access token
-      const claim = getClaimFromToken(authState.access_token, authorization.claimName);
+      const claim = getClaimFromToken(authState.access_token, authorization.tokenClaimName);
 
       // Set the permissions
       dispatch({ type: ACTIONS.SET_PERMISSIONS, acl: claim });
+      dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.READY });
+      store.current.putAuthorization(claim, authorization.application);
     }
 
     // If the type is ID Token Claim the configuration must contain a claim name
     if (authorization.mode === AUTHORIZATION_MODES.ID_TOKEN_CLAIM) {
-      if (!authorization.claimName) {
+      if (!authorization.tokenClaimName) {
         console.error("Authorization type is id token claim but no claim name was provided")
         return;
       }
 
       // Try to get the claim from the id token
-      const claim = getClaimFromToken(authState.id_token, authorization.claimName);
+      const claim = getClaimFromToken(authState.id_token, authorization.tokenClaimName);
 
       // Set the permissions
       dispatch({ type: ACTIONS.SET_PERMISSIONS, acl: claim });
+      dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.READY });
+      store.current.putAuthorization(claim, authorization.application);
     }
 
     // If the type is ACL the configuration must contain a source
@@ -503,7 +547,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
   // Any time config changes make sure we update the state
   useEffect(() => {
-    console.log('useProvideAuth, config changed', config);
     if (whitelist?.length > 0) {
       _metaWhileList = whitelist;
     }
@@ -523,7 +566,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
         .withRawConfiguration(config)
         .build();
 
-      console.log('useProvideAuth, config was valid', cfg);
       // Push the config into the state, we probably dont need the full config but it contains the anonymous user info at a minimum
       dispatch({ type: ACTIONS.SET_CONFIG, config: cfg });
 
@@ -553,7 +595,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     if (!init.current) {
       if (store.current) {
         const boot = store.current.getCombinedToken();
-        console.log('useProvideAuth, boot token', boot);
         if (boot) {
           init.current = {
             combinedToken: boot
@@ -572,18 +613,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       if (init.current.combinedToken) {
         // We need to parse and exteract the id_token, access_token, and maybe refresh_token
         try {
-          // const { valid, id_token, access_token, refresh_token } = parseCombinedToken(init.current.combinedToken);
-          // if (!valid) {
-          //   console.error('Invalid combined token');
-          //   // If the refresh token is set we should try to refresh
-          //   if (refresh_token) {
-          //     startWithRefreshToken(refresh_token);
-          //   } else {
-          //     logout_internal('combined token invalid');
-          //   }
-          // } else {
-          //   dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: access_token, refreshToken: refresh_token, id_token: id_token });
-          // }
           parseTokenAndUpdateState(init.current.combinedToken);
         } catch (ex) {
           console.error('Error parsing combined token', ex);
@@ -723,9 +752,16 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
     const redirect = config?.redirects?.logout || `${config.apiRoot || window.location.origin}/${apiSlug}/oauth/logout`;
 
     // Open the logout endpoint in a new tab
-    const fetchUrl = config?.logoutURL || (config?.useAzureAD ?
-      `https://${config.host}/oauth2/logout?post_logout_redirect_uri=${redirect}` :
-      `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`);
+    // const fetchUrl = config?.logoutURL || (config?.useAzureAD ?
+    //   `https://${config.host}/oauth2/logout?post_logout_redirect_uri=${redirect}` :
+    //   `https://${config.host}/logout?client_id=${config.clientId}&logout_uri=${redirect}`);
+
+    // TODO this isnt always the case and so we will need to support templates
+    let fetchUrl = null;
+    if(config?.authentication?.oAuth?.endpoints?.logout)
+      fetchUrl = config?.authentication?.oAuth?.endpoints?.logout;
+    else
+      fetchUrl = `${config?.authentication?.oAuth?.host}/oauth2/logout?client_id=${config.authentication.oAuth.clientId}&logout_uri=${redirect}`;
 
     // If openWindow is true open the logout endpoint in a new tab
     // Otherwise open the logout endpoint in the current tab
@@ -829,7 +865,6 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * @returns {object}
    */
   const parseTokenAndUpdateState = async (tokenData) => {
-    console.log('parseTokenAndUpdateState', tokenData);
     // Check to see if we have a token
     // If it is null or empty we will logout
     if (!tokenData || tokenData.length === 0) {

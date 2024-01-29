@@ -16,14 +16,11 @@ import { useAuth } from '@timmons-group/shared-react-auth';
  * @returns {React.ReactElement} - the menu arrow
  */
 export const MenuArrow = ({ open }) => {
-  debugger;
   if (open) {
     let ret = <ArrowDropUp />;
-    console.log(ret);
     return ret
   }
   let rets = <ArrowDropDownIcon />;
-  console.log(rets);
   return rets
 };
 
