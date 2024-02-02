@@ -987,7 +987,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
         // REFRESH TOKENES MUST BE STRINGS
       }
       // I swear to god axios if you ignore the content type one more time
-      let res = await axios.post(url, refreshToken, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'content-type': 'application/x-www-form-urlencoded' } })
+      let res = await axios.post(url, { refreshToken }, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'content-type': 'application/x-www-form-urlencoded' } })
       parseTokenAndUpdateState(res.data.token, res.data.user);
       // if (config.useSession) setBootTokenInSession(res.data.token);
       // else setBootTokenInLocalStorage(res.data.token);

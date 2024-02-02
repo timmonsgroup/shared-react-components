@@ -85,7 +85,7 @@ const PermissionFilter = ({ permission, any, all, isRoute, showLoggingIn, showIf
     if (authState?.state === AUTH_STATES.LOGGED_IN) {
       return children;
     } else {
-      return "Not logged in not rendering"
+      return null;
     }
   }
   // User has failed all the checks, return a null component (nothing rendered) or a Navigate component to the root.
