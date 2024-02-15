@@ -23,7 +23,7 @@ const timeToStale = 5 * 60; // The time from the token expiration when we should
   TODO: More documentation!
 */
 
-import { getConfigBuilder, AUTHORIZATION_MODES, ACCESS_CONTROL_LIST_SOURCE, STORAGE_MODES } from '@timmons-group/shared-auth-config';
+import { getConfigBuilder, AUTHORIZATION_MODES, STORAGE_MODES } from '@timmons-group/shared-auth-config';
 
 // This constant is a template for a logged out user
 // It gets used when a user is not logged in or when the logged in user selects to logout
@@ -398,7 +398,7 @@ export const useAuth = () => {
  * @param {object} [options] Additional options
  * @returns {AuthContext} The auth context object
  */
-const useProvideAuth = (config, whitelist, options, initInfo) => {
+const useProvideAuth = (config, whitelist, options) => {
 
   // We are using the useReducer hook to manage the auth state
   // authState should be exposed to the consumer as part of this hook
@@ -682,7 +682,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * This function is called to start the login process
    * It will open the login endpoint in a new tab
    * Should be exposed to the consumer as part of this hook
-   * @param {objec | string} state The state to login with, this will be returned with a valid login
+   * @param {object | string} state The state to login with, this will be returned with a valid login
    * @function
    * @async
    * @returns {boolean|Promise<void>} True if the login was started, false if the login was not started
@@ -726,7 +726,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
 
     // If openWindow is true open the login endpoint in a new tab
     // Otherwise open the login endpoint in the current tab
-    if (openWindow) window.open(fetchUrl, '_blank');
+    if (config?.authentication?.authenticateInNewTab) window.open(fetchUrl, '_blank');
     else window.location.href = fetchUrl;
   };
 
@@ -984,7 +984,7 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
       let typeOfRefreshToken = typeof refreshToken;
       if (typeOfRefreshToken !== 'string') {
         refreshToken = "" + refreshToken;
-        // REFRESH TOKENES MUST BE STRINGS
+        // REFRESH TOKENS MUST BE STRINGS
       }
       // I swear to god axios if you ignore the content type one more time
       let res = await axios.post(url, { refreshToken }, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'content-type': 'application/x-www-form-urlencoded' } })
@@ -1023,9 +1023,12 @@ const useProvideAuth = (config, whitelist, options, initInfo) => {
    * We then make sure that the event type is 'oauth-token'
    * @param {*} event the event that was posted to the window from the oAuth tab
    * @function
-   * deprecated
    */
   const handleMessage = (event) => {
+    if(config?.authentication?.messageOrigins && !config?.authentication?.messageOrigins.includes(event.origin)) {
+      return;
+    }
+    
     if (event.origin !== window.location.origin) {
       return;
     }

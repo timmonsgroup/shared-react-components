@@ -17,10 +17,10 @@ import { useAuth } from '@timmons-group/shared-react-auth';
  */
 export const MenuArrow = ({ open }) => {
   if (open) {
-    let ret = <ArrowDropUp />;
+    let ret = <><ArrowDropUp /></>;
     return ret
   }
-  let rets = <ArrowDropDownIcon />;
+  let rets = <><ArrowDropDownIcon /></>;
   return rets
 };
 
@@ -85,7 +85,7 @@ export const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
         >
           <>
             {getDisplayName(user)}
-            {!hideArrow && <MenuArrow open={open} />}
+            <MenuArrow open={open} />
           </>
         </Button>
         <Menu

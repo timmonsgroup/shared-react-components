@@ -219,6 +219,7 @@ const getEmptyConfiguration = () => {
  * @property {function} withOAuthHost
  * @property {function} withOAuthRefreshEndpoint
  * @property {function} withOAuthLogoutEndpoint
+ * @property {function} withAuthenticateInNewTab
  * 
  * @property {function} withStorage
  * @property {function} withSessionStorage
@@ -237,6 +238,7 @@ const getEmptyConfiguration = () => {
  * @property {function} withRawConfiguration
  * @property {function} withDefaultPermissions
  * @property {function} withAppAuthorization
+ * 
  * @property {function} build
  * 
  */
@@ -331,6 +333,17 @@ export const getConfigBuilder = () => {
       withOAuthLogoutEndpoint: (logoutEndpoint) => {
         if(!configuration.authentication.oAuth.endpoints) configuration.authentication.oAuth.endpoints = {};
         configuration.authentication.oAuth.endpoints.logout = logoutEndpoint;
+        return builder();
+      },
+
+      /**
+       * You must use this if you are authenticating cross origin
+       * @param {string[]} messageSources the allowed message sources, e.g. ['https://example.com']
+       * @returns {ConfigurationBuilder}
+       */
+      withAuthenticateInNewTab: (messageSources) => {
+        configuration.authentication.authenticateInNewTab = true;
+        configuration.authentication.messageSources = messageSources;
         return builder();
       },
 
