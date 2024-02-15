@@ -21,21 +21,15 @@ export const AUTHORIZATION_MODES = {
  * This type defines the configuration for the authentication
   * @typedef {Object} Configuration
   * @property {AuthenticationConfiguration} authentication
-  * @property {StorageConfiguration|EmptyObject} storage
-  * @property {AuthorizationConfiguration|EmptyObject} authorization
- */
-
-/**
- * This type defines an empty object
- * @typedef {Object} EmptyObject
- * 
+  * @property {StorageConfiguration} storage
+  * @property {AuthorizationConfiguration} authorization
  */
 
 /**
  * This type defines the configuration for the authentication
  * The configuration can either be 
  * @typedef {Object} AuthenticationConfiguration
- * @property {OAuthConfiguration|EmptyObject} oAuth
+ * @property {OAuthConfiguration} oAuth
  * 
  */
 /**
@@ -67,7 +61,7 @@ export const AUTHORIZATION_MODES = {
  * This type defines the configuration for the authorization
  * @typedef {Object} AuthorizationConfiguration
  * @property {string} mode - The authorization mode
- * @property {tokenClaimName} tokenClaimName - The name of the claim to use for authorization. Used for id_token_claim and access_token_claim authorization modes
+ * @property {string} tokenClaimName - The name of the claim to use for authorization. Used for id_token_claim and access_token_claim authorization modes
  * @property {string} aclEndpoint - The endpoints to use for acl authorization
  * 
  */
@@ -203,8 +197,12 @@ const getEmptyConfiguration = () => {
     authentication: {
       oAuth: {},
     },
-    storage: {},
-    authorization: {},
+    storage: {
+      mode: STORAGE_MODES.NONE,
+    },
+    authorization: {
+      mode: AUTHORIZATION_MODES.NONE,
+    },
   }
 }
 
@@ -221,6 +219,7 @@ const getEmptyConfiguration = () => {
  * @property {function} withOAuthHost
  * @property {function} withOAuthRefreshEndpoint
  * @property {function} withOAuthLogoutEndpoint
+ * @property {function} withAuthenticateInNewTab
  * 
  * @property {function} withStorage
  * @property {function} withSessionStorage
@@ -239,6 +238,7 @@ const getEmptyConfiguration = () => {
  * @property {function} withRawConfiguration
  * @property {function} withDefaultPermissions
  * @property {function} withAppAuthorization
+ * 
  * @property {function} build
  * 
  */
@@ -337,6 +337,17 @@ export const getConfigBuilder = () => {
       },
 
       /**
+       * You must use this if you are authenticating cross origin
+       * @param {string[]} messageSources the allowed message sources, e.g. ['https://example.com']
+       * @returns {ConfigurationBuilder}
+       */
+      withAuthenticateInNewTab: (messageSources) => {
+        configuration.authentication.authenticateInNewTab = true;
+        configuration.authentication.messageSources = messageSources;
+        return builder();
+      },
+
+      /**
        * @param {StorageConfiguration} storageConfiguration
        * @returns {ConfigurationBuilder}
        */
@@ -387,6 +398,7 @@ export const getConfigBuilder = () => {
       /**
        * @param {AuthorizationConfiguration} authorizationConfiguration
        * @returns {ConfigurationBuilder}
+       * @deprecated Use withNoAuthorization, withAccessControlListAuthorization, withIdTokenClaimAuthorization, or withAccessTokenClaimAuthorization
        */
       withAuthorization: (authorizationConfiguration) => {
         configuration.authorization = authorizationConfiguration || {
@@ -473,7 +485,7 @@ export const getConfigBuilder = () => {
        * @returns {ConfigurationBuiler}
        */
       withAppAuthorization: (application) => {
-        console.log("Using expirimintal feature: withAppAuthorization", Application)
+        console.log("Using expirimintal feature: withAppAuthorization", application)
         configuration.authorization.application = application;
         return builder();
       },
