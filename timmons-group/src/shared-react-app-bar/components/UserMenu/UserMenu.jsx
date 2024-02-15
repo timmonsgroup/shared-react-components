@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
 import Link from '@mui/material/Link';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowDropUp from '@mui/icons-material/ArrowDropUp';
+import {ArrowDropDown, ArrowDropUp} from '@mui/icons-material';
 
 import { useAuth } from '@timmons-group/shared-react-auth';
 
@@ -17,10 +16,10 @@ import { useAuth } from '@timmons-group/shared-react-auth';
  */
 export const MenuArrow = ({ open }) => {
   if (open) {
-    let ret = <ArrowDropUp />;
+    let ret = <><ArrowDropDown /></>;
     return ret
   }
-  let rets = <ArrowDropDownIcon />;
+  let rets = <><ArrowDropUp /></>;
   return rets
 };
 
@@ -87,7 +86,7 @@ export const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
         >
           <>
             {getDisplayName(user)}
-            {!hideArrow && <MenuArrow open={open} />}
+            <MenuArrow open={open} />
           </>
         </Button>
         <Menu

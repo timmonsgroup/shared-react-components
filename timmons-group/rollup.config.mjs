@@ -29,6 +29,7 @@ import copy from 'rollup-plugin-copy';
 import * as packageJSON from './package.json' with { type: "json" };
 
 import rollupJson from '@rollup/plugin-json';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 
 // This function is used as a rollup plugin to transform package.json files
@@ -137,6 +138,7 @@ export default {
     },
   ],
   plugins: [
+    peerDepsExternal(),
     resolve({
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
       preferBuiltins: false,
@@ -177,6 +179,8 @@ export default {
         { src: 'src/shared-react-permission-filter/README.md', dest: 'build/shared-react-permission-filter' },
         { src: 'src/shared-react-app-bar/package.json', dest: 'build/shared-react-app-bar', transform: packageJsonTransform },
         { src: 'src/shared-react-app-bar/README.md', dest: 'build/shared-react-app-bar' },
+        { src: 'src/shared-react-components/package.json', dest: 'build/shared-react-components', transform: packageJsonTransform },
+        { src: 'src/shared-react-components/README.md', dest: 'build/shared-react-comnponents' },
       ],
     }),
     // Transform package.json files to fix dependencies
@@ -195,6 +199,7 @@ export default {
     'react-router-redux',
     'jwt-decode',
     'axios',
+    "axios-retry",
     'js-cookie',
     'query-string',
     'reselect',
@@ -245,11 +250,43 @@ export default {
     '@mui/material/Link',
     '@mui/icons-material/ArrowDropDown',
     '@mui/icons-material/ArrowDropUp',
+    '@mui/material/MenuItem',
+    '@mui/material/Menu',
+    '@mui/material/IconButton',
+    '@mui/material/Toolbar',
+    '@mui/material/Typography',
+    '@mui/material/AppBar',
+    '@mui/material/Drawer',
+    '@mui/material/List',
+    '@mui/material/ListItem',
+    '@mui/material/ListItemIcon',
+    '@mui/material/ListItemText',
+    '@mui/material/CssBaseline',
+    '@mui/material/Container',
+    '@mui/material/Grid',
+    '@mui/material/Box',
+    '@mui/material/Avatar',
+    '@mui/material/Divider',
+    '@mui/material/ListItemIcon',
+    '@mui/material/ListItemText',
+    '@mui/material/Button',
+    "@mui/x-data-grid",
+    "@mui/material/Unstable_Grid2",
+    "@mui/icons-material/InfoOutlined",
     '@emotion/styled',
     'jsx-runtime',
     "@timmons-group/shared-auth-config",
     "@timmons-group/shared-react-auth",
     "@timmons-group/shared-react-permission-filter",
     "@timmons-group/shared-react-app-bar",
+    "@emotion/styled",
+    "yup",
+    "@hookform/resolvers/yup",
+    "notistack",
+    "react-hook-form",
+    "@testing-library/react",
+    "jest",
+    "@testing-library/jest-dom",
+    /\.(css|less|scss)$/
   ],
 };
