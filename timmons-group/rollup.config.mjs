@@ -180,7 +180,7 @@ export default {
         { src: 'src/shared-react-app-bar/package.json', dest: 'build/shared-react-app-bar', transform: packageJsonTransform },
         { src: 'src/shared-react-app-bar/README.md', dest: 'build/shared-react-app-bar' },
         { src: 'src/shared-react-components/package.json', dest: 'build/shared-react-components', transform: packageJsonTransform },
-        { src: 'src/shared-react-components/README.md', dest: 'build/shared-react-comnponents' },
+        { src: 'src/shared-react-components/README.md', dest: 'build/shared-react-components' },
       ],
     }),
     // Transform package.json files to fix dependencies
