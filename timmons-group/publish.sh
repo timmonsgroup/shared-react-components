@@ -7,6 +7,6 @@ set -e
 cd build
 for dir in */; do
   cd $dir
-  npm publish --tag gamma
+  npm publish
   cd ..
 done
