@@ -4,7 +4,7 @@ import React, { forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
 
 import { Typography, Drawer, Box } from '@mui/material';
-import InfoIcon from '@mui/icons-material/InfoOutlined';
+import { InfoOutlined as InfoIcon } from '@mui/icons-material';
 
 
 const SideBarButton = ({ isOpen, onToggleSideBar, dw }) => {
