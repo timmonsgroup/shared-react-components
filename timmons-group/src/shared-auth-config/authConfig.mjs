@@ -485,7 +485,7 @@ export const getConfigBuilder = () => {
        * @returns {ConfigurationBuiler}
        */
       withAppAuthorization: (application) => {
-        console.log("Using expirimintal feature: withAppAuthorization", application)
+        console.warn("Using expirimintal feature: withAppAuthorization", application)
         configuration.authorization.application = application;
         return builder();
       },

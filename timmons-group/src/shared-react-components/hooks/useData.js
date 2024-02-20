@@ -224,7 +224,7 @@ export const useGet = (url, defaultValue = null, options) => {
 axiosRetry(axios, {
   retries: 3, // number of retries
   retryDelay: (retryCount) => {
-    console.log(`retry attempt: ${retryCount}`);
+    console.warn(`retry attempt: ${retryCount}`);
     return retryCount * 2000; // time interval between retries
   },
   retryCondition: (error) => {

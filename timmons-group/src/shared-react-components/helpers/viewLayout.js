@@ -386,7 +386,7 @@ const isConditionMet = (condition, triggerData, fieldId) => {
   const { is: value, exists, not } = condition;
 
   if (Object.hasOwn(condition, 'is') && Object.hasOwn(condition, 'exists')) {
-    console.log(`Warning: You have provided "is" and "exist" in the field configuration for the ${fieldId} field. "is" takes precedence over "exists" inside of a conditional configuration`)
+    console.warn(`Warning: You have provided "is" and "exist" in the field configuration for the ${fieldId} field. "is" takes precedence over "exists" inside of a conditional configuration`)
   }
   /**
    * By default, if the condition is configured just as:

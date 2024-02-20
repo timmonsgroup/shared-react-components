@@ -23,7 +23,7 @@ export function useGetAppConfig() {
         setConfig(config);
         setIsLoaded(true);
       } catch (ex) {
-        console.log(`App Config Exception${retried ? ' 2nd attempt' : ''}: `, ex);
+        console.warn(`App Config Exception${retried ? ' 2nd attempt' : ''}: `, ex);
         if (!retried.current) {
           retried.current = true;
           // With aurora we could hit a timeout while the backend tries to spool up, in that case we try again

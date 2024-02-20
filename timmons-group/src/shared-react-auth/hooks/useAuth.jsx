@@ -408,10 +408,6 @@ const useProvideAuth = (config, whitelist, options) => {
   const store = useRef(null);
   const init = useRef(null);
 
-  useEffect(() => {
-    console.debug("Global State Changed", authState.globalState);
-  }, [authState.globalState]);
-
 
   const getACL = async (authorization) => {
     // The configuration needs to have a source
@@ -992,7 +988,6 @@ const useProvideAuth = (config, whitelist, options) => {
       // if (config.useSession) setBootTokenInSession(res.data.token);
       // else setBootTokenInLocalStorage(res.data.token);
     } catch (ex) {
-      debugger
       console.error(`Failed to refresh token: ${ex}`);
       logout_internal('startwithrefreshtoken failed refresh catch');
     }
@@ -1256,7 +1251,6 @@ const authReducer = (nextState, action) => {
         globalState: action.globalState,
       };
     case ACTIONS.SET_CONFIG_STATE:
-      console.debug("Setting config state", action.configState)
       return {
         ...nextState,
         configState: action.configState,

@@ -233,7 +233,7 @@ export const addSingleSelectFormatting = (muiGridColumn, layoutColumn, editable)
       return { value: c.label || c.name, label: c.label || c.name };
     });
   } else {
-    console.log('No choices for column', layoutColumn);
+    console.warn('No choices for column', layoutColumn);
     muiGridColumn.type = 'string';
   }
   muiGridColumn.valueGetter = ({ value }) => getValueNameOrDefault(value, muiGridColumn.nullValue);
