@@ -16,10 +16,10 @@ import { useAuth } from '@timmons-group/shared-react-auth';
  */
 export const MenuArrow = ({ open }) => {
   if (open) {
-    let ret = <><ArrowDropDown /></>;
+    let ret = <ArrowDropDown />;
     return ret
   }
-  let rets = <><ArrowDropUp /></>;
+  let rets = <ArrowDropUp />;
   return rets
 };
 
