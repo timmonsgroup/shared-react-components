@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {
   ClickAwayListener, Tooltip
 } from '@mui/material';
-import IIcon from '@mui/icons-material/InfoOutlined';
+import { InfoOutlined as IICon } from '@mui/icons-material';
 
 /**
  * TooltipIcon is a wrapper around the MUI InfoOutlined icon (default) that displays a tooltip when clicked
