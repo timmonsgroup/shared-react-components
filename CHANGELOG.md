@@ -1,4 +1,29 @@
 # Change Log #
+## Release 1.0.1 - 02/20/2023 ##
+### Fixes ###
+Changed the way Icons were being imported that was causing some errors in the split package repo.
+Converted some console logs to console warns
+
+## Release 1.0.0 - 02/16/2024 ##
+All the changes from Gamma.
+### Internal Changes ###
+Several things that use to fall under the `@timmons-group/shared-react-components` package have been moved to their own packages.
+- The following have moved
+  - `useAuth` hook, `ProvideAuth` context component have been moved to `@timmons-group/shared-react-auth`.
+  - The `AppBar`, `UserMenu`, and `PermissionFilter` components have been moved to `@timmons-group/shared-react-app-bar`.
+
+### New Packages ###
+- `@timmons-group/shared-auth-config` is a new package used to build an oAuth configuration object.
+  - It is used by several `@timmons-group` packages.
+  - This package may be used in either a client or server environment.
+- `@timmons-group/shared-react-auth` contains React specific bits for handling authentication.
+  - `useAuth` hook
+  - `ProvideAuth` context provider that incorporates `useAuth` and provides the `authState` to the application.
+- `@timmons-group/shared-react-app-bar` is now a separate package
+  - `AppBar` - A component that renders a Material-UI AppBar with a logo, title, and user menu.
+  - `UserMenu` - A component that renders a Material-UI Menu with a user's name and a logout button.
+  - `PermissionFilter` - A component that can be used to filter components based on a user's permissions.
+
 ## Release 1.0.0 (gamma) - 11/21/2023 ##
 ## The big rework
 Create React App is going away as a dependency

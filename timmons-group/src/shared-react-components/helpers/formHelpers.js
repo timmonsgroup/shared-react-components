@@ -31,7 +31,7 @@ export const VALID_PATTERNS = Object.freeze({
  */
 export function yupString(label, isRequired = true, reqMessage) {
   const schema = string().label(label || 'This field');
-  return isRequired ? schema.required(reqMessage) : schema;
+  return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 /**
  * Create a yup schema for a date field
@@ -51,8 +51,8 @@ export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
     // .test('formatted', msg, (value, context) => (
     //   !context || !context.originalValue ? true : validDateFormat(context.originalValue)
     // ))
-    .nullable().label(label);
-  return isRequired ? schema.required(reqMessage) : schema;
+    .label(label);
+  return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 
 /**
@@ -81,7 +81,7 @@ export function multiToPayload(selections) {
  * @returns {YupSchema} - yup schema for the field
  */
 export function yupTypeAhead(label, isRequired = true, reqMessage) {
-  return yupString(label, isRequired, reqMessage).nullable();
+  return yupString(label, isRequired, reqMessage);
 }
 
 /**
@@ -107,7 +107,7 @@ export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
  * @returns {YupSchema}
  */
 export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, minLength, minValue, maxValue) {
-  let schema = number().integer().nullable().label(label)
+  let schema = number().integer().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg);
 
@@ -118,7 +118,7 @@ export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, min
   schema = addMaxValue(schema, label, maxValue, true);
   schema = addMinValue(schema, label, minValue, true);
 
-  return isRequired ? schema.required(reqMessage) : schema;
+  return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 
 /**
@@ -137,11 +137,11 @@ export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, min
  */
 export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength, minValue) {
   let formatMessage = isNaN(parseInt(int)) && isNaN(parseInt(frac)) ? 'Invalid number format' : msg;
-  let schema = number().nullable().label(label)
+  let schema = number().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(formatMessage)
     .test('formatted', formatMessage, (value, context) => (
-      !context || !context.originalValue ? true : validDoubleFormat(context.originalValue, int, frac)
+      !context?.originalValue ? true : validDoubleFormat(context.originalValue, int, frac)
     ));
 
   // Check for and add tests max/min Length if needed
@@ -150,7 +150,7 @@ export function yupFloat(label, isRequired = true, int = null, frac = null, maxL
   schema = addMaxValue(schema, label, maxValue);
   schema = addMinValue(schema, label, minValue);
 
-  return isRequired ? schema.required(reqMessage) : schema;
+  return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 
 /**
@@ -224,7 +224,7 @@ const addMinValue = (schema, label, minValue, isInt) => {
  * @returns {YupSchema} - yup schema for a currency field
  */
 export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage, minLength, maxValue, minValue) {
-  let schema = number().nullable().label(label)
+  let schema = number().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg)
     .test('formatted', msg, (value, context) => (
@@ -237,7 +237,7 @@ export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage
   schema = addMaxValue(schema, label, maxValue);
   schema = addMinValue(schema, label, minValue);
 
-  return isRequired ? schema.required(reqMessage) : schema;
+  return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 
 
@@ -342,8 +342,8 @@ export function getSelectValue(multiple, inData) {
  */
 export function yupObject(label, isRequired = false, reqMessage) {
   // Need nullable to avoid type error on 'object' even if required
-  const schema = object().label(label).nullable();
-  return isRequired ? schema.required(reqMessage) : schema;
+  const schema = object().label(label);
+  return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 
 /**
@@ -405,7 +405,11 @@ export function createFieldValidation(type, label, validationMap, field) {
 
         if (pattern) {
           const regexp = new RegExp(pattern, flags);
-          validation = validation.matches(regexp, errorMessage || `Please enter a value that matches the regular expression: ${regexp}`);
+          const matchOptions = {
+            message: errorMessage || `Please enter a value that matches the regular expression: ${regexp}`,
+            excludeEmptyString: true
+          };
+          validation = validation.matches(regexp, matchOptions);
         }
       }
       const isEmail = !!validationMap.get(VALIDATIONS.EMAIL);
@@ -491,7 +495,7 @@ export function createFieldValidation(type, label, validationMap, field) {
     // NOTE that Checkboxes are multi-selects, so we use the same validation
     case FIELDS.CHOICE:
     case FIELDS.OBJECT: {
-      validation = (field?.render?.multiple ? yupMultiselect : yupTypeAhead)(label, required, reqMessage).nullable();
+      validation = (field?.render?.multiple ? yupMultiselect : yupTypeAhead)(label, required, reqMessage);
       break;
     }
 
