@@ -173,6 +173,15 @@ const validateConfiguration = (configuration) => {
     validateOAuthConfiguration(configuration.authentication.oAuth);
   }
 
+  // Validate no authentication
+  if (configuration.authentication.mode === 'none') {
+    if (configuration.authentication.fakeUser) {
+      if (typeof configuration.authentication.fakeUser !== 'object') {
+        throw new Error('The fake user must be an object');
+      }
+    }
+  }
+
   // The storage configuration must be an object
   if (typeof configuration.storage !== 'object') {
     throw new Error('The storage configuration must be an object');
@@ -264,6 +273,24 @@ export const getConfigBuilder = () => {
        */
       withAuthentication: (authenticationConfiguration) => {
         configuration.authentication = authenticationConfiguration;
+        return builder();
+      },
+
+      /**
+       * Disables authentication
+       * @returns {ConfigurationBuilder}
+       */
+      withNoAuthentication: () => {
+        configuration.authentication = { mode: 'none'};
+        return builder();
+      },
+
+      /**
+       * Sets a fake user for use with no authentication
+       * @param {User} user
+       */
+      withFakeUser: (user) => {
+        configuration.authentication.fakeUser = user;
         return builder();
       },
 

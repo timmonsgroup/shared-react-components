@@ -485,6 +485,9 @@ const useProvideAuth = (config, whitelist, options) => {
     // If the type is none we will not attempt to get permissions
     if (authorization.mode === AUTHORIZATION_MODES.NONE) {
       console.warn("Authorization type is none, skipping")
+      const defaultPermissions = config?.authentication?.fakeUser?.permissions || config?.authorization?.defaultPermissions || [];
+      dispatch({ type: ACTIONS.SET_PERMISSIONS, acl: defaultPermissions });
+      dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.READY });
       return;
     }
 
@@ -522,7 +525,7 @@ const useProvideAuth = (config, whitelist, options) => {
 
     // If the type is ACL the configuration must contain a source
     if (authorization.mode === AUTHORIZATION_MODES.ACCESS_CONTROL_LIST) {
-     
+
       // Try to get the acl from the source
       const acl = await getACL(authorization);
 
@@ -674,16 +677,7 @@ const useProvideAuth = (config, whitelist, options) => {
   }, [authState.staleCheckState]);
 
 
-  /**
-   * This function is called to start the login process
-   * It will open the login endpoint in a new tab
-   * Should be exposed to the consumer as part of this hook
-   * @param {object | string} state The state to login with, this will be returned with a valid login
-   * @function
-   * @async
-   * @returns {boolean|Promise<void>} True if the login was started, false if the login was not started
-   */
-  const login = async (state) => {
+  const oAuthLogin = async (state) => {
     // This method only works with oAuth config
     let { authentication } = config;
     let { oAuth } = authentication;
@@ -724,6 +718,41 @@ const useProvideAuth = (config, whitelist, options) => {
     // Otherwise open the login endpoint in the current tab
     if (config?.authentication?.authenticateInNewTab) window.open(fetchUrl, '_blank');
     else window.location.href = fetchUrl;
+  }
+
+  const noLogin = async () => {
+    dispatch({ type: ACTIONS.BEGIN_LOGIN });
+    dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.AUTHENTICATING });
+    dispatch({ type: ACTIONS.SET_TOKEN_INFO, access_token: 'none' });
+    dispatch({ type: ACTIONS.SET_GLOBAL_STATE, globalState: GLOBAL_STATES.READY });
+    // Use the fakeUser from the config if it exists
+    let user = config?.authentication?.fakeUser || loggedOutUser;
+
+    dispatch({
+      type: ACTIONS.SET_TOKEN_INFO,
+      user: { ...user, isSignedIn: true },
+      access_token: 'none',
+      id_token: 'none',
+      refresh_token: 'none',
+      bearer_token: 'none',
+    });
+  }
+
+  /**
+   * This function is called to start the login process
+   * It will open the login endpoint in a new tab
+   * Should be exposed to the consumer as part of this hook
+   * @param {object | string} state The state to login with, this will be returned with a valid login
+   * @function
+   * @async
+   * @returns {boolean|Promise<void>} True if the login was started, false if the login was not started
+   */
+  const login = async (state) => {
+    if (config?.authentication?.oAuth) {
+      return oAuthLogin(state);
+    } else if (config?.authentication?.mode === 'none') {
+      return noLogin();
+    }
   };
 
   /**
@@ -1020,10 +1049,10 @@ const useProvideAuth = (config, whitelist, options) => {
    * @function
    */
   const handleMessage = (event) => {
-    if(config?.authentication?.messageOrigins && !config?.authentication?.messageOrigins.includes(event.origin)) {
+    if (config?.authentication?.messageOrigins && !config?.authentication?.messageOrigins.includes(event.origin)) {
       return;
     }
-    
+
     if (event.origin !== window.location.origin) {
       return;
     }
@@ -1100,24 +1129,34 @@ const getActiveBearerToken = () => {
 };
 
 const userFromIdToken = (id_token) => {
-  let decoded = null;
-  if (typeof id_token === 'string') {
-    decoded = decodeTokenToJWT(id_token);
-  }
-  else {
-    decoded = id_token;
-  }
+  // If the authentication mode is none, return the fake suer or the logged out user
+  // if (config?.authentication?.mode === 'none') {
+  //   return config?.authentication?.fakeUser || loggedOutUser;
+  // }
 
-  const user = {
-    id: decoded.sub,
-    name: decoded.name,
-    email: decoded.email,
-    isSignedIn: true,
-    isAuthenticated: true,
-    acl: decoded.permissions,
-  };
+  try {
+    let decoded = null;
+    if (typeof id_token === 'string') {
+      decoded = decodeTokenToJWT(id_token);
+    }
+    else {
+      decoded = id_token;
+    }
 
-  return user;
+    const user = {
+      id: decoded.sub,
+      name: decoded.name,
+      email: decoded.email,
+      isSignedIn: true,
+      isAuthenticated: true,
+      acl: decoded.permissions,
+    };
+
+    return user;
+  } catch (ex) {
+    console.error('Error parsing id_token', ex);
+    return loggedOutUser;
+  }
 };
 
 /**
@@ -1186,7 +1225,7 @@ const authReducer = (nextState, action) => {
         ...nextState,
         id_token: action.id_token,
         access_token: action.access_token,
-        user: userFromIdToken(action.id_token),
+        user: action.user || userFromIdToken(action.id_token),
         bearerToken: action.bearer_token,
         refreshToken: action.refresh_token,
         state: AUTH_STATES.LOGGED_IN,
