@@ -2,7 +2,6 @@
 
 import PropTypes from 'prop-types';
 
-//import { Navigate } from 'react-router-dom';
 import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../../helpers';
 import { useAuth } from '@timmons-group/shared-react-auth';
 
