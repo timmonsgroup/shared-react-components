@@ -1,8 +1,6 @@
 /** @module useAuth */
 import '../models/auth';
-import * as React from 'react'
 import {
-  useState,
   useRef,
   useEffect,
   useContext,
@@ -11,7 +9,7 @@ import {
 } from 'react';
 import { ACLS, AUTH_STATES } from '../constants';
 import PropTypes from 'prop-types';
-import { parseTokens, decodeTokenToJWT, parseCombinedToken } from '../helpers/JWTUtil';
+import { decodeTokenToJWT, parseCombinedToken } from '../helpers/JWTUtil';
 import axios from 'axios';
 
 const openWindow = false;
@@ -432,9 +430,9 @@ const useProvideAuth = (config, whitelist, options) => {
 
   /**
    * Get a claim from a token and parse it if necessary
-   * @param {JWT} token 
-   * @param {string} claimName 
-   * @returns 
+   * @param {JWT} token
+   * @param {string} claimName
+   * @returns
    */
   const getClaimFromToken = (token, claimName) => {
     if (!token) {
@@ -522,7 +520,7 @@ const useProvideAuth = (config, whitelist, options) => {
 
     // If the type is ACL the configuration must contain a source
     if (authorization.mode === AUTHORIZATION_MODES.ACCESS_CONTROL_LIST) {
-     
+
       // Try to get the acl from the source
       const acl = await getACL(authorization);
 
@@ -1023,7 +1021,7 @@ const useProvideAuth = (config, whitelist, options) => {
     if(config?.authentication?.messageOrigins && !config?.authentication?.messageOrigins.includes(event.origin)) {
       return;
     }
-    
+
     if (event.origin !== window.location.origin) {
       return;
     }
