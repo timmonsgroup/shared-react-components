@@ -88,9 +88,12 @@ const replaceFileDependencies = () => ({
   }
 });
 
+// I want to exclude the directory src/shared-react-storybook from the build
+
+
 const input = Object.fromEntries(
   glob
-    .sync('src/**/*')
+    .sync('src/**/*', { ignore: ['src/shared-react-storybook/**/*'] })
     // Only include files ending with .js, .jsx, .ts, and .tsx
     .filter(file => /\.(js|jsx|ts|tsx|mjs)$/.test(file))
     .map(file => [
@@ -181,6 +184,8 @@ export default {
         { src: 'src/shared-react-app-bar/README.md', dest: 'build/shared-react-app-bar' },
         { src: 'src/shared-react-components/package.json', dest: 'build/shared-react-components', transform: packageJsonTransform },
         { src: 'src/shared-react-components/README.md', dest: 'build/shared-react-components' },
+        // { src: 'src/shared-react-storybook/package.json', dest: 'build/shared-react-storybook', transform: packageJsonTransform },
+        // { src: 'src/shared-react-storybook/README.md', dest: 'build/shared-react-storybook' },
       ],
     }),
     // Transform package.json files to fix dependencies
@@ -188,6 +193,8 @@ export default {
 
   ],
   external: [
+    'ansi-styles',
+    'chalk',
     'react',
     'react/jsx-runtime',
     'prop-types',
@@ -269,8 +276,10 @@ export default {
     '@mui/material/Divider',
     '@mui/material/ListItemIcon',
     '@mui/material/ListItemText',
+    '@mui/material/Typography',
     '@mui/material/Button',
     "@mui/x-data-grid",
+    "@mui/x-date-pickers",
     "@mui/material/Unstable_Grid2",
     "@mui/icons-material/InfoOutlined",
     '@emotion/styled',
@@ -286,6 +295,8 @@ export default {
     "react-hook-form",
     "@testing-library/react",
     "jest",
+    'vite',
+    "@vitejs/plugin-react",
     "@testing-library/jest-dom",
     /\.(css|less|scss)$/
   ],

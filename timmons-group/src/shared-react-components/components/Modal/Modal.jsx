@@ -30,6 +30,7 @@ const Modal = ({
   open, okLabel, cancelLabel, title, onOk, onCancel, handleClose, showX, children, hideActions, hideCancel, hideOk,
   disableOk, disableCancel, okColor = 'primary', cancelColor = 'regressive', ...props
 }) => {
+  console.log('Modal rendered')
   const titleRender = () => {
     if (showX) {
       return (
