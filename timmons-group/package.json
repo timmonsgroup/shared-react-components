@@ -25,6 +25,7 @@
     "@rollup/plugin-typescript": "^11.1.6",
     "@timmons-group/shared-auth-config": "file://./build/shared-auth-config",
     "@timmons-group/shared-react-auth": "file://./build/shared-react-auth",
+    "@timmons-group/shared-react-components": "file:./build/shared-react-components",
     "lerna": "^8.0.2",
     "rollup": "^4.9.5",
     "rollup-plugin-copy": "^3.5.0",
@@ -35,13 +36,14 @@
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
-    "axios": "^1.6.5",
-    "@types/react": "^18.2.51"
+    "@types/react": "^18.2.51",
+    "axios": "^1.6.5"
   },
   "dependencies": {
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "rifm": "^0.12.1"
   }
 }

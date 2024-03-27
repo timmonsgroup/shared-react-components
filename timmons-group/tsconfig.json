@@ -17,12 +17,13 @@
         "strict": false,
         "rootDir": "./src",
     },
-    
+
     "exclude": [
         "tests",
         "node_modules",
         "*/node_modules",
         "*/**/node_modules",
+        "*/shared-react-storybook",
         "build",
     ],
     "include": [
