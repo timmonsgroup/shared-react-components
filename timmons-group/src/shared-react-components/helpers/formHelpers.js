@@ -371,8 +371,9 @@ export function validDoubleFormat(value, i = 4, f = 4) {
   // If one or both of the values are not numbers, set them to an arbitrary digit value
   const int = isNaN(pInt) ? 999999999 : pInt;
   const frac = isNaN(pFrac) ? 999999999 : pFrac;
+  const absValue = Math.abs(value).toString();
 
-  const re = new RegExp(`^\\d{0,${int}}(\\.\\d{0,${frac}})?$`).test(value);
+  const re = new RegExp(`^\\d{0,${int}}(\\.\\d{0,${frac}})?$`).test(absValue);
   return re;
 }
 
