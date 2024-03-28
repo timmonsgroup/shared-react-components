@@ -2,7 +2,7 @@
 
 /** @module GridHelpers */
 import React from 'react';
-import { TextField } from '@mui/material';
+import GridFilterInput from './GridFilterInput';
 import { dateFormatter, currencyFormatter, dateStringNormalizer, caseless } from './helpers.js';
 /**
 * This is the base config for a column that is used by the MUIGrid component
@@ -36,19 +36,7 @@ export const baseColumnConfig = (layoutColumn, nullValue) => {
     let filterOperator = {
       label: 'Contains',
       value: 'contains',
-      InputComponent: ({ item, applyValue, ...rest }) => {
-        return (
-        <TextField
-          label="Value"
-          inputRef={input => input && input.focus()}
-          variant="standard"
-          value={item.value}
-          placeholder="Filter value"
-          onChange={(e) => applyValue({ ...item, value: e.target.value })}
-          {...rest}
-        />
-        )
-      },
+      InputComponent: GridFilterInput,
       getApplyFilterFn: (filterItem) => {
         return (params) => {
           if (!filterItem.value && filterItem.value !== 0) return true;

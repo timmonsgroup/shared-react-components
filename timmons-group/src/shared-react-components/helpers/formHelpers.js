@@ -1,6 +1,6 @@
 /** @module formHelpers */
 import '../models/form';
-import { DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
+import { CONDITIONAL_RENDER, DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
 import { functionOrDefault, isObject } from './helpers';
 import {
   string, array, date, number, object
@@ -29,7 +29,7 @@ export const VALID_PATTERNS = Object.freeze({
  * @param {string} [reqMessage]
  * @returns {YupSchema} - yup schema for the field
  */
-export function yupString(label, isRequired = true, reqMessage) {
+export function yupString(label, isRequired, reqMessage) {
   const schema = string().label(label || 'This field');
   return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
@@ -41,7 +41,7 @@ export function yupString(label, isRequired = true, reqMessage) {
  * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for a date field
  */
-export function yupDate(label, isRequired = false, msg = DATE_MSG, reqMessage) {
+export function yupDate(label, isRequired, msg = DATE_MSG, reqMessage) {
   // If you can't figure out why date validation is not working remove the "typeError(msg)" this will spit out more detail
   const schema = date()
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -80,7 +80,7 @@ export function multiToPayload(selections) {
  * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for the field
  */
-export function yupTypeAhead(label, isRequired = true, reqMessage) {
+export function yupTypeAhead(label, isRequired, reqMessage) {
   return yupString(label, isRequired, reqMessage);
 }
 
@@ -92,7 +92,7 @@ export function yupTypeAhead(label, isRequired = true, reqMessage) {
  * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for the field
  */
-export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
+export function yupTrimString(label, isRequired, trimMsg, reqMessage) {
   return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces').strict(true);
 }
 
@@ -106,7 +106,7 @@ export function yupTrimString(label, isRequired = true, trimMsg, reqMessage) {
  * @param {number} [minLength] - min length of the field
  * @returns {YupSchema}
  */
-export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, minLength, minValue, maxValue) {
+export function yupInt(label, isRequired, maxLength, msg, reqMessage, minLength, minValue, maxValue) {
   let schema = number().integer().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg);
@@ -135,7 +135,7 @@ export function yupInt(label, isRequired = true, maxLength, msg, reqMessage, min
  * @param {number} [minValue] - min value of the field
  * @returns {YupSchema}
  */
-export function yupFloat(label, isRequired = true, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength, minValue) {
+export function yupFloat(label, isRequired, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength, minValue) {
   let formatMessage = isNaN(parseInt(int)) && isNaN(parseInt(frac)) ? 'Invalid number format' : msg;
   let schema = number().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -223,7 +223,7 @@ const addMinValue = (schema, label, minValue, isInt) => {
  * @param {number} [minLength] - min length of the field
  * @returns {YupSchema} - yup schema for a currency field
  */
-export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage, minLength, maxValue, minValue) {
+export function yupCurrency(label, isRequired, maxLength, msg, reqMessage, minLength, maxValue, minValue) {
   let schema = number().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg)
@@ -236,6 +236,8 @@ export function yupCurrency(label, isRequired = true, maxLength, msg, reqMessage
   schema = addMinLength(schema, label, minLength);
   schema = addMaxValue(schema, label, maxValue);
   schema = addMinValue(schema, label, minValue);
+
+  console.log('yuCurrency schema', isRequired)
 
   return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
@@ -285,7 +287,7 @@ function addMaxLength(schema, label, maxLength) {
  * @param {number} minLength - min length of the field
  * @returns {YupSchema} - yup schema for a string field
  */
-export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMessage, minLength) {
+export function yupTrimStringMax(label, isRequired, maxLength, msg, reqMessage, minLength) {
   let schema = yupTrimString(label, isRequired, msg, reqMessage);
   // Check for and add tests max/min Length if needed
   schema = addMaxLength(schema, label, maxLength);
@@ -300,7 +302,7 @@ export function yupTrimStringMax(label, isRequired = true, maxLength, msg, reqMe
  * @param {string} reqMessage - message to display if the field is required
  * @returns {YupSchema} - yup schema for a string field
  */
-export function yupMultiselect(label, isRequired = true, reqMessage) {
+export function yupMultiselect(label, isRequired, reqMessage) {
   const message = reqMessage || 'Please select at least one item';
   const schema = array().label(label || 'This field');
   return isRequired ? schema.required(message).min(1, message) : schema;
@@ -393,8 +395,8 @@ export function createFieldValidation(type, label, validationMap, field) {
   const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
   const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
   const reqMessage = field?.render?.requiredErrorText;
-  const disableFutureErrorText = field?.render?.disableFutureErrorText;
-
+  const disableFutureErrorText = field?.render?.[CONDITIONAL_RENDER.DISABLE_FUTURE_ERROR_TEXT];
+  debugger;
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT: {
@@ -468,6 +470,8 @@ export function createFieldValidation(type, label, validationMap, field) {
     case FIELDS.CURRENCY: {
       const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
       const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
+
+      console.log('currency validation', field)
 
       validation = yupCurrency(
         label,
