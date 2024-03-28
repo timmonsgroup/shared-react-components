@@ -394,9 +394,8 @@ export function createFieldValidation(type, label, validationMap, field) {
   const minLength = validationMap.get(VALIDATIONS.MIN_LENGTH);
   const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
   const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
-  const reqMessage = field?.render?.requiredErrorText;
+  const reqMessage = field?.render?.[CONDITIONAL_RENDER.REQ_TEXT];
   const disableFutureErrorText = field?.render?.[CONDITIONAL_RENDER.DISABLE_FUTURE_ERROR_TEXT];
-  debugger;
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT: {
