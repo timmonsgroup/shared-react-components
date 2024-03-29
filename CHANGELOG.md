@@ -1,4 +1,27 @@
 # Change Log #
+## Release 1.0.2 - 03/30/2023 ##
+### Fixes ###
+- In the update to yup 1.x `nullable` functionality was changed this caused some really strange behavior in the form validation. This has been fixed by only applying `nullable` to the yup validations that are NOT required.
+- ValidDoubleFormat now takes the Math.abs of the value to ensure that negative numbers pass validation.
+
+### New Functionality ###
+#### Components ####
+- RequiredIndicator
+  - Now looks for a theme option `requiredIndicator` (which can be set in your muiTheme file).
+    - This allows for the indicator to be styled based on the theme
+  - The indicator can now be styled with the `sx` prop.
+    - Example:
+      ```jsx
+      <RequiredIndicator sx={{ color: 'blue' }} />
+      ```
+  - The default is `red` if no theme `requiredIndicator` is found OR sx prop was not passed.
+
+#### Helpers ####
+- `gridHelpers`
+  - This file created a TextField to handle Grid filter operations. That was jsx in a js file and caused some issues. This has been moved to a jsx file.
+  - `helpers/GridFilterInput.jsx` is that new file
+
+
 ## Release 1.0.1 - 02/20/2023 ##
 ### Fixes ###
 Changed the way Icons were being imported that was causing some errors in the split package repo.
