@@ -259,6 +259,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
 const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions, finalId) => {
+  debugger;
   const DateField = ({ field: { value, onChange, ref }, fieldState: { error } }) => (
     <>
       <DatePicker
