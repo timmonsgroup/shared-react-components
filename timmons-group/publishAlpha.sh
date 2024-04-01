@@ -4,7 +4,6 @@
 set -e
 
 # Publish all packages in the build folder
-npm version premajor --preid alpha
 cd build
 for dir in */; do
   cd $dir
