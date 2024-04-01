@@ -35,8 +35,8 @@
     "tslib": "^2.6.2"
   },
   "peerDependencies": {
-    "axios": "^1.6.5",
-    "@types/react": "^18.2.51"
+    "@types/react": "^18.2.51",
+    "axios": "^1.6.5"
   },
   "dependencies": {
     "@date-io/date-fns": "^2.15.0",
