@@ -1,13 +1,14 @@
 /** @module AnyField */
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
 import {
-  TextField, FormControl,
+  Box, TextField, FormControl,
   FormGroup, FormControlLabel, FormHelperText,
   Checkbox
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers';
 
 import RadioOptions from '../../components/RadioOptions';
 import Typeahead from '../../components/Typeahead';
@@ -15,7 +16,6 @@ import FormErrorMessage from '../../components/FormErrorMessage';
 import AnyFieldLabel from '../../components/AnyFieldLabel';
 
 import { FIELD_TYPES } from '../../constants';
-import { Box } from '@mui/material';
 import { isObject } from '../../helpers';
 
 const makeFilter = (checkedId) => {
@@ -249,44 +249,6 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
 
   return TextFieldWrapped;
 };
-/*
-// renderInput={(params) => {
-        //   // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
-        //   params.inputProps['data-src-field'] = finalId || name;
-        //   params.inputProps.readOnly = readOnly;
-        //   params.name = finalId || name;
-        //   params.id = finalId || name;
-        //   if (placeholder) {
-        //     params.inputProps.placeholder = placeholder;
-        //   }
-        //   return (
-        //     <>
-        //       <AnyFieldLabel htmlFor={finalId || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
-        //       <TextField sx={{ width: '100%' }} {...params} />
-        //     </>
-        //   );
-        // }}
-*/
-
-const DateFieldToolbar = ({
-  id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture, error, fieldOptions, ...params
-}) => {
-  console.log('params', params)
-  params.inputProps['data-src-field'] = id;
-  params.inputProps.readOnly = readOnly;
-  params.name = id;
-  params.id = id;
-  if (placeholder) {
-    params.inputProps.placeholder = placeholder;
-  }
-  return (
-    <>
-      <AnyFieldLabel htmlFor={id} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
-      <TextField sx={{ width: '100%' }} {...params}  />
-    </>
-  );
-}
-
 
 /**
  * This is a custom renderer for the MUI DatePicker component to work with react-hook-form
@@ -305,22 +267,21 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
         value={value}
         onChange={onChange}
         disableFuture={disableFuture}
-        slots={{ textField: DateFieldToolbar }}
-        slotProps={{
-          textField: {
-            id: finalId || name,
-            name: finalId || name,
-            label,
-            disabled,
-            required,
-            readOnly,
-            helperText,
-            iconHelperText,
-            altHelperText,
-            placeholder,
-            error,
-            fieldOptions
+        renderInput={(params) => {
+          // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
+          params.inputProps['data-src-field'] = finalId || name;
+          params.inputProps.readOnly = readOnly;
+          params.name = finalId || name;
+          params.id = finalId || name;
+          if (placeholder) {
+            params.inputProps.placeholder = placeholder;
           }
+          return (
+            <>
+              <AnyFieldLabel htmlFor={finalId || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
+              <TextField sx={{ width: '100%' }} {...params} />
+            </>
+          );
         }}
       />
       {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
@@ -437,46 +398,44 @@ const checkboxRenderer = (layout, fieldOptions, finalId) => {
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
     return (
-      <>
-        <FormControl
-          data-src-field={finalId || field.id}
+      <FormControl
+        data-src-field={finalId || field.id}
+        error={!!error}
+        disabled={disabled}
+        component="fieldset"
+        variant="standard"
+      >
+        <AnyFieldLabel
+          asFormInput={true}
+          htmlFor={finalId || field.name}
           error={!!error}
+          label={label}
+          required={!!required}
           disabled={disabled}
-          component="fieldset"
-          variant="standard"
-        >
-          <AnyFieldLabel
-            asFormInput={true}
-            htmlFor={finalId || field.name}
-            error={!!error}
-            label={label}
-            required={!!required}
-            disabled={disabled}
-            iconText={iconHelperText}
-            fieldOptions={fieldOptions}
-            helperText={helperText}
-          />
-          <FormGroup>
-            {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
-            {choices?.map((item) => (
-              <FormControlLabel
-                key={item.id}
-                control={<Checkbox
-                  data-src-checkbox={item.id}
-                  onBlur={field.onBlur}
-                  checked={field?.value?.includes(item.id)}
-                  onChange={(e) => {
-                    field.onChange(handleMultiSelectChange(field, item.id));
-                  }}
-                />}
-                label={item.label}
-              />
-            ))}
-            {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
-            <FormErrorMessage error={error} />
-          </FormGroup>
-        </FormControl>
-      </>
+          iconText={iconHelperText}
+          fieldOptions={fieldOptions}
+          helperText={helperText}
+        />
+        <FormGroup>
+          {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
+          {choices?.map((item) => (
+            <FormControlLabel
+              key={item.id}
+              control={<Checkbox
+                data-src-checkbox={item.id}
+                onBlur={field.onBlur}
+                checked={field?.value?.includes(item.id)}
+                onChange={(e) => {
+                  field.onChange(handleMultiSelectChange(field, item.id));
+                }}
+              />}
+              label={item.label}
+            />
+          ))}
+          {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
+          <FormErrorMessage error={error} />
+        </FormGroup>
+      </FormControl>
     );
   };
 

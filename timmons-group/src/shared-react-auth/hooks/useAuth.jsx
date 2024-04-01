@@ -1139,6 +1139,20 @@ const authReducer = (nextState, action) => {
     // Maintain the rest of the current state, only update the refresh token
     case ACTIONS.SET_CONFIG: {
       let anonUser = action.config?.anonUser;
+
+
+      let nextAuthState = AUTH_STATES.LOGGED_OUT;
+      let nextUser = anonUser;
+      // ReactStrictMode will end up rendering the component twice, in that case a set config will be called twice
+      // First we check to see if the config is the same as the current config
+      let authenticationConfigSame = JSON.stringify(nextState?.config) == JSON.stringify(action?.config);
+
+      // If the config is the same we will try to keep the current authentication state and user
+      if(authenticationConfigSame) {
+        nextAuthState = nextState.state || AUTH_STATES.LOGGED_OUT;
+        nextUser = nextState?.user || anonUser || loggedOutUser
+      }
+
       if (anonUser) {
         // Migrate from the backend model to the frontend model
         anonUser = {
@@ -1149,8 +1163,7 @@ const authReducer = (nextState, action) => {
           isAuthenticated: false,
           acl: anonUser.acl || anonUser.permissions,
         };
-      }
-      else if (action.config?.authorization?.defaultPermissions) {
+      } else if (action.config?.authorization?.defaultPermissions) {
         anonUser = {
           id: 'anonymous',
           name: 'Anonymous',
@@ -1165,8 +1178,8 @@ const authReducer = (nextState, action) => {
         ...nextState,
         loggedOutuser: anonUser,
         config: action.config,
-        state: AUTH_STATES.LOGGED_OUT,
-        user: anonUser || loggedOutUser,
+        state: nextAuthState,
+        user: nextUser
       };
     }
     case ACTIONS.BEGIN_LOGIN:

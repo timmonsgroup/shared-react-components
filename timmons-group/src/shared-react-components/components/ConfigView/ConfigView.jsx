@@ -13,7 +13,7 @@ import {
   Typography, Card, CardContent, Box,
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Divider, styled
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import {Unstable_Grid2 as Grid} from '@mui/material';
 
 //create a context for the application data
 export const ViewContext = createContext();

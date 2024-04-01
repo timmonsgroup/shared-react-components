@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material';
 import { mergeDeep } from './helpers/helpers';
 import { GRID_ACTION_TYPE } from './constants';
 import LinkBehavior from './components/LinkBehavior';

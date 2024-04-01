@@ -3,7 +3,7 @@
   "workspaces": [
     "src/*"
   ],
-  "version": "1.0.2-alpha.0",
+  "version": "1.0.2-alpha.2",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -43,7 +43,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
-    "@mui/x-date-pickers": "^7.1.0",
+    "@mui/x-date-pickers": "^5.0.20",
     "date-fns": "^2.25.0",
     "is-retry-allowed": "^3.0.0",
     "prop-types": "^15.8.1",

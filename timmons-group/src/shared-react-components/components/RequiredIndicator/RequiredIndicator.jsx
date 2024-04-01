@@ -1,8 +1,7 @@
 /** @module RequiredIndicator */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, useTheme } from '@mui/material';
 
 /**
  * Simple component to render an asterisk if the prop is true
