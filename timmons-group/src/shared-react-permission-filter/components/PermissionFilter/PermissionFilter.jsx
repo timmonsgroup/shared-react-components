@@ -6,7 +6,7 @@ import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../../helpe
 import { useAuth } from '@timmons-group/shared-react-auth';
 
 // TODO: Remove this dependency, maybe allow the end user to pass in a component to render instead of this
-import CircularProgress from '@mui/material/CircularProgress';
+import {CircularProgress} from '@mui/material';
 import { AUTH_STATES } from '../../constants.js';
 
 /**

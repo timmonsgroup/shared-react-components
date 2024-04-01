@@ -2,8 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button, Box, Stack, AppBar as MUIAppBar, Toolbar } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Button, Box, Stack, AppBar as MUIAppBar, Toolbar, useTheme } from '@mui/material';
+// import { useTheme } from '@mui/material';
 
 import UserMenu from '../../components/UserMenu';
 import PermissionFilter from '@timmons-group/shared-react-permission-filter';
@@ -60,7 +60,7 @@ const theTheme = {
 const AppBar = ({ onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props }) => {
   const { authState } = useAuth();
   const { user } = authState;
-  
+
   const theme = useTheme();
   const appBar = theme?.appBar || theTheme.appBar;
 

@@ -8,7 +8,7 @@ import {
   GridToolbar as MUIGridToolbar,
 } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 
 import { processLayout, processGenericLayout, convertToLinkFormat } from '../../helpers';
 

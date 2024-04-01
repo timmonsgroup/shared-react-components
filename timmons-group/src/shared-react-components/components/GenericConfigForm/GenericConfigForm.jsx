@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form';
 
 // Third party components
 import { Button, Card, CardContent, Container, Stack, Skeleton } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import {Unstable_Grid2 as Grid} from '@mui/material';
 
 // Internal bits
 import DynamicField from '../../components/DynamicField';

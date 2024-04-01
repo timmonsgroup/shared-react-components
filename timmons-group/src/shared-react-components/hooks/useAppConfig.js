@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext, useRef } from 'react';
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material';
 import { config as defaultConfig } from '../config/default';
 
 export const configContext = createContext();
