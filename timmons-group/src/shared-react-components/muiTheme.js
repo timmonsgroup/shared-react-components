@@ -21,6 +21,9 @@ const baseThemeProperties = {
       position: 'relative'
     },
   },
+  requiredIndicator: {
+    color: 'red',
+  },
   pamGrid: {
     width: '100%',
     height: '100%',

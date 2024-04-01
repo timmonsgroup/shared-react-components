@@ -33,6 +33,7 @@ const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, 
   const [parsed, setParsed] = useState(null);
 
   useEffect(() => {
+    console.log('formLayout changed', formLayout)
     const parseIt = async () => {
       const parsed = await parseFormLayout(formLayout, urlDomain, parseOptions);
       setParsed(parsed);
