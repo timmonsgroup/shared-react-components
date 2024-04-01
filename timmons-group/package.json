@@ -24,7 +24,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@timmons-group/shared-auth-config": "file://./build/shared-auth-config",
-    "@timmons-group/shared-reacr-auth": "file://./build/shared-react-auth",
+    "@timmons-group/shared-react-auth": "file://./build/shared-react-auth",
     "lerna": "^8.0.2",
     "rollup": "^4.9.5",
     "rollup-plugin-copy": "^3.5.0",
@@ -39,9 +39,14 @@
     "@types/react": "^18.2.51"
   },
   "dependencies": {
+    "@date-io/date-fns": "^2.15.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
-    "prop-types": "^15.8.1"
+    "@mui/x-date-pickers": "^7.1.0",
+    "date-fns": "^2.25.0",
+    "is-retry-allowed": "^3.0.0",
+    "prop-types": "^15.8.1",
+    "reselect": "^5.1.0"
   }
 }
