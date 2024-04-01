@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
 import {
-  TextField, FormControl,
+  Box, TextField, FormControl,
   FormGroup, FormControlLabel, FormHelperText,
   Checkbox
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers';
 
 import RadioOptions from '../../components/RadioOptions';
 import Typeahead from '../../components/Typeahead';
@@ -16,7 +16,6 @@ import FormErrorMessage from '../../components/FormErrorMessage';
 import AnyFieldLabel from '../../components/AnyFieldLabel';
 
 import { FIELD_TYPES } from '../../constants';
-import { Box } from '@mui/material';
 import { isObject } from '../../helpers';
 
 const makeFilter = (checkedId) => {
