@@ -22,6 +22,7 @@
   - Setting these values will make the DatePicker disable dates that are outside of the range.
 - `minValueErrorText` and `maxValueErrorText` have been added as well.
   - These are used to override default the error message when the date is outside of the range.
+  - These error messages also be used for int/float fields if set.
 
 #### Helpers ####
 - `gridHelpers`
