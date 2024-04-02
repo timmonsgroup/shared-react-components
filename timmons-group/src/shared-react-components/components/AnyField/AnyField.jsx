@@ -17,6 +17,7 @@ import AnyFieldLabel from '../../components/AnyFieldLabel';
 
 import { FIELD_TYPES } from '../../constants';
 import { isObject } from '../../helpers';
+import { dateStringNormalizer, isEmpty } from '../../helpers/helpers';
 
 const makeFilter = (checkedId) => {
   const checkId = isObject(checkedId) ? checkedId.id : checkedId;
@@ -257,7 +258,17 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @param {FieldOptions} [fieldOptions] Various options for the field
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture }, fieldOptions, finalId) => {
+const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture, ...layout }, fieldOptions, finalId) => {
+  const extraProps = {};
+  // This will disable selecting dates before the minDate in the component. The user can still type in a date before this point
+  if (!isEmpty(layout.minValue)) {
+    extraProps.minDate = new Date(dateStringNormalizer(layout.minValue));
+  }
+  // This will disable selecting dates past the maxDate in the component. The user can still type in a date past this point
+  if (!isEmpty(layout.maxValue)) {
+    extraProps.maxDate = new Date(dateStringNormalizer(layout.maxValue));
+  }
+  // if (layout.minValue)
   const DateField = ({ field: { value, onChange, ref }, fieldState: { error } }) => (
     <>
       <DatePicker
@@ -267,6 +278,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
         value={value}
         onChange={onChange}
         disableFuture={disableFuture}
+        {...extraProps}
         renderInput={(params) => {
           // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
           params.inputProps['data-src-field'] = finalId || name;

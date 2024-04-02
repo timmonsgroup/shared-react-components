@@ -88,7 +88,9 @@ export const DEFAULT_VALUE = 'defaultValue';
 export const TODAY_DEFAULT = 'today';
 export const MAX_VALUE = 'maxValue';
 export const MIN_VALUE = 'minValue';
+export const MIN_VALUE_ERROR_TEXT = 'minValueErrorText';
 export const MAX_LENGTH = 'maxLength';
+export const MAX_VALUE_ERROR_TEXT = 'maxValueErrorText';
 export const MIN_LENGTH = 'minLength';
 export const EMAIL = 'email';
 export const ZIP = 'zip';
@@ -105,7 +107,11 @@ export const CONDITIONAL_RENDER = Object.freeze({
   PLACEHOLDER,
   DISABLED,
   DISABLE_FUTURE,
+  MIN_VALUE,
+  MAX_VALUE,
   DISABLE_FUTURE_ERROR_TEXT,
+  MAX_VALUE_ERROR_TEXT,
+  MIN_VALUE_ERROR_TEXT,
   READ_ONLY: 'readOnly',
   URL: 'url',
   RENDER_PROPERTY_ID: 'renderPropertyId',

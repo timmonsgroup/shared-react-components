@@ -3,6 +3,7 @@
 ### Fixes ###
 - In the update to yup 1.x `nullable` functionality was changed this caused some really strange behavior in the form validation. This has been fixed by only applying `nullable` to the yup validations that are NOT required.
 - ValidDoubleFormat now takes the Math.abs of the value to ensure that negative numbers pass validation.
+- The `Typeahead` component was not correctly setting the name or id props on the input element. This has been fixed.
 
 ### New Functionality ###
 #### Components ####
@@ -15,6 +16,12 @@
       <RequiredIndicator sx={{ color: 'blue' }} />
       ```
   - The default is `red` if no theme `requiredIndicator` is found OR sx prop was not passed.
+
+#### Form Configuration ####
+- `minValue` and `maxValue` will now be used by the Date validation and honored by the DateField/Picker component.
+  - Setting these values will make the DatePicker disable dates that are outside of the range.
+- `minValueErrorText` and `maxValueErrorText` have been added as well.
+  - These are used to override default the error message when the date is outside of the range.
 
 #### Helpers ####
 - `gridHelpers`

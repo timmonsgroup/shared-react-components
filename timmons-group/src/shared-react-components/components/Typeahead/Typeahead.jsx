@@ -130,6 +130,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
               sx={textFieldSX || {}}
               inputProps={{
                 ...params.inputProps,
+                id: textFieldProps?.id || textFieldProps?.name || 'typeaheadInput',
                 sx: inputSX || {},
                 autoComplete: 'new-password', // disable autocomplete and autofill
                 'aria-autocomplete': 'none',

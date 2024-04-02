@@ -1,7 +1,7 @@
 /** @module formHelpers */
 import '../models/form';
 import { CONDITIONAL_RENDER, DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS } from '../constants.js';
-import { functionOrDefault, isObject } from './helpers';
+import { dateStringNormalizer, functionOrDefault, isEmpty, isObject } from './helpers';
 import {
   string, array, date, number, object
 } from 'yup';
@@ -104,9 +104,12 @@ export function yupTrimString(label, isRequired, trimMsg, reqMessage) {
  * @param {string} [msg] - message to display if the field is not an integer
  * @param {string} [reqMessage] - message to display if the field is required
  * @param {number} [minLength] - min length of the field
+ * @param {number} [minValue] - min value of the field
+ * @param {number} [maxValue] - max value of the field
+ * @param {object} [options] - additional options for the field
  * @returns {YupSchema}
  */
-export function yupInt(label, isRequired, maxLength, msg, reqMessage, minLength, minValue, maxValue) {
+export function yupInt(label, isRequired, maxLength, msg, reqMessage, minLength, minValue, maxValue, options = {}) {
   let schema = number().integer().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg);
@@ -115,8 +118,8 @@ export function yupInt(label, isRequired, maxLength, msg, reqMessage, minLength,
   schema = addMaxLength(schema, label, maxLength);
   schema = addMinLength(schema, label, minLength);
   // Make sure we pass in true for the isInt flag
-  schema = addMaxValue(schema, label, maxValue, true);
-  schema = addMinValue(schema, label, minValue, true);
+  schema = addMaxValue(schema, label, maxValue, true, options?.maxValueErrorText);
+  schema = addMinValue(schema, label, minValue, true, options?.minValueErrorText);
 
   return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
@@ -133,9 +136,10 @@ export function yupInt(label, isRequired, maxLength, msg, reqMessage, minLength,
  * @param {string} [reqMessage] - message to display if the field is required
  * @param {number} [minLength] - min length of the field
  * @param {number} [minValue] - min value of the field
+ * @param {object} [options] - additional options for the field
  * @returns {YupSchema}
  */
-export function yupFloat(label, isRequired, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength, minValue) {
+export function yupFloat(label, isRequired, int = null, frac = null, maxLength, msg, maxValue, reqMessage, minLength, minValue, options = {}) {
   let formatMessage = isNaN(parseInt(int)) && isNaN(parseInt(frac)) ? 'Invalid number format' : msg;
   let schema = number().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
@@ -147,8 +151,8 @@ export function yupFloat(label, isRequired, int = null, frac = null, maxLength, 
   // Check for and add tests max/min Length if needed
   schema = addMaxLength(schema, label, maxLength);
   schema = addMinLength(schema, label, minLength);
-  schema = addMaxValue(schema, label, maxValue);
-  schema = addMinValue(schema, label, minValue);
+  schema = addMaxValue(schema, label, maxValue, false, options?.maxValueErrorText);
+  schema = addMinValue(schema, label, minValue, false, options?.minValueErrorText);
 
   return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
@@ -159,17 +163,20 @@ export function yupFloat(label, isRequired, int = null, frac = null, maxLength, 
  * @param {string} label - label for the field
  * @param {string|number}[maxValue - the max value the field can be
  * @param {boolean} [isInt] - should the test be for an integer or a float
+ * @param {string} [errorMessage] - message to display if the field is greater than the max value
  * @function
  * @returns {YupSchema}
  */
-const addMaxValue = (schema, label, maxValue, isInt) => {
+const addMaxValue = (schema, label, maxValue, isInt, errorMessage) => {
   // Check if maxValue is a number
   const parsedMax = isInt ? parseInt(maxValue) : parseFloat(maxValue);
   const isNaNMax = isNaN(parsedMax);
 
+  let message = errorMessage || `${label} cannot be greater than ${parsedMax}`;
+
   // maxValue seems to functionally be a boolean that flags that the value must be less than 1. Maybe we should rename this value? I thought it was a number we set saying the value can't be greater than it at first - Eric Schmiel 1/19/23
   if (!isNaNMax) {
-    schema = schema.test('maxValue', `${label} cannot be greater than ${parsedMax}`, (value, context) => {
+    schema = schema.test('maxValue', message, (value, context) => {
       if (!context || !context.originalValue) {
         return true;
       }
@@ -189,16 +196,18 @@ const addMaxValue = (schema, label, maxValue, isInt) => {
  * @param {string} label - label for the field
  * @param {string|number} minValue - the max value the field can be
  * @param {boolean} [isInt] - should the test be for an integer or a float
+ * @param {string} [errorMessage] - custom error message to display
  * @function
  * @returns {YupSchema}
  */
-const addMinValue = (schema, label, minValue, isInt) => {
+const addMinValue = (schema, label, minValue, isInt, errorMessage) => {
   // Check if minValue is a number
   const parsedMin = isInt ? parseInt(minValue) : parseFloat(minValue);
   const isNaNMin = isNaN(parsedMin);
+  const message = errorMessage || `${label} cannot be less than ${parsedMin}`;
 
   if (!isNaNMin) {
-    schema = schema.test('minValue', `${label} cannot be less than ${parsedMin}`, (value, context) => {
+    schema = schema.test('minValue', message, (value, context) => {
       if (!context || !context.originalValue) {
         return true;
       }
@@ -394,6 +403,8 @@ export function createFieldValidation(type, label, validationMap, field) {
   const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
   const reqMessage = field?.render?.[CONDITIONAL_RENDER.REQ_TEXT];
   const disableFutureErrorText = field?.render?.[CONDITIONAL_RENDER.DISABLE_FUTURE_ERROR_TEXT];
+  const maxValueErrorText = field?.render?.[CONDITIONAL_RENDER.MAX_VALUE_ERROR_TEXT];
+  const minValueErrorText = field?.render?.[CONDITIONAL_RENDER.MIN_VALUE_ERROR_TEXT];
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT: {
@@ -441,7 +452,8 @@ export function createFieldValidation(type, label, validationMap, field) {
         reqMessage,
         minLength,
         minValue,
-        maxValue
+        maxValue,
+        { maxValueErrorText, minValueErrorText }
       );
       break;
     case FIELDS.FLOAT: {
@@ -460,14 +472,12 @@ export function createFieldValidation(type, label, validationMap, field) {
         maxValue,
         reqMessage,
         minLength,
-        minValue
+        minValue,
+        { maxValueErrorText, minValueErrorText }
       );
       break;
     }
     case FIELDS.CURRENCY: {
-      const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
-      const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
-
       validation = yupCurrency(
         label,
         required,
@@ -486,9 +496,17 @@ export function createFieldValidation(type, label, validationMap, field) {
       const disableFutureDates = !!validationMap.get(VALIDATIONS.DISABLE_FUTURE);
       if (disableFutureDates) {
         const today = new Date().toDateString();
-
         validation = validation.max(today, disableFutureErrorText);
+      } else if(!isEmpty(maxValue)) {
+        const maxValueDate = new Date(dateStringNormalizer(maxValue));
+        validation = validation.max(maxValueDate, maxValueErrorText ?? `Date cannot be after ${maxValueDate.toDateString()}`);
       }
+
+      if (!isEmpty(minValue)) {
+        const minValueDate = new Date(dateStringNormalizer(minValue));
+        validation = validation.min(minValueDate, minValueErrorText ?? `Date cannot be before ${minValueDate.toDateString()}`);
+      }
+
       break;
     }
 
