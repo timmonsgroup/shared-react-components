@@ -237,8 +237,6 @@ export function yupCurrency(label, isRequired, maxLength, msg, reqMessage, minLe
   schema = addMaxValue(schema, label, maxValue);
   schema = addMinValue(schema, label, minValue);
 
-  console.log('yuCurrency schema', isRequired)
-
   return isRequired ? schema.required(reqMessage) : schema.nullable();
 }
 
@@ -469,8 +467,6 @@ export function createFieldValidation(type, label, validationMap, field) {
     case FIELDS.CURRENCY: {
       const maxValue = validationMap.get(VALIDATIONS.MAX_VALUE);
       const minValue = validationMap.get(VALIDATIONS.MIN_VALUE);
-
-      console.log('currency validation', field)
 
       validation = yupCurrency(
         label,
