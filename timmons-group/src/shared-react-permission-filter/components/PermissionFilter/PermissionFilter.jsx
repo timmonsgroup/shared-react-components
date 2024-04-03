@@ -2,7 +2,7 @@
 
 import PropTypes from 'prop-types';
 
-import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../../helpers';
+import { hasAllPermissions, hasPermission, hasAnyPermissions } from '../../helpers/helpers.js';
 import { useAuth } from '@timmons-group/shared-react-auth';
 
 // TODO: Remove this dependency, maybe allow the end user to pass in a component to render instead of this

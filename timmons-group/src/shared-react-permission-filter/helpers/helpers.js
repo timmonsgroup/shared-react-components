@@ -21,3 +21,9 @@ export const hasAnyPermissions = (permissions, acl) => {
 
   return false;
 };
+
+export default {
+  hasPermission,
+  hasAllPermissions,
+  hasAnyPermissions
+};

@@ -2,7 +2,7 @@
   "name": "@timmons-group/shared-react-permission-filter",
   "version": "0.0.1",
   "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
-  "main": "index.mjs",
+  "main": "index.js",
   "types": "index.d.ts",
   "type": "module",
   "scripts": {
@@ -12,5 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "@timmons-group/shared-auth-config": "*"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./components": "./components/index.ts",
+    "./components/*": "./components/*",
+    "./helpers": "./helpers/helpers.js",
+    "./helpers/*": "./helpers/*"
   }
 }

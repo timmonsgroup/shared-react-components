@@ -2,8 +2,7 @@
   "name": "@timmons-group/shared-react-components",
   "version": "1.0.0-gamma.3",
   "private": false,
-  "main": "index.mjs",
-  "module": "index.mjs",
+  "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "build": "rimraf dist && rollup -c",
@@ -47,6 +46,7 @@
     "@hookform/resolvers": "^2.9.10",
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.6",
+    "@mui/utils": "^5.15.14",
     "@mui/x-data-grid": "^5.17.6",
     "@mui/x-date-pickers": "^5.0.20",
     "axios": "^1.6.2",
@@ -75,7 +75,18 @@
     "tslib": "^2.5.0",
     "typescript": "^5.0.4"
   },
-  "dependencies": {
-    "@mui/utils": "^5.15.14"
+  "dependencies": {},
+  "exports": {
+    ".":  "./index.mjs",
+    "./components": "./components/index.js",
+    "./components/*": "./components/*",
+    "./helpers": "./helpers/index.js",
+    "./helpers/*": "./helpers/*",
+    "./hooks": "./hooks/index.js",
+    "./hooks/*": "./hooks/*",
+    "./models": "./models/index.js",
+    "./models/*": "./models/*",
+    "./muiTheme": "./muiTheme.js",
+    "./constants": "./constants.js"
   }
 }

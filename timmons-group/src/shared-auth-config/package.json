@@ -11,5 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+  },
+  "exports": {
+    ".": "./authConfig.mjs"
   }
 }

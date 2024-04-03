@@ -2,7 +2,7 @@
   "name": "@timmons-group/shared-react-auth",
   "version": "0.0.1",
   "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
-  "main": "index.mjs",
+  "main": "index.jsx",
   "types": "index.d.ts",
   "type": "module",
   "scripts": {
@@ -12,5 +12,11 @@
   "license": "ISC",
   "dependencies": {
     "@timmons-group/shared-auth-config": "*"
+  },
+  "exports": {
+    ".": "./index.jsx",
+    "./helpers/*": "./helpers/*",
+    "./hooks/*": "./hooks/*",
+    "./models/*": "./models/*"
   }
 }

@@ -1,3 +1,5 @@
+import { de } from 'date-fns/locale';
+
 // Need to export all components from here
 export { default as AnyField } from './AnyField';
 export { default as AnyFieldLabel } from './AnyFieldLabel';
