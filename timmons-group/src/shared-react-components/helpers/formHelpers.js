@@ -233,11 +233,16 @@ const addMinValue = (schema, label, minValue, isInt, errorMessage) => {
  * @returns {YupSchema} - yup schema for a currency field
  */
 export function yupCurrency(label, isRequired, maxLength, msg, reqMessage, minLength, maxValue, minValue) {
+  // yup.number will coerce a string to a number so ".25" will become 0.25.
+  // if it cannot coerce the typeError will be thrown (e.g. "1.2.3" or "abc" will throw a typeError)
+  // We transform the value to null if it is an empty string so that we can use nullable
   let schema = number().label(label)
     .transform((curr, orig) => (orig === '' ? null : curr))
     .typeError(msg)
     .test('formatted', msg, (value, context) => (
-      !context || !context.originalValue ? true : validCurrencyFormat(context.originalValue)
+      // If the originalValue is empty or null return true required or nullable will handle the rest
+      // otherwise pass the transformed value to the validCurrencyFormat function
+      !context || !context.originalValue ? true : validCurrencyFormat(value)
     ));
 
   // Check for and add tests max/min Length if needed
