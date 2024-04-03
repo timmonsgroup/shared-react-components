@@ -5,6 +5,7 @@
 - ValidDoubleFormat now takes the Math.abs of the value to ensure that negative numbers pass validation.
 - The `Typeahead` component was not correctly setting the name or id props on the input element. This has been fixed.
 - The validCurrencyFormat helper was not correctly allow .25 as a valid currency value. This has been fixed.
+- The default enqueueSnackbar function in the attemptFormSubmit helper would case a nasty render error if the returned error was an object. There is a failsafe now to convert the object to a string via Object.values.
 
 ### New Functionality ###
 #### Components ####

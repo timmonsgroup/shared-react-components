@@ -580,7 +580,14 @@ export const attemptFormSubmit = async (formData, isEdit, {
   if (queueSnack) {
     errorSnackMessage = functionOrDefault(formatSubmitError,
       (result, { isEdit, unitLabel, serverError }) => {
-        return serverError && result?.response?.data?.error ? result?.response?.data?.error : `Error ${isEdit ? 'updating' : 'creating'} ${unitLabel}`;
+        let serverErrorMessage = result?.response?.data?.error;
+        //check if the error message is an object
+        // this is a failsafe in case the error message is an object.
+        // The toast will break if it attempts to render an object (which is not a valid react child)
+        if (isObject(serverErrorMessage)) {
+          serverErrorMessage = Object.values(serverErrorMessage).join(', ');
+        }
+        return serverError && serverErrorMessage ? serverErrorMessage : `Error ${isEdit ? 'updating' : 'creating'} ${unitLabel}`;
       }
     );
     successSnackMessage = functionOrDefault(formatSubmitMessage, (result, { isEdit, unitLabel }) => `${unitLabel} successfully ${isEdit ? 'updated' : 'created'}`);
