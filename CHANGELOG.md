@@ -2,10 +2,10 @@
 ## Release 1.0.2 - 04/3/2024 ##
 ### Fixes ###
 - In the update to yup 1.x `nullable` functionality was changed this caused some really strange behavior in the form validation. This has been fixed by only applying `nullable` to the yup validations that are NOT required.
-- ValidDoubleFormat now takes the Math.abs of the value to ensure that negative numbers pass validation.
-- The `Typeahead` component was not correctly setting the name or id props on the input element. This has been fixed.
-- The validCurrencyFormat helper was not correctly allow .25 as a valid currency value. This has been fixed.
-- The default enqueueSnackbar function in the attemptFormSubmit helper would case a nasty render error if the returned error was an object. There is a failsafe now to convert the object to a string via Object.values.
+- `validDoubleFormat` now takes the `Math.abs` of the value to ensure that negative numbers pass validation.
+- The `Typeahead` component was not correctly setting the name or id props on the input element. Now both are set.
+- The `validCurrencyFormat` helper was not correctly allowing values without leading zeros (e.g .25) as a valid currency value. The yupCurrency has been updated to allow for this.
+- The default `enqueueSnackbar` function in the `attemptFormSubmit` helper would case a nasty React rendering error if the returned error was an object (instead of an expected string). There is a failsafe now to convert the object's values to a string via `Object.values`.
 
 ### New Functionality ###
 #### Components ####
