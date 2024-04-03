@@ -1,9 +1,10 @@
 # Change Log #
-## Release 1.0.2 - 03/30/2023 ##
+## Release 1.0.2 - 04/3/2024 ##
 ### Fixes ###
 - In the update to yup 1.x `nullable` functionality was changed this caused some really strange behavior in the form validation. This has been fixed by only applying `nullable` to the yup validations that are NOT required.
 - ValidDoubleFormat now takes the Math.abs of the value to ensure that negative numbers pass validation.
 - The `Typeahead` component was not correctly setting the name or id props on the input element. This has been fixed.
+- The validCurrencyFormat helper was not correctly allow .25 as a valid currency value. This has been fixed.
 
 ### New Functionality ###
 #### Components ####
@@ -30,7 +31,7 @@
   - `helpers/GridFilterInput.jsx` is that new file
 
 
-## Release 1.0.1 - 02/20/2023 ##
+## Release 1.0.1 - 02/20/2024 ##
 ### Fixes ###
 Changed the way Icons were being imported that was causing some errors in the split package repo.
 Converted some console logs to console warns
