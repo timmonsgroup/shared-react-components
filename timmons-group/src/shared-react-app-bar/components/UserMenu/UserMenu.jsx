@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
-import Link from '@mui/material/Link';
+import {Link} from '@mui/material';
 import {ArrowDropDown, ArrowDropUp} from '@mui/icons-material';
 
 import { useAuth } from '@timmons-group/shared-react-auth';

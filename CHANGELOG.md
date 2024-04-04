@@ -1,5 +1,38 @@
 # Change Log #
-## Release 1.0.1 - 02/20/2023 ##
+## Release 1.0.2 - 04/3/2024 ##
+### Fixes ###
+- In the update to yup 1.x `nullable` functionality was changed this caused some really strange behavior in the form validation. This has been fixed by only applying `nullable` to the yup validations that are NOT required.
+- `validDoubleFormat` now takes the `Math.abs` of the value to ensure that negative numbers pass validation.
+- The `Typeahead` component was not correctly setting the name or id props on the input element. Now both are set.
+- The `validCurrencyFormat` helper was not correctly allowing values without leading zeros (e.g .25) as a valid currency value. The yupCurrency has been updated to allow for this.
+- The default `enqueueSnackbar` function in the `attemptFormSubmit` helper would case a nasty React rendering error if the returned error was an object (instead of an expected string). There is a failsafe now to convert the object's values to a string via `Object.values`.
+
+### New Functionality ###
+#### Components ####
+- RequiredIndicator
+  - Now looks for a theme option `requiredIndicator` (which can be set in your muiTheme file).
+    - This allows for the indicator to be styled based on the theme
+  - The indicator can now be styled with the `sx` prop.
+    - Example:
+      ```jsx
+      <RequiredIndicator sx={{ color: 'blue' }} />
+      ```
+  - The default is `red` if no theme `requiredIndicator` is found OR sx prop was not passed.
+
+#### Form Configuration ####
+- `minValue` and `maxValue` will now be used by the Date validation and honored by the DateField/Picker component.
+  - Setting these values will make the DatePicker disable dates that are outside of the range.
+- `minValueErrorText` and `maxValueErrorText` have been added as well.
+  - These are used to override default the error message when the date is outside of the range.
+  - These error messages also be used for int/float fields if set.
+
+#### Helpers ####
+- `gridHelpers`
+  - This file created a TextField to handle Grid filter operations. That was jsx in a js file and caused some issues. This has been moved to a jsx file.
+  - `helpers/GridFilterInput.jsx` is that new file
+
+
+## Release 1.0.1 - 02/20/2024 ##
 ### Fixes ###
 Changed the way Icons were being imported that was causing some errors in the split package repo.
 Converted some console logs to console warns

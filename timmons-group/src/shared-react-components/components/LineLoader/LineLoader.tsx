@@ -41,7 +41,7 @@ LineLoader.propTypes = {
 
 LineLoader.defaultProps = {
   messageAlign: 'center',
-  message: null,
+  message: undefined,
   width: '100%',
 };
 
