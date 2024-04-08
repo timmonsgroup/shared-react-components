@@ -72,11 +72,14 @@ export const processDynamicFormLayout = (formLayout, data) => {
  * @param {Map<string, object>} triggerFields - Map of fields that trigger conditional rendering
  * @param {Map<string, object>} fields - Map of all fields
  * @param {string} triggerId - ID of the field to check
- * @param {any} formValue - Value of the field to check
+ * @param {any} triggerValue - Value of the field to check
  * @param {object} options - Options for the conditional rendering
+ * @param {any} formValue - Value of the field to check
  * @returns {Array} - Array of fields that need to be updated
  */
-const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) => {
+const getUpdatedFields = (triggerField, fields, triggerId, triggerValue, options, formValue) => {
+  
+  if(formValue === '') formValue = null;
   const updatedFields = [];
 
   // This is a hack to handle the fact that the form values maybe strings or numbers
@@ -92,10 +95,18 @@ const getUpdatedFields = (triggerField, fields, triggerId, formValue, options) =
     }
   }
 
+
+  // Check again with the ANY_VALUE value
+  if (!hasIt && formValue !== undefined && formValue !== null) {
+    hasIt = triggerField.fieldValues.has(ANY_VALUE);
+    if (hasIt) {
+      usedFormValue = ANY_VALUE;
+    }
+  }
+
   if (hasIt) {
     // Get the fields that need to be updated
     let affectedFields = triggerField.fieldValues.get(usedFormValue) || [];
-
     affectedFields.forEach((loadOut, fieldId) => {
       const conditional = {
         hasAsync: false,
@@ -451,7 +462,7 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
     const formValue = values[fieldId];
 
     // Loop through all the fields that are dependent on this triggerField
-    const updated = getUpdatedFields(triggerField, fields, fieldId, formValue, options);
+    const updated = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
     updated.forEach(({ id, conditional }) => {
       updateConditional(id, conditional);
     });
@@ -464,7 +475,7 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
     if (triggerField.hasOnChange) {
       // If the value is null, we need to handle the reset of the affected fields
       if (formValue !== null && formValue !== undefined && formValue !== '' && formValue?.length > 0) {
-        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options);
+        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
         anyUpdates.forEach(({ id, conditional }) => {
           updateConditional(id, conditional);
         });
