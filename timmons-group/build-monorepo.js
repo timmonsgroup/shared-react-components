@@ -132,9 +132,8 @@ const input = Object.fromEntries(
 // use the local version of the package instead of the version from npm.
 const packageJsonFiles = glob.sync('src/**/package.json');
 
-const windowsToUnix = (parts) => {
-    const [name, file] = parts;
-    return [name, file.replace(/\\/g, '/')];
+const windowsToUnix = (file) => {
+    return file.replace(/\\/g, '/').replace(/^[a-zA-Z]:\//, '/');
 }
 
 const buildConfig = (packageJsonPath) => {
@@ -186,9 +185,8 @@ const buildConfig = (packageJsonPath) => {
         .replace(path.extname(file), ''),
         // This expands the relative paths to absolute paths, so e.g.
         // src/nested/foo becomes /project/src/nested/foo.js
-        fileURLToPath(new URL(file, import.meta.url)),
+        fileURLToPath(new URL(windowsToUnix(file), windowsToUnix(import.meta.url))),
     ])
-    .map(windowsToUnix);
 
     const input = Object.fromEntries(inFiles);
 
@@ -266,6 +264,7 @@ const buildConfig = (packageJsonPath) => {
         external: [
             'react',
             'react/jsx-runtime',
+
             'prop-types',
             'react-dom',
             'react-router-dom',
