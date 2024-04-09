@@ -132,6 +132,10 @@ const input = Object.fromEntries(
 // use the local version of the package instead of the version from npm.
 const packageJsonFiles = glob.sync('src/**/package.json');
 
+const windowsToUnix = (file) => {
+    return file.replace(/\\/g, '/');
+}
+
 const buildConfig = (packageJsonPath) => {
     // Get the folder for the packageJsonPath
     const packageFolder = path.dirname(packageJsonPath);
@@ -182,8 +186,8 @@ const buildConfig = (packageJsonPath) => {
         // This expands the relative paths to absolute paths, so e.g.
         // src/nested/foo becomes /project/src/nested/foo.js
         fileURLToPath(new URL(file, import.meta.url)),
-
     ])
+    .map(windowsToUnix);
 
     const input = Object.fromEntries(inFiles);
 
