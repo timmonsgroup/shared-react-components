@@ -200,6 +200,7 @@ const createRenderSection = (section, fieldMap) => {
  * @returns {object} - Object containing the useFormObject, formProcessing, and sections
  */
 export const useConfigForm = (formLayout, data, options, addCustomValidations) => {
+  console.log('useConfigForm', formLayout, data, options, addCustomValidations)
   const { defaultValues, watchFields, validations: dynamicValidations } = processDynamicFormLayout(formLayout, data);
   const [sections, setSections] = useState([]);
   const [validations, setValidations] = useState({});
@@ -288,6 +289,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
 
   // If we have any watchFields, watch them and update the form
   useLayoutEffect(() => {
+    console.log('useLayoutEffect',readyForWatches, watchFields)
     let subscription = null;
     if (readyForWatches && !subscription) {
       subscription = watch((formValues, { name, type }) => {
@@ -393,6 +395,7 @@ const initTheForm = ({ formLayout, setSections, validations, setValidations, isR
     }
 
     setFormProcessing(false);
+    console.log('Setting ready for watches', watchFields)
     if (watchFields.length > 0 && !isResetting) {
       setReadyForWatches(true);
     }
@@ -424,6 +427,7 @@ const initTheForm = ({ formLayout, setSections, validations, setValidations, isR
  * @param {boolean} props.fromWatch - Whether or not this is being called from a watch
  */
 const renderTheSections = ({ sections, fields, triggerFields, values, watchFields, finishSetup, options, fromWatch }) => {
+  console.log("Sections render")
   let renderSections = fromWatch ? sections : [];
   if (!fromWatch) {
     sections.forEach(section => {
@@ -440,6 +444,7 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
   let hasAsync = false;
 
   const updateConditional = (fieldId, conditional) => {
+    console.log('Updating conditional', fieldId, conditional)
     if (conditional.isUpdating) {
       areUpdating[fieldId] = true;
       if (conditional.hasAsync && conditional.asyncLoader) {
@@ -563,6 +568,7 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
  * @returns {Array<object>}
  */
 const processConditionalUpdate = (sections, fields, updatedFields, asyncThings = {}, dynValid = {}, resetFields = {}) => {
+  console.log('Processing conditional update')
   const revalidates = {};
 
   // Loop through the fields that need to be updated

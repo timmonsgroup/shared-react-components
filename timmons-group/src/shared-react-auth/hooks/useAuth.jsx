@@ -589,6 +589,7 @@ const useProvideAuth = (config, whitelist, options) => {
           }
         }
         else {
+          console.log('No boot token')
         }
       }
     }
@@ -1140,6 +1141,17 @@ const authReducer = (nextState, action) => {
     case ACTIONS.SET_CONFIG: {
       let anonUser = action.config?.anonUser;
 
+      if(!anonUser) {
+        anonUser = {
+          id: 'anonymous',
+          name: 'Anonymous',
+          email: 'anonymous',
+          isSignedIn: false,
+          isAuthenticated: false,
+          acl: action.config?.authorization?.defaultPermissions || ['Can Sign In']
+        };
+      }
+
 
       let nextAuthState = AUTH_STATES.LOGGED_OUT;
       let nextUser = anonUser;
@@ -1150,6 +1162,9 @@ const authReducer = (nextState, action) => {
       // If the config is the same we will try to keep the current authentication state and user
       if(authenticationConfigSame) {
         nextAuthState = nextState.state || AUTH_STATES.LOGGED_OUT;
+        if(nextAuthState == AUTH_STATES.INITIALIZING) {
+          nextAuthState = AUTH_STATES.LOGGED_OUT;
+        }
         nextUser = nextState?.user || anonUser || loggedOutUser
       }
 
@@ -1174,13 +1189,14 @@ const authReducer = (nextState, action) => {
         };
       }
 
-      return {
+      let retState = {
         ...nextState,
         loggedOutuser: anonUser,
         config: action.config,
         state: nextAuthState,
         user: nextUser
       };
+      return retState;
     }
     case ACTIONS.BEGIN_LOGIN:
       return {
