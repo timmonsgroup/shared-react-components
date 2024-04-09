@@ -132,8 +132,9 @@ const input = Object.fromEntries(
 // use the local version of the package instead of the version from npm.
 const packageJsonFiles = glob.sync('src/**/package.json');
 
-const windowsToUnix = (file) => {
-    return file.replace(/\\/g, '/');
+const windowsToUnix = (parts) => {
+    const [name, file] = parts;
+    return [name, file.replace(/\\/g, '/')];
 }
 
 const buildConfig = (packageJsonPath) => {
