@@ -6,7 +6,6 @@ const meta = {
 };
 
 const render = (args) => {
-  console.log('args', args)
   return <ContainerWithCard {...args}>
     <h1>This is content rendered inside MUI Container &gt; Card &gt; CardContent components</h1>
   </ContainerWithCard>;

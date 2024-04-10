@@ -589,7 +589,7 @@ const useProvideAuth = (config, whitelist, options) => {
           }
         }
         else {
-          console.log('No boot token')
+          console.debug('No boot token')
         }
       }
     }
