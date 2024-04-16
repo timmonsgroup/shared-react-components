@@ -61,7 +61,7 @@ const packageJsonTransform = (contents, id) => {
         packageJson.version = mainVersion;
 
         // And add a module field with the value being the main file with the .mjs extension
-        packageJson.module = packageJson.main.replace(/\..*$/, '.mjs');
+        packageJson.module = packageJson.main.replace(/\..*$/, '.js');
 
         return JSON.stringify(packageJson, null, 2);
     }
@@ -198,8 +198,8 @@ const buildConfig = (packageJsonPath) => {
         {
             dir: `build/${outputFolder}`,
             format: 'es',
-            entryFileNames: '[name].mjs',
-            chunkFileNames: '[name]-[hash].mjs',
+            entryFileNames: '[name].js',
+            chunkFileNames: '[name]-[hash].js',
             sourcemap: true,
             assetFileNames: '[name][extname]',
             preserveModules: true,
