@@ -6,29 +6,44 @@
  * It will run tsc --project tsconfig.json
  */
 
-import build from '@date-io/date-fns';
 import { execSync } from 'child_process';
 import { log } from 'console';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import readline from 'readline';
 
+/**
+ * Parses command line arguments and returns an object with parsed values.
+ * @param {string[]} args - The command line arguments to parse.
+ * @returns {Object} - An object containing parsed values.
+ */
 const parseArgs = (args) => {
     const parsed = {};
     args.forEach((arg, i) => {
         if (arg === '--help') {
             parsed.help = true;
         }
+        
         if (arg === '--version') {
             parsed.version = args[i + 1];
         }
+        
         if (arg === '--ignore-clean') {
             parsed.ignoreClean = true;
         }
+        
+        if (arg === '--ignore-tag') {
+            parsed.ignoreTag = true;
+        }
+
     });
     return parsed;
 };
 
+/**
+ * Displays the help information for the build-cli command.
+ * @returns {void}
+ */
 const showHelp = () => {
     console.log(`Usage: build-cli [options]
 Options:
@@ -37,6 +52,10 @@ Options:
 `);
 }
 
+/**
+ * Retrieves the version information from the package.json file.
+ * @returns {Promise<Object>} An object containing the version information.
+ */
 const getVersion = async () => {
     // Read the package.json file
     const packageJson = JSON.parse(readFileSync(resolve('./package.json')).toString());
@@ -59,19 +78,34 @@ const getVersion = async () => {
     return version
 }
 
+/**
+ * Retrieves the new version after prompting the user.
+ *
+ * @param {string} version - The current version.
+ * @returns {Promise<string>} The new version.
+ */
 const getNewVersion = async (version) => {
-
+    console.log('Current version is');
     logVersion(version);
-
-
+    
     await promptVersion(version);
-
+    
+    console.log('New version is');
     logVersion(version);
-
-
     return version;
 }
 
+/**
+ * Converts a version object to a string representation.
+ *
+ * @param {object} version - The version object.
+ * @param {number} version.major - The major version number.
+ * @param {number} version.minor - The minor version number.
+ * @param {number} version.patch - The patch version number.
+ * @param {string} [version.tag] - The version tag (optional).
+ * @param {number} [version.subversion] - The subversion number (optional).
+ * @returns {string} The string representation of the version.
+ */
 const versionToString = (version) => {
     let versionString = `${version.major}.${version.minor}.${version.patch}`;
     if (version.tag) {
@@ -81,6 +115,10 @@ const versionToString = (version) => {
 }
 
 // This will print the version object in the format major.minor.patch-tag.subversion
+/**
+ * Logs the version details.
+ * @param {Object} version - The version object.
+ */
 const logVersion = (version) => {
     let versionString = versionToString(version);
     console.log(`Version is ${versionString}`);
@@ -96,6 +134,12 @@ const logVersion = (version) => {
 // We will ask the user which part of the version they want to change
 // We will then ask the user for the new value
 
+/**
+ * Prompts the user for a version and returns it.
+ *
+ * @param {string} version - The initial version value.
+ * @returns {Promise<string>} - A promise that resolves to the version entered by the user.
+ */
 const promptVersion = async (version) => {
     const rl = readline.createInterface({
         input: process.stdin,
@@ -113,9 +157,14 @@ const promptVersion = async (version) => {
     await prom;
 
     return version;
-
 }
 
+/**
+ * Asks the user which part of the version they would like to increment and performs the corresponding action.
+ *
+ * @param {readline.Interface} rl - The readline interface for reading user input.
+ * @param {object} version - The version object containing major, minor, patch, tag, and subversion properties.
+ */
 const doTheQuestion = (rl, version) => {
     rl.question(`Which part of the version would you like to increment?
     1. Major\t\t - Select this if the build includes breaking changes
@@ -201,6 +250,10 @@ const doTheQuestion = (rl, version) => {
     });
 }
 
+/**
+ * Performs the versioning process.
+ * @returns {Promise<string>} The version string.
+ */
 const doTheversionThing = async () => {
     let ver = await getVersion();
 
@@ -270,6 +323,11 @@ const doTheversionThing = async () => {
     return versionToString(ver);
 }
 
+/**
+ * Ensures that the Git repository is clean before running the build.
+ * If there are uncommitted changes, the function will log an error message
+ * and exit the process with a non-zero exit code.
+ */
 const ensureGitClean = async () => {
     const status = execSync('git status --porcelain').toString();
     if (status) {
@@ -280,6 +338,12 @@ const ensureGitClean = async () => {
     }
 }
 
+/**
+ * Ensures that a given git tag does not already exist.
+ *
+ * @param {string} version - The version to check for.
+ * @returns {Promise<void>} - A promise that resolves when the check is complete.
+ */
 const ensureGitTag = async (version) => {
     const tags = execSync('git tag').toString().split('\n');
     if (tags.includes(version)) {
@@ -289,6 +353,10 @@ const ensureGitTag = async (version) => {
     }
 }
 
+/**
+    * Publishes the project based on user input.
+    * @returns {Promise<void>} A promise that resolves when the publishing is complete.
+    */
 const publish = async () => {
     // We have different publish methods. We need to ask the user which one they want to do
     const rl = readline.createInterface({
@@ -345,6 +413,11 @@ const publish = async () => {
 
 }
 
+/**
+ * Apply a tag to the repository on git.
+ * @param {string} version - The version to be tagged.
+ * @returns {Promise<void>} - A promise that resolves when the tag is applied.
+ */
 const tag = async (version) => {
     // Ask the suer if they want to apply the tag to the repo on git
     const rl = readline.createInterface({
@@ -372,6 +445,11 @@ const tag = async (version) => {
     await prom;
 }
 
+/**
+ * Main function that handles the build process.
+ * @param {string[]} args - The command line arguments.
+ * @returns {Promise<void>} - A promise that resolves when the build process is complete.
+ */
 const main = async (args) => {
     const parsedArgs = parseArgs(args);
     if (parsedArgs.help) {
@@ -391,7 +469,8 @@ const main = async (args) => {
         version = await doTheversionThing();
     }
 
-    await ensureGitTag(version);
+    if(!parsedArgs.ignoreTag)
+        await ensureGitTag(version);
 
     // Run the build-monorepo.js script
     execSync('npm run build-new', { stdio: 'inherit' });

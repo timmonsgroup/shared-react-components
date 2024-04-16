@@ -12,8 +12,8 @@
         "emitDeclarationOnly": true,
         "outDir": "build/ts/",
         "declarationDir": "build/",
-        "esModuleInterop":true,
-        "skipLibCheck":true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
         "strict": false,
         "rootDir": "./src",
         "moduleResolution": "NodeNext"
