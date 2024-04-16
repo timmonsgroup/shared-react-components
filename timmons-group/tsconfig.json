@@ -13,7 +13,7 @@
         "outDir": "build/ts/",
         "declarationDir": "build/",
         "esModuleInterop":true,
-        "skipLibCheck":false,
+        "skipLibCheck":true,
         "strict": false,
         "rootDir": "./src",
         "moduleResolution": "NodeNext"

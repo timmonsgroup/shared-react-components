@@ -60,7 +60,7 @@ const packageJsonTransform = (contents, id) => {
         // Now set the version to the main version
         packageJson.version = mainVersion;
 
-        // And add a module field with the value being the main file with the .mjs extension
+        // And add a module field with the value being the main file with the .js extension
         packageJson.module = packageJson.main.replace(/\..*$/, '.js');
 
         return JSON.stringify(packageJson, null, 2);
@@ -82,7 +82,7 @@ const replaceFileDependencies = () => ({
     }
 });
 
-const updateExportsToMJS = () => ({
+const updateExportsToJS = () => ({
     name: 'update-exports-to-mjs',
     async transform(code, id) {
         if (id.endsWith('package.json')) {
@@ -91,8 +91,8 @@ const updateExportsToMJS = () => ({
 
             // Get the exports and change anything that ends in .js, .jsx, .ts, .tsx to .mjs
             for (const [key, value] of Object.entries(packageJson.exports)) {
-                let newKey = key.replace(/\.(js|jsx|mjs|ts|tsx)$/, '.mjs');
-                let newValue = value.replace(/\.(js|jsx|mjs|ts|tsx)$/, '.mjs');
+                let newKey = key.replace(/\.(js|jsx|mjs|ts|tsx)$/, '.js');
+                let newValue = value.replace(/\.(js|jsx|mjs|ts|tsx)$/, '.js');
                 packageJson.exports[newKey] = newValue;
 
             }
@@ -104,7 +104,7 @@ const updateExportsToMJS = () => ({
 const allTransforms = (contents, id) => {
     let code = contents;
     code = packageJsonTransform(code, id);
-    code = updateExportsToMJS().transform(code, id);
+    code = updateExportsToJS().transform(code, id);
     return code;
 }
 
@@ -252,7 +252,7 @@ const buildConfig = (packageJsonPath) => {
             commonjs(),
             // Transform package.json files to fix dependencies
             replaceFileDependencies(),
-            updateExportsToMJS(),
+            updateExportsToJS(),
             copy({
                 targets: [
                     { src: packageJsonPath, dest: `build/${outputFolder}`, transform: allTransforms },
