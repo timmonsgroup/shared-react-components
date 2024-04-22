@@ -591,6 +591,16 @@ const useProvideAuth = (config, whitelist, options) => {
         else {
           console.debug('No boot token')
         }
+
+        if (init?.current?.combinedToken) {
+          // We need to parse and exteract the id_token, access_token, and maybe refresh_token
+          try {
+            parseTokenAndUpdateState(init.current.combinedToken);
+          } catch (ex) {
+            console.error('Error parsing combined token', ex);
+            logout_internal('combined token error');
+          }
+        }
       }
     }
 
@@ -711,6 +721,10 @@ const useProvideAuth = (config, whitelist, options) => {
     // const apiSlug = config.apiSlug || 'api';
     let redirect = oAuth.redirectUri;
     let fetchUrl = `https://${oAuth.host}/oauth2/authorize?response_type=code&client_id=${oAuth.clientId}&redirect_uri=${redirect}`;
+    
+    if(oAuth?.endpoints?.authorize) {
+      fetchUrl = oAuth.endpoints.authorize;
+    }
 
     if (state) {
       if (typeof state !== 'string') {

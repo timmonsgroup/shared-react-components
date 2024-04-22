@@ -4,5 +4,9 @@
     "titleBar.activeBackground": "#094935",
     "titleBar.activeForeground": "#EEFDF8"
   },
-  "search.useIgnoreFiles": false
+  "search.useIgnoreFiles": false,
+  "editor.defaultFormatter": "vscode.json-language-features",
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
