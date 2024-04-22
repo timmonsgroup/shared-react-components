@@ -720,19 +720,26 @@ const useProvideAuth = (config, whitelist, options) => {
     // Calculate our redirect url based off of the origin of the current page and the login endpoint in our api
     // const apiSlug = config.apiSlug || 'api';
     let redirect = oAuth.redirectUri;
-    let fetchUrl = `https://${oAuth.host}/oauth2/authorize?response_type=code&client_id=${oAuth.clientId}&redirect_uri=${redirect}`;
-    
-    if(oAuth?.endpoints?.authorize) {
-      fetchUrl = oAuth.endpoints.authorize;
+    let fetchUrl = `https://${oAuth.host}/oauth2/authorize`; //?response_type=code&client_id=${oAuth.clientId}&redirect_uri=${redirect}`;
+    let queryParams = [];
+    queryParams.push(`response_type=code`);
+    queryParams.push(`client_id=${oAuth.clientId}`);
+    queryParams.push(`redirect_uri=${redirect}`);
+    if (oAuth.scope) {
+      queryParams.push(`scope=${oAuth.scope}`);
     }
-
     if (state) {
       if (typeof state !== 'string') {
         state = JSON.stringify(state);
       }
-      fetchUrl += `&state=${state}`;
+      queryParams.push(`state=${state}`);
     }
 
+    if (oAuth?.endpoints?.authorize) {
+      fetchUrl = oAuth.endpoints.authorize;
+    }
+
+    fetchUrl += `?${queryParams.join('&')}`;
     // If openWindow is true open the login endpoint in a new tab
     // Otherwise open the login endpoint in the current tab
     if (config?.authentication?.authenticateInNewTab) window.open(fetchUrl, '_blank');
@@ -1033,7 +1040,7 @@ const useProvideAuth = (config, whitelist, options) => {
    * @function
    */
   const handleMessage = (event) => {
-    if(config?.authentication?.messageOrigins && !config?.authentication?.messageOrigins.includes(event.origin)) {
+    if (config?.authentication?.messageOrigins && !config?.authentication?.messageOrigins.includes(event.origin)) {
       return;
     }
 
@@ -1155,7 +1162,7 @@ const authReducer = (nextState, action) => {
     case ACTIONS.SET_CONFIG: {
       let anonUser = action.config?.anonUser;
 
-      if(!anonUser) {
+      if (!anonUser) {
         anonUser = {
           id: 'anonymous',
           name: 'Anonymous',
@@ -1174,9 +1181,9 @@ const authReducer = (nextState, action) => {
       let authenticationConfigSame = JSON.stringify(nextState?.config) == JSON.stringify(action?.config);
 
       // If the config is the same we will try to keep the current authentication state and user
-      if(authenticationConfigSame) {
+      if (authenticationConfigSame) {
         nextAuthState = nextState.state || AUTH_STATES.LOGGED_OUT;
-        if(nextAuthState == AUTH_STATES.INITIALIZING) {
+        if (nextAuthState == AUTH_STATES.INITIALIZING) {
           nextAuthState = AUTH_STATES.LOGGED_OUT;
         }
         nextUser = nextState?.user || anonUser || loggedOutUser
