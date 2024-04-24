@@ -460,7 +460,6 @@ export class ConfigurationBuilder {
    * @returns {ConfigurationBuilder}
    */
   withAppAuthorization = (application) => {
-    console.warn("Using expirimintal feature: withAppAuthorization", application)
     this.configuration.authorization.application = application;
     return this;
   }
