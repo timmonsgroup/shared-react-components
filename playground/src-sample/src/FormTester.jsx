@@ -8,9 +8,7 @@ const FormTester = () => {
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
-  const { formState, control } = useFormObject;
-
-  console.log('formState', formState)
+  const { control } = useFormObject;
 
   const layout = {
     "label": "Organization",
@@ -29,16 +27,15 @@ const FormTester = () => {
   };
   const emptyMap = new Map();
   const field = parseField(layout, emptyMap);
-  // const getOptionDisabled = (option) => {
-  //   if (option.id === 1) {
-  //     return true;
-  //   }
-  // }
+  const getOptionDisabled = (option) => {
+    if (option.id === 1) {
+      return true;
+    }
+  }
   const fieldComponentProps = {
-
+    getOptionDisabled
   }
 
-  console.log('field', field);
   return (
     <form>
       <AnyField layout={field.render} control={control} fieldComponentProps={fieldComponentProps} />
