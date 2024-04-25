@@ -92,17 +92,18 @@ const handleMultiSelectChange = (field, checkedId) => {
  * @param {boolean} [props.disabled] - whether the field is disabled
  * @param {string} [props.nestedName] - the name of the field if it is nested
  * @param {boolean} [props.isNested] - whether the field is nested
+ * @param {object} [props.fieldComponentProps] - any props you want to pass to the field component
  * @param {FieldOptions} [props.options] - various options for the fields
  * @returns {React.ReactElement | null} - the rendered AnyField
  */
-const AnyField = ({ control, layout, rules, options, nestedName, isNested, ...props }) => {
+const AnyField = ({ control, layout, rules, options, nestedName, isNested, fieldComponentProps, ...props }) => {
   // If this component ever uses hooks make sure to move this return BELOW those hooks
   if (layout.hidden) {
     return null;
   }
 
   const name = (isNested && nestedName) ? nestedName : layout.name;
-  const renderState = renderType(layout, options, nestedName);
+  const renderState = renderType(layout, options, nestedName, fieldComponentProps);
   // Per react-hook-form docs, we should not unregister fields in a field Array at this level
   // It is done via the useFieldArray hook in ClusterField component
   const shouldUnregister = !isNested;
@@ -137,7 +138,7 @@ AnyField.propTypes = {
  * @param {string} [nestedName] - the name of the field if it is nested
  * @returns {React.ReactElement} - the rendered field
  */
-const renderType = (layout, fieldOptions = {}, nestedName) => {
+const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) => {
   if (layout.iconHelperText) {
     fieldOptions.icon = fieldOptions.icon || {};
     fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
@@ -147,7 +148,7 @@ const renderType = (layout, fieldOptions = {}, nestedName) => {
   const finalId = nestedName || id;
   switch (type) {
     case FIELD_TYPES.DATE: {
-      return dateRenderer(layout, fieldOptions, finalId);
+      return dateRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }
     case FIELD_TYPES.TEXT:
     case FIELD_TYPES.LONG_TEXT:
@@ -155,14 +156,14 @@ const renderType = (layout, fieldOptions = {}, nestedName) => {
     case FIELD_TYPES.LINK:
     case FIELD_TYPES.CURRENCY:
     case FIELD_TYPES.FLOAT: {
-      return textRenderer(layout, fieldOptions, finalId);
+      return textRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }
     case FIELD_TYPES.CHOICE:
     case FIELD_TYPES.OBJECT: {
       if (layout.multiple && layout.checkbox) {
-        return checkboxRenderer(layout, fieldOptions, finalId);
+        return checkboxRenderer(layout, fieldOptions, finalId, fieldComponentProps);
       }
-      return typeaheadRenderer(layout, fieldOptions, finalId);
+      return typeaheadRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }
     case 'radio': {
       const renderRadio = ({ field: { value, onChange }, fieldState: { error } }) => {
@@ -176,12 +177,13 @@ const renderType = (layout, fieldOptions = {}, nestedName) => {
             value={value}
             onChange={onChange}
             error={error}
+            {...fieldComponentProps}
           />);
       };
       return renderRadio;
     }
     default:
-      return textRenderer(layout, fieldOptions);
+      return textRenderer(layout, fieldOptions, fieldComponentProps);
   }
 };
 
@@ -190,9 +192,14 @@ const renderType = (layout, fieldOptions = {}, nestedName) => {
  * @function
  * @param {FieldLayout} layout Object containing the layout of the field
  * @param {FieldOptions} [fieldOptions] Various options for the field
+ * @param {string} [finalId] the final id of the field
+ * @param {object} [fieldComponentProps] - any props you want to pass to the field component
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type }, fieldOptions, finalId) => {
+const textRenderer = (
+  { id, name, label, isMultiLine, placeholder, required, disabled, readOnly, altHelperText, iconHelperText, helperText, type },
+  fieldOptions, finalId, fieldComponentProps
+) => {
   const inputAttrs = {
     'data-src-field': finalId,
     readOnly: readOnly,
@@ -229,6 +236,7 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
           minRows={isMultiLine ? 3 : 1}
           placeholder={placeholder || `${prefix} ${label}`}
           variant="outlined"
+          {...fieldComponentProps}
         />
         {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
         <FormErrorMessage error={error} />
@@ -256,9 +264,14 @@ const textRenderer = ({ id, name, label, isMultiLine, placeholder, required, dis
  * @function
  * @param {FieldLayout} layout Object containing the layout of the field
  * @param {FieldOptions} [fieldOptions] Various options for the field
+ * @param {string} [finalId] - the final id of the field
+ * @param {object} [fieldComponentProps] - any props you want to pass to the field component
  * @returns {React.ReactElement} A custom renderer for the MUI DatePicker component
  */
-const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture, ...layout }, fieldOptions, finalId) => {
+const dateRenderer = (
+  { id, name, label, disabled, required, readOnly, helperText, iconHelperText, altHelperText, placeholder, disableFuture, ...layout },
+  fieldOptions, finalId, fieldComponentProps
+) => {
   const extraProps = {};
   // This will disable selecting dates before the minDate in the component. The user can still type in a date before this point
   if (!isEmpty(layout.minValue)) {
@@ -279,6 +292,7 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
         onChange={onChange}
         disableFuture={disableFuture}
         {...extraProps}
+        {...fieldComponentProps}
         renderInput={(params) => {
           // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
           params.inputProps['data-src-field'] = finalId || name;
@@ -319,9 +333,14 @@ const dateRenderer = ({ id, name, label, disabled, required, readOnly, helperTex
  * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
  * @param {FieldOptions} [fieldOptions] Various options for the field
+ * @param {string} [finalId] - the final id of the field
+ * @param {object} [fieldComponentProps] - any props you want to pass to the field component
  * @returns {React.ReactElement} A custom renderer for the MUI TextField component
  */
-const typeaheadRenderer = ({ label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText, multiple }, fieldOptions, finalId) => {
+const typeaheadRenderer = (
+  { label, id, name, disabled, choices, required, placeholder, helperText, altHelperText, iconHelperText, multiple },
+  fieldOptions, finalId, fieldComponentProps
+) => {
   const WrappedTypeahead = ({ field, field: { onChange }, fieldState: { error } }) => {
     // value is passed in via the react hook form inside of field
     // Ref is needed by the typeahead / autoComplete component and is passed in via props spreading
@@ -354,6 +373,7 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
           error: !!error,
           inputRef: field.ref,
         }}
+        {...fieldComponentProps}
         // hooks-form appears to only want value and not the native onChange
         onChange={(_, newValue) => {
           // Need slightly different logic for multiple.
@@ -401,9 +421,11 @@ const typeaheadRenderer = ({ label, id, name, disabled, choices, required, place
  * @function
  * @param {FieldLayout} layout - Object containing the layout of the field
  * @param {FieldOptions} [fieldOptions] Various options for the field
+ * @param {string} [finalId] - the final id of the field
+ * @param {object} [fieldComponentProps] - any props you want to pass to the field component
  * @returns {React.ReactElement} A custom renderer for the MUI Checkbox component
  */
-const checkboxRenderer = (layout, fieldOptions, finalId) => {
+const checkboxRenderer = (layout, fieldOptions, finalId, fieldComponentProps) => {
   const { label, disabled, choices = [], required, helperText, iconHelperText, altHelperText } = layout;
 
   const Checkboxes = ({ field, fieldState: { error } }) => {
@@ -438,6 +460,7 @@ const checkboxRenderer = (layout, fieldOptions, finalId) => {
                   data-src-checkbox={item.id}
                   onBlur={field.onBlur}
                   checked={field?.value?.includes(item.id)}
+                  {...fieldComponentProps}
                   onChange={(e) => {
                     field.onChange(handleMultiSelectChange(field, item.id));
                   }}
