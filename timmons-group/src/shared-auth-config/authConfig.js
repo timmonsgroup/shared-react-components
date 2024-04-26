@@ -480,5 +480,3 @@ export class ConfigurationBuilder {
  * @returns {ConfigurationBuilder}
  */
 export const getConfigBuilder = () => new ConfigurationBuilder();
-
-
