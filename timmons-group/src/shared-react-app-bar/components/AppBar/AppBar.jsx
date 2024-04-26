@@ -172,6 +172,8 @@ AppBar.propTypes = {
   navLinks: PropTypes.array,
   logoUrl: PropTypes.string,
   userLinks: PropTypes.array,
+  //user needs to be removed eventually, it is not being used this is here cause TYPESCRIPT is an ass
+  user: PropTypes.shape({}),
   buttonVariant: PropTypes.string,
   themeGroup: PropTypes.shape({}),
   showLoggingIn: PropTypes.bool,

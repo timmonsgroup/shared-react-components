@@ -129,7 +129,10 @@ UserMenu.propTypes = {
   onLogout: PropTypes.func,
   links: PropTypes.arrayOf(
     PropTypes.shape({ title: PropTypes.string, href: PropTypes.string })
-  )
+  ),
+  // These are not used. Should be removed eventually TYPESCRIPT Y THO?
+  user: PropTypes.shape({ name: PropTypes.string, isSignedIn: PropTypes.bool }),
+  hideArrow: PropTypes.bool,
 };
 
 export default UserMenu;
