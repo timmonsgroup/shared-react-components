@@ -57,7 +57,11 @@ const theTheme = {
  * @param {boolean} [props.showLoggingIn] - A boolean to indicate if the app should show the logging in message
  * @param {function} [props.renderLogo] - A function to overwrite the default renderer for the logo section - Optional
  */
-const AppBar = ({ onLogin, onLogout, navLinks, logoUrl, buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props }) => {
+const AppBar = ({
+  onLogin, onLogout, navLinks = [{ title: 'Home', href: '/' }],
+  logoUrl='https://wilcity.com/wp-content/uploads/2018/12/sample-logo-design-png-3-2.png',
+  buttonVariant = 'appbar', themeGroup, userLinks, showLoggingIn, logoText, renderLogo, ...props
+}) => {
   const { authState } = useAuth();
   const { user } = authState;
 
@@ -165,22 +169,14 @@ AppBar.propTypes = {
   onLogout: PropTypes.func,
   logoText: PropTypes.string,
   renderLogo: PropTypes.func,
-  user: PropTypes.shape({}),
   navLinks: PropTypes.array,
   logoUrl: PropTypes.string,
   userLinks: PropTypes.array,
+  //user needs to be removed eventually, it is not being used this is here cause TYPESCRIPT is an ass
+  user: PropTypes.shape({}),
   buttonVariant: PropTypes.string,
   themeGroup: PropTypes.shape({}),
   showLoggingIn: PropTypes.bool,
-};
-
-AppBar.defaultProps = {
-  navLinks: [
-    { title: 'Home', href: '/' }
-  ],
-  user: null,
-  logoUrl:
-    'https://wilcity.com/wp-content/uploads/2018/12/sample-logo-design-png-3-2.png', //This is a lorum ipusum logo
 };
 
 export default AppBar;

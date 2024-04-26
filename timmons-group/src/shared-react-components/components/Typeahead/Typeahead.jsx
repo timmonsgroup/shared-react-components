@@ -102,6 +102,11 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
       disabled={disabled}
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
+      getOptionDisabled={(option) => {
+        if (option.disabled) {
+          return true;
+        }
+      }}
       renderOption={
         (optProps, option) => (
         // We're generating a more verbose key here in the event of bad data

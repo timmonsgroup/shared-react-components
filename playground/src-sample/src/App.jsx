@@ -8,12 +8,16 @@ import { LoadingSpinner } from '@timmons-group/shared-react-components/component
 import Theme from '@timmons-group/shared-react-components/muiTheme'
 
 import { ThemeProvider } from '@mui/material/styles'
+import { CssBaseline } from '@mui/material'
+import FormTester from './FormTester'
 
 function App() {
+  console.log('Theme', Theme)
   const [count, setCount] = useState(0)
 
   return (
     <ThemeProvider theme={Theme}>
+      <CssBaseline />
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -25,7 +29,8 @@ function App() {
       <h1>Vite + React</h1>
       <div className="card">
         <LineLoader />
-        <LoadingSpinner isActive={true} />
+        <FormTester />
+        {/* <LoadingSpinner isActive={true} /> */}
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>

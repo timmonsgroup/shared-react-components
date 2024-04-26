@@ -20,8 +20,8 @@ interface LineLoaderProps {
  * <LineLoader message="Loading..." />
  */
 const LineLoader: React.FC<LineLoaderProps & LinearProgressProps> = ({
-  width,
-  message,
+  width = '100%',
+  message = undefined,
   messageAlign = 'center',
   ...props
 }): ReactElement => {
@@ -37,12 +37,6 @@ LineLoader.propTypes = {
   messageAlign: PropTypes.oneOf(['left', 'right', 'center']),
   message: PropTypes.string,
   width: PropTypes.string,
-};
-
-LineLoader.defaultProps = {
-  messageAlign: 'center',
-  message: undefined,
-  width: '100%',
 };
 
 export default LineLoader;

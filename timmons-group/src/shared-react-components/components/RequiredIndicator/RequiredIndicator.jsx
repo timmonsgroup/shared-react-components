@@ -1,5 +1,4 @@
 /** @module RequiredIndicator */
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, useTheme } from '@mui/material';
 
@@ -9,7 +8,7 @@ import { Box, useTheme } from '@mui/material';
  * @param {object} [sx] style object
  * @returns {React.ReactElement}
  */
-const RequiredIndicator = ({ isRequired, sx }) => {
+const RequiredIndicator = ({ isRequired=true, sx={} }) => {
   const theme = useTheme();
   const requiredIndicator = theme.requiredIndicator || { color: 'red' };
   const finalSx = { ...requiredIndicator, ...sx };
@@ -25,8 +24,4 @@ RequiredIndicator.propTypes = {
   sx: PropTypes.object,
 };
 
-RequiredIndicator.defaultProps = {
-  isRequired: true,
-  sx: {},
-};
 export default RequiredIndicator;

@@ -46,14 +46,14 @@ import { AUTH_STATES } from '../../constants.js';
       }
     />;
  */
-const PermissionFilter = ({ permission, any, all, isRoute, showLoggingIn, showIfLoggedIn, children, ...props }) => {
+const PermissionFilter = ({ permission = null, any = null, all = null, isRoute = false, showLoggingIn, showIfLoggedIn, children, ...props }) => {
   // Get the user acls from the auth hook authState
   const { authState } = useAuth();
 
   // As this is under the authProvider context it will render on every authState change
 
   // props.acl is a backdoor to allow storybook stories to pass in acls
-  const acl = authState?.user?.acl || props.acl;
+  const acl = authState?.user?.acl || props.acl || [];
 
   // If the permissionFilter is a route, return a Navigate component to the root.
   //const returned = isRoute === true ? (<Navigate to="/" />) : null;
@@ -101,14 +101,6 @@ PermissionFilter.propTypes = {
   isRoute: PropTypes.bool,
   showLoggingIn: PropTypes.bool,
   children: PropTypes.node,
-};
-
-PermissionFilter.defaultProps = {
-  acl: [],
-  permission: null,
-  any: null,
-  all: null,
-  isRoute: false,
 };
 
 export default PermissionFilter;
