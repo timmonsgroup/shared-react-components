@@ -36,10 +36,9 @@ MenuArrow.propTypes = {
  * @param {object[]} [props.links] - an array of links to display in the menu
  * @param {string} [props.links[].title] - the title of the link
  * @param {string} [props.links[].href] - the href of the link
- * @param {boolean} [props.hideArrow] - boolean to indicate if the arrow should be hidden
  * @returns {React.ReactElement} - the user menu
  */
-export const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
+export const UserMenu = ({  onLogin, onLogout, links }) => {
   const { authState } = useAuth();
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
@@ -126,18 +125,11 @@ export const UserMenu = ({  onLogin, onLogout, links, hideArrow }) => {
 };
 
 UserMenu.propTypes = {
-  user: PropTypes.shape({ name: PropTypes.string, isSignedIn: PropTypes.bool }),
   onLogin: PropTypes.func,
   onLogout: PropTypes.func,
   links: PropTypes.arrayOf(
     PropTypes.shape({ title: PropTypes.string, href: PropTypes.string })
-  ),
-  hideArrow: PropTypes.bool,
-};
-
-UserMenu.defaultProps = {
-  user: null,
-  hideArrow: false,
+  )
 };
 
 export default UserMenu;

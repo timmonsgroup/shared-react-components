@@ -402,7 +402,7 @@ const ConfigGrid = ({
   layout,
   initialSortColumn,
   initialSortDirection,
-  showToolbar,
+  showToolbar = false,
   extraGridProps,
   actions,
   themeGroup,
@@ -640,10 +640,6 @@ ConfigGrid.propTypes = {
   ),
   onFilterModelChange: PropTypes.func,
   onSortModelChange: PropTypes.func,
-};
-
-ConfigGrid.defaultProps = {
-  showToolbar: false,
 };
 
 export default ConfigGrid;

@@ -15,7 +15,7 @@ import { Backdrop, Box, CircularProgress, Stack } from '@mui/material';
  * @example
  * <LoadingSpinner isActive={true} />
  */
-const LoadingSpinner = ({ isActive, variant, message, zIndex, ...props }) => {
+const LoadingSpinner = ({ isActive = false, variant = 'accent', message = null, zIndex, ...props }) => {
   /**
    * MUI base theme default zIndex values
     appBar:1100
@@ -51,12 +51,6 @@ LoadingSpinner.propTypes = {
   isActive: PropTypes.bool,
   variant: PropTypes.oneOf(['background', 'primary', 'accent', 'secondary', 'error', 'tertiary', 'success']),
   zIndex: PropTypes.number,
-};
-
-LoadingSpinner.defaultProps = {
-  message: null,
-  isActive: false,
-  variant: 'accent',
 };
 
 export default LoadingSpinner;
