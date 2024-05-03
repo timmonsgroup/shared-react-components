@@ -432,47 +432,45 @@ const checkboxRenderer = (layout, fieldOptions, finalId, fieldComponentProps) =>
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
     return (
-      <>
-        <FormControl
-          data-src-field={finalId || field.id}
+      <FormControl
+        data-src-field={finalId || field.id}
+        error={!!error}
+        disabled={disabled}
+        component="fieldset"
+        variant="standard"
+      >
+        <AnyFieldLabel
+          asFormInput={true}
+          htmlFor={finalId || field.name}
           error={!!error}
+          label={label}
+          required={!!required}
           disabled={disabled}
-          component="fieldset"
-          variant="standard"
-        >
-          <AnyFieldLabel
-            asFormInput={true}
-            htmlFor={finalId || field.name}
-            error={!!error}
-            label={label}
-            required={!!required}
-            disabled={disabled}
-            iconText={iconHelperText}
-            fieldOptions={fieldOptions}
-            helperText={helperText}
-          />
-          <FormGroup>
-            {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
-            {choices?.map((item) => (
-              <FormControlLabel
-                key={item.id}
-                control={<Checkbox
-                  data-src-checkbox={item.id}
-                  onBlur={field.onBlur}
-                  checked={field?.value?.includes(item.id)}
+          iconText={iconHelperText}
+          fieldOptions={fieldOptions}
+          helperText={helperText}
+        />
+        <FormGroup>
+          {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
+          {choices?.map((item) => (
+            <FormControlLabel
+              key={item.id}
+              control={<Checkbox
+                data-src-checkbox={item.id}
+                onBlur={field.onBlur}
+                checked={field?.value?.includes(item.id)}
                   {...fieldComponentProps}
-                  onChange={(e) => {
-                    field.onChange(handleMultiSelectChange(field, item.id));
-                  }}
-                />}
-                label={item.label}
-              />
-            ))}
-            {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
-            <FormErrorMessage error={error} />
-          </FormGroup>
-        </FormControl>
-      </>
+                onChange={(e) => {
+                  field.onChange(handleMultiSelectChange(field, item.id));
+                }}
+              />}
+              label={item.label}
+            />
+          ))}
+          {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
+          <FormErrorMessage error={error} />
+        </FormGroup>
+      </FormControl>
     );
   };
 

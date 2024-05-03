@@ -209,6 +209,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
   // update the validation schema hookForm uses when the validation state changes
   const validationSchema = useMemo(
     () => {
+      console.log('validationSchema useMemo', validations)
       if (addCustomValidations && typeof addCustomValidations === 'function') {
         const newValids = addCustomValidations(validations);
         if (newValids) {
