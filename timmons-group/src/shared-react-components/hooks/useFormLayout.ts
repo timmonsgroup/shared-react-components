@@ -92,12 +92,12 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
           // loop through validation object
           Object.keys(property).forEach((key) => {
             // Setting any dynamic rendering layout like "required" or "disabled" that must be visually represented
-            if (conditionalRenderProps.includes(key)) {
+            if ((conditionalRenderProps as any).includes(key)) {
               layout.set(key, property[key]);
             }
 
             // Setting the actual validation props
-            if (validationTypes.includes(key)) {
+            if ((validationTypes as any).includes(key)) {
               // Any validation props in here will override the base field validation props
               validationProps.set(key, property[key]);
             }
@@ -297,6 +297,7 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap): LegacyPars
       choices: [],
       multiple: !!field.multiple,
       checkbox: !!field.checkbox,
+      type
     };
 
     parsedField.render = updatedRender;
@@ -361,6 +362,7 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap): LegacyPars
       addLabel: field.addLabel,
       removeLabel: field.removeLabel,
       clusterColumnCount: field.clusterColumnCount,
+      type,
     };
     parsedField.render = updatedRender;
   }
@@ -391,7 +393,7 @@ function parseValidation(validationMap, data, debug = false) {
     if (debug) {
       console.debug('~parseValidation~', key, data[key]);
     }
-    if (validationTypes.includes(key) && data[key] !== undefined) {
+    if ((validationTypes as any).includes(key) && data[key] !== undefined) {
       validationMap.set(key, data[key]);
     }
   });
