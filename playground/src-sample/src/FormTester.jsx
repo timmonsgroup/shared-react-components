@@ -1,10 +1,17 @@
-import { AnyField, parseField } from "@timmons-group/shared-react-components"
+import { AnyField, parseField, PLACEHOLDER } from "@timmons-group/shared-react-components"
 import { useForm } from "react-hook-form"
+import { createDateModel } from "./helpers/helpers";
+
+const dateLayout = createDateModel("date", "Enter a Date", true, { [PLACEHOLDER]: "Boogity"});
 
 const FormTester = () => {
   const useFormObject = useForm({
     mode: 'onBlur',
-    shouldUnregister: true
+    shouldUnregister: true,
+    defaultValues: {
+      organizationId: 2,
+      date: null,
+    }
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
@@ -27,6 +34,7 @@ const FormTester = () => {
   };
   const emptyMap = new Map();
   const field = parseField(layout, emptyMap);
+  const field2 = parseField(dateLayout, emptyMap);
   const getOptionDisabled = (option) => {
     if (option.id === 1) {
       return true;
@@ -39,6 +47,7 @@ const FormTester = () => {
   return (
     <form>
       <AnyField layout={field.render} control={control} fieldComponentProps={fieldComponentProps} />
+      <AnyField layout={field2.render} control={control} />
     </form>
   )
 }

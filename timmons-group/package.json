@@ -39,11 +39,10 @@
     "axios": "^1.6.5"
   },
   "dependencies": {
-    "@date-io/date-fns": "^2.15.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.6",
-    "@mui/x-date-pickers": "^5.0.20",
+    "@mui/x-date-pickers": "^7.3.2",
     "date-fns": "^2.25.0",
     "is-retry-allowed": "^3.0.0",
     "prop-types": "^15.8.1",

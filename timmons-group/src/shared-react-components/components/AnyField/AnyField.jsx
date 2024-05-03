@@ -293,21 +293,22 @@ const dateRenderer = (
         disableFuture={disableFuture}
         {...extraProps}
         {...fieldComponentProps}
-        renderInput={(params) => {
-          // MUI-X DatePicker injects a bunch of props into the input element. If we override the inputProps entirely functionality goes BOOM
-          params.inputProps['data-src-field'] = finalId || name;
-          params.inputProps.readOnly = readOnly;
-          params.name = finalId || name;
-          params.id = finalId || name;
-          if (placeholder) {
-            params.inputProps.placeholder = placeholder;
+        slots={{ textField: DateFieldToolbar }}
+        slotProps={{
+          textField: {
+            id: finalId || name,
+            name: finalId || name,
+            label,
+            disabled,
+            required,
+            readOnly,
+            helperText,
+            iconHelperText,
+            altHelperText,
+            placeholder,
+            error,
+            fieldOptions
           }
-          return (
-            <>
-              <AnyFieldLabel htmlFor={finalId || name} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
-              <TextField sx={{ width: '100%' }} {...params} />
-            </>
-          );
         }}
       />
       {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
@@ -327,6 +328,25 @@ const dateRenderer = (
 
   return DateField;
 };
+
+const DateFieldToolbar = ({
+  id, label, disabled, required, readOnly, iconHelperText, altHelperText, placeholder, error, fieldOptions, ...params
+}) => {
+  console.log('params', params)
+  params.inputProps['data-src-field'] = id;
+  params.inputProps.readOnly = readOnly;
+  params.name = id;
+  params.id = id;
+  if (placeholder) {
+    params.inputProps.placeholder = placeholder;
+  }
+  return (
+    <>
+      <AnyFieldLabel htmlFor={id} error={!!error} label={label} required={!!required} disabled={disabled} iconText={iconHelperText} helperText={altHelperText} fieldOptions={fieldOptions} />
+      <TextField sx={{ width: '100%' }} {...params} />
+    </>
+  );
+}
 
 /**
  * This is a custom renderer for our Typeahead component to work with react-hook-form
