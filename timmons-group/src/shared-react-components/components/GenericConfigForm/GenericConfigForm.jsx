@@ -30,6 +30,7 @@ import { SectionTop } from '../../components/SectionTop';
  * @property {function} [renderLoading] - a function to render the loading indicator
  * @property {number} [columnCount] - the number of columns to render
  * @property {object} [fieldOptions] - the options to pass to the fields
+ * @property {object} [fieldComponentProps] - the options to pass to the underlying field components (Usually MUI components)
  * @property {boolean} [hideEmptySections] - whether or not to hide the section if it is empty
  * @property {object} [children] - the children to render
  */
@@ -41,7 +42,7 @@ import { SectionTop } from '../../components/SectionTop';
  */
 const FormSections = ({
   children, formTitle, formDescription, renderFormDescription, renderFormTitle, columnCount = 1, fieldOptions, hideEmptySections = true,
-  renderLoading, renderFormInformation, renderSectionTitle, renderSectionDescription, renderSectionTop, ...props
+  renderLoading, renderFormInformation, renderSectionTitle, renderSectionDescription, renderSectionTop, fieldComponentProps, ...props
 }) => {
   const { sections, formProcessing, useFormObject } = useFormContext();
   const { control } = useFormObject;
@@ -70,6 +71,7 @@ const FormSections = ({
   const sectOpts = {
     columnCount,
     fieldOptions,
+    fieldComponentProps,
     hideEmptySections,
     renderSectionTitle,
     renderSectionDescription,
@@ -112,6 +114,7 @@ FormSections.propTypes = {
   renderSectionTitle: PropTypes.func,
   renderSectionDescription: PropTypes.func,
   renderSectionTop: PropTypes.func,
+  fieldComponentProps: PropTypes.object,
   fieldOptions: PropTypes.object,
   hideEmptySections: PropTypes.bool,
   renderLoading: PropTypes.func,
@@ -292,6 +295,7 @@ const renderColumnSection = (section, control, index, options) => {
  * @param {object} props.control - the control object from useForm
  * @param {object} [props.options] - the options object
  * @param {object} [props.options.fieldOptions] - the options to pass to the fields
+ * @param {object} [props.options.fieldComponentProps] - the props to pass to the underlying field component (Usually MUI components)
  * @returns {React.ReactElement} - the rendered row using Grid
  * @example
  * <CardContent>
@@ -324,6 +328,7 @@ const SectionRow = ({ row, control, options }) => {
               field={field}
               control={control}
               options={options?.fieldOptions || {}}
+              fieldComponentProps={options?.fieldComponentProps || {}}
             />
           </Grid>
         );
