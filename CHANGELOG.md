@@ -1,5 +1,5 @@
 # Change Log #
-## Release 1.1.x - 05/13/2024 ##
+## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###
 - We've removed defaultProps from all components. This has been deprecated in React 18 and will be removed in a future version.
   - Components that were using defaultProps have been updated to use default values in the function signature.
