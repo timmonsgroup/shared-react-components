@@ -1,4 +1,92 @@
 # Change Log #
+## Release 1.1.0 - 05/13/2024 ##
+### Fixes ###
+- We've removed defaultProps from all components. This has been deprecated in React 18 and will be removed in a future version.
+  - Components that were using defaultProps have been updated to use default values in the function signature.
+  - Affected components:
+    - UserMenu (from shared-react-app-bar)
+    - AppBar (from shared-react-app-bar)
+    - ConfigGrid
+    - LineLoader
+    - LoadingSpinner
+    - RequiredIndicator
+
+### New Functionality ###
+#### useAuth ####
++ Create ConfigBuilder class based on the old config builder. Replaced the export of the old config builder to return an instance of the class to ensure backwards compatibility.
++ Added support for a configurable scope in the oAuth config and useAuth
++ Added support for an authorize endpoint in the oAuth config and useAuth
+* Migrate from string concat to using queryParams so we dont have to worry about encoding so much
+* Move from .mjs to .js because typescript doesnt like it and would export type files as .mts which then it refuses to import
+
+#### Components ####
+- `Typeahead`
+  - Now has the ability to disable a option in the dropdown.
+    - This is can be done in two different ways
+      - Adding a `disabled` property to the option object.
+        - This is the most common way to disable an option and should be used if you are using ConfigForm with GenericConfigForm.
+        - Example:
+          ```javascript
+          const options = [
+            { label: 'Option 1', value: 1 },
+            { label: 'Option 2', value: 2, disabled: true },
+          ];
+          ```
+      - You can directly pass a `getOptionDisabled` function to the `getOptionDisabled` prop.
+        - This will override the default `getOptionDisabled` method in Typeahead (which checks for `disabled` on the array of options).
+        - This function will be called for each option in the dropdown and should return a boolean.
+        - This has always been possible as all extra props are passed to the underlying MUI Autocomplete component.
+        - Example:
+          ```javascript
+          const getOptionDisabled = (option) => {
+            return option.value === 2;
+          };
+
+          return (
+            <Typeahead items={someArrayOfChoices} getOptionDisabled={getOptionDisabled} />
+          );
+          ```
+- `DynamicField` | `AnyField`
+  - Now has the ability to send any props to the underlying components rendered
+    - This is done by passing a `fieldComponentProps` object to the `DynamicField` | `AnyField` component.
+    - This object will be spread into the props of the underlying component.
+    - This is useful for passing custom props to the underlying component.
+    - Example:
+      ```javascript
+      // Here we're defining a custom prop `getOptionDisabled` that will be passed to the underlying component.
+      // Any component that might be rendered by DynamicField or AnyField will be sent ALL the props in the `fieldComponentProps` object.
+      const fieldCompProps = {
+        getOptionDisabled = (option) => {
+          return option.value === 2;
+        };
+      };
+
+      return (
+        <>
+          <DynamicField field={someField} fieldComponentProps={fieldCompProps} />
+          <AnyField layout={someField.render} fieldComponentProps={fieldCompProps} />
+        </>
+      );
+      ```
+- `GenericConfigForm`
+  - You can now add `fieldComponentProps` to the `sectionProps` object.
+    - This will be prop drilled to the `DynamicField` -> `AnyField` components (see above).
+    - This is useful for passing custom props to the underlying component.
+    - Example:
+      ```javascript
+      const sectionProps = {
+        fieldComponentProps: {
+          getOptionDisabled = (option) => {
+            return option.value === 2;
+          };
+        },
+      };
+
+      return (
+        <GenericConfigForm layout={someLayout} data={someData} sectionProps={sectionProps} />
+      );
+      ```
+
 ## Release 1.0.2 - 04/3/2024 ##
 ### Fixes ###
 - In the update to yup 1.x `nullable` functionality was changed this caused some really strange behavior in the form validation. This has been fixed by only applying `nullable` to the yup validations that are NOT required.
