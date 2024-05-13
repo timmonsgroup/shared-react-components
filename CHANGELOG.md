@@ -1,5 +1,5 @@
 # Change Log #
-## Release 1.1.x - 05/10/2024 ##
+## Release 1.1.x - 05/13/2024 ##
 ### Fixes ###
 - We've removed defaultProps from all components. This has been deprecated in React 18 and will be removed in a future version.
   - Components that were using defaultProps have been updated to use default values in the function signature.
@@ -12,6 +12,13 @@
     - RequiredIndicator
 
 ### New Functionality ###
+#### useAuth ####
++ Create ConfigBuilder class based on the old config builder. Replaced the export of the old config builder to return an instance of the class to ensure backwards compatibility.
++ Added support for a configurable scope in the oAuth config and useAuth
++ Added support for an authorize endpoint in the oAuth config and useAuth
+* Migrate from string concat to using queryParams so we dont have to worry about encoding so much
+* Move from .mjs to .js because typescript doesnt like it and would export type files as .mts which then it refuses to import
+
 #### Components ####
 - `Typeahead`
   - Now has the ability to disable a option in the dropdown.
