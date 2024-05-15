@@ -9,12 +9,12 @@ import { Button, Card, CardContent, Container, Stack, Skeleton } from '@mui/mate
 import {Unstable_Grid2 as Grid} from '@mui/material';
 
 // Internal bits
-import DynamicField from '../../components/DynamicField';
-import SubHeader from '../../components/SubHeader';
-import LoadingSpinner from '../LoadingSpinner';
-import { createRowFields, functionOrDefault } from '../../helpers';
-import { FIELD_TYPES } from '../../constants';
-import { SectionTop } from '../../components/SectionTop';
+import DynamicField from '../DynamicField';
+import SubHeader from '../../../shared-react-components/components/SubHeader
+import LoadingSpinner from '../../../shared-react-components/components/LoadingSpinner';
+import { createRowFields, functionOrDefault } from '../../../shared-react-components/helpers';
+import { FIELD_TYPES } from '../../../shared-react-components/constants';
+import { SectionTop } from '../../../shared-react-components/components/SectionTop
 
 /** @module FormSections */
 /**

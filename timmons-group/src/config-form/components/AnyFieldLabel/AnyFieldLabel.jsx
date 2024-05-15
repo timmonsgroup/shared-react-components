@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import {
   InputLabel, Box, FormLabel, FormHelperText, useTheme
 } from '@mui/material';
-import RequiredIndicator from '../../components/RequiredIndicator';
-import TooltipIcon from '../../components/TooltipIcon';
+import RequiredIndicator from '../RequiredIndicator';
+import TooltipIcon from '../../../shared-react-components/components/TooltipIcon';
 
 /**
  * Icons for info icons

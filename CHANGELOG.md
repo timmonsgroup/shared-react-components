@@ -1,4 +1,11 @@
 # Change Log #
+## Release 2.0.0 - Eventually ##
+### Breaking Changes ###
+ - ConfigForm, DynamicField, etc, etc have moved to separate repo
+ - Removed JWTUtil and its test file from shared-react-components
+ - Removed formHelpers from shared-react-components
+ - MUI X Datepickers have been upgrade to 7.x
+
 ## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###
 - We've removed defaultProps from all components. This has been deprecated in React 18 and will be removed in a future version.

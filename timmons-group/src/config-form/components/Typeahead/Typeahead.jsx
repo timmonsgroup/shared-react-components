@@ -3,9 +3,9 @@ import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, TextField, Autocomplete, FormHelperText } from '@mui/material';
-import AnyFieldLabel from '../../components/AnyFieldLabel';
-import FormErrorMessage from '../../components/FormErrorMessage';
-import { isEmpty } from '../../helpers';
+import AnyFieldLabel from '../AnyFieldLabel';
+import FormErrorMessage from '../FormErrorMessage';
+import { isEmpty } from '../../../shared-react-components/helpers';
 
 /**
  * Wrapper of the Mui Autocomplete component

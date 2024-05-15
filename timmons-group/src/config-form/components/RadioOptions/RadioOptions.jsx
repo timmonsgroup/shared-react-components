@@ -2,8 +2,8 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import { FormControl, FormControlLabel, FormLabel, RadioGroup, Radio } from '@mui/material';
-import FormErrorMessage from '../../components/FormErrorMessage';
-import RequiredIndicator from '../../components/RequiredIndicator';
+import FormErrorMessage from '../FormErrorMessage';
+import RequiredIndicator from '../RequiredIndicator';
 
 const RadioOptions = ({ row, id, label, items, error, isRequired, ...props }) => {
   const renderRadios = () => {

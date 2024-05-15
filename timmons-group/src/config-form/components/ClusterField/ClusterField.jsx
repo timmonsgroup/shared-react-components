@@ -9,12 +9,12 @@ import { Button, Divider, FormHelperText, useTheme, useMediaQuery, Typography, U
 // import Grid from '@mui/material/Unstable_Grid2';
 
 // SRC Components
-import AnyField from '../../components/AnyField';
-import AnyFieldLabel from '../../components/AnyFieldLabel';
+import AnyField from '../AnyField';
+import AnyFieldLabel from '../AnyFieldLabel';
 
 // Hooks, helpers, and constants
-import { getFieldValue } from '../../hooks';
-import { createRowFields } from '../../helpers';
+import { getFieldValue } from '../../../shared-react-components/hooks';
+import { createRowFields } from '../../../shared-react-components/helpers';
 
 /**
  * ClusterField component will render a field that contains a list of subfields

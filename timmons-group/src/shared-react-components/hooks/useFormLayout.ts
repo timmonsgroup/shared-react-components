@@ -9,7 +9,7 @@ import {
 } from '../constants.js';
 import { useEffect, useState } from 'react';
 
-import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
+import { createFieldValidation, getSelectValue, multiToPayload } from '../../config-form/helpers/formHelpers.js';
 import axios from 'axios';
 import { dateStringNormalizer } from '../helpers/helpers.js';
 import { LegacyParsedFormField, LegacyLayoutField, LegacyDropdownRenderProps, LegacyDateRenderProps, LegacyLongTextRenderProps, LegacyTextRenderProps, LegacyClusterRenderProps, LegacyParsedSection } from '../models/formLegacy.model';

@@ -9,10 +9,10 @@ import { useFormContext } from 'react-hook-form';
 import { Button, CardContent, Container, Stack, Box, Skeleton, useTheme } from '@mui/material';
 
 // Internal bits
-import LoadingSpinner from '../../components/LoadingSpinner';
-import {SectionTop} from '../../components/SectionTop';
-import {SectionRow} from '../../components/GenericConfigForm';
-import { functionOrDefault, createRowFields } from '../../helpers';
+import LoadingSpinner from '../../../shared-react-components/components/LoadingSpinner';
+import {SectionTop} from '../../../shared-react-components/components/SectionTop';
+import {SectionRow} from '../GenericConfigForm';
+import { functionOrDefault, createRowFields } from '../../../shared-react-components/helpers';
 
 /**
  * Renderer for a section with

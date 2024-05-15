@@ -6,10 +6,10 @@ import PropTypes from 'prop-types';
 import { FormProvider } from 'react-hook-form';
 
 // Internal bits
-import { parseFormLayout } from '../../hooks/useFormLayout';
-import { useConfigForm } from '../../hooks/useConfigForm';
-import LoadingSpinner from '../LoadingSpinner';
-import { functionOrDefault } from '../../helpers';
+import { parseFormLayout } from '../../../shared-react-components/hooks/useFormLayout';
+import { useConfigForm } from '../../../shared-react-components/hooks/useConfigForm';
+import LoadingSpinner from '../../../shared-react-components/components/LoadingSpinner';
+import { functionOrDefault } from '../../../shared-react-components/helpers';
 
 /**
  * Configurable form wrapper. Parses PAM style layout and waits and then wraps the children in a DynamicForm

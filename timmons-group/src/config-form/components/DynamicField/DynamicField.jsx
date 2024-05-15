@@ -4,11 +4,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // SRC Components
-import AnyField from '../../components/AnyField';
-import ClusterField from '../../components/ClusterField';
+import AnyField from '../AnyField';
+import ClusterField from '../ClusterField';
 
 // Hooks, helpers, and constants
-import { FIELD_TYPES } from '../../constants';
+import { FIELD_TYPES } from '../../../shared-react-components/constants';
 
 /**
  * A Helper component to check if a field is a cluster field and render the appropriate component
