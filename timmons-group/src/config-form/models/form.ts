@@ -165,6 +165,7 @@ export type TriggerField = {
   id: string;
   fieldValues: Map<string, string>;
   touches: Map<string, string>;
+  hasOnChange?: boolean;
 }
 
 /**

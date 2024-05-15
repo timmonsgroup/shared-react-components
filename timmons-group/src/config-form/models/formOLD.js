@@ -91,6 +91,7 @@
  * @property {string} id - field id
  * @property {Map<string, string>} fieldValues - map of field values
  * @property {Map<string, string>} touches - map of fields that trigger field could influence
+ * @property {boolean} [hasOnChange] - map of errors
  */
 
 /**

@@ -208,7 +208,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
  * Parse a field
  * @function
  * @param {object} field - field object
- * @param {Map<string, string>} asyncFieldsMap - map of async fields
+ * @param {Map<string, string>} [asyncFieldsMap] - map of async fields
  * @returns {ParsedField} parsed field
  */
 export function parseField(field, asyncFieldsMap) {
@@ -318,7 +318,7 @@ export function parseField(field, asyncFieldsMap) {
       console.warn(`Field type ${type} does not support async choices`);
     }
 
-    asyncFieldsMap.set(field.path, field.url);
+    asyncFieldsMap?.set(field.path, field.url);
   }
 
   // Special case for cluster fields

@@ -331,7 +331,6 @@ const dateRenderer = (
 const DateFieldToolbar = ({
   id, label, disabled, required, readOnly, iconHelperText, altHelperText, placeholder, error, fieldOptions, ...params
 }) => {
-  console.log('params', params)
   params.inputProps['data-src-field'] = id;
   params.inputProps.readOnly = readOnly;
   params.name = id;

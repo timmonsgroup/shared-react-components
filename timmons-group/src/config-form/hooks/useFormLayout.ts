@@ -1,5 +1,8 @@
 /** @module useFormLayout */
-import { useLayout, dateStringNormalizer } from '@timmons-group/shared-react-components';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+import { useLayout, dateStringNormalizer, isEmpty } from '@timmons-group/shared-react-components';
 import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
@@ -7,10 +10,8 @@ import {
   REQUIRED, DISABLED,
   PLACEHOLDER, ANY_VALUE
 } from '../constants.js';
-import { useEffect, useState } from 'react';
 
-import { createFieldValidation, getSelectValue, multiToPayload } from '../../config-form/helpers/formHelpers.js';
-import axios from 'axios';
+import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers';
 import { LegacyParsedFormField, LegacyLayoutField, LegacyDropdownRenderProps, LegacyDateRenderProps, LegacyLongTextRenderProps, LegacyTextRenderProps, LegacyClusterRenderProps, LegacyParsedSection } from '../models/formLegacy.model';
 import { Conditional } from '../models/formFields.model';
 
@@ -216,10 +217,10 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
  * Parse a field
  * @function
  * @param {object} field - field object
- * @param {Map<string, string>} asyncFieldsMap - map of async fields
+ * @param {Map<string, string>} [asyncFieldsMap] - map of async fields
  * @returns {ParsedField} parsed field
  */
-export function parseField(field: LegacyLayoutField, asyncFieldsMap): LegacyParsedFormField {
+export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, any> | null = null): LegacyParsedFormField {
   if (!field) {
     return {} as LegacyParsedFormField;
   }
@@ -480,7 +481,7 @@ export function getFieldValue(field, formData) {
   let inData = formData?.[name];
 
   // If the config specifies a default value, use that value ONLY if the data is undefined.
-  if ((inData === undefined || inData === null) && field[DEFAULT_VALUE]) {
+  if ((inData === undefined || inData === null) && !isEmpty(field[DEFAULT_VALUE])) {
     inData = field[DEFAULT_VALUE];
   }
 
@@ -489,11 +490,11 @@ export function getFieldValue(field, formData) {
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT:
+    case FIELDS.LINK:
     case FIELDS.INT:
     case FIELDS.CURRENCY:
-    case FIELDS.LINK:
     case FIELDS.FLOAT: {
-      value = inData || '';
+      value = isEmpty(inData) ? '' : inData;
       break;
     }
 

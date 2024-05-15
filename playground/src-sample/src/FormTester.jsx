@@ -1,8 +1,10 @@
-import { AnyField, parseField, PLACEHOLDER } from "@timmons-group/shared-react-components"
+import { AnyField, FIELD_TYPES, getFieldValue, parseField, PLACEHOLDER } from "@timmons-group/config-form"
 import { useForm } from "react-hook-form"
-import { createDateModel } from "./helpers/helpers";
+import { createCurrencyModel, createDateModel, createAnyModel } from "./helpers/helpers";
 
 const dateLayout = createDateModel("date", "Enter a Date", true, { [PLACEHOLDER]: "Boogity"});
+const numberField = createCurrencyModel("number", "Enter a Number", true, { [PLACEHOLDER]: "Bacon uints"});
+const texty = createAnyModel(FIELD_TYPES.TEXT, "texty", "Enter some text", true, { [PLACEHOLDER]: "Pop Tarts"});
 
 const FormTester = () => {
   const useFormObject = useForm({
@@ -11,6 +13,8 @@ const FormTester = () => {
     defaultValues: {
       organizationId: 2,
       date: null,
+      number: 0,
+      texty: "",
     }
   });
 
@@ -33,9 +37,16 @@ const FormTester = () => {
     ],
   };
   const emptyMap = new Map();
-  const field = parseField(layout, emptyMap);
-  const field2 = parseField(dateLayout, emptyMap);
+  const field = parseField(layout);
+  const field2 = parseField(dateLayout);
+  const field3 = parseField(numberField);
+  const field4 = parseField(texty);
+  const myValue = getFieldValue(field3, {number: '0'});
+  const myValue2= getFieldValue(field4, {texty: 'sherbert'});
+  console.log('myValue', myValue)
+  console.log('myValue2', myValue2)
   const getOptionDisabled = (option) => {
+    console.log(option);
     if (option.id === 1) {
       return true;
     }
@@ -48,6 +59,7 @@ const FormTester = () => {
     <form>
       <AnyField layout={field.render} control={control} fieldComponentProps={fieldComponentProps} />
       <AnyField layout={field2.render} control={control} />
+      <AnyField layout={field3.render} control={control} />
     </form>
   )
 }
