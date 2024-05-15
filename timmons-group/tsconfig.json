@@ -27,7 +27,7 @@
     ],
     "include": [
         "src/**/*"
-, "../archive"    ],
+    ],
     "buildOptions": {
         "outDir": "./build",
         "declaration": true,
