@@ -40,7 +40,7 @@
 
   },
   "exports": {
-    ".": "./index.mjs",
+    ".": "./index.js",
     "./components": "./components/index.js",
     "./components/*": "./components/*",
     "./helpers": "./helpers/index.js",

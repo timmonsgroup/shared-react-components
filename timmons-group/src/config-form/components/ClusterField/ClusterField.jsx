@@ -11,11 +11,10 @@ import { Button, Divider, FormHelperText, useTheme, useMediaQuery, Typography, U
 // SRC Components
 import AnyField from '../AnyField';
 import AnyFieldLabel from '../AnyFieldLabel';
+import { createRowFields } from '../../helpers/formHelpers';
 
 // Hooks, helpers, and constants
-import {
-  getFieldValue, createRowFields
-} from '@timmons-group/shared-react-components';
+import { getFieldValue } from '../../hooks/useFormLayout';
 
 /**
  * ClusterField component will render a field that contains a list of subfields

@@ -1,9 +1,10 @@
 /** @module formHelpers */
 import '../models/form';
 import {
-  CONDITIONAL_RENDER, DATE_MSG, FIELD_TYPES as FIELDS, VALIDATIONS,
+  CONDITIONAL_RENDER, FIELD_TYPES as FIELDS,
   dateStringNormalizer, functionOrDefault, isEmpty, isObject
 } from '@timmons-group/shared-react-components';
+import { DATE_MSG, VALIDATIONS } from '../constants';
 
 import {
   string, array, date, number, object

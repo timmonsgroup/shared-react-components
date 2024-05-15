@@ -8,7 +8,7 @@ import { object } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // Internal bits
-import { getFieldValue, useFormLayout } from '../hooks/useFormLayout';
+import { getFieldValue, useFormLayout } from '../timmons-group/src/config-form/hooks/useFormLayout';
 import axios from 'axios';
 
 import {

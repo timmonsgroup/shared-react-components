@@ -108,15 +108,13 @@
   },
   "dependencies": {},
   "exports": {
-    ".":  "./index.mjs",
+    ".":  "./index.js",
     "./components": "./components/index.js",
     "./components/*": "./components/*",
     "./helpers": "./helpers/index.js",
     "./helpers/*": "./helpers/*",
     "./hooks": "./hooks/index.js",
     "./hooks/*": "./hooks/*",
-    "./models": "./models/index.js",
-    "./models/*": "./models/*",
     "./muiTheme": "./muiTheme.js",
     "./constants": "./constants.js"
   }

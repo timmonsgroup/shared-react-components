@@ -1,5 +1,5 @@
 /** @module useFormLayout */
-import { useLayout } from './useData.js';
+import { useLayout, dateStringNormalizer } from '@timmons-group/shared-react-components';
 import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../../config-form/helpers/formHelpers.js';
 import axios from 'axios';
-import { dateStringNormalizer } from '../helpers/helpers.js';
 import { LegacyParsedFormField, LegacyLayoutField, LegacyDropdownRenderProps, LegacyDateRenderProps, LegacyLongTextRenderProps, LegacyTextRenderProps, LegacyClusterRenderProps, LegacyParsedSection } from '../models/formLegacy.model';
 import { Conditional } from '../models/formFields.model';
 

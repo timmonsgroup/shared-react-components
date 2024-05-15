@@ -3,6 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { useFormContext } from 'react-hook-form';
+import {
+  SubHeader, LoadingSpinner, functionOrDefault, FIELD_TYPES, SectionTop
+} from '@timmons-group/shared-react-components';
 
 // Third party components
 import { Button, Card, CardContent, Container, Stack, Skeleton } from '@mui/material';
@@ -10,9 +13,7 @@ import {Unstable_Grid2 as Grid} from '@mui/material';
 
 // Internal bits
 import DynamicField from '../DynamicField';
-import {
-  SubHeader, LoadingSpinner, createRowFields, functionOrDefault, FIELD_TYPES, SectionTop
-} from '@timmons-group/shared-react-components';
+import { createRowFields } from '../../helpers/formHelpers';
 
 /** @module FormSections */
 /**

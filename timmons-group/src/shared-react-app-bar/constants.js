@@ -7,7 +7,6 @@ export const AUTH_STATES = Object.freeze({
   REFRESHING_TOKEN: 'REFRESHING_TOKEN',
   ERROR: 'ERROR'
 });
-export const DATE_MSG = 'Must be a valid date';
 
 export const DATA_STATES = Object.freeze({
   IDLE: 0,

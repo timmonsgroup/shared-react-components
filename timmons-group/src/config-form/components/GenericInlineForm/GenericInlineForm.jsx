@@ -7,12 +7,14 @@ import { useFormContext } from 'react-hook-form';
 
 // Third party components
 import { Button, CardContent, Container, Stack, Box, Skeleton, useTheme } from '@mui/material';
+import {
+  LoadingSpinner, functionOrDefault, SectionTop
+} from '@timmons-group/shared-react-components';
 
 
 // Internal bits
-import {
-  LoadingSpinner, createRowFields, functionOrDefault, SectionRow, SectionTop
-} from '@timmons-group/shared-react-components';
+import { SectionRow } from '../GenericConfigForm/GenericConfigForm';
+import { createRowFields } from '../../helpers/formHelpers';
 
 /**
  * Renderer for a section with

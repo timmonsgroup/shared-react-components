@@ -15,11 +15,10 @@ import {
   ID_FIELD,
   LABEL_FIELD,
   CONDITIONAL_RENDER,
-  DEFAULT_VALUE,
-  FIELD_TYPES,
-  ANY_VALUE
+  FIELD_TYPES
 } from '@timmons-group/shared-react-components';
 
+import { DEFAULT_VALUE, ANY_VALUE } from '../constants';
 
 
 /**

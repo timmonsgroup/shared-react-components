@@ -38,6 +38,8 @@ export const FIELD_TYPES = Object.freeze({
   NONE: 999
 });
 
+export const DATE_MSG = 'Must be a valid date';
+
 export const REQUIRED = 'required';
 export const PLACEHOLDER = 'placeholder';
 export const DISABLED = 'disabled';
