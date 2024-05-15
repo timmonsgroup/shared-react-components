@@ -8,14 +8,15 @@ import { object } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // Internal bits
-import { getFieldValue, useFormLayout } from './useFormLayout';
+import { getFieldValue, useFormLayout } from '../hooks/useFormLayout';
 import axios from 'axios';
+
 import {
   ID_FIELD,
   LABEL_FIELD,
-  CONDITIONAL_RENDER
-} from '../constants';
-import { objectReducer } from '../helpers';
+  CONDITIONAL_RENDER,
+  objectReducer
+} from '@timmons-group/shared-react-components';
 
 /**
  * @typedef {Object} UseDynamicFormReturn

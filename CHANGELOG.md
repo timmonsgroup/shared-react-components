@@ -5,6 +5,10 @@
  - Removed JWTUtil and its test file from shared-react-components
  - Removed formHelpers from shared-react-components
  - MUI X Datepickers have been upgrade to 7.x
+ - DATA_STATUS, ACLS, and AUTH_STATUS have been removed from SRC constants
+
+### Notes ###
+FIELD_TYPES, CONDITIONAL_RENDER and several other magic strings have been duplicated to the new config-form repo. WE can rexamine this later
 
 ## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###

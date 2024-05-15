@@ -11,5 +11,4 @@ export { default as RequiredIndicator } from '../../config-form/components/Requi
 export { default as TooltipIcon } from './TooltipIcon';
 export { default as LinkBehavior } from './LinkBehavior';
 export * from './SectionTop';
-export * from '../../config-form/components/GenericConfigForm';
 export * from './ConfigView';

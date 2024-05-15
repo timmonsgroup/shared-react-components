@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Box, TextField, Autocomplete, FormHelperText } from '@mui/material';
 import AnyFieldLabel from '../AnyFieldLabel';
 import FormErrorMessage from '../FormErrorMessage';
-import { isEmpty } from '../../../shared-react-components/helpers';
+import { isEmpty } from '@timmons-group/shared-react-components';
 
 /**
  * Wrapper of the Mui Autocomplete component
@@ -109,7 +109,7 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
       }}
       renderOption={
         (optProps, option) => (
-        // We're generating a more verbose key here in the event of bad data
+          // We're generating a more verbose key here in the event of bad data
           <Box component="li" {...optProps} key={`${option.id ?? option.value}-${option.label || option.name}`}>
             {option.label ?? option.name}
           </Box>

@@ -178,6 +178,8 @@ export default {
     commonjs(),
     copy({
       targets: [
+        { src: 'src/config-form/package.json', dest: 'build/config-form', transform: packageJsonTransform },
+        { src: 'src/config-form/README.md', dest: 'build/config-form' },
         { src: 'src/shared-auth-config/package.json', dest: 'build/shared-auth-config', transform: packageJsonTransform },
         { src: 'src/shared-auth-config/README.md', dest: 'build/shared-auth-config' },
         { src: 'src/shared-react-auth/package.json', dest: 'build/shared-react-auth', transform: packageJsonTransform },
@@ -349,7 +351,7 @@ export default {
     "@mui/x-date-pickers/YearPicker",
     "@mui/x-date-pickers/DateTimePicker",
     "@mui/x-date-pickers/AdapterLuxon",
-    
+
     "@date-io",
     "@date-io/dayjs",
     "@date-io/luxon",

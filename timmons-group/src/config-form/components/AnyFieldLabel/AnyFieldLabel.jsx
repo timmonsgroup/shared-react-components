@@ -6,7 +6,7 @@ import {
   InputLabel, Box, FormLabel, FormHelperText, useTheme
 } from '@mui/material';
 import RequiredIndicator from '../RequiredIndicator';
-import TooltipIcon from '../../../shared-react-components/components/TooltipIcon';
+import { TooltipIcon } from '@timmons-group/shared-react-components';
 
 /**
  * Icons for info icons

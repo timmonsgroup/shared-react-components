@@ -5,20 +5,21 @@ import { useEffect, useMemo, useState, useLayoutEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { object } from 'yup';
+import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // Internal bits
 import { getFieldValue } from './useFormLayout';
-import axios from 'axios';
 import {
+  objectReducer,
   ID_FIELD,
   LABEL_FIELD,
   CONDITIONAL_RENDER,
   DEFAULT_VALUE,
   FIELD_TYPES,
   ANY_VALUE
-} from '../constants';
-import { objectReducer } from '../helpers';
+} from '@timmons-group/shared-react-components';
+
 
 
 /**
@@ -78,8 +79,8 @@ export const processDynamicFormLayout = (formLayout, data) => {
  * @returns {Array} - Array of fields that need to be updated
  */
 const getUpdatedFields = (triggerField, fields, triggerId, triggerValue, options, formValue) => {
-  
-  if(formValue === '') formValue = null;
+
+  if (formValue === '') formValue = null;
   const updatedFields = [];
 
   // This is a hack to handle the fact that the form values maybe strings or numbers

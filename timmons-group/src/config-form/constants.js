@@ -86,18 +86,17 @@ export const SPECIAL_ATTRS = Object.freeze({
   LABEL_FIELD
 });
 
-export const GRID_ACTION_TYPE = Object.freeze({
-  ADD: 'add',
-  EDIT: 'edit',
-  DELETE: 'delete',
-  VIEW: 'view',
-  CUSTOM: 'custom'
-});
-
-export const STATIC_TYPES = Object.freeze({
-  HEADER: 'header',
-  TEXT: 'text',
-  DIVIDER: 'divider',
-  COMPONENT: 'component',
-  IMAGE: 'image',
+export const VALIDATIONS = Object.freeze({
+  REQUIRED,
+  INTEGER_DIGITS: 'integerDigits',
+  FRACTIONAL_DIGITS: 'fractionalDigits',
+  MAX_VALUE,
+  MIN_VALUE,
+  MAX_LENGTH,
+  MIN_LENGTH,
+  EMAIL,
+  PHONE,
+  ZIP,
+  DISABLE_FUTURE,
+  REGEXP_VALIDATION: 'regexpValidation',
 });

@@ -13,8 +13,9 @@ import AnyField from '../AnyField';
 import AnyFieldLabel from '../AnyFieldLabel';
 
 // Hooks, helpers, and constants
-import { getFieldValue } from '../../../shared-react-components/hooks';
-import { createRowFields } from '../../../shared-react-components/helpers';
+import {
+  getFieldValue, createRowFields
+} from '@timmons-group/shared-react-components';
 
 /**
  * ClusterField component will render a field that contains a list of subfields

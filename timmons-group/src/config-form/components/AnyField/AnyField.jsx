@@ -15,9 +15,8 @@ import Typeahead from '../Typeahead';
 import FormErrorMessage from '../FormErrorMessage';
 import AnyFieldLabel from '../AnyFieldLabel';
 
-import { FIELD_TYPES } from '../../../shared-react-components/constants';
-import { isObject } from '../../../shared-react-components/helpers';
-import { dateStringNormalizer, isEmpty } from '../../../shared-react-components/helpers/helpers';
+import { FIELD_TYPES, isObject, dateStringNormalizer, isEmpty } from '@timmons-group/shared-react-components';
+
 
 const makeFilter = (checkedId) => {
   const checkId = isObject(checkedId) ? checkedId.id : checkedId;
