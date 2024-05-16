@@ -12,22 +12,23 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/x-date-pickers": "^7.3.2",
+    "@hookform/resolvers": "^3.4.0",
+    "@mui/x-date-pickers": "^7.4.0",
     "date-fns": "^2.30.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.51.3"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.51.4"
   },
   "devDependencies": {
-    "@timmons-group/config-form": "file://../../timmons-group/build/config-form/",
-    "@timmons-group/shared-react-components": "file://../../timmons-group/build/shared-react-components/",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
+    "@timmons-group/config-form": "file:../../timmons-group/build/config-form",
+    "@timmons-group/shared-react-components": "file:../../timmons-group/build/shared-react-components",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.6",
-    "vite": "^5.2.0"
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "vite": "^5.2.11"
   }
 }
