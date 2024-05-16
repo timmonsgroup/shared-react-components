@@ -40,7 +40,7 @@ const FormTester = () => {
       {id: 3, name: "Org 3"},
     ],
   };
-  const emptyMap = new Map();
+
   const field = parseField(layout);
   const field2 = parseField(dateLayout);
   const field3 = parseField(numberField);

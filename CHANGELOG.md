@@ -19,6 +19,11 @@
    - Version 3.0.0 of `@hookform/resolvers` required yup version ^1.x (update in our 1.0.0 release) and we missed have upgrading this library too.
  - DATA_STATUS, ACLS, and AUTH_STATUS have been removed from SRC constants
 
+### Fixes ###
+- @timmons-group/config-form
+  - Fixed zero not being correctly hydrated by getFieldValue
+    - [Issue](https://github.com/timmonsgroup/shared-react-components/issues/12)
+
 ### Notes ###
 FIELD_TYPES, CONDITIONAL_RENDER and several other magic strings have been duplicated to the new config-form repo. We can rexamine this later
 There have been some README updates to explain how to build the libraries and test them in the playground
