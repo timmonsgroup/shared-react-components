@@ -1,14 +1,27 @@
 # Change Log #
 ## Release 2.0.0 - Eventually ##
+
+### Individual Change Logs ###
+- [Config Form](./timmons-group/src/config-form/CHANGELOG.md)
+
 ### Breaking Changes ###
- - ConfigForm, DynamicField, etc, etc have moved to separate repo
+ - ConfigForm, DynamicField, formHelpers, etc, etc have moved to separate repo
+  - Update your imports to use the new package
+  - `import {ConfigForm} from '@timmons-group/config-form'`
+  - TODO: List ALL the exports that have moved
  - Removed JWTUtil and its test file from shared-react-components
- - Removed formHelpers from shared-react-components
- - MUI X Datepickers have been upgrade to 7.x
+  - This was a duplicate of the JWTUtil in shared-auth-config
+  - In the rare event you were using exports from here make sure you are importing shared-auth-config
+    - `import { decodeTokenToJWT, parseCombinedToken } from '@timmons-group/shared-auth-config'`
+ - MUI X Datepickers library has been upgrade to ^7.4.0
+ - @hookform/resolvers library has been upgraded to ^3.1.1
+   - This should not have any breaking once the library version is updated
+   - Version 3.0.0 of `@hookform/resolvers` required yup version ^1.x (update in our 1.0.0 release) and we missed have upgrading this library too.
  - DATA_STATUS, ACLS, and AUTH_STATUS have been removed from SRC constants
 
 ### Notes ###
-FIELD_TYPES, CONDITIONAL_RENDER and several other magic strings have been duplicated to the new config-form repo. WE can rexamine this later
+FIELD_TYPES, CONDITIONAL_RENDER and several other magic strings have been duplicated to the new config-form repo. We can rexamine this later
+There have been some README updates to explain how to build the libraries and test them in the playground
 
 ## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###
