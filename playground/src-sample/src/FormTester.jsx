@@ -1,6 +1,9 @@
 import { AnyField, FIELD_TYPES, getFieldValue, parseField, PLACEHOLDER } from "@timmons-group/config-form"
 import { useForm } from "react-hook-form"
 import { createCurrencyModel, createDateModel, createAnyModel } from "./helpers/helpers";
+import { yupResolver } from '@hookform/resolvers/yup';
+
+console.log('yupResolver', yupResolver)
 
 const dateLayout = createDateModel("date", "Enter a Date", true, { [PLACEHOLDER]: "Boogity"});
 const numberField = createCurrencyModel("number", "Enter a Number", true, { [PLACEHOLDER]: "Bacon uints"});
@@ -15,7 +18,8 @@ const FormTester = () => {
       date: null,
       number: 0,
       texty: "",
-    }
+    },
+
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
