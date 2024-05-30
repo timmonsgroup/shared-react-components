@@ -2,7 +2,9 @@ import { ConfigForm, GenericConfigForm } from "@timmons-group/config-form";
 import { layout } from "./helpers/FormLayoutPreset";
 
 const ConfigFormTester = () => {
-  const formData = {}
+  const formData = {
+    email: 'duderino@gmail.com'
+  }
 
   const onSubmit = (data) => {
     console.log('onSubmit', data)
