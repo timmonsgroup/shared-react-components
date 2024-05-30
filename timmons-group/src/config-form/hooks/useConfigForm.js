@@ -247,7 +247,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       setFormProcessing,
       setReadyForWatches,
       defaultValues,
-      options: { ...options, setError, clearErrors }
+      options: { ...options, setError, resetField, clearErrors }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formLayout]);
@@ -282,7 +282,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       setFormProcessing,
       setReadyForWatches,
       defaultValues,
-      options
+      options: { ...options, setError, resetField, clearErrors }
     });
   };
 
@@ -339,7 +339,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
           triggerFields: formLayout.triggerFields,
           values: formValues,
           watchFields,
-          options,
+          options: { ...options, setError, resetField, clearErrors },
           fromWatch: true,
           finishSetup
         });
@@ -649,7 +649,8 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
  * @param {FetchChoicesOptions} object - url to load the data from
  * @returns {Promise<Array<object>>}
  */
-export const fetchChoices = async (fieldId, url, { clearErrors, setError, urlDomain, mappedId, mappedLabel, triggerFieldId, choiceFormatter }) => {
+export const fetchChoices = async (fieldId, url, { clearErrors, setError, resetField, urlDomain, mappedId, mappedLabel, triggerFieldId, choiceFormatter }) => {
+  resetField(fieldId);
   const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
   const things = await axios.get(fetchUrl).then(res => {
     // We may need to clear the error in the event that the error was caused by a previous failed attempt
