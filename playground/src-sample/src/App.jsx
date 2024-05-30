@@ -8,6 +8,7 @@ import FormTester from './FormTester'
 import { ContainerWithCard } from '@timmons-group/shared-react-components'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import ConfigFormTester from './ConfigFormTester'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,17 +17,9 @@ function App() {
     <ThemeProvider theme={Theme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <ConfigFormTester />
         <ContainerWithCard>
           <FormTester />
-          <Button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </Button>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test HMR
-          </p>
-          <p className="read-the-docs">
-            Click on the Vite and React logos to learn more
-          </p>
         </ContainerWithCard>
       </LocalizationProvider>
     </ThemeProvider>

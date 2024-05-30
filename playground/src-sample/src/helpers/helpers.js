@@ -33,3 +33,26 @@ export const createAnyModel = (fieldType, name, label, required = false, otherTh
     ...otherThings,
   }
 };
+
+export const createLayoutModel = (name, sections=[], layoutKey=null, editable = true) => {
+  return {
+    name,
+    sections,
+    id: 2,
+    modelId: 10,
+    enabled: true,
+    editable: true,
+    layoutKey: 'new_fd',
+    type: 1,
+  }
+}
+
+export const createSectionModel = (name, layout = [], editable = true, enabled = true, order = 0) => {
+  return {
+    name,
+    layout,
+    editable,
+    enabled,
+    order,
+  }
+}
