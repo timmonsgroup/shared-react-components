@@ -16,6 +16,8 @@ import { FIELD_TYPES } from '@timmons-group/shared-react-components';
  * @param {object} props - props object
  * @param {object} props.control - react-hook-form control object
  * @param {object} props.field - field object
+ * @param {object} [props.options] - options object
+ * @param {object} [props.fieldComponentProps] - field component props
  * @returns {React.ReactElement}
  * @example
  * <DynamicField
@@ -24,7 +26,7 @@ import { FIELD_TYPES } from '@timmons-group/shared-react-components';
     options={options.fieldOptions || {}}
   />
  */
-const DynamicField = ({ control, field, ...props }) => {
+const DynamicField = ({ control, field, options = {}, fieldComponentProps = {}, ...props }) => {
   const layout = field?.render || {};
   if (layout.hidden) {
     return null;
@@ -32,7 +34,7 @@ const DynamicField = ({ control, field, ...props }) => {
   const { type } = layout;
 
   if (type === FIELD_TYPES.CLUSTER) {
-    return <ClusterField control={control} field={field} {...props} />;
+    return <ClusterField control={control} field={field} options={options} {...props} />;
   }
 
   return (
@@ -45,5 +47,7 @@ DynamicField.propTypes = {
   field: PropTypes.shape({
     render: PropTypes.object,
   }),
+  options: PropTypes.object,
+  fieldComponentProps: PropTypes.object,
 };
 export default DynamicField;

@@ -155,16 +155,19 @@ export type TriggerCondition = {
   isValid: boolean;
 }
 
+export type TriggerFieldValues = Map<string, Map<string, any[]>>;
+export type TriggerFieldTouches = Map<string, Map<string, boolean>>;
+
 /**
  * @typedef {object} TriggerField
  * @property {string} id - field id
- * @property {Map<string, string>} fieldValues - map of field values
- * @property {Map<string, string>} touches - map of fields that trigger field could influence
+ * @property {TriggerFieldValues} fieldValues - map of field values
+ * @property {TriggerFieldTouches} touches - map of fields that trigger field could influence
  */
 export type TriggerField = {
   id: string;
-  fieldValues: Map<string, string>;
-  touches: Map<string, string>;
+  fieldValues: TriggerFieldValues;
+  touches: TriggerFieldTouches;
   hasOnChange?: boolean;
 }
 

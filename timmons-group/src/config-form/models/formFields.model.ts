@@ -46,8 +46,8 @@ export type Validations = {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
-  min?: number;
-  max?: number;
+  minValue?: number;
+  maxValue?: number;
   pattern?: string;
 }
 
@@ -59,9 +59,7 @@ export type Conditional = When & Then;
  * @example
  * {
  *  fieldId: 'firstName',
- *  operation: {
-  *  eq: 'John'
- *  },
+ *  operation:'eq'
  *  value: 'John'
  * }
  *

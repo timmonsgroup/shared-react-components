@@ -14,6 +14,7 @@ import {
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers';
 import { LegacyParsedFormField, LegacyLayoutField, LegacyDropdownRenderProps, LegacyDateRenderProps, LegacyLongTextRenderProps, LegacyTextRenderProps, LegacyClusterRenderProps, LegacyParsedSection } from '../models/formLegacy.model';
 import { Conditional } from '../models/formFields.model';
+import { TriggerField } from '../models/form';
 
 const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
@@ -406,7 +407,7 @@ function parseValidation(validationMap, data, debug = false) {
  * @param {Map<string, TriggerField>} triggerFields - map of trigger fields
  * @param {Array<TriggerCondition>} conditions - conditions
  */
-const parseConditions = (fieldId, triggerFields, conditions) => {
+const parseConditions = (fieldId, triggerFields:Map<string, TriggerField>, conditions) => {
   if (conditions?.length) {
     conditions.forEach((condition) => {
       const { when: triggerId, then: validations, isValid } = condition;
@@ -414,7 +415,7 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
 
       // touches is a map of every field that triggerfield could influence.
       // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
-      const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
+      const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map(), hasOnChange: false};
 
       if (isValid) {
         value = ANY_VALUE;
