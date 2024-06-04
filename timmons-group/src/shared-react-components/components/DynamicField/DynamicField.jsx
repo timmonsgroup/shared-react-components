@@ -32,7 +32,7 @@ const DynamicField = ({ control, field, ...props }) => {
   const { type } = layout;
 
   if (type === FIELD_TYPES.CLUSTER) {
-    return <ClusterField control={control} field={field} {...props} />;
+    return <ClusterField control={control} field={field} options={options} {...props} />;
   }
 
   return (
@@ -45,5 +45,7 @@ DynamicField.propTypes = {
   field: PropTypes.shape({
     render: PropTypes.object,
   }),
+  options: PropTypes.object,
+  fieldComponentProps: PropTypes.object,
 };
 export default DynamicField;
