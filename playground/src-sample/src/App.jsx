@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 import ConfigFormTester from './ConfigFormTester'
@@ -8,12 +5,9 @@ import Theme from '@timmons-group/shared-react-components/muiTheme'
 
 import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline } from '@mui/material'
-import FormTester from './FormTester'
+// import FormTester from './FormTester'
 
 function App() {
-  console.log('Theme', Theme)
-  const [count, setCount] = useState(0)
-
   return (
     <ThemeProvider theme={Theme}>
       <CssBaseline />
