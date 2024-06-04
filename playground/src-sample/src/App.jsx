@@ -3,8 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-import { LineLoader } from '@timmons-group/shared-react-components/components'
-import { LoadingSpinner } from '@timmons-group/shared-react-components/components'
+import { LineLoader, LoadingSpinner } from '@timmons-group/shared-react-components/components'
 import Theme from '@timmons-group/shared-react-components/muiTheme'
 
 import { ThemeProvider } from '@mui/material/styles'
