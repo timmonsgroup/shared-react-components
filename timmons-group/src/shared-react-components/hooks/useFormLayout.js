@@ -1,7 +1,8 @@
 /** @module useFormLayout */
+import axios from 'axios';
+
 import '../models/form.js';
 import { useLayout } from './useData.js';
-import '../models/form.js';
 import {
   FIELD_TYPES as FIELDS, VALIDATIONS, CONDITIONAL_RENDER,
   SPECIAL_ATTRS, ID_FIELD, LABEL_FIELD, DEFAULT_VALUE,
@@ -13,7 +14,6 @@ import {
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
-import axios from 'axios';
 import { dateStringNormalizer } from '../helpers/helpers.js';
 
 const validationTypes = Object.values(VALIDATIONS);
@@ -63,14 +63,17 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
 
   const sections = [];
   const triggerFields = new Map();
+  const newTriggerFields= new Map();
   const fields = new Map();
   const asyncFields = new Map();
 
   if (layout.sections?.length) {
     layout.sections.forEach((section) => {
-      sections.push(parseSection(section, fields, triggerFields, asyncFields));
+      sections.push(parseSection(section, fields, triggerFields, asyncFields, { newTriggerFields }));
     });
   }
+
+  console.log('newTriggerFields', newTriggerFields);
 
   // Create validations for each field that has conditional validations
   triggerFields.forEach((trigField) => {
@@ -110,6 +113,8 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
       });
     });
   });
+
+  finishParseNewTriggerFields(newTriggerFields, fields);
 
   /**
    * Fetch any async data for the fields
@@ -159,8 +164,82 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
     }
   }
 
-  return { sections, fields, triggerFields };
+  return { sections, fields, triggerFields, newTriggerFields };
 };
+
+const finishParseNewTriggerFields = (triggerFields, fields) => {
+  // Create validations for each field that has conditional validations
+  triggerFields.forEach((trigField) => {
+    const touches = trigField.touches;
+    touches.forEach((conditions, touchedId) => {
+      console.log('Touched field Id', touchedId);
+      console.log('\tTouched field conditions for trigField', trigField.id, conditions);
+      conditions.forEach((condition, aFI) => {
+        const layout = new Map();
+        const validationProps = new Map();
+        if (!fields.has(touchedId)) {
+          console.log('missing field', touchedId);
+          return;
+        }
+        const field = fields.get(touchedId);
+        // Parse the validation props from the base field first
+        parseValidation(validationProps, field.modelData);
+        parseValidation(validationProps, field.render);
+
+        console.log('\tcondition', condition);
+
+        // loop through validation object
+        Object.keys(condition.then).forEach((key) => {
+          // Setting any dynamic rendering layout like "required" or "disabled" that must be visually represented
+          if (conditionalRenderProps.includes(key)) {
+            layout.set(key, condition.then[key]);
+          }
+
+          // Setting the actual validation props
+          if (validationTypes.includes(key)) {
+            // Any validation props in here will override the base field validation props
+            validationProps.set(key, condition.then[key]);
+          }
+        });
+
+        const { type, label } = field;
+        const mergedField = { ...field };
+        // Convert the layout map to an object
+        const dynRender = Object.fromEntries(layout);
+        // We'll pass the merged field to the createFieldValidation function so that it can use the dynamic render props (like requiredErrorText)
+        mergedField.render = { ...field.render, ...dynRender };
+        // Create a yup validation for the field that is triggered by the triggerField
+        condition.then = {
+          layout,
+          validation: createFieldValidation(type, label, validationProps, mergedField)
+        };
+      });
+    });
+  });
+}
+
+const parseNewConditions = (fieldId, triggerFields, conditions) => {
+  if (!conditions || conditions.length === 0) {
+    return;
+  }
+
+  conditions.forEach((condition) => {
+    const processedCondition = isNewConditional(condition) ? condition : transformLegacyCondition(condition);
+    const triggerId = processedCondition.when.fieldId;
+
+    // // touches is a map of every field that triggerfield could influence.
+    // // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
+    const trigField = triggerFields.get(triggerId) || { id: triggerId, touches: new Map() };
+    const affectedFieldConditions = trigField.touches.get(fieldId) || [];
+    // console.log('affectedFieldConditions', affectedFieldConditions);
+    affectedFieldConditions.push(processedCondition);
+    trigField.touches.set(fieldId, affectedFieldConditions);
+    // console.log('updated affectedFieldConditions', trigField.touches.get(fieldId));
+
+    triggerFields.set(triggerId, trigField);
+    console.log('updated triggerField', triggerFields.get(triggerId));
+  });
+}
 
 /**
  * Parse a section
@@ -171,7 +250,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
  * @param {Map<string, string>} asyncFieldsMap
  * @returns {ParsedSection} - parsed section
  */
-export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap) {
+export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap, options) {
   if (!section) {
     return {};
   }
@@ -195,6 +274,7 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
         const { conditions } = parsedField;
         if (conditions.length) {
           parseConditions(field.path, triggerFieldMap, conditions);
+          parseNewConditions(field.path, options.newTriggerFields, conditions);
         }
       }
     });
@@ -376,16 +456,19 @@ function parseValidation(validationMap, data, debug = false) {
 const parseConditions = (fieldId, triggerFields, conditions) => {
   if (conditions?.length) {
     conditions.forEach((condition) => {
-      const { when: triggerId, then: validations, isValid } = condition;
+      const { when: triggerId, then: validations, isValid, isNot } = condition;
       let value = condition?.is?.toString();
 
       // touches is a map of every field that triggerfield could influence.
       // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
       const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
 
-      if (isValid) {
+      if (isValid || isNot === null) {
         value = ANY_VALUE;
         trigField.hasOnChange = true;
+      } else if (isNot !== undefined) {
+        value = isNot.toString();
+        trigField.hasNot = true;
       }
 
       const fieldValues = trigField.fieldValues.get(value) || new Map();
@@ -402,6 +485,41 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
     });
   }
 };
+
+// export type When = {
+//   fieldId: string;
+//   operation: Operation;
+//   value: string | number | boolean | RegExp;
+//   and?: Whens;
+//   or?: Whens;
+// }
+
+const isWhen = (when) => {
+  let validWhen = false;
+  if (when?.fieldId && when?.operation && when?.value !== undefined) {
+    validWhen = true;
+  }
+  console.log('validWhen', validWhen, when)
+  return validWhen;
+}
+
+const isNewConditional = (conditional) => {
+  return isWhen(conditional?.when) && conditional?.then;
+}
+
+//export type Operation = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'in' | 'notIn' | 'regex' | 'notRegex' | 'isNull' | 'isNotNull';
+const transformLegacyCondition = (condition) => {
+  const { when: fieldId, then, isValid } = condition;
+  let value = condition?.is?.toString();
+  return {
+    when: {
+      fieldId,
+      value,
+      operation: isValid ? 'isNotNull' : 'eq'
+    },
+    then
+  }
+}
 
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.

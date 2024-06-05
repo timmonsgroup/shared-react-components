@@ -457,8 +457,13 @@ const moneyChild = {
         hidden: false,
         minValue: 3.01,
       },
-      when: 'moMoney',
-      is: 100,
+      // when: 'moMoney',
+      when: {
+        fieldId: 'moMoney',
+        operation: 'gte',
+        value: 100
+      },
+      // is: 100,
     },
   ],
   required: true,
@@ -551,95 +556,95 @@ export const layout = {
           // integerField,
           moneyField,
           anotherCluster,
-          // moneyChild
+          moneyChild
         ],
       },
-      {
-        name: "I' another Section",
-        description: "I'm a description",
-        editable: true,
-        enabled: true,
-        order: 10,
-        layout: [
-          {
-            label: 'Department Type 2',
-            path: 'fdType2',
-            type: 0,
-            model: {
-              id: 8,
-              modelid: 10,
-              type: 0,
-              name: 'fdType2',
-              data: {},
-            },
-            iconHelperText:
-              'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
-            required: false,
-            readOnly: true,
-            hidden: true,
-            conditions: [
-              {
-                then: {
-                  renderPropertyId: 'fireDepartmentType.name',
-                  hidden: false,
-                },
-                when: 'fireDepartment',
-                isValid: true,
-              },
-            ],
-          },
-          {
-            label: 'Department ID',
-            path: 'departmentId',
-            type: 0,
-            model: {
-              id: 7,
-              modelid: 10,
-              type: 0,
-              name: 'departmentId',
-              data: {},
-            },
-            required: false,
-            readOnly: true,
-            placeholder: 'But why?',
-            hidden: true,
-            conditions: [
-              {
-                then: {
-                  renderPropertyId: 'fdid',
-                  hidden: false,
-                },
-                when: 'fireDepartment',
-                isValid: true,
-              },
-            ],
-          },
-          {
-            label: 'Cluster Must Validate',
-            path: 'validateCluster',
-            type: 0,
-            model: {
-              id: 7,
-              modelid: 10,
-              type: 0,
-              name: 'validateCluster',
-              data: {},
-            },
-            required: false,
-            hidden: true,
-            conditions: [
-              {
-                then: {
-                  hidden: false,
-                  helperText: 'You have at least one cluster. I appear',
-                },
-                when: 'amCluster',
-                isValid: true,
-              },
-            ],
-          },
-        ],
-      },
+      // {
+      //   name: "I' another Section",
+      //   description: "I'm a description",
+      //   editable: true,
+      //   enabled: true,
+      //   order: 10,
+      //   layout: [
+      //     {
+      //       label: 'Department Type 2',
+      //       path: 'fdType2',
+      //       type: 0,
+      //       model: {
+      //         id: 8,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'fdType2',
+      //         data: {},
+      //       },
+      //       iconHelperText:
+      //         'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
+      //       required: false,
+      //       readOnly: true,
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             renderPropertyId: 'fireDepartmentType.name',
+      //             hidden: false,
+      //           },
+      //           when: 'fireDepartment',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Department ID',
+      //       path: 'departmentId',
+      //       type: 0,
+      //       model: {
+      //         id: 7,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'departmentId',
+      //         data: {},
+      //       },
+      //       required: false,
+      //       readOnly: true,
+      //       placeholder: 'But why?',
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             renderPropertyId: 'fdid',
+      //             hidden: false,
+      //           },
+      //           when: 'fireDepartment',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Cluster Must Validate',
+      //       path: 'validateCluster',
+      //       type: 0,
+      //       model: {
+      //         id: 7,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'validateCluster',
+      //         data: {},
+      //       },
+      //       required: false,
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             hidden: false,
+      //             helperText: 'You have at least one cluster. I appear',
+      //           },
+      //           when: 'amCluster',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
     ],
   },
 };

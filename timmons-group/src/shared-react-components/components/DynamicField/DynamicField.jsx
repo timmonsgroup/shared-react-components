@@ -16,6 +16,8 @@ import { FIELD_TYPES } from '../../constants';
  * @param {object} props - props object
  * @param {object} props.control - react-hook-form control object
  * @param {object} props.field - field object
+ * @param {object} [props.options] - options object
+ * @param {object} [props.fieldComponentProps] - field component props
  * @returns {React.ReactElement}
  * @example
  * <DynamicField
@@ -24,7 +26,7 @@ import { FIELD_TYPES } from '../../constants';
     options={options.fieldOptions || {}}
   />
  */
-const DynamicField = ({ control, field, ...props }) => {
+const DynamicField = ({ control, field, options = {}, fieldComponentProps = {}, ...props }) => {
   const layout = field?.render || {};
   if (layout.hidden) {
     return null;
@@ -36,7 +38,7 @@ const DynamicField = ({ control, field, ...props }) => {
   }
 
   return (
-    <AnyField layout={layout} control={control} {...props} />
+    <AnyField layout={layout} control={control} {...props} fieldComponentProps={fieldComponentProps}/>
   );
 };
 

@@ -128,6 +128,7 @@ AnyField.propTypes = {
   options: PropTypes.object,
   isNested: PropTypes.bool,
   nestedName: PropTypes.string,
+  fieldComponentProps: PropTypes.object,
 };
 
 /**
