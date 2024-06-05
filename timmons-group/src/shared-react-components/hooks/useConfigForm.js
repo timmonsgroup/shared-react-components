@@ -53,7 +53,8 @@ export const processDynamicFormLayout = (formLayout, data) => {
         }
 
         // If this field exists in the triggerfields we need to watch the form for changes
-        if (formLayout.newTriggerFields.has(fieldId)) {
+        // if (formLayout.newTriggerFields.has(fieldId)) {
+        if (formLayout.triggerFields.has(fieldId)) {
           fieldsToWatch[fieldId] = true;
         }
       }
@@ -166,6 +167,13 @@ const getNewUpdatedFields = (triggerField, fields, triggerId, formValue, options
   let affectedFields = triggerField.touches || [];
   affectedFields.forEach((conditions, touchedId) => {
     //check all the conditions
+    const conditional = {
+      hasAsync: false,
+      loadedChoices: {},
+      hasRenderValue: false,
+      isUpdating: false,
+      noPasses: true
+    };
     console.log('Touched: ', touchedId, 'Conditions: ', conditions);
     conditions.forEach(({ when, then }) => {
       const { operation, value } = when;
@@ -173,13 +181,8 @@ const getNewUpdatedFields = (triggerField, fields, triggerId, formValue, options
       const passes = checkConditional(when, formValue);
       console.log('Passes? ', passes)
       if (passes) {
+        conditional.noPasses = false;
         const loadOut = then;
-        const conditional = {
-          hasAsync: false,
-          loadedChoices: {},
-          hasRenderValue: false,
-          isUpdating: false,
-        };
         // If the field has a remoteUrl, we need to fetch the data
         const layout = loadOut?.layout;
         const isHidden = layout?.get(CONDITIONAL_RENDER.HIDDEN);
@@ -217,8 +220,9 @@ const getNewUpdatedFields = (triggerField, fields, triggerId, formValue, options
 
         conditional.isUpdating = true;
         conditional.loadOut = loadOut;
-        updatedFields.push({ id: touchedId, conditional });
+        // updatedFields.push({ id: touchedId, conditional });
       }
+      updatedFields.push({ id: touchedId, conditional });
     });
   });
   console.log('NEW Updated Fields: ', updatedFields);
@@ -502,7 +506,9 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
   }
 
   const areUpdating = {};
+  const newAreUpdating = {};
   const updatedFields = [];
+  const newUpdatedFields = [];
   const asyncLoaders = {};
   const loadedChoices = {};
   const dynValid = {};
@@ -520,10 +526,22 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
     }
   };
 
+  const updateNewConditional = (fieldId, conditional) => {
+    if (conditional.isUpdating && !conditional.noPasses) {
+      newAreUpdating[fieldId] = true;
+      // if (conditional.hasAsync && conditional.asyncLoader) {
+      //   hasAsync = true;
+      //   asyncLoaders[fieldId] = conditional.asyncLoader;
+      // })
+      newUpdatedFields.push({ id: fieldId, type: 'update', ...conditional.loadOut });
+    }
+  };
+
   // Loop through all the triggerFields and see if the initial values have caused any fields to be updated
   watchFields.forEach((fieldId) => {
+    const usedTF = triggerFields;
     // If somehow watching a field that is not in the formLayout, skip it
-    const triggerField = newTriggerFields.get(fieldId);
+    const triggerField = usedTF.get(fieldId);
     if (!triggerField) {
       return;
     }
@@ -537,36 +555,36 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
     const formValue = values[fieldId];
 
     // Loop through all the fields that are dependent on this triggerField
-    // const updated = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
-    // console.log('Updated: ', updated);
-    // updated.forEach(({ id, conditional }) => {
-    //   updateConditional(id, conditional);
-    // });
+    const updated = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
+    console.log('Updated: ', updated);
+    updated.forEach(({ id, conditional }) => {
+      updateConditional(id, conditional);
+    });
 
     const updatednew = getNewUpdatedFields(newTriggerField, fields, fieldId, formValue, options);
     updatednew.forEach(({ id, conditional }) => {
-      updateConditional(id, conditional);
+      updateNewConditional(id, conditional);
     });
-    // console.
+    console.log('Updated New: ', updatednew);
 
     // A flag to determine if this "onChange" field has a null value. If it does, we need to handle resets for affected fields heavy handedly
     let nullChangeValue = false;
 
     // Check for any "onChange" fields
     // We have to run a separate loop because conditions could be met for a specific value AND for ANY_VALUE (i.e. not null)
-    // if (triggerField.hasOnChange) {
-    //   // If the value is null, we need to handle the reset of the affected fields
-    //   if (formValue !== null && formValue !== undefined && formValue !== '' && formValue?.length > 0) {
-    //     const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
-    //     console.log('Any Updates: ', anyUpdates);
-    //     anyUpdates.forEach(({ id, conditional }) => {
-    //       updateConditional(id, conditional);
-    //     });
-    //   } else {
-    //     // Not needed for initial render
-    //     nullChangeValue = true;
-    //   }
-    // }
+    if (triggerField.hasOnChange) {
+      // If the value is null, we need to handle the reset of the affected fields
+      if (formValue !== null && formValue !== undefined && formValue !== '' && formValue?.length > 0) {
+        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
+        console.log('Any Updates: ', anyUpdates);
+        anyUpdates.forEach(({ id, conditional }) => {
+          updateConditional(id, conditional);
+        });
+      } else {
+        // Not needed for initial render
+        nullChangeValue = true;
+      }
+    }
 
     // If this update is from a watch, we need to handle the reset of the affected fields
     if (fromWatch) {
@@ -575,27 +593,39 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
       const touchedFields = triggerField.touches;
 
       // Add a reset to the updatedFields array
-      const addReset = (fieldId) => {
-        if (!areUpdating[fieldId]) {
-          areUpdating[fieldId] = true;
-          updatedFields.push({ id: fieldId, type: 'reset' });
+      const addReset = (rID) => {
+        if (!areUpdating[rID]) {
+          areUpdating[rID] = true;
+          updatedFields.push({ id: rID, type: 'reset' });
         }
       };
 
+      updatednew.forEach(({ id, conditional }) => {
+        if (conditional.noPasses) {
+          if (!newAreUpdating[id]) {
+            newAreUpdating[id] = true;
+            newUpdatedFields.push({ id: id, type: 'reset' });
+          }
+        }
+      });
+
       // Determine any fields that need to be reset
-      touchedFields.forEach((value, fieldId) => {
+      touchedFields.forEach((value, tID) => {
         // If this field is not affected by the new value, it needs to be reset (probably)
         // We check if the field is already being updated because we don't want to reset a field that is being updated
         // This would happen with a field that has a remoteUrl that updates on EVERY triggerfield change.
-        // if (!value.has(formValue)) {
-        //   addReset(fieldId);
-        // } else if (value.has(ANY_VALUE) && nullChangeValue) {
-        //   // We need to reset any fields that may have been triggered by an ANY_VALUE trigger and allow it to be reset when the triggerfield is null
-        //   addReset(fieldId);
-        // }
+        if (!value.has(formValue)) {
+          addReset(tID);
+        } else if (value.has(ANY_VALUE) && nullChangeValue) {
+          // We need to reset any fields that may have been triggered by an ANY_VALUE trigger and allow it to be reset when the triggerfield is null
+          addReset(tID);
+        }
       });
     }
   });
+
+  console.log('Updated Fields: ', updatedFields);
+  console.log('NEW Updated Fields: ', newUpdatedFields);
 
   const hasUpdates = Object.keys(areUpdating).length > 0;
   if (hasUpdates) {

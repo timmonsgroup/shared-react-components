@@ -427,7 +427,8 @@ const moneyField = {
         minValue: 3.01,
       },
       when: 'email',
-      isValid: true,
+      is:'dude@gmail.com'
+      // isValid: true,
     },
   ],
   required: true,
@@ -457,13 +458,13 @@ const moneyChild = {
         hidden: false,
         minValue: 3.01,
       },
-      // when: 'moMoney',
-      when: {
-        fieldId: 'moMoney',
-        operation: 'gte',
-        value: 100
-      },
-      // is: 100,
+      when: 'moMoney',
+      // when: {
+      //   fieldId: 'moMoney',
+      //   operation: 'gte',
+      //   value: 100
+      // },
+      is: 100,
     },
   ],
   required: true,
