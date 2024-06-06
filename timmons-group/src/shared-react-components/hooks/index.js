@@ -6,6 +6,8 @@ export {
   parseField, getFieldValue, processFieldValue
 } from './useFormLayout.js';
 export { useDynamicForm } from './useDynamicForm.js';
-export { processDynamicFormLayout, useConfigForm, fetchChoices } from './useConfigForm.js';
+export {
+  processDynamicFormLayout, useConfigForm, fetchChoices, defaultChoiceFormatter, defaultChoiceMapper
+} from './useConfigForm.js';
 export { useToggle } from './useToggle.js';
 export {default as useQuery} from './useQuery.js';

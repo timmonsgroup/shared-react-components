@@ -21,6 +21,7 @@ import {
 import { objectReducer } from '../helpers';
 import { checkConditional } from '../helpers/formHelpers';
 
+const useNewConditionals = false;
 
 /**
  * @function processDynamicFormLayout
@@ -510,6 +511,7 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
   const updatedFields = [];
   const newUpdatedFields = [];
   const asyncLoaders = {};
+  const newAsyncLoaders = {};
   const loadedChoices = {};
   const dynValid = {};
   const resetFields = {};
@@ -529,31 +531,28 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
   const updateNewConditional = (fieldId, conditional) => {
     if (conditional.isUpdating && !conditional.noPasses) {
       newAreUpdating[fieldId] = true;
-      // if (conditional.hasAsync && conditional.asyncLoader) {
-      //   hasAsync = true;
-      //   asyncLoaders[fieldId] = conditional.asyncLoader;
-      // })
+      if (conditional.hasAsync && conditional.asyncLoader) {
+        hasAsync = true;
+        newAsyncLoaders[fieldId] = conditional.asyncLoader;
+      };
       newUpdatedFields.push({ id: fieldId, type: 'update', ...conditional.loadOut });
     }
   };
 
   // Loop through all the triggerFields and see if the initial values have caused any fields to be updated
   watchFields.forEach((fieldId) => {
-    const usedTF = triggerFields;
+    const usedTFs = useNewConditionals ? newTriggerFields : triggerFields;
     // If somehow watching a field that is not in the formLayout, skip it
-    const triggerField = usedTF.get(fieldId);
-    if (!triggerField) {
+    const usedTriggerField = usedTFs.get(fieldId);
+    if (!usedTriggerField) {
       return;
     }
 
     const newTriggerField = newTriggerFields.get(fieldId);
-    if (newTriggerField) {
-      console.log('newTriggerField', newTriggerField);
-    }
+    const triggerField = triggerFields.get(fieldId);
 
     // Get the starting value of the field
     const formValue = values[fieldId];
-
     // Loop through all the fields that are dependent on this triggerField
     const updated = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
     console.log('Updated: ', updated);
@@ -626,8 +625,10 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
 
   console.log('Updated Fields: ', updatedFields);
   console.log('NEW Updated Fields: ', newUpdatedFields);
+  const theUpdateObject = useNewConditionals ? newAreUpdating : areUpdating;
+  const theUsedUpdateFields = useNewConditionals ? newUpdatedFields : updatedFields;
 
-  const hasUpdates = Object.keys(areUpdating).length > 0;
+  const hasUpdates = Object.keys(theUpdateObject).length > 0;
   if (hasUpdates) {
     // If any of the affected fields have async needs, we need to wait for them to resolve
     if (hasAsync) {
@@ -646,7 +647,7 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
         // }
 
         Promise.all(optTypes).finally(() => {
-          renderSections = processConditionalUpdate(renderSections, fields, updatedFields, loadedChoices, dynValid, resetFields);
+          renderSections = processConditionalUpdate(renderSections, fields, theUsedUpdateFields, loadedChoices, dynValid, resetFields);
           if (finishSetup && typeof finishSetup === 'function') {
             finishSetup({ renderSections, dynValid, resetFields });
           }
@@ -656,7 +657,7 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
         });
       }
     } else {
-      renderSections = processConditionalUpdate(renderSections, fields, updatedFields, null, dynValid, resetFields);
+      renderSections = processConditionalUpdate(renderSections, fields, theUsedUpdateFields, null, dynValid, resetFields);
       finishSetup({ renderSections, dynValid, resetFields });
     }
   } else {
@@ -743,14 +744,45 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
 
 /**
  * @typedef {Object} FetchChoicesOptions
- * @property {string} urlDomain - domain to use when fetching the data
- * @property {string} mappedId - property to use when mapping the id
- * @property {string} mappedLabel - property to use when mapping the label
- * @property {string} triggerFieldId - id of the field that triggered the load
- * @property {function} choiceFormatter - function to format the choices
- * @property {function} clearErrors - function to clear errors
- * @property {function} setError - function to set errors
+ * @property {string} [urlDomain] - domain to use when fetching the data
+ * @property {string} [mappedId] - property to use when mapping the id
+ * @property {string} [mappedLabel] - property to use when mapping the label
+ * @property {string} [triggerFieldId] - id of the field that triggered the load
+ * @property {function} [choiceFormatter] - function to format the choices
+ * @property {function} [clearErrors] - function to clear errors
+ * @property {function} [setError] - function to set errors
  */
+
+/**
+ * The default choice formatter
+ * @param {object} item
+ * @param {object} [options] - options for the choice mapper
+ * @param {string} [options.mappedId] - property to use when mapping the id
+ * @param {string} [options.mappedLabel] - property to use when mapping the label
+ * @returns {Array<object>}
+ */
+export function defaultChoiceFormatter(item, options) {
+  const opt = item || {};
+  const { mappedId, mappedLabel } = options || {};
+  const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+  const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
+  return { id, label };
+}
+
+/**
+ * The default parser for fetching choices. Assumes data is an array of objects and a property on response
+ * @param {object} res - response from the fetch
+ * @param {object} [options] - options for the choice mapper
+ * @param {string} [options.mappedId] - property to use when mapping the id
+ * @param {string} [options.mappedLabel] - property to use when mapping the label
+ * @returns {Array<object>}
+ */
+export function defaultChoiceMapper(res, options) {
+  const { data } = res || {};
+  return data?.map((opt) => {
+    return defaultChoiceFormatter(opt, options);
+  });
+}
 
 /**
  * Loads the data for the async fields
@@ -774,12 +806,7 @@ export const fetchChoices = async (fieldId, url, { clearErrors, setError, urlDom
       return choiceFormatter(fieldId, res, { triggerFieldId, mappedId, mappedLabel });
     }
 
-    const { data } = res || {};
-    return data?.map((opt) => {
-      const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
-      const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
-      return { id, label };
-    });
+    return defaultChoiceMapper(res, { mappedId, mappedLabel });
   }
   ).catch(error => {
     if (error.name !== 'CanceledError') {

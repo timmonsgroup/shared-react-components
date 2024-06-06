@@ -1,4 +1,5 @@
 import { FIRE_DEPTS } from './LargeDataset';
+import { FIELD_TYPES } from '@timmons-group/shared-react-components';
 const FUNDING_SOURCES = [
   {
     id: 0,
@@ -427,8 +428,8 @@ const moneyField = {
         minValue: 3.01,
       },
       when: 'email',
-      is:'dude@gmail.com'
-      // isValid: true,
+      isValid: true,
+      // is:'dude@gmail.com'
     },
   ],
   required: true,
@@ -472,32 +473,33 @@ const moneyChild = {
 };
 
 const asyncTypeahead = {
-  label: 'Dog Facts',
-  path: 'anotherField',
+  label: 'Public Holidays',
+  path: 'asyncPublicHolidays',
   type: 10,
   model: {
     id: 5,
     modelid: 10,
     type: 2,
-    name: 'anotherField',
+    name: 'asyncPublicHolidays',
     data: {},
   },
-  placeholder: 'The typeahead will populate this field',
-  iconHelperText:
-    'Please select the Fire Department you are applying for funding on behalf of.',
-  helperText:
-    'You need to pick a fire department before I can hydrate this field.',
-  required: true,
-  conditions: [
-    {
-      when: 'fireDepartment',
-      isValid: true,
-      then: {
-        helperText: "I'm so glad you picked a fire department!",
-        url: 'https://dog-api.kinduff.com/api/facts?number=5',
-      },
-    },
-  ],
+  url: 'https://date.nager.at/api/v2/publicholidays/2020/US',
+  placeholder: 'Using the URL to populate this field',
+  // iconHelperText:
+  //   'Please select the Fire Department you are applying for funding on behalf of.',
+  // helperText:
+  //   'You need to pick a fire department before I can hydrate this field.',
+  // required: true,
+  // conditions: [
+  //   {
+  //     when: 'fireDepartment',
+  //     isValid: true,
+  //     then: {
+  //       helperText: "I'm so glad you picked a fire department!",
+  //       url: 'https://dog-api.kinduff.com/api/facts?number=5',
+  //     },
+  //   },
+  // ],
   disabled: false,
 };
 
@@ -526,6 +528,82 @@ const dateField = {
     'This error text appears when the date picker fails its disable future validation ${max}',
 };
 
+const virginiaCities = {
+  label: 'Cities',
+  placeholder: 'Select a city',
+  path: 'virginiaCities',
+  type: 10,
+  model: {
+    id: 5,
+    modelid: 10,
+    type: 10,
+    name: 'virginiaCities',
+  },
+  possibleChoices: [
+    {
+      name: 'Richmond',
+      id: 'richmond',
+    },
+    {
+      name: 'Charlottesville',
+      id: 'charlottesville',
+    },
+    {
+      name: 'Roanoke',
+      id: 'roanoke',
+    },
+    {
+      name: 'Blacksburg',
+      id: 'blacksburg',
+    },
+    {
+      name: 'Lynchburg',
+      id: 'lynchburg',
+    },
+    {
+      name: 'Staunton',
+      id: 'staunton',
+    },
+    {
+      name: 'Harrisonburg',
+      id: 'harrisonburg',
+    }
+  ],
+  required: false
+}
+
+
+const conditionalUrlField = {
+  "label": "Groups",
+  "path": "groups",
+  "type": FIELD_TYPES.OBJECT,
+  "model": {
+    "id": 2,
+    "modelid": 30,
+    "type": FIELD_TYPES.OBJECT,
+    "name": "groups",
+    "data": {
+      "useId": true,
+      // "multiple": true,
+      "objectTypeId": 20
+    }
+  },
+  "required": true,
+  "disabled": true,
+  "hidden": false,
+  "conditions": [
+    {
+      "then": {
+        "url": "https://api.openbrewerydb.org/v1/breweries?by_city=##thevalue##&per_page=10",
+        "disabled": false,
+        "required": true
+      },
+      "when": "virginiaCities",
+      "isValid": true
+    }
+  ]
+}
+
 export const layout = {
   layout: {
     data: {
@@ -547,6 +625,8 @@ export const layout = {
         layout: [
           customRegexField,
           emailField,
+          asyncTypeahead,
+          virginiaCities,
           // zipField,
           // phoneField,
           // fireDepartmentField,
@@ -555,6 +635,7 @@ export const layout = {
           // dateField,
           // clusterField,
           // integerField,
+          conditionalUrlField,
           moneyField,
           anotherCluster,
           moneyChild
@@ -761,3 +842,79 @@ export const inlineFormLayout = {
     ],
   },
 };
+
+// {
+//   "data": {
+//     "create": "/api/joinRequest/new",
+//       "idField": "streamID"
+//   },
+//   "id": 11,
+//     "modelId": 30,
+//       "enabled": true,
+//         "name": "Join Organization Request",
+//           "editable": true,
+//             "layoutKey": "join",
+//               "type": 1,
+//                 "sections": [
+//                   {
+//                     "editable": true,
+//                     "enabled": true,
+//                     "name": "Request Organization Access",
+//                     "order": 10,
+//                     "layout": [
+//                       {
+//                         "label": "Organization",
+//                         "path": "organization",
+//                         "type": 10,
+//                         "model": {
+//                           "id": 1,
+//                           "modelid": 30,
+//                           "type": 10,
+//                           "name": "organization",
+//                           "data": {
+//                             "useId": true,
+//                             "multiple": false,
+//                             "objectTypeId": 10
+//                           }
+//                         },
+//                         "required": true,
+//                         "disabled": false,
+//                         "hidden": false,
+//                         "url": "https://date.nager.at/api/v2/publicholidays/2020/US"
+//                       },
+//                       {
+//                         "label": "Groups",
+//                         "path": "groups",
+//                         "type": 10,
+//                         "model": {
+//                           "id": 2,
+//                           "modelid": 30,
+//                           "type": 10,
+//                           "name": "groups",
+//                           "data": {
+//                             "useId": true,
+//                             "multiple": true,
+//                             "objectTypeId": 20
+//                           }
+//                         },
+//                         "required": true,
+//                         "disabled": true,
+//                         "hidden": false,
+//                         "conditions": [
+//                           {
+//                             "then": {
+//                               "url": "/api/group/getAllForOrganization?organization=##thevalue##",
+//                               "disabled": false,
+//                               "required": true
+//                             },
+//                             "when": "organization",
+//                             "isValid": true
+//                           }
+//                         ],
+//                         "multiple": true,
+//                         "checkbox": true
+//                       }
+//                     ]
+//                   }
+//                 ]
+// }
