@@ -21,7 +21,7 @@ import {
 import { defaultChoiceMapper, objectReducer } from '../helpers';
 import { checkConditional } from '../helpers/formHelpers';
 
-const useNewConditionals = false;
+const useNewConditionals = true;
 
 /**
  * @function processDynamicFormLayout
@@ -192,10 +192,10 @@ const getNewUpdatedFields = (triggerField, fields, triggerId, formValue, options
           const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
           // Note the ID_FIELD and LABEL_FIELD are here different from the useFormLayout hook
           // These are the values on this field's CONDITIONAL layout, not the default layout
-          conditional.asyncLoader = () => fetchChoices(fieldId, remoteUrl, {
+          conditional.asyncLoader = () => fetchChoices(touchedId, remoteUrl, {
             mappedId: layout?.get(ID_FIELD),
             mappedLabel: layout?.get(LABEL_FIELD),
-            triggerFieldId: fieldId,
+            triggerFieldId: touchedId,
             ...options
           });
         }
@@ -319,7 +319,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       setFormProcessing,
       setReadyForWatches,
       defaultValues,
-      options: { ...options, setError, clearErrors }
+      options: { ...options, setError, clearErrors, resetField }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formLayout]);
@@ -354,7 +354,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       setFormProcessing,
       setReadyForWatches,
       defaultValues,
-      options
+      options: { ...options, setError, clearErrors, resetField }
     });
   };
 
@@ -365,6 +365,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
     if (readyForWatches && !subscription) {
       subscription = watch((formValues, { name, type }) => {
         let watched = watchFields.includes(name);
+        console.log('Watched: ', watched, 'Name: ', name, 'Type: ', type)
 
         // This field is not watched
         if (!watched) {
@@ -412,8 +413,9 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
           newTriggerFields: formLayout.newTriggerFields,
           values: formValues,
           watchFields,
-          options,
           fromWatch: true,
+          triggeringFieldId: name,
+          options: { ...options, setError, clearErrors, resetField },
           finishSetup
         });
       });
@@ -498,7 +500,7 @@ const initTheForm = ({ formLayout, setSections, validations, setValidations, isR
  * @param {object} props.options - Options object
  * @param {boolean} props.fromWatch - Whether or not this is being called from a watch
  */
-const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, values, watchFields, finishSetup, options, fromWatch }) => {
+const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, values, watchFields, finishSetup, options, fromWatch, triggeringFieldId }) => {
   let renderSections = fromWatch ? sections : [];
   if (!fromWatch) {
     sections.forEach(section => {
@@ -541,7 +543,10 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
   };
 
   // Loop through all the triggerFields and see if the initial values have caused any fields to be updated
-  watchFields.forEach((fieldId) => {
+  const watchesToCheck = fromWatch ? [triggeringFieldId] : watchFields;
+  console.log('Watches to Check: ', watchesToCheck);
+  console.log('All watches: ', watchFields);
+  watchesToCheck.forEach((fieldId) => {
     const usedTFs = useNewConditionals ? newTriggerFields : triggerFields;
     // If somehow watching a field that is not in the formLayout, skip it
     const usedTriggerField = usedTFs.get(fieldId);
@@ -765,7 +770,10 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
  * @param {FetchChoicesOptions} object - url to load the data from
  * @returns {Promise<Array<object>>}
  */
-export const fetchChoices = async (fieldId, url, { clearErrors, setError, urlDomain, mappedId, mappedLabel, triggerFieldId, choiceFormatter }) => {
+export const fetchChoices = async (fieldId, url, { clearErrors, setError, resetField, urlDomain, mappedId, mappedLabel, triggerFieldId, choiceFormatter }) => {
+  console.log('Fetching data for field', fieldId);
+  // If we are fetching new choices, we need to reset the field so the user is forced to make a new selection
+  resetField(fieldId);
   const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
   const things = await axios.get(fetchUrl).then(res => {
     // We may need to clear the error in the event that the error was caused by a previous failed attempt

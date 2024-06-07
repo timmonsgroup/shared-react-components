@@ -30,7 +30,7 @@ const ConfigFormTester = () => {
     <ConfigForm formLayout={layout.layout} data={formData} parseOptions={{ choiceFormatter }}>
       <GenericConfigForm
         headerTitle="Bacon Bits"
-        // isEdit={isEdit}
+        isEdit={true}
         // sectionProps={sectionProps}
         onSubmit={onSubmit}
       />
