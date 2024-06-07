@@ -73,7 +73,7 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
     });
   }
 
-  console.log('newTriggerFields', newTriggerFields);
+  // console.log('newTriggerFields', newTriggerFields);
 
   // Create validations for each field that has conditional validations
   triggerFields.forEach((trigField) => {
@@ -173,13 +173,13 @@ const finishParseNewTriggerFields = (triggerFields, fields) => {
   triggerFields.forEach((trigField) => {
     const touches = trigField.touches;
     touches.forEach((conditions, touchedId) => {
-      console.log('Touched field Id', touchedId);
-      console.log('\tTouched field conditions for trigField', trigField.id, conditions);
+      // console.log('Touched field Id', touchedId);
+      // console.log('\tTouched field conditions for trigField', trigField.id, conditions);
       conditions.forEach((condition, aFI) => {
         const layout = new Map();
         const validationProps = new Map();
         if (!fields.has(touchedId)) {
-          console.log('missing field', touchedId);
+          // console.log('missing field', touchedId);
           return;
         }
         const field = fields.get(touchedId);
@@ -187,7 +187,7 @@ const finishParseNewTriggerFields = (triggerFields, fields) => {
         parseValidation(validationProps, field.modelData);
         parseValidation(validationProps, field.render);
 
-        console.log('\tcondition', condition);
+        // console.log('\tcondition', condition);
 
         // loop through validation object
         Object.keys(condition.then).forEach((key) => {
@@ -219,14 +219,57 @@ const finishParseNewTriggerFields = (triggerFields, fields) => {
   });
 }
 
+const isWhen = (when) => {
+  let validWhen = false;
+  if (when?.fieldId && when?.operation) {
+    // isNotNull and isNull are valid operations without a value
+    if (when?.value !== undefined || when.operation === 'isNull' || when.operation === 'isNotNull') {
+      validWhen = true;
+    }
+  }
+  // console.log('validWhen', validWhen, when)
+  return validWhen;
+}
+
+const isNewConditional = (conditional) => {
+  return isWhen(conditional?.when) && conditional?.then;
+}
+
+//export type Operation = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'in' | 'notIn' | 'regex' | 'notRegex' | 'isNull' | 'isNotNull';
+const transformLegacyCondition = (fieldId, condition, index) => {
+  const { when: triggerFieldId, then, isValid } = condition;
+  let value = condition?.is?.toString();
+  return {
+    conditionId: `${fieldId}-${triggerFieldId}-${index}`,
+    when: {
+      fieldId: triggerFieldId,
+      value,
+      operation: isValid ? 'isNotNull' : 'eq'
+    },
+    then
+  }
+}
+
+const transformCondition = (fieldId, condition, index) => {
+  if (isNewConditional(condition)) {
+    return {
+      conditionId: `${fieldId}-${condition.when.fieldId}-${index}`,
+      ...condition
+    }
+  }
+  return transformLegacyCondition(fieldId, condition, index);
+}
+
 const parseNewConditions = (fieldId, triggerFields, conditions) => {
   if (!conditions || conditions.length === 0) {
     return;
   }
 
-  conditions.forEach((condition) => {
-    const processedCondition = isNewConditional(condition) ? condition : transformLegacyCondition(condition);
+  conditions.forEach((condition, index) => {
+    // console.log('condition', condition)
+    const processedCondition = transformCondition(fieldId, condition, index);
     const triggerId = processedCondition.when.fieldId;
+    // console.log('processedCondition', triggerId)
 
     // // touches is a map of every field that triggerfield could influence.
     // // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
@@ -238,7 +281,7 @@ const parseNewConditions = (fieldId, triggerFields, conditions) => {
     // console.log('updated affectedFieldConditions', trigField.touches.get(fieldId));
 
     triggerFields.set(triggerId, trigField);
-    console.log('updated triggerField', triggerFields.get(triggerId));
+    // console.log('updated triggerField', triggerFields.get(triggerId));
   });
 }
 
@@ -274,7 +317,6 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap,
         parsedSection.fields.push(field.path);
         const { conditions } = parsedField;
         if (conditions.length) {
-          parseConditions(field.path, triggerFieldMap, conditions);
           parseNewConditions(field.path, options.newTriggerFields, conditions);
         }
       }
@@ -447,46 +489,6 @@ function parseValidation(validationMap, data, debug = false) {
   });
 }
 
-/**
- * Parse conditions and add them to the triggerFieldMap
- * @function
- * @param {string} fieldId - field id
- * @param {Map<string, TriggerField>} triggerFields - map of trigger fields
- * @param {Array<TriggerCondition>} conditions - conditions
- */
-const parseConditions = (fieldId, triggerFields, conditions) => {
-  if (conditions?.length) {
-    conditions.forEach((condition) => {
-      const { when: triggerId, then: validations, isValid, isNot } = condition;
-      let value = condition?.is?.toString();
-
-      // touches is a map of every field that triggerfield could influence.
-      // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
-      const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
-
-      if (isValid || isNot === null) {
-        value = ANY_VALUE;
-        trigField.hasOnChange = true;
-      } else if (isNot !== undefined) {
-        value = isNot.toString();
-        trigField.hasNot = true;
-      }
-
-      const fieldValues = trigField.fieldValues.get(value) || new Map();
-      const affectedFields = fieldValues.get(fieldId) || [];
-      const touched = trigField.touches.get(fieldId) || new Map();
-
-      touched.set(value, true);
-      trigField.touches.set(fieldId, touched);
-      affectedFields.push(validations);
-      fieldValues.set(fieldId, affectedFields);
-      trigField.fieldValues.set(value, fieldValues);
-
-      triggerFields.set(triggerId, trigField);
-    });
-  }
-};
-
 // export type When = {
 //   fieldId: string;
 //   operation: Operation;
@@ -494,33 +496,6 @@ const parseConditions = (fieldId, triggerFields, conditions) => {
 //   and?: Whens;
 //   or?: Whens;
 // }
-
-const isWhen = (when) => {
-  let validWhen = false;
-  if (when?.fieldId && when?.operation && when?.value !== undefined) {
-    validWhen = true;
-  }
-  console.log('validWhen', validWhen, when)
-  return validWhen;
-}
-
-const isNewConditional = (conditional) => {
-  return isWhen(conditional?.when) && conditional?.then;
-}
-
-//export type Operation = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'in' | 'notIn' | 'regex' | 'notRegex' | 'isNull' | 'isNotNull';
-const transformLegacyCondition = (condition) => {
-  const { when: fieldId, then, isValid } = condition;
-  let value = condition?.is?.toString();
-  return {
-    when: {
-      fieldId,
-      value,
-      operation: isValid ? 'isNotNull' : 'eq'
-    },
-    then
-  }
-}
 
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.

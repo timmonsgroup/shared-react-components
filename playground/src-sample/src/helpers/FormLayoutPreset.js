@@ -410,7 +410,7 @@ const moneyField = {
   iconHelperText: 'Currency is moMoney.',
   helperText: 'I are current.',
   placeholder: "I don't know you",
-  hidden: true,
+  // hidden: true,
   model: {
     data: {
       minValue: 1.01,
@@ -423,12 +423,19 @@ const moneyField = {
   minValue: 2.01,
   conditions: [
     {
+      when : {
+        fieldId: 'email',
+        operation: 'neq',
+        // operation: 'isNull',
+        value: 'money@gmail.com'
+      },
       then: {
         hidden: false,
         minValue: 3.01,
-      },
-      when: 'email',
-      isValid: true,
+        required: false,
+      }
+      // when: 'email',
+      // isValid: true,
       // is:'dude@gmail.com'
     },
   ],
@@ -623,8 +630,9 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
-          customRegexField,
+          // customRegexField,
           emailField,
+          moneyField,
           asyncTypeahead,
           virginiaCities,
           // zipField,
@@ -636,8 +644,7 @@ export const layout = {
           // clusterField,
           // integerField,
           conditionalUrlField,
-          moneyField,
-          anotherCluster,
+          // anotherCluster,
           moneyChild
         ],
       },

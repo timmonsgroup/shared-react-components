@@ -698,11 +698,10 @@ export const createRowFields = (fields, columnCount, isInline) => {
   return rows;
 };
 
-export const checkConditional = (condition, fieldValue, indent = '') => {
-  console.log(indent, 'check condition', condition)
-  const { value, operation, fieldId } = condition;
+export const checkConditional = (condition, fieldValue/* , indent = '' */) => {
+  // console.log(indent, 'check condition', condition)
+  const { value, operation/* , fieldId */ } = condition;
   // const fieldValue = data[fieldId];
-  console.log(indent, fieldId, 'with fieldValue', fieldValue, 'operation', operation, 'value', value)
   switch (operation) {
     case 'eq':
       return fieldValue === value;
@@ -717,17 +716,13 @@ export const checkConditional = (condition, fieldValue, indent = '') => {
     case 'lte':
       return parseFloat(fieldValue) <= parseFloat(value);
     case 'contains':
-      return fieldValue.includes(value);
+      return fieldValue?.includes(value);
     case 'notContains':
-      return !fieldValue.includes(value);
+      return !fieldValue?.includes(value);
     case 'startsWith':
-      return fieldValue.startsWith(value);
+      return fieldValue?.startsWith(value);
     case 'endsWith':
-      return fieldValue.endsWith(value);
-    case 'in':
-      return fieldValue.includes(value);
-    case 'notIn':
-      return !fieldValue.includes(value);
+      return fieldValue?.endsWith(value);
     case 'regex':
       return new RegExp(value).test(fieldValue);
     case 'notRegex':
