@@ -8,12 +8,9 @@ export const choiceFormatter = (fieldId, response, options) => {
       return { id: index, label: choiceDataItem.name };
     });
 
-    console.log('using Custom for fieldId')
     return formattedChoices;
   }
 
-  console.log('using SRC default')
-  console.log('choiceFormatter', fieldId, response, options);
   return defaultChoiceMapper(response, options);
 }
 
