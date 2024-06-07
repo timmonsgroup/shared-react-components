@@ -516,6 +516,7 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
   const dynValid = {};
   const resetFields = {};
   let hasAsync = false;
+  let hasNewAsync = false;
 
   const updateConditional = (fieldId, conditional) => {
     if (conditional.isUpdating) {
@@ -532,7 +533,7 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
     if (conditional.isUpdating && !conditional.noPasses) {
       newAreUpdating[fieldId] = true;
       if (conditional.hasAsync && conditional.asyncLoader) {
-        hasAsync = true;
+        hasNewAsync = true;
         newAsyncLoaders[fieldId] = conditional.asyncLoader;
       };
       newUpdatedFields.push({ id: fieldId, type: 'update', ...conditional.loadOut });
@@ -627,15 +628,17 @@ const renderTheSections = ({ sections, fields, triggerFields, newTriggerFields, 
   console.log('NEW Updated Fields: ', newUpdatedFields);
   const theUpdateObject = useNewConditionals ? newAreUpdating : areUpdating;
   const theUsedUpdateFields = useNewConditionals ? newUpdatedFields : updatedFields;
-
+  const theUsedAsyncLoaders = useNewConditionals ? newAsyncLoaders : asyncLoaders;
+  const hasTheUsedAsync = useNewConditionals ? hasNewAsync : hasAsync;
   const hasUpdates = Object.keys(theUpdateObject).length > 0;
+
   if (hasUpdates) {
     // If any of the affected fields have async needs, we need to wait for them to resolve
-    if (hasAsync) {
+    if (hasTheUsedAsync) {
       // Create an array of promise so we can await all.
-      const optTypes = Object.keys(asyncLoaders).map((fId) => (
+      const optTypes = Object.keys(theUsedAsyncLoaders).map((fId) => (
         // return Promise that stores the loadedChoices into the correct model
-        asyncLoaders[fId]().then((loaded) => {
+        theUsedAsyncLoaders[fId]().then((loaded) => {
           loadedChoices[fId] = loaded;
         })
       ));
