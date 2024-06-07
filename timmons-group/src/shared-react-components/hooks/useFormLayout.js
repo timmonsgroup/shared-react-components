@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
-import { dateStringNormalizer } from '../helpers/helpers.js';
+import { dateStringNormalizer, defaultChoiceMapper } from '../helpers/helpers.js';
 
 const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
@@ -134,7 +134,8 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
         const parsedOptions = options.choiceFormatter(fieldId, res, { mappedId, mappedLabel });
         return parsedOptions;
       } else if (data?.length) {
-        return data.map((d) => ({ ...d, id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
+        return defaultChoiceMapper(res, { mappedId, mappedLabel });
+        // return data.map((d) => ({ ...d, id: d[mappedId] || d.id, label: d[mappedLabel] || d.name }));
       }
     }
     ).catch(error => {

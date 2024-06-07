@@ -18,7 +18,7 @@ import {
   FIELD_TYPES,
   ANY_VALUE
 } from '../constants';
-import { objectReducer } from '../helpers';
+import { defaultChoiceMapper, objectReducer } from '../helpers';
 import { checkConditional } from '../helpers/formHelpers';
 
 const useNewConditionals = false;
@@ -755,37 +755,6 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
  * @property {function} [clearErrors] - function to clear errors
  * @property {function} [setError] - function to set errors
  */
-
-/**
- * The default choice formatter
- * @param {object} item
- * @param {object} [options] - options for the choice mapper
- * @param {string} [options.mappedId] - property to use when mapping the id
- * @param {string} [options.mappedLabel] - property to use when mapping the label
- * @returns {Array<object>}
- */
-export function defaultChoiceFormatter(item, options) {
-  const opt = item || {};
-  const { mappedId, mappedLabel } = options || {};
-  const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
-  const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
-  return { id, label };
-}
-
-/**
- * The default parser for fetching choices. Assumes data is an array of objects and a property on response
- * @param {object} res - response from the fetch
- * @param {object} [options] - options for the choice mapper
- * @param {string} [options.mappedId] - property to use when mapping the id
- * @param {string} [options.mappedLabel] - property to use when mapping the label
- * @returns {Array<object>}
- */
-export function defaultChoiceMapper(res, options) {
-  const { data } = res || {};
-  return data?.map((opt) => {
-    return defaultChoiceFormatter(opt, options);
-  });
-}
 
 /**
  * Loads the data for the async fields

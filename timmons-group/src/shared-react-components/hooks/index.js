@@ -7,7 +7,7 @@ export {
 } from './useFormLayout.js';
 export { useDynamicForm } from './useDynamicForm.js';
 export {
-  processDynamicFormLayout, useConfigForm, fetchChoices, defaultChoiceFormatter, defaultChoiceMapper
+  processDynamicFormLayout, useConfigForm, fetchChoices
 } from './useConfigForm.js';
 export { useToggle } from './useToggle.js';
 export {default as useQuery} from './useQuery.js';

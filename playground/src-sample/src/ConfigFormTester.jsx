@@ -2,7 +2,7 @@ import { ConfigForm, GenericConfigForm, defaultChoiceMapper } from "@timmons-gro
 import { layout } from "./helpers/FormLayoutPreset";
 
 export const choiceFormatter = (fieldId, response, options) => {
-  if (fieldId === '') {
+  if (fieldId === 'asyncPublicHolidays') {
     const { data } = response || {};
     const formattedChoices = data.map((choiceDataItem, index) => {
       return { id: index, label: choiceDataItem.name };
@@ -25,8 +25,6 @@ const ConfigFormTester = () => {
   const onSubmit = (data) => {
     console.log('onSubmit', data)
   }
-
-
 
   return (
     <ConfigForm formLayout={layout.layout} data={formData} parseOptions={{ choiceFormatter }}>
