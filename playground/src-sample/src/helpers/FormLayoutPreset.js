@@ -392,6 +392,7 @@ const integerField = {
   placeholder: 'I was once a float like you',
   minValue: 1.01,
   maxValue: 100,
+  hidden: true,
   model: {
     id: 8,
     modelid: 10,
@@ -399,7 +400,20 @@ const integerField = {
     name: 'intTest',
     data: {},
   },
-  required: true,
+  conditions: [
+    {
+      when: {
+        fieldId:'moMoney',
+        operation: 'gte',
+        value: 100
+      },
+      then: {
+        minValue: 3.01,
+        required: true,
+        hidden: false,
+      },
+    },
+  ],
   disabled: false,
 };
 
@@ -426,7 +440,6 @@ const moneyField = {
       when : {
         fieldId: 'email',
         operation: 'neq',
-        // operation: 'isNull',
         value: 'money@gmail.com'
       },
       then: {
@@ -434,9 +447,15 @@ const moneyField = {
         minValue: 3.01,
         required: false,
       }
-      // when: 'email',
-      // isValid: true,
-      // is:'dude@gmail.com'
+    },
+    {
+      when: 'someOtherField',
+      is: '102',
+      then: {
+        hidden: false,
+        minValue: 102,
+        required: false,
+      },
     },
   ],
   required: true,
@@ -634,6 +653,7 @@ export const layout = {
           emailField,
           moneyField,
           asyncTypeahead,
+          integerField,
           virginiaCities,
           // zipField,
           // phoneField,
@@ -849,79 +869,3 @@ export const inlineFormLayout = {
     ],
   },
 };
-
-// {
-//   "data": {
-//     "create": "/api/joinRequest/new",
-//       "idField": "streamID"
-//   },
-//   "id": 11,
-//     "modelId": 30,
-//       "enabled": true,
-//         "name": "Join Organization Request",
-//           "editable": true,
-//             "layoutKey": "join",
-//               "type": 1,
-//                 "sections": [
-//                   {
-//                     "editable": true,
-//                     "enabled": true,
-//                     "name": "Request Organization Access",
-//                     "order": 10,
-//                     "layout": [
-//                       {
-//                         "label": "Organization",
-//                         "path": "organization",
-//                         "type": 10,
-//                         "model": {
-//                           "id": 1,
-//                           "modelid": 30,
-//                           "type": 10,
-//                           "name": "organization",
-//                           "data": {
-//                             "useId": true,
-//                             "multiple": false,
-//                             "objectTypeId": 10
-//                           }
-//                         },
-//                         "required": true,
-//                         "disabled": false,
-//                         "hidden": false,
-//                         "url": "https://date.nager.at/api/v2/publicholidays/2020/US"
-//                       },
-//                       {
-//                         "label": "Groups",
-//                         "path": "groups",
-//                         "type": 10,
-//                         "model": {
-//                           "id": 2,
-//                           "modelid": 30,
-//                           "type": 10,
-//                           "name": "groups",
-//                           "data": {
-//                             "useId": true,
-//                             "multiple": true,
-//                             "objectTypeId": 20
-//                           }
-//                         },
-//                         "required": true,
-//                         "disabled": true,
-//                         "hidden": false,
-//                         "conditions": [
-//                           {
-//                             "then": {
-//                               "url": "/api/group/getAllForOrganization?organization=##thevalue##",
-//                               "disabled": false,
-//                               "required": true
-//                             },
-//                             "when": "organization",
-//                             "isValid": true
-//                           }
-//                         ],
-//                         "multiple": true,
-//                         "checkbox": true
-//                       }
-//                     ]
-//                   }
-//                 ]
-// }

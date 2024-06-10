@@ -1,5 +1,5 @@
 /** @module AnyField */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 
@@ -68,7 +68,7 @@ const handleMultiSelectChange = (field, checkedId) => {
  * @typedef {Object} FieldLayout
  * @property {string} id - the id of the field
  * @property {string} name - the name of the field
- * @property {string} type - the type of the field
+ * @property {number} type - the type of the field
  * @property {string} label - the label of the field
  * @property {string} [helperText] - the helper text of the field
  * @property {string} [placeholder] - the placeholder of the field
@@ -210,6 +210,23 @@ const textRenderer = (
   const prefix = readOnly ? '' : 'Enter';
 
   const TextFieldWrapped = ({ field: { ref, value, onChange, onBlur }, fieldState: { error } }) => {
+    // This is an alt way to prevent the wheel changing the value of the input. However it prevents the page from scrolling if the input is being hovered.
+    // const aRef = useRef(ref);
+    // useEffect(() => {
+    //   if (isNumber) {
+    //     const onWheel = (e) => {
+    //       console.log('onWheel', e.target);
+    //       e.preventDefault();
+    //     };
+    //     aRef?.current.addEventListener('wheel', onWheel);
+    //   }
+    //   return () => {
+    //     if (isNumber) {
+    //       console.log('GTFO clean up')
+    //       aRef?.current?.removeEventListener('wheel', onWheel);
+    //     }
+    //   };
+    // }, []);
     return (
       <>
         <AnyFieldLabel
@@ -225,6 +242,7 @@ const textRenderer = (
         <TextField sx={{ width: '100%' }}
           name={finalId || name}
           inputProps={inputAttrs}
+          // inputRef={aRef}
           inputRef={ref}
           disabled={disabled}
           type={isNumber ? 'number' : 'text'}
@@ -232,6 +250,7 @@ const textRenderer = (
           error={!!error}
           onChange={onChange}
           onBlur={onBlur}
+          onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
           value={value}
           multiline={isMultiLine}
           minRows={isMultiLine ? 3 : 1}
@@ -433,47 +452,45 @@ const checkboxRenderer = (layout, fieldOptions, finalId, fieldComponentProps) =>
 
     // FormControl expects error to be a boolean. If it's an object, it will throw an error
     return (
-      <>
-        <FormControl
-          data-src-field={finalId || field.id}
+      <FormControl
+        data-src-field={finalId || field.id}
+        error={!!error}
+        disabled={disabled}
+        component="fieldset"
+        variant="standard"
+      >
+        <AnyFieldLabel
+          asFormInput={true}
+          htmlFor={finalId || field.name}
           error={!!error}
+          label={label}
+          required={!!required}
           disabled={disabled}
-          component="fieldset"
-          variant="standard"
-        >
-          <AnyFieldLabel
-            asFormInput={true}
-            htmlFor={finalId || field.name}
-            error={!!error}
-            label={label}
-            required={!!required}
-            disabled={disabled}
-            iconText={iconHelperText}
-            fieldOptions={fieldOptions}
-            helperText={helperText}
-          />
-          <FormGroup>
-            {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
-            {choices?.map((item) => (
-              <FormControlLabel
-                key={item.id}
-                control={<Checkbox
-                  data-src-checkbox={item.id}
-                  onBlur={field.onBlur}
-                  checked={field?.value?.includes(item.id)}
-                  {...fieldComponentProps}
-                  onChange={(e) => {
-                    field.onChange(handleMultiSelectChange(field, item.id));
-                  }}
-                />}
-                label={item.label}
-              />
-            ))}
-            {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
-            <FormErrorMessage error={error} />
-          </FormGroup>
-        </FormControl>
-      </>
+          iconText={iconHelperText}
+          fieldOptions={fieldOptions}
+          helperText={helperText}
+        />
+        <FormGroup>
+          {choices.length === 0 && <FormHelperText>There are no options to select</FormHelperText>}
+          {choices?.map((item) => (
+            <FormControlLabel
+              key={item.id}
+              control={<Checkbox
+                data-src-checkbox={item.id}
+                onBlur={field.onBlur}
+                checked={field?.value?.includes(item.id)}
+                {...fieldComponentProps}
+                onChange={(e) => {
+                  field.onChange(handleMultiSelectChange(field, item.id));
+                }}
+              />}
+              label={item.label}
+            />
+          ))}
+          {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
+          <FormErrorMessage error={error} />
+        </FormGroup>
+      </FormControl>
     );
   };
 
