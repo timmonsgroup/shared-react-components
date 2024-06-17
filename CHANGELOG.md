@@ -1,4 +1,10 @@
 # Change Log #
+## Release 1.2.0 - 6/10/2024 ##
+### Fixes ###
+- Fix a bug where a typeahead that asynchronously loads options would not correctly reset if it was dependent on another field's value'.
+- Fixed an issue where React would fuss about fieldComponentProps not being a prop for the DynamicField component.
+- Fixed the shared-react-components package.json to correctly point to the correct main file (index.js).
+
 ## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###
 - We've removed defaultProps from all components. This has been deprecated in React 18 and will be removed in a future version.

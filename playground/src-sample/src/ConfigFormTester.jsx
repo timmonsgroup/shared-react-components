@@ -1,7 +1,7 @@
-import { ConfigForm, GenericConfigForm, defaultChoiceMapper } from "@timmons-group/shared-react-components";
+import { ConfigForm, GenericConfigForm, defaultChoiceMapper, yupCurrency } from "@timmons-group/shared-react-components";
 import { layout } from "./helpers/FormLayoutPreset";
 
-export const choiceFormatter = (fieldId, response, options) => {
+const choiceFormatter = (fieldId, response, options) => {
   if (fieldId === 'asyncPublicHolidays') {
     const { data } = response || {};
     const formattedChoices = data.map((choiceDataItem, index) => {
@@ -14,6 +14,14 @@ export const choiceFormatter = (fieldId, response, options) => {
   return defaultChoiceMapper(response, options);
 }
 
+function customValidations(configFormValidations) {
+  console.log('configFormValidations', configFormValidations)
+  return {
+    ...configFormValidations,
+    intTest: yupCurrency().required('Bacon is required'),
+  }
+}
+
 const ConfigFormTester = () => {
   const formData = {
     email: 'duderino@gmail.com'
@@ -24,7 +32,7 @@ const ConfigFormTester = () => {
   }
 
   return (
-    <ConfigForm formLayout={layout.layout} data={formData} parseOptions={{ choiceFormatter }}>
+    <ConfigForm formLayout={layout.layout} data={formData} parseOptions={{ choiceFormatter }} addCustomValidations={customValidations}>
       <GenericConfigForm
         headerTitle="Bacon Bits"
         isEdit={true}
