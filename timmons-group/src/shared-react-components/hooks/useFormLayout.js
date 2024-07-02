@@ -238,7 +238,7 @@ const isNewConditional = (conditional) => {
 //export type Operation = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'in' | 'notIn' | 'regex' | 'notRegex' | 'isNull' | 'isNotNull';
 const transformLegacyCondition = (fieldId, condition, index) => {
   const { when: triggerFieldId, then, isValid } = condition;
-  let value = condition?.is?.toString();
+  let value = condition?.is;
   return {
     conditionId: `${fieldId}-${triggerFieldId}-${index}`,
     when: {
