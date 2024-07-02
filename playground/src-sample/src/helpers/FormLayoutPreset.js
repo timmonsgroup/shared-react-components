@@ -618,14 +618,25 @@ const conditionalUrlField = {
   "disabled": true,
   "hidden": false,
   "conditions": [
+    // {
+    //   "then": {
+    //     "url": "https://api.openbrewerydb.org/v1/breweries?by_city=##thevalue##&per_page=10",
+    //     "disabled": false,
+    //     "required": true
+    //   },
+    //   "when": "virginiaCities",
+    //   "isValid": true
+    // }
     {
-      "then": {
-        "url": "https://api.openbrewerydb.org/v1/breweries?by_city=##thevalue##&per_page=10",
-        "disabled": false,
-        "required": true
+      when: {
+        fieldId: 'virginiaCities',
+        operation: 'isNotNull',
       },
-      "when": "virginiaCities",
-      "isValid": true
+      then: {
+        url: 'https://api.openbrewerydb.org/v1/breweries?by_city=##thevalue##&per_page=10',
+        disabled: false,
+        required: true
+      }
     }
   ]
 }
@@ -654,300 +665,300 @@ export const layoutWithNumericValues = {
         enabled: true,
         name: 'Section One',
         order: 10,
-        layout: [{
-          label: ' ',
-          path: 'needsPotentialChanges',
-          type: FIELD_TYPES.CHOICE,
-          model: {
-            name: 'needsPotentialChanges',
-            id: 5,
-            modelid: 10,
+        layout: [
+          {
+            label: ' ',
+            path: 'needsPotentialChanges',
             type: FIELD_TYPES.CHOICE,
+            model: {
+              name: 'needsPotentialChanges',
+              id: 5,
+              modelid: 10,
+              type: FIELD_TYPES.CHOICE,
+            },
+            possibleChoices: [
+              { id: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.YES, name: 'Yes' },
+              { id: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.NO, name: 'No' }
+            ],
           },
-          possibleChoices: [
-            { id: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.YES, name: 'Yes' },
-            { id: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.NO, name: 'No' }
-          ],
-        },
-        {
-          label: 'Changes proposed',
-          path: 'potentialChanges',
-          type: FIELD_TYPES.LONG_TEXT,
-          model: {
-            name: 'potentialChanges',
-            id: 5,
-            modelid: 10,
+          {
+            label: 'New Format',
+            path: 'newFormat',
             type: FIELD_TYPES.LONG_TEXT,
-          },
-          required: false,
-          hidden: true,
-          minLength: 10,
-          maxLength: 2000,
-          conditions: [
-            {
-              when: 'needsPotentialChanges',
-              is: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.YES,
-              then: {
-                required: true,
-                hidden: false
+            model: {
+              name: 'newFormat',
+              id: 5,
+              modelid: 10,
+              type: FIELD_TYPES.LONG_TEXT,
+            },
+            required: false,
+            hidden: true,
+            minLength: 10,
+            maxLength: 2000,
+            conditions: [
+              {
+                when: 'someOtherField',
+                is: 7,
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              },
+              {
+                when: {
+                  fieldId: 'someOtherField',
+                  operation: 'eq',
+                  value: 7
+                },
+                then: {
+                  required: true,
+                  hidden: false
+                }
               }
-            }
-            // {
-            //   when: {
-            //     fieldId: 'needsPotentialChanges',
-            //     operation: 'eq',
-            //     value: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.YES
-            //   },
-            //   then: {
-            //     required: true,
-            //     hidden: false
-            //   }
-            // }
-          ],
-          placeholder: ' '
-        },
+            ],
+          }
         ],
       },
     ],
   },
 };
 
-  export const layout = {
-    layout: {
-      data: {
-        create: '/api/grantApplication/new',
+export const layout = {
+  layout: {
+    data: {
+      create: '/api/grantApplication/new',
+    },
+    id: 2,
+    modelId: 10,
+    enabled: true,
+    name: 'FD Grant Application',
+    editable: true,
+    layoutKey: 'new_fd',
+    type: 1,
+    sections: [
+      {
+        editable: true,
+        enabled: true,
+        name: 'Section One',
+        order: 10,
+        layout: [
+          // customRegexField,
+          emailField,
+          moneyField,
+          asyncTypeahead,
+          integerField,
+          virginiaCities,
+          // zipField,
+          // phoneField,
+          // fireDepartmentField,
+          // checkboxes,
+          // asyncTypeahead,
+          // dateField,
+          // clusterField,
+          // integerField,
+          conditionalUrlField,
+          // anotherCluster,
+          moneyChild
+        ],
       },
-      id: 2,
-      modelId: 10,
-      enabled: true,
-      name: 'FD Grant Application',
-      editable: true,
-      layoutKey: 'new_fd',
-      type: 1,
-      sections: [
-        {
-          editable: true,
-          enabled: true,
-          name: 'Section One',
-          order: 10,
-          layout: [
-            // customRegexField,
-            emailField,
-            moneyField,
-            asyncTypeahead,
-            integerField,
-            virginiaCities,
-            // zipField,
-            // phoneField,
-            // fireDepartmentField,
-            // checkboxes,
-            // asyncTypeahead,
-            // dateField,
-            // clusterField,
-            // integerField,
-            conditionalUrlField,
-            // anotherCluster,
-            moneyChild
-          ],
-        },
-        // {
-        //   name: "I' another Section",
-        //   description: "I'm a description",
-        //   editable: true,
-        //   enabled: true,
-        //   order: 10,
-        //   layout: [
-        //     {
-        //       label: 'Department Type 2',
-        //       path: 'fdType2',
-        //       type: 0,
-        //       model: {
-        //         id: 8,
-        //         modelid: 10,
-        //         type: 0,
-        //         name: 'fdType2',
-        //         data: {},
-        //       },
-        //       iconHelperText:
-        //         'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
-        //       required: false,
-        //       readOnly: true,
-        //       hidden: true,
-        //       conditions: [
-        //         {
-        //           then: {
-        //             renderPropertyId: 'fireDepartmentType.name',
-        //             hidden: false,
-        //           },
-        //           when: 'fireDepartment',
-        //           isValid: true,
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       label: 'Department ID',
-        //       path: 'departmentId',
-        //       type: 0,
-        //       model: {
-        //         id: 7,
-        //         modelid: 10,
-        //         type: 0,
-        //         name: 'departmentId',
-        //         data: {},
-        //       },
-        //       required: false,
-        //       readOnly: true,
-        //       placeholder: 'But why?',
-        //       hidden: true,
-        //       conditions: [
-        //         {
-        //           then: {
-        //             renderPropertyId: 'fdid',
-        //             hidden: false,
-        //           },
-        //           when: 'fireDepartment',
-        //           isValid: true,
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       label: 'Cluster Must Validate',
-        //       path: 'validateCluster',
-        //       type: 0,
-        //       model: {
-        //         id: 7,
-        //         modelid: 10,
-        //         type: 0,
-        //         name: 'validateCluster',
-        //         data: {},
-        //       },
-        //       required: false,
-        //       hidden: true,
-        //       conditions: [
-        //         {
-        //           then: {
-        //             hidden: false,
-        //             helperText: 'You have at least one cluster. I appear',
-        //           },
-        //           when: 'amCluster',
-        //           isValid: true,
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // },
-      ],
-    },
-  };
+      // {
+      //   name: "I' another Section",
+      //   description: "I'm a description",
+      //   editable: true,
+      //   enabled: true,
+      //   order: 10,
+      //   layout: [
+      //     {
+      //       label: 'Department Type 2',
+      //       path: 'fdType2',
+      //       type: 0,
+      //       model: {
+      //         id: 8,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'fdType2',
+      //         data: {},
+      //       },
+      //       iconHelperText:
+      //         'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
+      //       required: false,
+      //       readOnly: true,
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             renderPropertyId: 'fireDepartmentType.name',
+      //             hidden: false,
+      //           },
+      //           when: 'fireDepartment',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Department ID',
+      //       path: 'departmentId',
+      //       type: 0,
+      //       model: {
+      //         id: 7,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'departmentId',
+      //         data: {},
+      //       },
+      //       required: false,
+      //       readOnly: true,
+      //       placeholder: 'But why?',
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             renderPropertyId: 'fdid',
+      //             hidden: false,
+      //           },
+      //           when: 'fireDepartment',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Cluster Must Validate',
+      //       path: 'validateCluster',
+      //       type: 0,
+      //       model: {
+      //         id: 7,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'validateCluster',
+      //         data: {},
+      //       },
+      //       required: false,
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             hidden: false,
+      //             helperText: 'You have at least one cluster. I appear',
+      //           },
+      //           when: 'amCluster',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+    ],
+  },
+};
 
-  export const viewLayout = {
-    layout: {
-      id: 2,
-      modelId: 10,
-      enabled: true,
-      name: 'FD Grant Application',
-      editable: true,
-      layoutKey: 'view_fd',
-      type: 'whateverViewTypeIs',
-      sections: [
-        {
-          enabled: true,
-          name: 'No columns or rows',
-          order: 10,
-          layout: [emailField, zipField, phoneField, fireDepartmentField],
-        },
-        {
-          enabled: true,
-          columns: false,
-          name: 'Section with Rows',
-          order: 10,
-          layout: [
-            [emailField, zipField],
-
-            [phoneField, fireDepartmentField],
-          ],
-        },
-      ],
-    },
-  };
-
-  export const inlineFormLayout = {
-    layout: {
-      data: {
-        create: '/api/grantApplication/new',
+export const viewLayout = {
+  layout: {
+    id: 2,
+    modelId: 10,
+    enabled: true,
+    name: 'FD Grant Application',
+    editable: true,
+    layoutKey: 'view_fd',
+    type: 'whateverViewTypeIs',
+    sections: [
+      {
+        enabled: true,
+        name: 'No columns or rows',
+        order: 10,
+        layout: [emailField, zipField, phoneField, fireDepartmentField],
       },
-      id: 2,
-      modelId: 10,
-      enabled: true,
-      name: 'Inline Form Layout Name',
-      editable: true,
-      layoutKey: 'ALLSAMPLEFILTER',
-      type: 1,
-      sections: [
-        {
-          name: '',
-          editable: true,
-          enabled: true,
-          layout: [
-            {
-              label: 'Surveillance Season',
-              path: 'season',
-              type: 7,
-              listName: 'HUNT_SEASON',
-              required: true,
-              requiredErrorText: 'Please select a season',
-              model: {
-                name: 'season',
-              },
-              possibleChoices: [
-                {
-                  id: '2024',
-                  name: '2024-2025',
-                },
-                {
-                  id: '2023',
-                  name: '2023-2024',
-                },
-                {
-                  id: '2022',
-                  name: '2022-2023',
-                },
-                {
-                  id: '2021',
-                  name: '2021-2022',
-                },
-                {
-                  id: '2020',
-                  name: '2020-2021',
-                },
-                {
-                  id: '2019',
-                  name: '2019-2020',
-                },
-              ],
-            },
-            {
-              label: 'Hunter First Name',
-              path: 'hunterFirstName',
-              type: 0,
-              required: false,
-              maxLength: 25,
-              model: {
-                name: 'hunterFirstName',
-              },
-            },
-            {
-              label: 'Hunter Last Name',
-              path: 'hunterLastName',
-              type: 0,
-              required: false,
-              maxLength: 25,
-              model: {
-                name: 'hunterLastName',
-              },
-            },
-          ],
-        },
-      ],
+      {
+        enabled: true,
+        columns: false,
+        name: 'Section with Rows',
+        order: 10,
+        layout: [
+          [emailField, zipField],
+
+          [phoneField, fireDepartmentField],
+        ],
+      },
+    ],
+  },
+};
+
+export const inlineFormLayout = {
+  layout: {
+    data: {
+      create: '/api/grantApplication/new',
     },
-  };
+    id: 2,
+    modelId: 10,
+    enabled: true,
+    name: 'Inline Form Layout Name',
+    editable: true,
+    layoutKey: 'ALLSAMPLEFILTER',
+    type: 1,
+    sections: [
+      {
+        name: '',
+        editable: true,
+        enabled: true,
+        layout: [
+          {
+            label: 'Surveillance Season',
+            path: 'season',
+            type: 7,
+            listName: 'HUNT_SEASON',
+            required: true,
+            requiredErrorText: 'Please select a season',
+            model: {
+              name: 'season',
+            },
+            possibleChoices: [
+              {
+                id: '2024',
+                name: '2024-2025',
+              },
+              {
+                id: '2023',
+                name: '2023-2024',
+              },
+              {
+                id: '2022',
+                name: '2022-2023',
+              },
+              {
+                id: '2021',
+                name: '2021-2022',
+              },
+              {
+                id: '2020',
+                name: '2020-2021',
+              },
+              {
+                id: '2019',
+                name: '2019-2020',
+              },
+            ],
+          },
+          {
+            label: 'Hunter First Name',
+            path: 'hunterFirstName',
+            type: 0,
+            required: false,
+            maxLength: 25,
+            model: {
+              name: 'hunterFirstName',
+            },
+          },
+          {
+            label: 'Hunter Last Name',
+            path: 'hunterLastName',
+            type: 0,
+            required: false,
+            maxLength: 25,
+            model: {
+              name: 'hunterLastName',
+            },
+          },
+        ],
+      },
+    ],
+  },
+};

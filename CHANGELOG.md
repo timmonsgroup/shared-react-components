@@ -5,6 +5,69 @@
 - Fixed an issue where React would fuss about fieldComponentProps not being a prop for the DynamicField component.
 - Fixed the shared-react-components package.json to correctly point to the correct main file (index.js).
 
+### New Functionality ###
+#### Hooks ####
+- useFormLayout
+  - Added a new syntax for declaring conditionals on fields
+    - The new syntax is more explicit and allows for more complex conditional logic.
+     - New "operations" for conditions:
+        - `eq` - Equal
+        - `neq` - Not Equal
+        - `gt` - Greater Than
+        - `gte` - Greater Than or Equal
+        - `lt` - Less Than
+        - `lte` - Less Than or Equal
+        - `contains` - Contains
+        - `notContains` - Not Contains
+        - `startsWith` - Starts With
+        - `endsWith` - Ends With
+        - `regex` - Regular Expression
+        - `notRegex` - Not Regular Expression
+        - `isNull` - Is Null
+        - `isNotNull` - Is Not Null
+    - The old syntax is still supported and will be converted to the new syntax under the hood.
+    - Example
+    ```javascript
+    {
+            label: 'New Format',
+            path: 'newFormat',
+            type: FIELD_TYPES.LONG_TEXT,
+            model: {
+              name: 'newFormat',
+              type: FIELD_TYPES.LONG_TEXT,
+            },
+            hidden: true,
+            conditions: [
+              // Legacy syntax
+              {
+                when: 'someOtherField',
+                is: 7,
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              },
+              // Is the same as the new syntax
+              {
+                when: {
+                  fieldId: 'someOtherField',
+                  operation: 'eq',
+                  value: 7
+                },
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              }
+            ],
+          }
+    ```
+- useConfigForm
+  - The conditional checking logic has been completely overhauled the concept of "ANY_VALUE" has been removed (use `isNull` or `isNotNull` instead).
+  - New conditional syntax is being used. Legacy syntax is run through the new operations.
+  - The conditional logic will no longer run apply a condition if the condition has already been applied.
+   - Prior to the concept of "appliedConditions" ALL conditions would be run / tested and the field layout rebuilt on every field change even if they had already been applied.
+
 ## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###
 - We've removed defaultProps from all components. This has been deprecated in React 18 and will be removed in a future version.
