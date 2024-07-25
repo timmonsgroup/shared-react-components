@@ -6,7 +6,7 @@ interface LinkBehaviorProps {
 }
 
 const LinkBehavior = forwardRef(
-  (props: LinkBehaviorProps, ref: Ref<HTMLAnchorElement | HTMLAnchorElement>) => {
+  (props: LinkBehaviorProps, ref: Ref<HTMLAnchorElement>) => {
     const { href, ...other } = props;
 
     // Map href (MUI) -> to (react-router)

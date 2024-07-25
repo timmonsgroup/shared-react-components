@@ -1,5 +1,5 @@
 # Change Log #
-## Release 1.2.0 - 6/10/2024 ##
+## Release 1.2.0 - 7/23/2024 ##
 ### Fixes ###
 - Fix a bug where a typeahead that asynchronously loads options would not correctly reset if it was dependent on another field's value'.
 - Fixed an issue where React would fuss about fieldComponentProps not being a prop for the DynamicField component.
