@@ -10,7 +10,7 @@ const CACHE = {};
 /**
  * Layout fetching hook that assumes the default layout endpoint
  * @function
- * @param {string} type - object type for standard get layout endpoint
+ * @param {string | number} type - object type for standard get layout endpoint
  * @param {string} key - layout key for standard get layout endpoint
  * @param {string} url - optional if you are not using the standard endpoint
  * @param {object} existingLayout - optional if you already have the layout and do not want to fetch it

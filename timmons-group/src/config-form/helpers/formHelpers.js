@@ -701,3 +701,70 @@ export const createRowFields = (fields, columnCount, isInline) => {
 
   return rows;
 };
+
+export const checkConditional = (condition, fieldValue/* , indent = '' */) => {
+  // console.log(indent, 'check condition', condition)
+  const { value, operation/* , fieldId */ } = condition;
+  // const fieldValue = data[fieldId];
+  switch (operation) {
+    case 'eq':
+      return fieldValue === value;
+    case 'neq':
+      return fieldValue !== value;
+    case 'gt':
+      return parseFloat(fieldValue) > parseFloat(value);
+    case 'gte':
+      return parseFloat(fieldValue) >= parseFloat(value);
+    case 'lt':
+      return parseFloat(fieldValue) < parseFloat(value);
+    case 'lte':
+      return parseFloat(fieldValue) <= parseFloat(value);
+    case 'contains':
+      return fieldValue?.includes(value);
+    case 'notContains':
+      return !fieldValue?.includes(value);
+    case 'startsWith':
+      return fieldValue?.startsWith(value);
+    case 'endsWith':
+      return fieldValue?.endsWith(value);
+    case 'regex':
+      return new RegExp(value).test(fieldValue);
+    case 'notRegex':
+      return !new RegExp(value).test(fieldValue);
+    case 'isNull':
+      return fieldValue === null;
+    case 'isNotNull':
+      return fieldValue !== null;
+  }
+}
+
+/**
+ * The default choice formatter
+ * @param {object} item
+ * @param {object} [options] - options for the choice mapper
+ * @param {string} [options.mappedId] - property to use when mapping the id
+ * @param {string} [options.mappedLabel] - property to use when mapping the label
+ * @returns {Array<object>}
+ */
+export function defaultChoiceFormatter(item, options) {
+  const opt = item || {};
+  const { mappedId, mappedLabel } = options || {};
+  const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
+  const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
+  return { ...item, id, label };
+}
+
+/**
+ * The default parser for fetching choices. Assumes data is an array of objects and a property on response
+ * @param {object} res - response from the fetch
+ * @param {object} [options] - options for the choice mapper
+ * @param {string} [options.mappedId] - property to use when mapping the id
+ * @param {string} [options.mappedLabel] - property to use when mapping the label
+ * @returns {Array<object>}
+ */
+export function defaultChoiceMapper(res, options) {
+  const { data } = res || {};
+  return data?.map((opt) => {
+    return defaultChoiceFormatter(opt, options);
+  });
+}

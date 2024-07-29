@@ -1,25 +1,24 @@
 /** @module useFormConfig */
 //Third party bits
 import '../models/form';
-import { useEffect, useMemo, useState, useLayoutEffect } from 'react';
+import { useEffect, useMemo, useState, useLayoutEffect, useRef } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { object } from 'yup';
-import axios from 'axios';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // Internal bits
 import { getFieldValue } from './useFormLayout';
+import axios from 'axios';
 import {
-  objectReducer,
   ID_FIELD,
   LABEL_FIELD,
-  CONDITIONAL_RENDER,
+  CONDITIONAL_RENDER, DEFAULT_VALUE } from '../constants';
+import {
+  objectReducer,
   FIELD_TYPES
 } from '@timmons-group/shared-react-components';
-
-import { DEFAULT_VALUE, ANY_VALUE } from '../constants';
-
+import { checkConditional, defaultChoiceMapper } from '../helpers/formHelpers';
 
 /**
  * @function processDynamicFormLayout
@@ -52,6 +51,8 @@ export const processDynamicFormLayout = (formLayout, data) => {
         }
 
         // If this field exists in the triggerfields we need to watch the form for changes
+        // console.log('Checking for trigger fields', fieldId, formLayout.triggerFields.has(fieldId));
+        // console.log('Trigger Fields', formLayout.triggerFields);
         if (formLayout.triggerFields.has(fieldId)) {
           fieldsToWatch[fieldId] = true;
         }
@@ -77,85 +78,79 @@ export const processDynamicFormLayout = (formLayout, data) => {
  * @param {any} formValue - Value of the field to check
  * @returns {Array} - Array of fields that need to be updated
  */
-const getUpdatedFields = (triggerField, fields, triggerId, triggerValue, options, formValue) => {
-
+const processAffectedFields = (triggerField, fields, formValue, options) => {
+  const { appliedConditionals } = options;
   if (formValue === '') formValue = null;
-  const updatedFields = [];
+  // All fields touched by the trigger field are processed.
+  const processedFields = [];
 
-  // This is a hack to handle the fact that the form values maybe strings or numbers
-  // TODO: Add check for field type and coerce for correct check
-  let usedFormValue = formValue;
-  let hasIt = triggerField.fieldValues.has(formValue);
+  let affectedFields = triggerField.touches || [];
+  // Note the conditions are ONLY the ones that are related to the triggering field
+  affectedFields.forEach((conditions, touchedId) => {
+    const conditional = {
+      hasAsync: false,
+      loadedChoices: {},
+      hasRenderValue: false,
+      isUpdating: false,
+      noPasses: true
+    };
+    // console.log('Touched: ', touchedId, 'Conditions: ', conditions);
+    //check all the conditions
+    conditions.forEach(({ conditionId, when, then }) => {
+      // check if the operation is true
+      const passes = checkConditional(when, formValue);
+      const { fieldId, operation, value } = when;
+      console.log(`${passes ? '👍' : '❌'}`, fieldId, 'with fieldValue', formValue, 'operation', operation, 'value', value)
+      if (passes) {
+        conditional.noPasses = false;
+        const loadOut = then;
+        // If the field has a remoteUrl, we need to fetch the data
+        const layout = loadOut?.layout;
+        const isHidden = layout?.get(CONDITIONAL_RENDER.HIDDEN);
+        if (!isHidden && layout?.has('url')) {
+          conditional.hasAsync = true;
+          const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
+          // Note the ID_FIELD and LABEL_FIELD here are different from the useFormLayout hook
+          // These are the values on this field's CONDITIONAL layout, not the default layout
+          conditional.asyncLoader = () => fetchChoices(touchedId, remoteUrl, {
+            mappedId: layout?.get(ID_FIELD),
+            mappedLabel: layout?.get(LABEL_FIELD),
+            triggerFieldId: touchedId,
+            ...options
+          });
+        }
 
-  // Check again with the string version of the value
-  if (!hasIt && formValue !== undefined && formValue !== null) {
-    hasIt = triggerField.fieldValues.has(formValue.toString());
-    if (hasIt) {
-      usedFormValue = formValue.toString();
-    }
-  }
+        // If the field has a condtional dependent renderProperty we need to parse it out
+        const renderId = layout?.get(CONDITIONAL_RENDER.RENDER_PROPERTY_ID);
+        if (!isHidden && renderId) {
+          // Get the choices for the triggering field so we can find the matching selected value
+          const { render: { choices } } = fields.get(triggerField.id);
+          const triggerChoice = choices?.find(c => c.id === formValue);
 
-
-  // Check again with the ANY_VALUE value
-  if (!hasIt && formValue !== undefined && formValue !== null) {
-    hasIt = triggerField.fieldValues.has(ANY_VALUE);
-    if (hasIt) {
-      usedFormValue = ANY_VALUE;
-    }
-  }
-
-  if (hasIt) {
-    // Get the fields that need to be updated
-    let affectedFields = triggerField.fieldValues.get(usedFormValue) || [];
-    affectedFields.forEach((loadOut, fieldId) => {
-      const conditional = {
-        hasAsync: false,
-        loadedChoices: {},
-        hasRenderValue: false,
-        isUpdating: false,
-      };
-      // If the field has a remoteUrl, we need to fetch the data
-      const layout = loadOut?.layout;
-      const isHidden = layout?.get(CONDITIONAL_RENDER.HIDDEN);
-      if (!isHidden && layout?.has('url')) {
-        conditional.hasAsync = true;
-        const remoteUrl = layout?.get('url')?.replace('##thevalue##', formValue);
-        // Note the ID_FIELD and LABEL_FIELD are here different from the useFormLayout hook
-        // These are the values on this field's CONDITIONAL layout, not the default layout
-        conditional.asyncLoader = () => fetchChoices(fieldId, remoteUrl, {
-          mappedId: layout?.get(ID_FIELD),
-          mappedLabel: layout?.get(LABEL_FIELD),
-          triggerFieldId: fieldId,
-          ...options
-        });
-      }
-
-      // If the field has a condtionall dependent renderProperty we need to parse it out
-      const renderId = layout?.get(CONDITIONAL_RENDER.RENDER_PROPERTY_ID);
-      if (!isHidden && renderId) {
-        // Get the choices for the triggering field so we can find the matching selected value
-        const { render: { choices } } = fields.get(triggerField.id);
-        const triggerChoice = choices?.find(c => c.id === formValue);
-
-        if (triggerChoice) {
-          // If the renderId is a dot notation, we need to dig into the object
-          // Otherwise, we can just use the value
-          const renderValue = objectReducer(triggerChoice, renderId) || '';
-          if (renderValue !== undefined && renderValue !== null) {
-            // setValue(fieldId, renderValue);
-            conditional.hasRenderValue = true;
-            conditional.renderValue = renderValue;
+          if (triggerChoice) {
+            // If the renderId is a dot notation, we need to dig into the object
+            // Otherwise, we can just use the value
+            const renderValue = objectReducer(triggerChoice, renderId) || '';
+            if (renderValue !== undefined && renderValue !== null) {
+              conditional.hasRenderValue = true;
+              conditional.renderValue = renderValue;
+            }
           }
         }
+
+        conditional.isUpdating = true;
+        conditional.loadOut = loadOut;
       }
-
-      conditional.isUpdating = true;
-      conditional.loadOut = loadOut;
-      updatedFields.push({ id: fieldId, conditional });
+      // console.log('Applied "pass" state', appliedConditionals.current[conditionId], ' vs ', passes)
+      const isApplied = appliedConditionals.current[conditionId] === passes;
+      // If the conditional is not already applied, or it has async needs, we need to process it
+      if (!isApplied || conditional.hasAsync) {
+        appliedConditionals.current[conditionId] = passes;
+        processedFields.push({ id: touchedId, conditional });
+      }
     });
-  }
-
-  return updatedFields;
+  });
+  return processedFields;
 };
 
 /**
@@ -205,11 +200,11 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
   const [validations, setValidations] = useState({});
   const [formProcessing, setFormProcessing] = useState(true);
   const [readyForWatches, setReadyForWatches] = useState(false);
+  const appliedConditionals = useRef({});
 
   // update the validation schema hookForm uses when the validation state changes
   const validationSchema = useMemo(
     () => {
-      console.log('validationSchema useMemo', validations)
       if (addCustomValidations && typeof addCustomValidations === 'function') {
         const newValids = addCustomValidations(validations);
         if (newValids) {
@@ -230,7 +225,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
   });
 
   // Form object will contain all the properties of useForm (React Hook Form)
-  const { formState, watch, trigger, reset, resetField, setError, clearErrors } = useFormObject;
+  const { formState, watch, trigger, reset, resetField, setError, clearErrors, getFieldState } = useFormObject;
 
   useLayoutEffect(() => {
     if (!formProcessing) {
@@ -247,7 +242,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       setFormProcessing,
       setReadyForWatches,
       defaultValues,
-      options: { ...options, setError, resetField, clearErrors }
+      options: { ...options, setError, clearErrors, resetField, appliedConditionals }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formLayout]);
@@ -282,7 +277,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       setFormProcessing,
       setReadyForWatches,
       defaultValues,
-      options: { ...options, setError, resetField, clearErrors }
+      options: { ...options, setError, clearErrors, resetField, appliedConditionals }
     });
   };
 
@@ -293,6 +288,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
     if (readyForWatches && !subscription) {
       subscription = watch((formValues, { name, type }) => {
         let watched = watchFields.includes(name);
+        // console.log('Watched: ', watched, 'Name: ', name, 'Type: ', type)
 
         // This field is not watched
         if (!watched) {
@@ -329,6 +325,16 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
             };
           });
 
+          // loop through the new validations and clear any errors IF the field is dirty
+          for (const field in dynValid) {
+            const fState = getFieldState(field);
+            // console.log(field, '| DYN FIELD | ', fState)
+            if (fState?.isDirty) {
+              // console.log('Clearing error for: ', field);
+              clearErrors(field);
+            }
+          }
+
           setFormProcessing(false);
         };
 
@@ -339,8 +345,9 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
           triggerFields: formLayout.triggerFields,
           values: formValues,
           watchFields,
-          options: { ...options, setError, resetField, clearErrors },
           fromWatch: true,
+          triggeringFieldId: name,
+          options: { ...options, setError, clearErrors, resetField, appliedConditionals },
           finishSetup
         });
       });
@@ -424,7 +431,7 @@ const initTheForm = ({ formLayout, setSections, validations, setValidations, isR
  * @param {object} props.options - Options object
  * @param {boolean} props.fromWatch - Whether or not this is being called from a watch
  */
-const renderTheSections = ({ sections, fields, triggerFields, values, watchFields, finishSetup, options, fromWatch }) => {
+const renderTheSections = ({ sections, fields, triggerFields, values, watchFields, finishSetup, options, fromWatch, triggeringFieldId }) => {
   let renderSections = fromWatch ? sections : [];
   if (!fromWatch) {
     sections.forEach(section => {
@@ -432,119 +439,86 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
     });
   }
 
-  const areUpdating = {};
-  const updatedFields = [];
-  const asyncLoaders = {};
+  const newAreUpdating = {};
+  const newUpdatedFields = [];
+  const newAsyncLoaders = {};
   const loadedChoices = {};
   const dynValid = {};
   const resetFields = {};
-  let hasAsync = false;
+  let hasNewAsync = false;
 
-  const updateConditional = (fieldId, conditional) => {
-    if (conditional.isUpdating) {
-      areUpdating[fieldId] = true;
+  const updateNewConditional = (fieldId, conditional) => {
+    if (conditional.isUpdating && !conditional.noPasses) {
+      newAreUpdating[fieldId] = true;
       if (conditional.hasAsync && conditional.asyncLoader) {
-        hasAsync = true;
-        asyncLoaders[fieldId] = conditional.asyncLoader;
-      }
-      updatedFields.push({ id: fieldId, type: 'update', ...conditional.loadOut });
+        hasNewAsync = true;
+        newAsyncLoaders[fieldId] = conditional.asyncLoader;
+      };
+      newUpdatedFields.push({ id: fieldId, type: 'update', ...conditional.loadOut });
     }
   };
 
   // Loop through all the triggerFields and see if the initial values have caused any fields to be updated
-  watchFields.forEach((fieldId) => {
+  const watchesToCheck = fromWatch ? [triggeringFieldId] : watchFields;
+  // console.log('Watches to Check: ', watchesToCheck);
+  // console.log('All watches: ', watchFields);
+  watchesToCheck.forEach((fieldId) => {
     // If somehow watching a field that is not in the formLayout, skip it
-    const triggerField = triggerFields.get(fieldId);
-    if (!triggerField) {
+    const usedTriggerField = triggerFields.get(fieldId);
+    if (!usedTriggerField) {
       return;
     }
 
+    const triggeringField = triggerFields.get(fieldId);
+
     // Get the starting value of the field
     const formValue = values[fieldId];
-
     // Loop through all the fields that are dependent on this triggerField
-    const updated = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
-    updated.forEach(({ id, conditional }) => {
-      updateConditional(id, conditional);
+    const updatednew = processAffectedFields(triggeringField, fields, formValue, options);
+    updatednew.forEach(({ id, conditional }) => {
+      updateNewConditional(id, conditional);
     });
-
-    // A flag to determine if this "onChange" field has a null value. If it does, we need to handle resets for affected fields heavy handedly
-    let nullChangeValue = false;
-
-    // Check for any "onChange" fields
-    // We have to run a separate loop because conditions could be met for a specific value AND for ANY_VALUE (i.e. not null)
-    if (triggerField.hasOnChange) {
-      // If the value is null, we need to handle the reset of the affected fields
-      if (formValue !== null && formValue !== undefined && formValue !== '' && formValue?.length > 0) {
-        const anyUpdates = getUpdatedFields(triggerField, fields, fieldId, ANY_VALUE, options, formValue);
-        anyUpdates.forEach(({ id, conditional }) => {
-          updateConditional(id, conditional);
-        });
-      } else {
-        // Not needed for initial render
-        nullChangeValue = true;
-      }
-    }
+    // console.log('Updated New: ', updatednew);
 
     // If this update is from a watch, we need to handle the reset of the affected fields
     if (fromWatch) {
-      // touches is a map of all the fields affected by this triggerfield
-      // fieldId is the key and the value is a map of the field values from this triggerfield that affect it
-      const touchedFields = triggerField.touches;
-
-      // Add a reset to the updatedFields array
-      const addReset = (fieldId) => {
-        if (!areUpdating[fieldId]) {
-          areUpdating[fieldId] = true;
-          updatedFields.push({ id: fieldId, type: 'reset' });
-        }
-      };
-
-      // Determine any fields that need to be reset
-      touchedFields.forEach((value, fieldId) => {
-        // If this field is not affected by the new value, it needs to be reset (probably)
-        // We check if the field is already being updated because we don't want to reset a field that is being updated
-        // This would happen with a field that has a remoteUrl that updates on EVERY triggerfield change.
-        if (!value.has(formValue)) {
-          addReset(fieldId);
-        } else if (value.has(ANY_VALUE) && nullChangeValue) {
-          // We need to reset any fields that may have been triggered by an ANY_VALUE trigger and allow it to be reset when the triggerfield is null
-          addReset(fieldId);
+      updatednew.forEach(({ id, conditional }) => {
+        if (conditional.noPasses) {
+          if (!newAreUpdating[id]) {
+            newAreUpdating[id] = true;
+            newUpdatedFields.push({ id: id, type: 'reset' });
+          }
         }
       });
     }
   });
 
-  const hasUpdates = Object.keys(areUpdating).length > 0;
+  // console.log('Updated Fields: ', updatedFields);
+  // console.log('NEW Updated Fields: ', newUpdatedFields);
+  const hasUpdates = Object.keys(newAreUpdating).length > 0;
+
   if (hasUpdates) {
     // If any of the affected fields have async needs, we need to wait for them to resolve
-    if (hasAsync) {
+    if (hasNewAsync) {
       // Create an array of promise so we can await all.
-      const optTypes = Object.keys(asyncLoaders).map((fId) => (
+      const optTypes = Object.keys(newAsyncLoaders).map((fId) => (
         // return Promise that stores the loadedChoices into the correct model
-        asyncLoaders[fId]().then((loaded) => {
+        newAsyncLoaders[fId]().then((loaded) => {
           loadedChoices[fId] = loaded;
         })
       ));
 
       // If we have choice loading promises, wait for them all to finish
       if (optTypes.length) {
-        // if (setLoading) {
-        //   setLoading(true);
-        // }
-
         Promise.all(optTypes).finally(() => {
-          renderSections = processConditionalUpdate(renderSections, fields, updatedFields, loadedChoices, dynValid, resetFields);
+          renderSections = processConditionalUpdate(renderSections, fields, newUpdatedFields, loadedChoices, dynValid, resetFields);
           if (finishSetup && typeof finishSetup === 'function') {
             finishSetup({ renderSections, dynValid, resetFields });
           }
-          // if (setLoading) {
-          //   setLoading(false);
-          // }
         });
       }
     } else {
-      renderSections = processConditionalUpdate(renderSections, fields, updatedFields, null, dynValid, resetFields);
+      renderSections = processConditionalUpdate(renderSections, fields, newUpdatedFields, null, dynValid, resetFields);
       finishSetup({ renderSections, dynValid, resetFields });
     }
   } else {
@@ -631,13 +605,13 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
 
 /**
  * @typedef {Object} FetchChoicesOptions
- * @property {string} urlDomain - domain to use when fetching the data
- * @property {string} mappedId - property to use when mapping the id
- * @property {string} mappedLabel - property to use when mapping the label
- * @property {string} triggerFieldId - id of the field that triggered the load
- * @property {function} choiceFormatter - function to format the choices
- * @property {function} clearErrors - function to clear errors
- * @property {function} setError - function to set errors
+ * @property {string} [urlDomain] - domain to use when fetching the data
+ * @property {string} [mappedId] - property to use when mapping the id
+ * @property {string} [mappedLabel] - property to use when mapping the label
+ * @property {string} [triggerFieldId] - id of the field that triggered the load
+ * @property {function} [choiceFormatter] - function to format the choices
+ * @property {function} [clearErrors] - function to clear errors
+ * @property {function} [setError] - function to set errors
  */
 
 /**
@@ -650,6 +624,8 @@ const processConditionalUpdate = (sections, fields, updatedFields, asyncThings =
  * @returns {Promise<Array<object>>}
  */
 export const fetchChoices = async (fieldId, url, { clearErrors, setError, resetField, urlDomain, mappedId, mappedLabel, triggerFieldId, choiceFormatter }) => {
+  // console.log('Fetching data for field', fieldId);
+  // If we are fetching new choices, we need to reset the field so the user is forced to make a new selection
   resetField(fieldId);
   const fetchUrl = urlDomain ? `${urlDomain}${url}` : url;
   const things = await axios.get(fetchUrl).then(res => {
@@ -663,12 +639,7 @@ export const fetchChoices = async (fieldId, url, { clearErrors, setError, resetF
       return choiceFormatter(fieldId, res, { triggerFieldId, mappedId, mappedLabel });
     }
 
-    const { data } = res || {};
-    return data?.map((opt) => {
-      const id = mappedId && opt[mappedId] ? opt[mappedId] : opt.id || opt.streamID;
-      const label = mappedLabel && opt[mappedLabel] ? opt[mappedLabel] : opt.name || opt.label;
-      return { id, label };
-    });
+    return defaultChoiceMapper(res, { mappedId, mappedLabel });
   }
   ).catch(error => {
     if (error.name !== 'CanceledError') {

@@ -1,3 +1,4 @@
+import theTheme from '@timmons-group/shared-react-components/muiTheme';
 import { FIRE_DEPTS } from './LargeDataset';
 const FUNDING_SOURCES = [
   {
@@ -421,14 +422,24 @@ const moneyField = {
   },
   minValue: 2.01,
   conditions: [
+    // {
+    //   then: {
+    //     hidden: false,
+    //     minValue: 3.01,
+    //   },
+    //   when: 'email',
+    //   isValid: true,
+    // },
     {
+      when: {
+        fieldId: 'email',
+        operation: 'isNotNull',
+      },
       then: {
         hidden: false,
         minValue: 3.01,
-      },
-      when: 'email',
-      isValid: true,
-    },
+      }
+    }
   ],
   required: true,
   disabled: false,

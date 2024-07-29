@@ -4,7 +4,7 @@
  * @property {string} path - field path
  */
 import { FIELD_TYPES } from '../constants';
-import { Conditional } from './formFields.model';
+import { Conditional, When } from './formFields.model';
 export type FieldIntTypes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 | 100 | 120 | 999;
 
 export type LegacyParsedSection = {
@@ -36,7 +36,7 @@ export type LegacyLayoutField = {
   disableFuture?: boolean;
   disableFutureErrorText?: string;
   minValue?: number;
-  conditions?: Array<LegacyCondition>;
+  conditions?: Array<LegacyCondition | Condition>;
   conditionals?: Array<Conditional>;
   hidden?: boolean;
   multiple?: boolean;
@@ -60,7 +60,7 @@ export type LegacyParsedFormField = {
   label: string;
   type: FieldIntTypes;
   hidden: boolean;
-  conditions?: LegacyCondition[];
+  conditions?: Array<LegacyCondition | Condition>;
   conditionals?: Conditional[];
   specialProps?: Record<string, any>;
   defaultValue?: Record<string, any>;
@@ -140,4 +140,16 @@ export type LegacyCondition = {
   is: string | number;
   isValid?: boolean;
   then: Record<string, any>;
+}
+
+export interface Condition {
+  when: When;
+  then: Record<string, any>;
+}
+
+/**
+ * This is the format of a parsed condition created in useFormLayout and used in useConfigForm
+ */
+export interface ParsedCondition extends Condition {
+  conditionId: string;
 }
