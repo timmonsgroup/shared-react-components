@@ -1,5 +1,6 @@
 import { ConfigForm, GenericConfigForm } from "@timmons-group/config-form";
 import { layout } from "./helpers/FormLayoutPreset";
+import { useFormContext } from "react-hook-form";
 
 const ConfigFormTester = () => {
   const formData = {
@@ -18,7 +19,22 @@ const ConfigFormTester = () => {
         // sectionProps={sectionProps}
         onSubmit={onSubmit}
       />
+      <AThing />
     </ConfigForm>
+  )
+}
+
+const AThing = () => {
+  const {useFormObject} = useFormContext();
+  return (
+    <div>
+      <h1>Thing</h1>
+      <button onClick={() => {
+        console.log('Values', useFormObject.getValues())
+        console.log('FormState', useFormObject.formState)
+      }}
+      >DO IT</button>
+    </div>
   )
 }
 

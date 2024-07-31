@@ -38,7 +38,7 @@ const DynamicField = ({ control, field, options = {}, fieldComponentProps = {}, 
   }
 
   return (
-    <AnyField layout={layout} control={control} {...props} />
+    <AnyField layout={layout} control={control} options={options} {...props} fieldComponentProps={fieldComponentProps}/>
   );
 };
 

@@ -20,11 +20,11 @@ import {
   ParsedCondition
 } from '../models/formLegacy.model';
 import { Conditional } from '../models/formFields.model';
-import { TriggerField } from '../models/form';
+// import { TriggerField } from '../models/form';
 
-const validationTypes = Object.values(VALIDATIONS);
-const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
-const specialProps = Object.values(SPECIAL_ATTRS);
+const validationTypes: Array<string> = Object.values(VALIDATIONS);
+const conditionalRenderProps: Array<string> = Object.values(CONDITIONAL_RENDER);
+const specialProps: Array<string> = Object.values(SPECIAL_ATTRS);
 
 /**
  * Layout fetching hook that extends the useLayout hook to parse the layout data into a more usable format
@@ -352,14 +352,14 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, 
     return {} as LegacyParsedFormField;
   }
 
-  const { label, type, model, conditions = [], linkFormat, conditionals = [] } = field;
-  const name = model?.name || `unknown${model?.id || ''}`;
+  const { path, label, type, model, conditions = [], linkFormat, conditionals = [] } = field;
+  const name = path || model?.name || `unknown${model?.id || ''}`;
 
   const hidden = !!field[CONDITIONAL_RENDER.HIDDEN];
 
   const parsedField: LegacyParsedFormField = {
-    path: field.path,
     id: name,
+    path,
     conditions,
     conditionals,
     label,
@@ -382,11 +382,13 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, 
       inline: !!field.inline,
       emptyMessage: field.emptyMessage,
       //Number properties
-      [MAX_VALUE]: field[MAX_VALUE],
       [MIN_VALUE]: field[MIN_VALUE],
+      [MAX_VALUE]: field[MAX_VALUE],
       [MAX_LENGTH]: field[MAX_LENGTH],
       [MIN_LENGTH]: field[MIN_LENGTH],
       //String properties
+      [MAX_VALUE_ERROR_TEXT]: field[MAX_VALUE_ERROR_TEXT],
+      [MIN_VALUE_ERROR_TEXT]: field[MIN_VALUE_ERROR_TEXT],
       [CONDITIONAL_RENDER.ALT_HELPER]: field[CONDITIONAL_RENDER.ALT_HELPER],
       [CONDITIONAL_RENDER.ICON_HELPER]: field[CONDITIONAL_RENDER.ICON_HELPER],
       [CONDITIONAL_RENDER.HELPER]: field[CONDITIONAL_RENDER.HELPER],
@@ -482,9 +484,9 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, 
     // This will also populate the validations property for each sub field
     const subFields = field.layout?.map((subF) => parseField(subF, asyncFieldsMap)) || [];
 
+    parsedField.subFields = subFields;
     const updatedRender: LegacyClusterRenderProps = {
       ...parsedField.render,
-      subFields,
       // Allow for custom labels
       addLabel: field.addLabel,
       removeLabel: field.removeLabel,

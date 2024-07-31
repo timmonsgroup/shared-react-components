@@ -16,6 +16,7 @@ import FormErrorMessage from '../FormErrorMessage';
 import AnyFieldLabel from '../AnyFieldLabel';
 
 import { FIELD_TYPES, isObject, dateStringNormalizer, isEmpty } from '@timmons-group/shared-react-components';
+import ClusterField from '../ClusterField';
 
 
 const makeFilter = (checkedId) => {
@@ -85,6 +86,7 @@ const handleMultiSelectChange = (field, checkedId) => {
  * AnyField is a wrapper around the various field types that implements the react-hook-form Controller
  * @function
  * @param {object} props
+ * @param {object} props.field - the field object
  * @param {object} props.control - the react-hook-form control object
  * @param {object} props.layout - the layout object
  * @param {object} [props.rules] - the react-hook-form rules object (this is not used if using form level validation)
@@ -95,10 +97,14 @@ const handleMultiSelectChange = (field, checkedId) => {
  * @param {FieldOptions} [props.options] - various options for the fields
  * @returns {React.ReactElement | null} - the rendered AnyField
  */
-const AnyField = ({ control, layout, rules, options, nestedName, isNested, fieldComponentProps, ...props }) => {
+const AnyField = ({ field, control, layout, rules, options, nestedName, isNested, fieldComponentProps, ...props }) => {
   // If this component ever uses hooks make sure to move this return BELOW those hooks
   if (layout.hidden) {
     return null;
+  }
+
+  if (layout?.type === FIELD_TYPES.CLUSTER) {
+    return <ClusterField field={field} control={control} options={options} {...props} />;
   }
 
   const name = (isNested && nestedName) ? nestedName : layout.name;
@@ -121,12 +127,14 @@ const AnyField = ({ control, layout, rules, options, nestedName, isNested, field
 };
 
 AnyField.propTypes = {
+  field: PropTypes.object,
   control: PropTypes.object.isRequired,
   layout: PropTypes.object.isRequired,
   rules: PropTypes.object,
   options: PropTypes.object,
   isNested: PropTypes.bool,
   nestedName: PropTypes.string,
+  fieldComponentProps: PropTypes.object
 };
 
 /**
@@ -146,6 +154,11 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
   const { id, type, label, options } = layout;
   const finalId = nestedName || id;
   switch (type) {
+    case FIELD_TYPES.CLUSTER: {
+      return (
+        <ClusterField layout={layout} options={fieldOptions} fieldComponentProps={fieldComponentProps} />
+      )
+    }
     case FIELD_TYPES.DATE: {
       return dateRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }
@@ -230,6 +243,7 @@ const textRenderer = (
           error={!!error}
           onChange={onChange}
           onBlur={onBlur}
+          onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
           value={value}
           multiline={isMultiLine}
           minRows={isMultiLine ? 3 : 1}

@@ -12,8 +12,8 @@ import { Button, Card, CardContent, Container, Stack, Skeleton } from '@mui/mate
 import {Unstable_Grid2 as Grid} from '@mui/material';
 
 // Internal bits
-import DynamicField from '../DynamicField';
 import { createRowFields } from '../../helpers/formHelpers';
+import AnyField from '../AnyField';
 
 /** @module FormSections */
 /**
@@ -319,12 +319,13 @@ const SectionRow = ({ row, control, options }) => {
     <Grid container spacing={spacing}>
       {fields.map((field) => {
         const { render } = field;
-        const isCluster = render?.type === FIELD_TYPES.CLUSTER ? true : false;
+        const isCluster = render?.type === FIELD_TYPES.CLUSTER;
 
         return (
           <Grid container={isCluster} xs={colSize} key={`grid-item-${field?.render?.name}`}>
-            <DynamicField
+            <AnyField
               field={field}
+              layout={render}
               control={control}
               options={options?.fieldOptions || {}}
               fieldComponentProps={options?.fieldComponentProps || {}}

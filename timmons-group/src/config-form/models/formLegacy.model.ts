@@ -3,7 +3,7 @@
  * @typedef {object} LegacyLayoutField
  * @property {string} path - field path
  */
-import { FIELD_TYPES } from '../constants';
+import { FIELD_TYPES, MAX_VALUE_ERROR_TEXT, MIN_VALUE_ERROR_TEXT } from '../constants';
 import { Conditional, When } from './formFields.model';
 export type FieldIntTypes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 | 100 | 120 | 999;
 
@@ -66,6 +66,7 @@ export type LegacyParsedFormField = {
   defaultValue?: Record<string, any>;
   modelData?: Record<string, any>;
   render: LegacyFieldRender;
+  subFields?: LegacyParsedFormField[];
   validations?: Record<string, any>;
 }
 
@@ -94,7 +95,9 @@ export type LegacyBaseFieldRenderProps = {
   url?: string;
 
   minValue?: number;
+  [MIN_VALUE_ERROR_TEXT]?: string;
   maxValue?: number;
+  [MAX_VALUE_ERROR_TEXT]?: string;
   minLength?: number;
   maxLength?: number;
 
@@ -129,7 +132,6 @@ export type LegacyTextRenderProps = LegacyBaseFieldRenderProps & {
 
 export type LegacyClusterRenderProps = LegacyBaseFieldRenderProps & {
   type: typeof FIELD_TYPES['CLUSTER'];
-  subFields: LegacyParsedFormField[];
   addLabel?: string;
   removeLabel?: string;
   clusterColumnCount?: number;

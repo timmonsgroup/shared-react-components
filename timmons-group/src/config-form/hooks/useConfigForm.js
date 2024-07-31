@@ -28,6 +28,7 @@ import { checkConditional, defaultChoiceMapper } from '../helpers/formHelpers';
  * @returns {ProcessedDynamicFormLayout} - Object containing the default values, validation schema, and fields to watch for changes
  */
 export const processDynamicFormLayout = (formLayout, data) => {
+  // console.log('Processing Dynamic Form Layout');
   // Will hold the validation schema for the form
   const validations = {};
   // Will hold the correctly formatted field values for the form
@@ -100,7 +101,7 @@ const processAffectedFields = (triggerField, fields, formValue, options) => {
       // check if the operation is true
       const passes = checkConditional(when, formValue);
       const { fieldId, operation, value } = when;
-      console.log(`${passes ? '👍' : '❌'}`, fieldId, 'with fieldValue', formValue, 'operation', operation, 'value', value)
+      // console.log(`${passes ? '👍' : '❌'}`, fieldId, 'with fieldValue', formValue, 'operation', operation, 'value', value)
       if (passes) {
         conditional.noPasses = false;
         const loadOut = then;
@@ -195,7 +196,11 @@ const createRenderSection = (section, fieldMap) => {
  * @returns {object} - Object containing the useFormObject, formProcessing, and sections
  */
 export const useConfigForm = (formLayout, data, options, addCustomValidations) => {
-  const { defaultValues, watchFields, validations: dynamicValidations } = processDynamicFormLayout(formLayout, data);
+  // Use memo because we do not need to re-run this function unless the formLayout or data changes
+  // If we do not memoize certain form actions will trigger a re-run of the watch subscription building
+  const { defaultValues, watchFields, validations: dynamicValidations } = useMemo(() => {
+    return processDynamicFormLayout(formLayout, data)
+  }, [formLayout, data]);
   const [sections, setSections] = useState([]);
   const [validations, setValidations] = useState({});
   const [formProcessing, setFormProcessing] = useState(true);
@@ -228,7 +233,9 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
   const { formState, watch, trigger, reset, resetField, setError, clearErrors, getFieldState } = useFormObject;
 
   useLayoutEffect(() => {
+    // console.log('\tForm Layout Changed');
     if (!formProcessing) {
+      // console.log('\t\tSetting form processing to true');
       setFormProcessing(true);
     }
 
@@ -244,6 +251,11 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       defaultValues,
       options: { ...options, setError, clearErrors, resetField, appliedConditionals }
     });
+
+    return () => {
+      // Cleanup
+      appliedConditionals.current = {};
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formLayout]);
 
@@ -283,12 +295,16 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
 
 
   // If we have any watchFields, watch them and update the form
+  // The
   useLayoutEffect(() => {
+    // console.log('\tReady for watches OR Watch Fields Changed');
     let subscription = null;
     if (readyForWatches && !subscription) {
+      // console.log('\t\tSetting up subscription');
+      // console.log('\t\t\t UPDATED Watch Fields: ', watchFields);
       subscription = watch((formValues, { name, type }) => {
         let watched = watchFields.includes(name);
-        // console.log('Watched: ', watched, 'Name: ', name, 'Type: ', type)
+        // console.log('\t\t\tWatched: ', watched, 'Name: ', name, 'Type: ', type)
 
         // This field is not watched
         if (!watched) {
@@ -297,13 +313,14 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
 
         if (type !== 'change') {
           // check if clusterField
-          const clusterField = formLayout.fields.get(name);
-          if (clusterField.type !== FIELD_TYPES.CLUSTER) {
+          const maybeCluster = formLayout.fields.get(name);
+          if (maybeCluster.type !== FIELD_TYPES.CLUSTER) {
             return;
           }
         }
 
         const finishSetup = ({ renderSections, resetFields, dynValid }) => {
+          // console.log('\tFinish Setup');
           // This will reset any fields that were disabled
           // We grab the "empty" value from the field and set it as the default value
           const resetValues = {};
@@ -314,10 +331,12 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
             resetField(field, { defaultValue: value });
           }
 
+          // console.log('\t\tUpdate sections state (new render)');
           setSections(renderSections);
 
           // This will trigger the useMemo to update the validation schema
           // That hook will then trigger the useEffect to revalidate the form
+          // console.log('\t\tUpdate validations state (new render)');
           setValidations((prevValues) => {
             return {
               ...prevValues,
@@ -335,6 +354,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
             }
           }
 
+          // console.log('\t\tSet form processing to false');
           setFormProcessing(false);
         };
 
@@ -353,8 +373,10 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
       });
     }
 
+    // Keep in mind that this will run on a renrender of the component BEFORE the next subscription is setup
     return () => {
       // TODO: Look into termination of any triggerfield async
+      // Kill the existing subscription
       subscription?.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -432,6 +454,7 @@ const initTheForm = ({ formLayout, setSections, validations, setValidations, isR
  * @param {boolean} props.fromWatch - Whether or not this is being called from a watch
  */
 const renderTheSections = ({ sections, fields, triggerFields, values, watchFields, finishSetup, options, fromWatch, triggeringFieldId }) => {
+  // console.log('Preparing next render of the sections (renderTheSections)');
   let renderSections = fromWatch ? sections : [];
   if (!fromWatch) {
     sections.forEach(section => {
@@ -460,8 +483,8 @@ const renderTheSections = ({ sections, fields, triggerFields, values, watchField
 
   // Loop through all the triggerFields and see if the initial values have caused any fields to be updated
   const watchesToCheck = fromWatch ? [triggeringFieldId] : watchFields;
-  // console.log('Watches to Check: ', watchesToCheck);
-  // console.log('All watches: ', watchFields);
+  // console.log('\tWatches to Check: ', watchesToCheck);
+  // console.log('\tAll watches: ', watchFields);
   watchesToCheck.forEach((fieldId) => {
     // If somehow watching a field that is not in the formLayout, skip it
     const usedTriggerField = triggerFields.get(fieldId);
