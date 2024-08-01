@@ -1,14 +1,33 @@
 # Change Log #
-## Release 1.2.0 - 7/23/2024 ##
+## Release 1.2.0 - 8/1/2024 ##
+
+The big update in this version is the addition of a new syntax for declaring conditionals on fields in the `useFormLayout` and `useConfigForm` hooks. This new syntax is more explicit and allows for more complex conditional logic. The old syntax is still supported and will be converted to the new syntax under the hood. See example below for more details.
+
 ### Fixes ###
 - Fix a bug where a typeahead that asynchronously loads options would not correctly reset if it was dependent on another field's value'.
 - Fixed an issue where React would fuss about fieldComponentProps not being a prop for the DynamicField component.
 - Fixed the shared-react-components package.json to correctly point to the correct main file (index.js).
+- DynamicField - was not correctly passing the options to the AnyField component.
 
 ### New Functionality ###
+#### Components ####
+- AnyField
+  - Added an onWheel event to the TextField to disable changing the value of a number field when attempting to scroll the page.
+
 #### Hooks ####
 - useFormLayout
   - Added a new syntax for declaring conditionals on fields
+    - Hooks check to make sure the condition in the new syntax is valid.
+    - A new condition object now consists of two properties: `when` and `then`.
+    - The `when` property is an object with the following properties:
+      - `fieldId` - The id of the field to check against.
+      - `operation` - The operation to perform on the field value (see below for a list of operations).
+      - `value` - The value to compare against. This is strict equality and we do not coerce to string.
+        - Examples
+         - `value: 7` and `operation: 'eq'` would check against the numeric 7 `value === 7`.
+         - `value: "7"` and `operation: 'et'` would check against the string 7 `value === "7"`.
+    - The `then` property is functionally unchanged from the old syntax.
+     - Any valid field properties here will be applied to the field if the condition is met.
     - The new syntax is more explicit and allows for more complex conditional logic.
      - New "operations" for conditions:
         - `eq` - Equal
