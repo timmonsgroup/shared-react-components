@@ -4,6 +4,7 @@
   "private": false,
   "description": "React Components and helpers to build a form via configuration with react-hook-form and MUI",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -52,6 +53,7 @@
     "./hooks": "./hooks/index.js",
     "./hooks/*": "./hooks/*",
     "./muiTheme": "./muiTheme.js",
-    "./constants": "./constants.js"
+    "./constants": "./constants.js",
+    "./models": "./models/index.js"
   }
 }
