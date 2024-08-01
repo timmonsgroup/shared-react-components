@@ -9,6 +9,9 @@
    - Upgraded from v2.x to ^3.1.1
      - No internal changes. Yup 1.x was a required to go to v3.x. We've been on Yup since the 1.x release of this library.
 
+### Constants ###
+ - AUTH_STATES is no longer exported from `@timmons-group/shared-react-components`. It is now exported from `@timmons-group/shared-react-auth`.
+
 ### ConfigForm ###
 ConfigForm has been moved to its own library `@timmons-group/config-form`. This was done to separate the form components from the shared components library. This will allow for better separation of concerns and allow for easier maintenance of the form components.
 
@@ -100,4 +103,12 @@ ConfigForm has been moved to its own library `@timmons-group/config-form`. This 
     // After
     + import { ConfigForm, GenericConfigForm, useFormLayout } from '@timmons-group/config-form';
     + import { ContainerWithCardLineLoader, LoadingSpinner, Modal } from '@timmons-group/shared-react-components';
+    ```
+3. Update removed constants imports
+    - Example:
+    ```tsx
+    // Before
+    - import { AUTH_STATES } from '@timmons-group/shared-react-components';
+    // Preferred After
+    + import { AUTH_STATES } from '@timmons-group/shared-react-auth';
     ```
