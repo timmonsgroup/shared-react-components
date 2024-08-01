@@ -17,6 +17,7 @@
     ".": "./index.jsx",
     "./helpers/*": "./helpers/*",
     "./hooks/*": "./hooks/*",
-    "./models/*": "./models/*"
+    "./models/*": "./models/*",
+    "./constants": "./constants.js"
   }
 }

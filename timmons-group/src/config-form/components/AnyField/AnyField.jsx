@@ -10,13 +10,12 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 
-import RadioOptions from '../RadioOptions';
-import Typeahead from '../Typeahead';
-import FormErrorMessage from '../FormErrorMessage';
-import AnyFieldLabel from '../AnyFieldLabel';
+import RadioOptions from '../RadioOptions/RadioOptions';
+import Typeahead from '../Typeahead/Typeahead';
+import FormErrorMessage from '../FormErrorMessage/FormErrorMessage';
+import AnyFieldLabel from '../AnyFieldLabel/AnyFieldLabel';
 
 import { FIELD_TYPES, isObject, dateStringNormalizer, isEmpty } from '@timmons-group/shared-react-components';
-import ClusterField from '../ClusterField';
 
 
 const makeFilter = (checkedId) => {
@@ -103,10 +102,6 @@ const AnyField = ({ field, control, layout, rules, options, nestedName, isNested
     return null;
   }
 
-  if (layout?.type === FIELD_TYPES.CLUSTER) {
-    return <ClusterField field={field} control={control} options={options} {...props} />;
-  }
-
   const name = (isNested && nestedName) ? nestedName : layout.name;
   const renderState = renderType(layout, options, nestedName, fieldComponentProps);
   // Per react-hook-form docs, we should not unregister fields in a field Array at this level
@@ -154,11 +149,6 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
   const { id, type, label, options } = layout;
   const finalId = nestedName || id;
   switch (type) {
-    case FIELD_TYPES.CLUSTER: {
-      return (
-        <ClusterField layout={layout} options={fieldOptions} fieldComponentProps={fieldComponentProps} />
-      )
-    }
     case FIELD_TYPES.DATE: {
       return dateRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }

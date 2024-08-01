@@ -22,6 +22,7 @@
   "devDependencies": {
     "@timmons-group/config-form": "file:../../timmons-group/build/config-form",
     "@timmons-group/shared-react-components": "file:../../timmons-group/build/shared-react-components",
+    "@timmons-group/shared-react-auth": "file:../../timmons-group/build/shared-react-auth",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",

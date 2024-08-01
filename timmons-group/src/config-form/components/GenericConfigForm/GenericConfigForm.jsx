@@ -13,7 +13,7 @@ import {Unstable_Grid2 as Grid} from '@mui/material';
 
 // Internal bits
 import { createRowFields } from '../../helpers/formHelpers';
-import AnyField from '../AnyField';
+import DynamicField from '../DynamicField/DynamicField';
 
 /** @module FormSections */
 /**
@@ -323,9 +323,8 @@ const SectionRow = ({ row, control, options }) => {
 
         return (
           <Grid container={isCluster} xs={colSize} key={`grid-item-${field?.render?.name}`}>
-            <AnyField
+            <DynamicField
               field={field}
-              layout={render}
               control={control}
               options={options?.fieldOptions || {}}
               fieldComponentProps={options?.fieldComponentProps || {}}

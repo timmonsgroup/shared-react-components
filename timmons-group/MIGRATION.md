@@ -9,6 +9,9 @@
    - Upgraded from v2.x to ^3.1.1
      - No internal changes. Yup 1.x was a required to go to v3.x. We've been on Yup since the 1.x release of this library.
 
+### ConfigForm ###
+ConfigForm has been moved to its own library `@timmons-group/config-form`. This was done to separate the form components from the shared components library. This will allow for better separation of concerns and allow for easier maintenance of the form components.
+
 
 ## Migration Steps ##
 1. Update the `package.json` of the project to add OR use the new versions of the libraries
@@ -27,13 +30,13 @@
       }
      ```
 2. Update imports for ConfigForm
-    - ConfigForm all Form components are now in the `@timmons-group/config-form` library
-     - Components now in the `@timmons-group/config-form` library are:
+    - All Form components are now in the `@timmons-group/config-form` library
+     - Components in the `@timmons-group/config-form` library are:
        - AnyField
        - AnyFieldLabel
        - ClusterField
        - ConfigForm
-       - DynamicField (deprecated)
+       - DynamicField
        - FormErrorMessage
        - GenericConfigForm
        - GenericInlineForm
@@ -93,8 +96,8 @@
     - Example:
     ```tsx
     // Before
-    - import { ContainerWithCard, ConfigForm, GenericConfigForm, LineLoader, LoadingSpinner, Modal } from '@timmons-group/shared-react-components';
+    - import { ContainerWithCard, ConfigForm, GenericConfigForm, LineLoader, LoadingSpinner, Modal, useFormLayout } from '@timmons-group/shared-react-components';
     // After
-    + import { ConfigForm, GenericConfigForm } from '@timmons-group/config-form';
+    + import { ConfigForm, GenericConfigForm, useFormLayout } from '@timmons-group/config-form';
     + import { ContainerWithCardLineLoader, LoadingSpinner, Modal } from '@timmons-group/shared-react-components';
     ```

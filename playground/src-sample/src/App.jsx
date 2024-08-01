@@ -1,9 +1,8 @@
-import { useState } from 'react'
-
+import {AUTH_STATES} from '@timmons-group/shared-react-auth';
 import Theme from '@timmons-group/shared-react-components/muiTheme'
 
 import { ThemeProvider } from '@mui/material/styles'
-import { Button, CssBaseline } from '@mui/material'
+import { CssBaseline } from '@mui/material'
 import FormTester from './FormTester'
 import { ContainerWithCard } from '@timmons-group/shared-react-components'
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -11,8 +10,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ConfigFormTester from './ConfigFormTester'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  console.log('AUTH_STATES', AUTH_STATES)
   return (
     <ThemeProvider theme={Theme}>
       <CssBaseline />
