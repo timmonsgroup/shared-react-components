@@ -468,32 +468,32 @@ const moneyChild = {
   type: 4,
   helperText: 'I are child.',
   placeholder: 'A child of moMoney',
-  hidden: true,
+  // hidden: true,
   model: {
-    data: {
-      minValue: 1.01,
-    },
+    // data: {
+    //   minValue: 1.01,
+    // },
     id: 8,
     modelid: 10,
     type: 4,
     name: 'moMoneyChild',
   },
   minValue: 2.01,
-  conditions: [
-    {
-      then: {
-        hidden: false,
-        minValue: 3.01,
-      },
-      when: 'moMoney',
-      // when: {
-      //   fieldId: 'moMoney',
-      //   operation: 'gte',
-      //   value: 100
-      // },
-      is: 100,
-    },
-  ],
+  // conditions: [
+  //   {
+  //     then: {
+  //       hidden: false,
+  //       minValue: 3.01,
+  //     },
+  //     when: 'moMoney',
+  //     // when: {
+  //     //   fieldId: 'moMoney',
+  //     //   operation: 'gte',
+  //     //   value: 100
+  //     // },
+  //     is: 100,
+  //   },
+  // ],
   required: true,
   disabled: false,
 };
@@ -743,11 +743,13 @@ export const layout = {
         order: 10,
         layout: [
           // customRegexField,
+          moneyChild,
           emailField,
           moneyField,
           asyncTypeahead,
           integerField,
           virginiaCities,
+          conditionalUrlField,
           // zipField,
           // phoneField,
           // fireDepartmentField,
@@ -756,9 +758,7 @@ export const layout = {
           // dateField,
           // clusterField,
           // integerField,
-          conditionalUrlField,
           // anotherCluster,
-          moneyChild
         ],
       },
       // {

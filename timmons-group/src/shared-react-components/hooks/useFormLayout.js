@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers.js';
-import { dateStringNormalizer, defaultChoiceMapper } from '../helpers/helpers.js';
+import { dateStringNormalizer, defaultChoiceMapper, isEmpty } from '../helpers/helpers.js';
 
 const validationTypes = Object.values(VALIDATIONS);
 const conditionalRenderProps = Object.values(CONDITIONAL_RENDER);
@@ -515,7 +515,7 @@ export function getFieldValue(field, formData) {
   let inData = formData?.[name];
 
   // If the config specifies a default value, use that value ONLY if the data is undefined.
-  if ((inData === undefined || inData === null) && field[DEFAULT_VALUE]) {
+  if ((inData === undefined || inData === null) && !isEmpty(field[DEFAULT_VALUE])) {
     inData = field[DEFAULT_VALUE];
   }
 
@@ -528,7 +528,7 @@ export function getFieldValue(field, formData) {
     case FIELDS.CURRENCY:
     case FIELDS.LINK:
     case FIELDS.FLOAT: {
-      value = inData || '';
+      value = isEmpty(inData) ? '' : inData;
       break;
     }
 

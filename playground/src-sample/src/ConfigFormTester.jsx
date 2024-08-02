@@ -24,7 +24,9 @@ function customValidations(configFormValidations) {
 
 const ConfigFormTester = () => {
   const formData = {
-    email: 'duderino@gmail.com'
+    email: 'duderino@gmail.com',
+    moMoneyChild: 0,
+
   }
 
   const onSubmit = (data) => {
