@@ -1,4 +1,9 @@
 # Change Log #
+## Release 1.2.1 - 8/2/2024 ##
+### Fixes ###
+- Fixes [#12](https://github.com/timmonsgroup/shared-react-components/issues/12)# Shared React Components #
+ - Added isEmpty checks instead of falsy checks to allow numeric 0 values to be correctly set in form fields.
+
 ## Release 1.2.0 - 8/1/2024 ##
 
 The big update in this version is the addition of a new syntax for declaring conditionals on fields in the `useFormLayout` and `useConfigForm` hooks. This new syntax is more explicit and allows for more complex conditional logic. The old syntax is still supported and will be converted to the new syntax under the hood. See example below for more details.
