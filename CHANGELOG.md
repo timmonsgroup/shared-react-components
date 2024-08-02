@@ -1,32 +1,122 @@
 # Change Log #
 ## Release 2.0.0 - Eventually ##
 
+The main change in this release is moving the Configurable Form components and helpers into their own package. As part of that move we have begun porting the ConfigForm components to TypeScript. This is a work in progress and will be completed piece meal in every release.
+
 ### Individual Change Logs ###
 - [Config Form](./timmons-group/src/config-form/CHANGELOG.md)
 
 ### Breaking Changes ###
+See migration guide for more details. [Migration Guide](./timmons-group/MIGRATION.md)
+
  - ConfigForm, DynamicField, formHelpers, etc, etc have moved to separate repo
-  - Update your imports to use the new package
-  - `import {ConfigForm} from '@timmons-group/config-form'`
-  - TODO: List ALL the exports that have moved
  - Removed JWTUtil and its test file from shared-react-components
   - This was a duplicate of the JWTUtil in shared-auth-config
   - In the rare event you were using exports from here make sure you are importing shared-auth-config
     - `import { decodeTokenToJWT, parseCombinedToken } from '@timmons-group/shared-auth-config'`
- - MUI X Datepickers library has been upgrade to ^7.4.0
+ - MUI X Datepickers library has been upgrade to ^6.20.0
+  - This should not have any breaking changes if you have updated to the latest version of the library
  - @hookform/resolvers library has been upgraded to ^3.1.1
    - This should not have any breaking once the library version is updated
    - Version 3.0.0 of `@hookform/resolvers` required yup version ^1.x (update in our 1.0.0 release) and we missed have upgrading this library too.
  - DATA_STATUS, ACLS, and AUTH_STATUS have been removed from SRC constants
 
-### Fixes ###
-- @timmons-group/config-form
-  - Fixed zero not being correctly hydrated by getFieldValue
-    - [Issue](https://github.com/timmonsgroup/shared-react-components/issues/12)
-
 ### Notes ###
 FIELD_TYPES, CONDITIONAL_RENDER and several other magic strings have been duplicated to the new config-form repo. We can rexamine this later
 There have been some README updates to explain how to build the libraries and test them in the playground
+
+## Release 1.2.1 - 8/2/2024 ##
+### Fixes ###
+- Fixes [#12](https://github.com/timmonsgroup/shared-react-components/issues/12)# Shared React Components #
+ - Added isEmpty checks instead of falsy checks to allow numeric 0 values to be correctly set in form fields.
+
+## Release 1.2.0 - 8/1/2024 ##
+
+The big update in this version is the addition of a new syntax for declaring conditionals on fields in the `useFormLayout` and `useConfigForm` hooks. This new syntax is more explicit and allows for more complex conditional logic. The old syntax is still supported and will be converted to the new syntax under the hood. See example below for more details.
+
+### Fixes ###
+- Fix a bug where a typeahead that asynchronously loads options would not correctly reset if it was dependent on another field's value'.
+- Fixed an issue where React would fuss about fieldComponentProps not being a prop for the DynamicField component.
+- Fixed the shared-react-components package.json to correctly point to the correct main file (index.js).
+- DynamicField - was not correctly passing the options to the AnyField component.
+
+### New Functionality ###
+#### Components ####
+- AnyField
+  - Added an onWheel event to the TextField to disable changing the value of a number field when attempting to scroll the page.
+
+#### Hooks ####
+- useFormLayout
+  - Added a new syntax for declaring conditionals on fields
+    - Hooks check to make sure the condition in the new syntax is valid.
+    - A new condition object now consists of two properties: `when` and `then`.
+    - The `when` property is an object with the following properties:
+      - `fieldId` - The id of the field to check against.
+      - `operation` - The operation to perform on the field value (see below for a list of operations).
+      - `value` - The value to compare against. This is strict equality and we do not coerce to string.
+        - Examples
+         - `value: 7` and `operation: 'eq'` would check against the numeric 7 `value === 7`.
+         - `value: "7"` and `operation: 'et'` would check against the string 7 `value === "7"`.
+    - The `then` property is functionally unchanged from the old syntax.
+     - Any valid field properties here will be applied to the field if the condition is met.
+    - The new syntax is more explicit and allows for more complex conditional logic.
+     - New "operations" for conditions:
+        - `eq` - Equal
+        - `neq` - Not Equal
+        - `gt` - Greater Than
+        - `gte` - Greater Than or Equal
+        - `lt` - Less Than
+        - `lte` - Less Than or Equal
+        - `contains` - Contains
+        - `notContains` - Not Contains
+        - `startsWith` - Starts With
+        - `endsWith` - Ends With
+        - `regex` - Regular Expression
+        - `notRegex` - Not Regular Expression
+        - `isNull` - Is Null
+        - `isNotNull` - Is Not Null
+    - The old syntax is still supported and will be converted to the new syntax under the hood.
+    - Example
+    ```javascript
+    {
+            label: 'New Format',
+            path: 'newFormat',
+            type: FIELD_TYPES.LONG_TEXT,
+            model: {
+              name: 'newFormat',
+              type: FIELD_TYPES.LONG_TEXT,
+            },
+            hidden: true,
+            conditions: [
+              // Legacy syntax
+              {
+                when: 'someOtherField',
+                is: 7,
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              },
+              // Is the same as the new syntax
+              {
+                when: {
+                  fieldId: 'someOtherField',
+                  operation: 'eq',
+                  value: 7
+                },
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              }
+            ],
+          }
+    ```
+- useConfigForm
+  - The conditional checking logic has been completely overhauled the concept of "ANY_VALUE" has been removed (use `isNull` or `isNotNull` instead).
+  - New conditional syntax is being used. Legacy syntax is run through the new operations.
+  - The conditional logic will no longer run apply a condition if the condition has already been applied.
+   - Prior to the concept of "appliedConditions" ALL conditions would be run / tested and the field layout rebuilt on every field change even if they had already been applied.
 
 ## Release 1.1.0 - 05/13/2024 ##
 ### Fixes ###
