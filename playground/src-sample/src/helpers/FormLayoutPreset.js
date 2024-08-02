@@ -1,5 +1,6 @@
 import theTheme from '@timmons-group/shared-react-components/muiTheme';
 import { FIRE_DEPTS } from './LargeDataset';
+import { FIELD_TYPES } from '@timmons-group/config-form';
 const FUNDING_SOURCES = [
   {
     id: 0,
@@ -410,7 +411,7 @@ const moneyField = {
   iconHelperText: 'Currency is moMoney.',
   helperText: 'I are current.',
   placeholder: "I don't know you",
-  hidden: true,
+  // hidden: true,
   model: {
     data: {
       minValue: 1.01,
@@ -422,24 +423,27 @@ const moneyField = {
   },
   minValue: 2.01,
   conditions: [
-    // {
-    //   then: {
-    //     hidden: false,
-    //     minValue: 3.01,
-    //   },
-    //   when: 'email',
-    //   isValid: true,
-    // },
     {
       when: {
         fieldId: 'email',
-        operation: 'isNotNull',
+        operation: 'neq',
+        value: 'money@gmail.com'
       },
       then: {
         hidden: false,
         minValue: 3.01,
+        required: false,
       }
-    }
+    },
+    {
+      when: 'someOtherField',
+      is: '102',
+      then: {
+        hidden: false,
+        minValue: 102,
+        required: false,
+      },
+    },
   ],
   required: true,
   disabled: false,
@@ -477,32 +481,33 @@ const moneyChild = {
 };
 
 const asyncTypeahead = {
-  label: 'Dog Facts',
-  path: 'anotherField',
+  label: 'Public Holidays',
+  path: 'asyncPublicHolidays',
   type: 10,
   model: {
     id: 5,
     modelid: 10,
     type: 2,
-    name: 'anotherField',
+    name: 'asyncPublicHolidays',
     data: {},
   },
-  placeholder: 'The typeahead will populate this field',
-  iconHelperText:
-    'Please select the Fire Department you are applying for funding on behalf of.',
-  helperText:
-    'You need to pick a fire department before I can hydrate this field.',
-  required: true,
-  conditions: [
-    {
-      when: 'fireDepartment',
-      isValid: true,
-      then: {
-        helperText: "I'm so glad you picked a fire department!",
-        url: 'https://dog-api.kinduff.com/api/facts?number=5',
-      },
-    },
-  ],
+  url: 'https://date.nager.at/api/v2/publicholidays/2020/US',
+  placeholder: 'Using the URL to populate this field',
+  // iconHelperText:
+  //   'Please select the Fire Department you are applying for funding on behalf of.',
+  // helperText:
+  //   'You need to pick a fire department before I can hydrate this field.',
+  // required: true,
+  // conditions: [
+  //   {
+  //     when: 'fireDepartment',
+  //     isValid: true,
+  //     then: {
+  //       helperText: "I'm so glad you picked a fire department!",
+  //       url: 'https://dog-api.kinduff.com/api/facts?number=5',
+  //     },
+  //   },
+  // ],
   disabled: false,
 };
 
@@ -531,6 +536,174 @@ const dateField = {
     'This error text appears when the date picker fails its disable future validation ${max}',
 };
 
+const virginiaCities = {
+  label: 'Cities',
+  placeholder: 'Select a city',
+  path: 'virginiaCities',
+  type: 10,
+  model: {
+    id: 5,
+    modelid: 10,
+    type: 10,
+    name: 'virginiaCities',
+  },
+  possibleChoices: [
+    {
+      name: 'Richmond',
+      id: 'richmond',
+    },
+    {
+      name: 'Charlottesville',
+      id: 'charlottesville',
+    },
+    {
+      name: 'Roanoke',
+      id: 'roanoke',
+    },
+    {
+      name: 'Blacksburg',
+      id: 'blacksburg',
+    },
+    {
+      name: 'Lynchburg',
+      id: 'lynchburg',
+    },
+    {
+      name: 'Staunton',
+      id: 'staunton',
+    },
+    {
+      name: 'Harrisonburg',
+      id: 'harrisonburg',
+    }
+  ],
+  required: false
+}
+
+const conditionalUrlField = {
+  "label": "Groups",
+  "path": "groups",
+  "type": FIELD_TYPES.OBJECT,
+  "model": {
+    "id": 2,
+    "modelid": 30,
+    "type": FIELD_TYPES.OBJECT,
+    "name": "groups",
+    "data": {
+      "useId": true,
+      // "multiple": true,
+      "objectTypeId": 20
+    }
+  },
+  "required": true,
+  "disabled": true,
+  "hidden": false,
+  "conditions": [
+    // {
+    //   "then": {
+    //     "url": "https://api.openbrewerydb.org/v1/breweries?by_city=##thevalue##&per_page=10",
+    //     "disabled": false,
+    //     "required": true
+    //   },
+    //   "when": "virginiaCities",
+    //   "isValid": true
+    // }
+    {
+      when: {
+        fieldId: 'virginiaCities',
+        operation: 'isNotNull',
+      },
+      then: {
+        url: 'https://api.openbrewerydb.org/v1/breweries?by_city=##thevalue##&per_page=10',
+        disabled: false,
+        required: true
+      }
+    }
+  ]
+}
+
+export const POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES = Object.freeze({
+  YES: 7,
+  NO: 8
+})
+
+export const layoutWithNumericValues = {
+  layout: {
+    data: {
+      create: '/api/grantApplication/new',
+    },
+    id: 2,
+    modelId: 10,
+    enabled: true,
+    name: 'FD Grant Application',
+    editable: true,
+    layoutKey: 'new_fd',
+    type: 1,
+
+    sections: [
+      {
+        editable: true,
+        enabled: true,
+        name: 'Section One',
+        order: 10,
+        layout: [
+          {
+            label: ' ',
+            path: 'needsPotentialChanges',
+            type: FIELD_TYPES.CHOICE,
+            model: {
+              name: 'needsPotentialChanges',
+              id: 5,
+              modelid: 10,
+              type: FIELD_TYPES.CHOICE,
+            },
+            possibleChoices: [
+              { id: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.YES, name: 'Yes' },
+              { id: POTENTIAL_CHANGES_NEEDED_PICKLIST_VALUES.NO, name: 'No' }
+            ],
+          },
+          {
+            label: 'New Format',
+            path: 'newFormat',
+            type: FIELD_TYPES.LONG_TEXT,
+            model: {
+              name: 'newFormat',
+              id: 5,
+              modelid: 10,
+              type: FIELD_TYPES.LONG_TEXT,
+            },
+            required: false,
+            hidden: true,
+            minLength: 10,
+            maxLength: 2000,
+            conditions: [
+              {
+                when: 'someOtherField',
+                is: 7,
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              },
+              {
+                when: {
+                  fieldId: 'someOtherField',
+                  operation: 'eq',
+                  value: 7
+                },
+                then: {
+                  required: true,
+                  hidden: false
+                }
+              }
+            ],
+          }
+        ],
+      },
+    ],
+  },
+};
+
 export const layout = {
   layout: {
     data: {
@@ -550,107 +723,101 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
-          customRegexField,
+          moneyChild,
           emailField,
-          // zipField,
-          // phoneField,
-          // fireDepartmentField,
-          // checkboxes,
-          // asyncTypeahead,
-          // dateField,
-          // clusterField,
-          // integerField,
           moneyField,
-          anotherCluster,
-          // moneyChild
+          asyncTypeahead,
+          integerField,
+          virginiaCities,
+          conditionalUrlField,
         ],
       },
-      {
-        name: "I' another Section",
-        description: "I'm a description",
-        editable: true,
-        enabled: true,
-        order: 10,
-        layout: [
-          {
-            label: 'Department Type 2',
-            path: 'fdType2',
-            type: 0,
-            model: {
-              id: 8,
-              modelid: 10,
-              type: 0,
-              name: 'fdType2',
-              data: {},
-            },
-            iconHelperText:
-              'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
-            required: false,
-            readOnly: true,
-            hidden: true,
-            conditions: [
-              {
-                then: {
-                  renderPropertyId: 'fireDepartmentType.name',
-                  hidden: false,
-                },
-                when: 'fireDepartment',
-                isValid: true,
-              },
-            ],
-          },
-          {
-            label: 'Department ID',
-            path: 'departmentId',
-            type: 0,
-            model: {
-              id: 7,
-              modelid: 10,
-              type: 0,
-              name: 'departmentId',
-              data: {},
-            },
-            required: false,
-            readOnly: true,
-            placeholder: 'But why?',
-            hidden: true,
-            conditions: [
-              {
-                then: {
-                  renderPropertyId: 'fdid',
-                  hidden: false,
-                },
-                when: 'fireDepartment',
-                isValid: true,
-              },
-            ],
-          },
-          {
-            label: 'Cluster Must Validate',
-            path: 'validateCluster',
-            type: 0,
-            model: {
-              id: 7,
-              modelid: 10,
-              type: 0,
-              name: 'validateCluster',
-              data: {},
-            },
-            required: false,
-            hidden: true,
-            conditions: [
-              {
-                then: {
-                  hidden: false,
-                  helperText: 'You have at least one cluster. I appear',
-                },
-                when: 'amCluster',
-                isValid: true,
-              },
-            ],
-          },
-        ],
-      },
+      // {
+      //   name: "I' another Section",
+      //   description: "I'm a description",
+      //   editable: true,
+      //   enabled: true,
+      //   order: 10,
+      //   layout: [
+      //     {
+      //       label: 'Department Type 2',
+      //       path: 'fdType2',
+      //       type: 0,
+      //       model: {
+      //         id: 8,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'fdType2',
+      //         data: {},
+      //       },
+      //       iconHelperText:
+      //         'Please contact the Wildfire Suite Support for assistance updating the Department Type if missing or incorrect.',
+      //       required: false,
+      //       readOnly: true,
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             renderPropertyId: 'fireDepartmentType.name',
+      //             hidden: false,
+      //           },
+      //           when: 'fireDepartment',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Department ID',
+      //       path: 'departmentId',
+      //       type: 0,
+      //       model: {
+      //         id: 7,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'departmentId',
+      //         data: {},
+      //       },
+      //       required: false,
+      //       readOnly: true,
+      //       placeholder: 'But why?',
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             renderPropertyId: 'fdid',
+      //             hidden: false,
+      //           },
+      //           when: 'fireDepartment',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       label: 'Cluster Must Validate',
+      //       path: 'validateCluster',
+      //       type: 0,
+      //       model: {
+      //         id: 7,
+      //         modelid: 10,
+      //         type: 0,
+      //         name: 'validateCluster',
+      //         data: {},
+      //       },
+      //       required: false,
+      //       hidden: true,
+      //       conditions: [
+      //         {
+      //           then: {
+      //             hidden: false,
+      //             helperText: 'You have at least one cluster. I appear',
+      //           },
+      //           when: 'amCluster',
+      //           isValid: true,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
     ],
   },
 };

@@ -108,12 +108,14 @@ const Typeahead = forwardRef(({ label, items, isRequired, textFieldProps, sx, er
         }
       }}
       renderOption={
-        (optProps, option, i) => (
+        (optProps, option, optState) => {
+          const iKey = `${option.id ?? option.value ?? optState.index + new Date().getTime()}-${option.label || option.name}`;
+          return (
           // We're generating a more verbose key here in the event of bad data
-          <Box component="li" {...optProps} key={`${option.id ?? option.value ?? i + new Date().getTime()}-${option.label || option.name}`}>
+            <Box component="li" {...optProps} key={iKey}>
             {option.label ?? option.name}
           </Box>
-        )
+        )}
       }
       renderInput={(params) => {
         return (
