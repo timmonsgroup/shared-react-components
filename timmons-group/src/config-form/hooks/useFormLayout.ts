@@ -465,7 +465,7 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, 
   if (field.possibleChoices) {
     const choices = field?.possibleChoices ? field?.possibleChoices.map(item => ({
       ...item,
-      label: item.name,
+      label: item.label ?? item.name,
       id: item.id,
     })) : [];
 
