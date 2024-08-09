@@ -8,6 +8,7 @@ import { ContainerWithCard } from '@timmons-group/shared-react-components'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ConfigFormTester from './ConfigFormTester'
+import ContextBooks from './ContextPerComponent/ContextBooks';
 
 function App() {
   console.log('AUTH_STATES', AUTH_STATES)
@@ -15,6 +16,7 @@ function App() {
     <ThemeProvider theme={Theme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <ContextBooks />
         <ConfigFormTester />
         <ContainerWithCard>
           <FormTester />

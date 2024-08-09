@@ -7,7 +7,6 @@ export { default as Modal } from './Modal';
 export { default as SideBar} from './SideBar';
 export { default as SubHeader } from './SubHeader';
 export { default as RenderExpandableCell } from './RenderExpandableCell';
-export { default as RequiredIndicator } from '../../config-form/components/RequiredIndicator';
 export { default as TooltipIcon } from './TooltipIcon';
 export { default as LinkBehavior } from './LinkBehavior';
 export * from './SectionTop';
