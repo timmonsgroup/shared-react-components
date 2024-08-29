@@ -14,3 +14,21 @@ We've updated the peer dependencies for the `@hookform/resolvers` package to ver
 - useFormLayout
   - Fixed zero not being correctly hydrated by getFieldValue
     - [Issue](https://github.com/timmonsgroup/shared-react-components/issues/12)
+
+### New Functionality ###
+- useConfigForm
+  - Accepts a new argument `formOptions`. This can be used to change the `mode` option in the `useForm` hook
+- ConfigForm
+  - New prop `formOptions`. Used to pass options to the new argument in useConfigForm mentioned above
+  - Example:
+  ```jsx
+  const options = {mode: 'onChange'};
+  return (
+  <ConfigForm formLayout={layout} data={formData} formOptions={options}>
+      <GenericConfigForm
+        headerTitle="Bacon Bits"
+        onSubmit={onSubmit}
+      />
+    </ConfigForm>
+  )
+  ```
