@@ -2,6 +2,10 @@ import { ConfigForm, GenericConfigForm } from "@timmons-group/config-form";
 import { layout } from "./helpers/FormLayoutPreset";
 import { useFormContext } from "react-hook-form";
 
+const options = {
+  mode: 'onChange'
+}
+
 const ConfigFormTester = () => {
   const formData = {
     email: 'duderino@gmail.com'
@@ -12,7 +16,7 @@ const ConfigFormTester = () => {
   }
 
   return (
-    <ConfigForm formLayout={layout.layout} data={formData}>
+    <ConfigForm formLayout={layout.layout} data={formData} formOptions={options}>
       <GenericConfigForm
         headerTitle="Bacon Bits"
         // isEdit={isEdit}

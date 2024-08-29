@@ -21,6 +21,7 @@ import { LoadingSpinner, functionOrDefault } from '@timmons-group/shared-react-c
  * @param {string} [props.urlDomain] - the domain to use for the API calls
  * @param {function} [props.renderLoading] - the function to render while the form is loading
  * @param {function} [props.addCustomValidations] - a function to add custom validations to the form - MUST be a function that returns an object of validation functions
+ * @param {object} [props.formOptions] - options to pass to the useForm hook (see useForm in useConfigForm)
  * @param {object} props.children - the children to render
  * @returns {React.ReactElement} - the wrapped children
  * @example
@@ -28,7 +29,7 @@ import { LoadingSpinner, functionOrDefault } from '@timmons-group/shared-react-c
  *  <MyForm />
  * </ConfigForm>
  */
-const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading, addCustomValidations }) => {
+const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, renderLoading, formOptions, addCustomValidations }) => {
   const [parsed, setParsed] = useState(null);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const ConfigForm = ({ formLayout, data, urlDomain, parseOptions = {}, children, 
 
   if (parsed) {
     return (
-      <ConfigFormProvider layout={parsed} data={data} options={parseOptions} addCustomValidations={addCustomValidations}>
+      <ConfigFormProvider layout={parsed} data={data} options={parseOptions} formOptions={formOptions} addCustomValidations={addCustomValidations}>
         {children}
       </ConfigFormProvider>
     );
@@ -73,14 +74,15 @@ ConfigForm.propTypes = {
  * @param {object} [props.data] - the data to populate the form with
  * @param {string} [props.urlDomain] - the domain to use for the API calls
  * @param {object} [props.options] - options to pass to the parser
+ * @param {object} [props.formOptions] - options to pass to the useForm hook (see useForm in useConfigForm)
  * @param {object} props.children - the children to render
  * @param {function} [props.addCustomValidations] - a function to add custom validations to the form - MUST be a function that returns an object of validation functions
  * @returns {React.ReactElement} - the wrapped children
  * @example <DynamicForm layout={layout} data={data}><MyForm /></DynamicForm>
  *
  */
-const ConfigFormProvider = ({ layout, data, urlDomain, children, options, addCustomValidations }) => {
-  const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options }, addCustomValidations);
+const ConfigFormProvider = ({ layout, data, urlDomain, children, options, formOptions, addCustomValidations }) => {
+  const { useFormObject, ...rest } = useConfigForm(layout, data, { urlDomain, ...options }, addCustomValidations, formOptions);
 
   return (
     <FormProvider useFormObject={useFormObject} {...rest}>
@@ -95,6 +97,7 @@ ConfigFormProvider.propTypes = {
   urlDomain: PropTypes.string,
   children: PropTypes.node,
   options: PropTypes.object,
+  formOptions: PropTypes.object,
   addCustomValidations: PropTypes.func,
 };
 

@@ -184,6 +184,10 @@ const createRenderSection = (section, fieldMap) => {
 };
 
 /**
+ * @typedef {"onBlur" | "onSubmit" | "onChange" | "all" | "onTouched"} HookFormMode
+ */
+
+/**
  * Any properties returned here may be applied to the FormContext for use in child components
  * @example
  * const { useFormObject, formProcessing, sections } = useConfigForm(formLayout, data, options);
@@ -192,10 +196,11 @@ const createRenderSection = (section, fieldMap) => {
  * @param {object} formLayout - Form layout object
  * @param {object} data - Data to pre-populate the form with
  * @param {object} [options] - any other options needed for the form
+ * @param {HookFormMode} [options.mode] - mode for the form (onBlur, onChange, onSubmit, all, onTouched)
  * @param {function} [addCustomValidations] - function to add custom validations to the form MUST return an object
  * @returns {object} - Object containing the useFormObject, formProcessing, and sections
  */
-export const useConfigForm = (formLayout, data, options, addCustomValidations) => {
+export const useConfigForm = (formLayout, data, options, addCustomValidations, formOptions) => {
   // Use memo because we do not need to re-run this function unless the formLayout or data changes
   // If we do not memoize certain form actions will trigger a re-run of the watch subscription building
   const { defaultValues, watchFields, validations: dynamicValidations } = useMemo(() => {
@@ -206,6 +211,9 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
   const [formProcessing, setFormProcessing] = useState(true);
   const [readyForWatches, setReadyForWatches] = useState(false);
   const appliedConditionals = useRef({});
+  const mode = formOptions?.mode ?? 'onBlur';
+  console.log('useConfigForm: formOptions', formOptions);
+  console.log('\tmode', mode);
 
   // update the validation schema hookForm uses when the validation state changes
   const validationSchema = useMemo(
@@ -223,7 +231,7 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations) =
   );
 
   const useFormObject = useForm({
-    mode: 'onBlur',
+    mode,
     defaultValues: defaultValues,
     resolver: yupResolver(validationSchema),
     shouldUnregister: true
