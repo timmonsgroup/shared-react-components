@@ -212,8 +212,6 @@ export const useConfigForm = (formLayout, data, options, addCustomValidations, f
   const [readyForWatches, setReadyForWatches] = useState(false);
   const appliedConditionals = useRef({});
   const mode = formOptions?.mode ?? 'onBlur';
-  console.log('useConfigForm: formOptions', formOptions);
-  console.log('\tmode', mode);
 
   // update the validation schema hookForm uses when the validation state changes
   const validationSchema = useMemo(
