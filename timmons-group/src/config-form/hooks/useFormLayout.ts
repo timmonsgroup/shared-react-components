@@ -446,8 +446,9 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, 
   if (type === FIELDS.LONG_TEXT) {
     const updatedRender: LegacyLongTextRenderProps = {
       ...parsedField.render,
-      isMultiline: true,
+      isMultiLine: true,
     };
+
     parsedField.render = updatedRender;
   }
 

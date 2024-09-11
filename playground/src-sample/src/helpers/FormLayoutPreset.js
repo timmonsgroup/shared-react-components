@@ -69,6 +69,27 @@ export const createTextModel = (
   ...otherThings,
 });
 
+export const createLongTextModel = (
+  name,
+  label,
+  required = false,
+  otherThings = {},
+  dataThings = {}
+) => ({
+  label,
+  path: name,
+  type: 1,
+  model: {
+    name,
+    id: 5,
+    modelid: 10,
+    type: 1,
+    data: dataThings,
+  },
+  required,
+  ...otherThings,
+});
+
 const emailField = createTextModel('email', 'Email', true, {
   placeholder: 'Please enter your email address',
   altHelperText: 'I GO ELSEWHERE!',
@@ -118,6 +139,12 @@ const zipField = createTextModel('zipCode', 'Zippity', true, {
 
 const phoneField = createTextModel('phone', 'Phone Number', true, {
   phone: true,
+});
+
+const longText = createLongTextModel('longText', 'Long Text', true, {
+  placeholder: 'Please enter a long text',
+  altHelperText: 'I GO ELSEWHERE!',
+  helperText: 'I am a long text field!',
 });
 
 const fireDepartmentField = {
@@ -723,6 +750,7 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
+          longText,
           moneyChild,
           emailField,
           moneyField,

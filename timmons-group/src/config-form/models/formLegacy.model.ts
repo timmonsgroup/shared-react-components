@@ -121,7 +121,7 @@ export type LegacyDateRenderProps = LegacyBaseFieldRenderProps & {
 }
 
 export type LegacyLongTextRenderProps = LegacyBaseFieldRenderProps & {
-  isMultiline?: boolean;
+  isMultiLine?: boolean;
 }
 
 export type LegacyTextRenderProps = LegacyBaseFieldRenderProps & {
