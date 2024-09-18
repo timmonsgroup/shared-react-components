@@ -599,7 +599,7 @@ export function getFieldValue(field, formData) {
     case FIELDS.DATE: {
       if (inData) {
         const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(dateStringNormalizer(inData));
-        inData = theDate.toDateString();
+        inData = theDate;
       }
       value = inData || null;
       break;

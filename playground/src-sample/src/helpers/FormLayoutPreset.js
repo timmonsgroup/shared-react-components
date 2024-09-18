@@ -501,9 +501,10 @@ const moneyChild = {
       },
       when: 'moMoney',
       is: 100,
+      required: true,
     },
   ],
-  required: true,
+  required: false,
   disabled: false,
 };
 
@@ -750,6 +751,7 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
+          dateField,
           longText,
           moneyChild,
           emailField,

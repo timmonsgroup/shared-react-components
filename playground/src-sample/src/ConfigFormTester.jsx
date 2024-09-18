@@ -8,7 +8,10 @@ const options = {
 
 const ConfigFormTester = () => {
   const formData = {
-    email: 'duderino@gmail.com'
+    email: 'duderino@gmail.com',
+    // dateApplicationReceived: '2022-01-01',
+    // dateApplicationReceived: '2024-01-02T05:00:00.000Z',
+    // dateApplicationReceived: '12/31/2023',
   }
 
   const onSubmit = (data) => {

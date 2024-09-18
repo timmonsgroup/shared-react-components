@@ -96,7 +96,8 @@ export function yupTypeAhead(label, isRequired, reqMessage) {
  * @returns {YupSchema} - yup schema for the field
  */
 export function yupTrimString(label, isRequired, trimMsg, reqMessage) {
-  return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces').strict(true);
+  // Add .strict(true); to the end of the function chain to error if leading and trailing spaces
+  return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces');
 }
 
 /**
