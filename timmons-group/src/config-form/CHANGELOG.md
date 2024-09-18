@@ -1,6 +1,6 @@
 # Change Log #
 ## Release 2.0.0 but actually first release ##
-### Breaking Changes from shared-react-components ##
+### Breaking Changes from shared-react-components ###
 First release as a standalone package.  This package was previously part of the shared-react-components package.  This is a breaking change as the package is now a standalone package.
 ```json
 "@timmons-group/config-form": "^2.0.0"
@@ -9,6 +9,8 @@ We've updated the peer dependencies for the `@hookform/resolvers` package to ver
 ```json
 "@hookform/resolvers": "^3.1.1"
 ```
+
+Our yup string helper has trim on it. Trim means yup will trim (removing leading or trailing spaces) the string value before attempting to validate In previous versions of the ConfigForm this threw a validation error if your string had trailing or leading spaces. This is no longer the case. It is recommended you run myFormStringValue.trim() on your data before saving.
 
 ### Fixes ###
 - useFormLayout
