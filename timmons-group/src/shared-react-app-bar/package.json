@@ -2,7 +2,7 @@
   "name": "@timmons-group/shared-react-app-bar",
   "version": "0.0.1",
   "description": "Shared configuration for use with authentication (login) and authorization (access) modules",
-  "main": "index.jsx",
+  "main": "index.ts",
   "types": "index.d.ts",
   "type": "module",
   "scripts": {
@@ -12,6 +12,15 @@
   "license": "ISC",
   "dependencies": {
     "@timmons-group/shared-auth-config": "*"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.6",
+    "@mui/material": "^5.10.6",
+    "@mui/utils": "^5.15.14",
+    "react": "^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "exports": {
     ".": "./index.jsx",

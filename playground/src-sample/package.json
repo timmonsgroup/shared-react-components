@@ -17,12 +17,16 @@
     "date-fns": "^2.30.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.51.4"
+    "react-hook-form": "^7.51.4",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "@timmons-group/config-form": "file:../../timmons-group/build/config-form",
     "@timmons-group/shared-react-components": "file:../../timmons-group/build/shared-react-components",
     "@timmons-group/shared-react-auth": "file:../../timmons-group/build/shared-react-auth",
+    "@timmons-group/shared-auth-config": "file:../../timmons-group/build/shared-auth-config",
+    "@timmons-group/shared-react-app-bar": "file:../../timmons-group/build/shared-react-app-bar",
+    "@timmons-group/shared-react-permission-filter": "file:../../timmons-group/build/shared-react-permission-filter",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
