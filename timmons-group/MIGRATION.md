@@ -15,6 +15,9 @@
 ### ConfigForm ###
 ConfigForm has been moved to its own library `@timmons-group/config-form`. This was done to separate the form components from the shared components library. This will allow for better separation of concerns and allow for easier maintenance of the form components.
 
+#### AppBar ####
+`AppBar` from `@timmons-group/shared-react-app-bar` is now responsive by default and will show icons.
+  - The type of the `renderLogo` property has changed. It now expects a function that optionally accepts two arguments and returns JSX. The previous version could accept a Functional Component. Any errors would primarily come from typescript applications
 
 ## Migration Steps ##
 1. Update the `package.json` of the project to add OR use the new versions of the libraries
@@ -112,3 +115,48 @@ ConfigForm has been moved to its own library `@timmons-group/config-form`. This 
     // Preferred After
     + import { AUTH_STATES } from '@timmons-group/shared-react-auth';
     ```
+4. Update custom logo rendering property `renderLogo` in AppBar
+  - New type for `renderLogo`
+    - See [AppBar Readme](src/shared-react-app-bar/README.md#props) for more properties
+    - ```typescript
+      type AppBarLogoRender = (logoUrl?: string, logoText?: string) => JSX.Element;
+      ```
+  - Migration example
+    - ```jsx
+         // Before
+         // If you are using typescript and your Component is typed as "FC" (Functional Component) typescript compiler will throw a type error
+         // If you are in javascript you should still be fine
+         const RenderLogo: FC = () => {
+           return (
+            <Stack direction={"row"} spacing={1}>
+              <img src={LOGO_URL}
+                alt="Community Wildfire Defense Grant Accomplishments Reporting Module"
+                style={{ height: "50px" }}
+              />
+            </Stack>
+          );
+        };
+
+        return <AppBar
+          {...someProps}
+          renderLogo={RenderLogo}
+        />
+
+        // After
+        const renderLogo = () => {
+           return (
+            <Stack direction={"row"} spacing={1}>
+              <img src={LOGO_URL}
+                alt="Community Wildfire Defense Grant Accomplishments Reporting Module"
+                style={{ height: "50px" }}
+              />
+              This is a weird logo
+            </Stack>
+          );
+        };
+
+        return <AppBar
+          {...someProps}
+          renderLogo={renderLogo}
+        />
+      ```

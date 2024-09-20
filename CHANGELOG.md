@@ -20,7 +20,16 @@ See migration guide for more details. [Migration Guide](./timmons-group/MIGRATIO
    - Version 3.0.0 of `@hookform/resolvers` required yup version ^1.x (update in our 1.0.0 release) and we missed have upgrading this library too.
  - DATA_STATUS, ACLS, and AUTH_STATUS have been removed from SRC constants
  - `ToolTipIcon` is now be keyboard focusable. This is for accessibility. This will cause the tooltip to be hit when tabbing through a form that has field label tooltips.
- - AppBar via `@timmons-group/shared-react-app-bar` is now responsive by default and will show icons.
+
+#### AppBar ####
+  - `AppBar` from `@timmons-group/shared-react-app-bar` is now responsive by default and will show icons.
+  - It was re-written in Typescript, but we are not currently able to export the types.
+  - The type of the `renderLogo` property has changed. It now expects a function that optionally accepts two arguments and returns JSX. The previous version could accept a Functional Component. Any errors would primarily come from typescript applications
+    - ```typescript
+      type AppBarLogoRender = (logoUrl?: string, logoText?: string) => JSX.Element;
+      ```
+
+  ##### Responsive Notes #####
    - The breakpoint for mobile variants of both menus is available separately so you adjust accordingly
    - A profile icon will be shown via `mobileUserWidth` with a media query:
      - Default is `1000`
