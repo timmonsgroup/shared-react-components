@@ -100,7 +100,7 @@ const App = () => {
   }
 }
 
-const ThemeAndRoutes: FC = () => {
+const ThemeAndRoutes = () => {
   return (
     // MUI Theme Provider
     <ThemeProvider theme={theme}>
@@ -256,30 +256,3 @@ return (
 | `mobileUserWidth`       | `number`           | The width at which the user menu switches to mobile mode.                                          | `1000`                                                                                            | No       |
 | `loginLabel`            | `string`           | The label for the login button.                                                                    | `'Sign In'`                                                                                       | No       |
 | `logoutLabel`           | `string`           | The label for the logout button.                                                                   | `'Sign Out'`                                                                                      | No       |
-
-## Example Usage
-
-```tsx
-import { AppBar } from '@timmons-group/shared-react-app-bar';
-import { ACLS } from '../../constants.js';
-
-const navLinks = [
-  { title: 'Home', href: '/' },
-  { title: 'About', href: '/about', permission: ACLS.CAN_SEE_ABOUT },
-];
-
-const App = () => (
-  <AppBar
-    navLinks={navLinks}
-    buttonVariant="contained"
-    mobileButtonVariant="outlined"
-    mobileWidth={768}
-    buttonClass="customButtonClass"
-    buttonClassMobile="customButtonClassMobile"
-    logoUrl="https://example.com/logo.png"
-    loginLabel="Log In"
-    logoutLabel="Log Out"
-  />
-);
-
-export default App;
