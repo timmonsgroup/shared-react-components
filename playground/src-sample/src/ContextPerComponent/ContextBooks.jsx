@@ -2,6 +2,7 @@
 import { Button } from "@mui/material";
 import { BookProvider } from "./BookProvider";
 import { useBookContext } from "./bookContext";
+import { TooltipIcon } from "@timmons-group/shared-react-components";
 
 const ContextBooks = () => {
   return (
@@ -24,6 +25,7 @@ const BookChangeButton = ({ changeTo }) => {
 
   return (
     <div>
+      <TooltipIcon infoText="Change the book name" />
       <Button onClick={() => theContext.changeName(changeTo)}>Set Book</Button>
       {theContext.book.name &&
         <Button onClick={() => theContext.changeName('')}>Clear</Button>

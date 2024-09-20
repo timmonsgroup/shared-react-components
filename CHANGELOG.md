@@ -8,7 +8,6 @@ The main change in this release is moving the Configurable Form components and h
 
 ### Breaking Changes ###
 See migration guide for more details. [Migration Guide](./timmons-group/MIGRATION.md)
-
  - ConfigForm, DynamicField, formHelpers, etc, etc have moved to separate repo
  - Removed JWTUtil and its test file from shared-react-components
   - This was a duplicate of the JWTUtil in shared-auth-config
@@ -20,6 +19,21 @@ See migration guide for more details. [Migration Guide](./timmons-group/MIGRATIO
    - This should not have any breaking once the library version is updated
    - Version 3.0.0 of `@hookform/resolvers` required yup version ^1.x (update in our 1.0.0 release) and we missed have upgrading this library too.
  - DATA_STATUS, ACLS, and AUTH_STATUS have been removed from SRC constants
+ - `ToolTipIcon` is now be keyboard focusable. This is for accessibility. This will cause the tooltip to be hit when tabbing through a form that has field label tooltips.
+ - AppBar via `@timmons-group/shared-react-app-bar` is now responsive by default and will show icons.
+   - The breakpoint for mobile variants of both menus is available separately so you adjust accordingly
+   - A profile icon will be shown via `mobileUserWidth` with a media query:
+     - Default is `1000`
+     - ```javascript
+       const isMobile = useMediaQuery(`(max-width:${mobileUserWidth}px)`);
+       ```
+     - ![Profile Icon](images/appbar-profile-responsive.png)
+   - A hamburger icon will be shown via `mobileWidth` with a media query:
+     - Default is `950`
+     - ```javascript
+       const isMobile = useMediaQuery(`(max-width:${mobileWidth}px)`);
+       ```
+     - ![alt text](images/appbar-hamburger.png)
 
 ### Notes ###
 FIELD_TYPES, CONDITIONAL_RENDER and several other magic strings have been duplicated to the new config-form repo. We can rexamine this later
