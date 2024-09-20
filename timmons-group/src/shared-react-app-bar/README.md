@@ -10,6 +10,13 @@ Recommended:
 
 It includes / requires authentication and authorization within an application via ProvidAuth and useAuth and must be inside a react-dom-router context.
 
+### Sections in this document ###
+1. [Images](#pics-it-did-happen)
+1. [Installation](#installation)
+1. [Usage](#usage)
+1. [Component Properties](#props)
+
+
 ## Pics, it did happen! ##
 In these images there is a version number visible that is not part of this library and would be up to you to render as needed.
 ### Anonymous ###
