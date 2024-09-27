@@ -529,32 +529,32 @@ function parseValidation(validationMap, data, debug = false) {
   });
 }
 
-const parseConditionals = (fieldId, triggerFields, conditionals: Conditional | Array<Conditional>) => {
-  const toProcess = Array.isArray(conditionals) ? conditionals : [conditionals];
-  if (toProcess?.length) {
-    toProcess.forEach((conditional: Conditional) => {
-      const { fieldId: triggerId, operation, value, and, or } = conditional;
-      const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
-      const fieldValues = trigField.fieldValues.get(value) || new Map();
-      const affectedFields = fieldValues.get(fieldId) || [];
-      const touched = trigField.touches.get(fieldId) || new Map();
+// const parseConditionals = (fieldId, triggerFields, conditionals: Conditional | Array<Conditional>) => {
+//   const toProcess = Array.isArray(conditionals) ? conditionals : [conditionals];
+//   if (toProcess?.length) {
+//     toProcess.forEach((conditional: Conditional) => {
+//       const { fieldId: triggerId, operation, value, and, or } = conditional;
+//       const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
+//       const fieldValues = trigField.fieldValues.get(value) || new Map();
+//       const affectedFields = fieldValues.get(fieldId) || [];
+//       const touched = trigField.touches.get(fieldId) || new Map();
 
-      touched.set(value, true);
-      trigField.touches.set(fieldId, touched);
-      affectedFields.push({ operation, value, and, or });
-      fieldValues.set(fieldId, affectedFields);
-      trigField.fieldValues.set(value, fieldValues);
+//       touched.set(value, true);
+//       trigField.touches.set(fieldId, touched);
+//       affectedFields.push({ operation, value, and, or });
+//       fieldValues.set(fieldId, affectedFields);
+//       trigField.fieldValues.set(value, fieldValues);
 
-      triggerFields.set(triggerId, trigField);
-      if (and) {
-        parseConditionals(fieldId, triggerFields, and);
-      }
-      if (or) {
-        parseConditionals(fieldId, triggerFields, or);
-      }
-    });
-  }
-}
+//       triggerFields.set(triggerId, trigField);
+//       if (and) {
+//         parseConditionals(fieldId, triggerFields, and);
+//       }
+//       if (or) {
+//         parseConditionals(fieldId, triggerFields, or);
+//       }
+//     });
+//   }
+// }
 
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.

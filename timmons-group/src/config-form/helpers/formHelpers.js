@@ -301,10 +301,14 @@ function addMaxLength(schema, label, maxLength) {
  * @param {string} msg - message to display if the field is not formatted correctly
  * @param {string} reqMessage - message to display if the field is required
  * @param {number} minLength - min length of the field
+ * @param {object} moreThings - additional options for the field
  * @returns {YupSchema} - yup schema for a string field
  */
-export function yupTrimStringMax(label, isRequired, maxLength, msg, reqMessage, minLength) {
+export function yupTrimStringMax(label, isRequired, maxLength, msg, reqMessage, minLength, moreThings) {
   let schema = yupTrimString(label, isRequired, msg, reqMessage);
+  if (moreThings?.[CONDITIONAL_RENDER.TRIM_STRICT]) {
+    schema = schema.strict(true);
+  }
   // Check for and add tests max/min Length if needed
   schema = addMaxLength(schema, label, maxLength);
   schema = addMinLength(schema, label, minLength);
@@ -414,10 +418,11 @@ export function createFieldValidation(type, label, validationMap, field) {
   const disableFutureErrorText = field?.render?.[CONDITIONAL_RENDER.DISABLE_FUTURE_ERROR_TEXT];
   const maxValueErrorText = field?.render?.[CONDITIONAL_RENDER.MAX_VALUE_ERROR_TEXT];
   const minValueErrorText = field?.render?.[CONDITIONAL_RENDER.MIN_VALUE_ERROR_TEXT];
+  const enforceTrim = validationMap.get(VALIDATIONS.TRIM_STRICT);
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT: {
-      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength, { [CONDITIONAL_RENDER.TRIM_STRICT]: enforceTrim });
 
       const regexProps = validationMap.get(VALIDATIONS.REGEXP_VALIDATION);
       if (regexProps) {
@@ -449,7 +454,7 @@ export function createFieldValidation(type, label, validationMap, field) {
       break;
     }
     case FIELDS.LINK: {
-      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength);
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength, { [CONDITIONAL_RENDER.TRIM_STRICT]: true });
       break;
     }
     case FIELDS.INT:

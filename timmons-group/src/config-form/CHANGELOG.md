@@ -12,6 +12,13 @@ We've updated the peer dependencies for the `@hookform/resolvers` package to ver
 
 Our yup string helper has trim on it. Trim means yup will trim (removing leading or trailing spaces) the string value before attempting to validate In previous versions of the ConfigForm this threw a validation error if your string had trailing or leading spaces. This is no longer the case. It is recommended you run myFormStringValue.trim() on your data before saving.
 
+### Deprecations ###
+`ConfigGrid` - We have stopped development on this. The components will remain in 2.x releases, but be removed in the next major release.
+
+The primary reason for this deprecation is [Material React Table(MRT)](https://www.material-react-table.com/). This library came out after our first few iterations of ConfigGrid (formerly known as PAMLayoutGrid) and accomplishes everything we originally wanted ConfigGrid to be and more. It also removes the limitiation of MUI-X Data grid and "premium" features. MRT uses MUI components with the headless [TanStack Table](https://tanstack.com/table/latest) library.
+
+We recommend re-creating your ConfigGrid implementations in MRT.
+
 ### Fixes ###
 - useFormLayout
   - Fixed zero not being correctly hydrated by getFieldValue

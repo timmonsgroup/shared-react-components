@@ -100,8 +100,8 @@ const processAffectedFields = (triggerField, fields, formValue, options) => {
     conditions.forEach(({ conditionId, when, then }) => {
       // check if the operation is true
       const passes = checkConditional(when, formValue);
-      const { fieldId, operation, value } = when;
-      // console.log(`${passes ? '👍' : '❌'}`, fieldId, 'with fieldValue', formValue, 'operation', operation, 'value', value)
+      // const { fieldId, operation, value } = when;
+      // console.log(conditionId, `${passes ? '👍' : '❌'}`, fieldId, 'with fieldValue', formValue, 'operation', operation, 'value', value)
       if (passes) {
         conditional.noPasses = false;
         const loadOut = then;
@@ -142,15 +142,27 @@ const processAffectedFields = (triggerField, fields, formValue, options) => {
         conditional.isUpdating = true;
         conditional.loadOut = loadOut;
       }
-      // console.log('Applied "pass" state', appliedConditionals.current[conditionId], ' vs ', passes)
       const isApplied = appliedConditionals.current[conditionId] === passes;
+      // console.log('\tApplied "pass" state', appliedConditionals.current[conditionId], ' vs ', passes)
+      // if (isApplied) {
+      //   console.log('\t\tAlready applied')
+      // }
       // If the conditional is not already applied, or it has async needs, we need to process it
       if (!isApplied || conditional.hasAsync) {
+        // if (!isApplied) {
+        //   console.log('\t\tApplying conditional')
+        // }
+        // if (conditional.hasAsync) {
+        //   console.log('\t\tHas async')
+        // }
         appliedConditionals.current[conditionId] = passes;
         processedFields.push({ id: touchedId, conditional });
       }
+      // console.log('\n');
     });
   });
+  // console.log('Processed Fields: ', processedFields);
+  // console.log('appliedConditionals: ', appliedConditionals.current);
   return processedFields;
 };
 

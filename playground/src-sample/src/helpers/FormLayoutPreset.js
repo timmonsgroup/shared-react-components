@@ -145,6 +145,19 @@ const longText = createLongTextModel('longText', 'Long Text', true, {
   placeholder: 'Please enter a long text',
   altHelperText: 'I GO ELSEWHERE!',
   helperText: 'I am a long text field!',
+  enforceTrim: true,
+  conditions: [
+    {
+      when: {
+        fieldId: 'email',
+        operation: 'eq',
+        value: 'money@gmail.com'
+      },
+      then: {
+        enforceTrim: false,
+      }
+    },
+  ]
 });
 
 const fireDepartmentField = {
