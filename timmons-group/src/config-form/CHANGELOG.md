@@ -9,8 +9,63 @@ We've updated the peer dependencies for the `@hookform/resolvers` package to ver
 ```json
 "@hookform/resolvers": "^3.1.1"
 ```
+MUI X Datepickers library has been upgraded to ^6.20.0
+ This should not have any breaking changes if you have updated to the latest version of the library
 
-Our yup string helper has trim on it. Trim means yup will trim (removing leading or trailing spaces) the string value before attempting to validate In previous versions of the ConfigForm this threw a validation error if your string had trailing or leading spaces. This is no longer the case. It is recommended you run myFormStringValue.trim() on your data before saving.
+Our yup string helper has [trim](https://github.com/jquense/yup?tab=readme-ov-file#stringtrimmessage-string--function-schema) on it. Trim means yup will trim (removing leading or trailing spaces) the string value before attempting to validate In previous versions of the ConfigForm this threw a validation error if your string had trailing or leading spaces. This is no longer our default case.
+
+```javascript
+// No trim
+value = " 1 2 3 " // would be validated 7 characters
+
+// Trim (not strict)
+value = " 1 2 3 " // would be validated as 5 characters
+
+// Trim (strict)
+value = " 1 2 3 " // would be validated as 5 characters AND throw an error because of leading AND trailing spaces
+```
+
+It is recommended you run myFormStringValue.trim() on your data before saving.
+
+If you would like to keep v1 functionality you can add "enforceTrim" to your field's layout object
+```javascript
+const layout = {
+  sections [
+    {
+      //section props
+      layout: : [
+        {
+          label: 'Some Field',
+          path: 'someField',
+          //... more things
+          enforceTrim: true, // This will throw and error if the string has leading or trailing spaces
+        },
+        // other fields...
+      ],
+    }
+  ]
+};
+```
+
+If you want to remove trim completely from the validation you can add "noTrim" to your field's layout object
+```javascript
+const layout = {
+  sections [
+    {
+      //section props
+      layout: : [
+        {
+          label: 'Some Field',
+          path: 'someField',
+          //... more things
+          noTrim: true, // no trimming will be done on this field. " 1 2 3 " would be considered 7 characters
+        },
+        // other fields...
+      ],
+    }
+  ]
+};
+```
 
 ### Deprecations ###
 `ConfigGrid` - We have stopped development on this. The components will remain in 2.x releases, but be removed in the next major release.
