@@ -576,7 +576,8 @@ const dateField = {
   },
   required: true,
   disabled: false,
-  disableFuture: true,
+  maxValue: '9/26/2024',
+  // disableFuture: true,
   disableFutureErrorText:
     'This error text appears when the date picker fails its disable future validation ${max}',
 };

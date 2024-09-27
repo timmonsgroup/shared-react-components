@@ -285,39 +285,52 @@ const dateRenderer = (
     extraProps.maxDate = new Date(dateStringNormalizer(layout.maxValue));
   }
   // if (layout.minValue)
-  const DateField = ({ field: { value, onChange, ref }, fieldState: { error } }) => (
-    <>
-      <DatePicker
-        id={finalId}
-        name={finalId || name}
-        disabled={disabled}
-        value={value}
-        onChange={onChange}
-        disableFuture={disableFuture}
-        {...extraProps}
-        {...fieldComponentProps}
-        slots={{ textField: DateFieldToolbar }}
-        slotProps={{
-          textField: {
-            id: finalId || name,
-            name: finalId || name,
-            label,
-            disabled,
-            required,
-            readOnly,
-            helperText,
-            iconHelperText,
-            altHelperText,
-            placeholder,
-            error,
-            fieldOptions
-          }
-        }}
-      />
-      {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
-      <FormErrorMessage error={error} />
-    </>
-  );
+  const DateField = ({ field: { value, onChange, ref }, fieldState: { error } }) => {
+    const handleDateChange = (newValue) => {
+      if (newValue) {
+        // Strip the time from the date
+        const strippedDate = new Date(newValue);
+        strippedDate.setHours(0, 0, 0, 0);
+        onChange(strippedDate);
+      } else {
+        onChange(newValue);
+      }
+    };
+
+    return (
+      <>
+        <DatePicker
+          id={finalId}
+          name={finalId || name}
+          disabled={disabled}
+          value={value}
+          onChange={handleDateChange}
+          disableFuture={disableFuture}
+          {...extraProps}
+          {...fieldComponentProps}
+          slots={{ textField: DateFieldToolbar }}
+          slotProps={{
+            textField: {
+              id: finalId || name,
+              name: finalId || name,
+              label,
+              disabled,
+              required,
+              readOnly,
+              helperText,
+              iconHelperText,
+              altHelperText,
+              placeholder,
+              error,
+              fieldOptions
+            }
+          }}
+        />
+        {helperText && <FormHelperText error={false}>{helperText}</FormHelperText>}
+        <FormErrorMessage error={error} />
+      </>
+    );
+  };
 
   DateField.propTypes = {
     field: PropTypes.shape({

@@ -524,12 +524,12 @@ export function createFieldValidation(type, label, validationMap, field) {
         validation = validation.max(today.toISOString(), disableFutureErrorText);
       } else if(!isEmpty(maxValue)) {
         const maxValueDate = new Date(dateStringNormalizer(maxValue));
-        validation = validation.max(maxValueDate, maxValueErrorText ?? `Date cannot be after ${maxValueDate.toDateString()}`);
+        validation = validation.max(maxValueDate.toISOString(), maxValueErrorText ?? `Date cannot be after ${maxValueDate.toDateString()}`);
       }
 
       if (!isEmpty(minValue)) {
         const minValueDate = new Date(dateStringNormalizer(minValue));
-        validation = validation.min(minValueDate, minValueErrorText ?? `Date cannot be before ${minValueDate.toDateString()}`);
+        validation = validation.min(maxValueDate.toISOString(), minValueErrorText ?? `Date cannot be before ${minValueDate.toDateString()}`);
       }
 
       break;
