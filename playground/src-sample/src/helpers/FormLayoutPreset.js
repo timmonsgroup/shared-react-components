@@ -1,6 +1,7 @@
 import theTheme from '@timmons-group/shared-react-components/muiTheme';
 import { FIRE_DEPTS } from './LargeDataset';
 import { FIELD_TYPES } from '@timmons-group/config-form';
+import { max } from 'date-fns';
 const FUNDING_SOURCES = [
   {
     id: 0,
@@ -146,6 +147,8 @@ const longText = createLongTextModel('longText', 'Long Text', true, {
   altHelperText: 'I GO ELSEWHERE!',
   helperText: 'I am a long text field!',
   enforceTrim: true,
+  noTrim: false,
+  maxLength: 10,
   conditions: [
     {
       when: {
@@ -154,7 +157,8 @@ const longText = createLongTextModel('longText', 'Long Text', true, {
         value: 'money@gmail.com'
       },
       then: {
-        enforceTrim: false,
+        noTrim: true,
+        // enforceTrim: false,
       }
     },
   ]

@@ -31,6 +31,7 @@ export const MAX_LENGTH = 'maxLength';
 export const MAX_VALUE_ERROR_TEXT = 'maxValueErrorText';
 export const MIN_LENGTH = 'minLength';
 export const TRIM_STRICT = 'enforceTrim';
+export const NO_TRIM = 'noTrim';
 export const EMAIL = 'email';
 export const ZIP = 'zip';
 export const PHONE = 'phone';
@@ -40,6 +41,7 @@ export const DISABLE_FUTURE_ERROR_TEXT = 'disableFutureErrorText';
 export const ANY_VALUE = 'anyValue';
 
 export const CONDITIONAL_RENDER = Object.freeze({
+  NO_TRIM,
   TRIM_STRICT,
   REQUIRED,
   LABEL_FIELD,
@@ -68,6 +70,7 @@ export const SPECIAL_ATTRS = Object.freeze({
 });
 
 export const VALIDATIONS = Object.freeze({
+  NO_TRIM,
   TRIM_STRICT,
   REQUIRED,
   INTEGER_DIGITS: 'integerDigits',

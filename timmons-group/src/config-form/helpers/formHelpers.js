@@ -95,9 +95,19 @@ export function yupTypeAhead(label, isRequired, reqMessage) {
  * @param {string} [reqMessage] - message to display if the field is required
  * @returns {YupSchema} - yup schema for the field
  */
-export function yupTrimString(label, isRequired, trimMsg, reqMessage) {
+export function yupTrimString(label, isRequired, trimMsg, reqMessage, moreThings) {
   // Add .strict(true); to the end of the function chain to error if leading and trailing spaces
-  return yupString(label, isRequired, reqMessage).trim(trimMsg || 'Remove leading and/or trailing spaces');
+  let schema = yupString(label, isRequired, reqMessage);
+  if (!!moreThings?.[CONDITIONAL_RENDER.NO_TRIM]) {
+    return schema;
+  }
+
+  schema = schema.trim(trimMsg || 'Remove leading and/or trailing spaces')
+  if (!!moreThings?.[CONDITIONAL_RENDER.TRIM_STRICT]) {
+    schema = schema.strict(true);
+  }
+
+  return schema;
 }
 
 /**
@@ -305,10 +315,7 @@ function addMaxLength(schema, label, maxLength) {
  * @returns {YupSchema} - yup schema for a string field
  */
 export function yupTrimStringMax(label, isRequired, maxLength, msg, reqMessage, minLength, moreThings) {
-  let schema = yupTrimString(label, isRequired, msg, reqMessage);
-  if (moreThings?.[CONDITIONAL_RENDER.TRIM_STRICT]) {
-    schema = schema.strict(true);
-  }
+  let schema = yupTrimString(label, isRequired, msg, reqMessage, moreThings);
   // Check for and add tests max/min Length if needed
   schema = addMaxLength(schema, label, maxLength);
   schema = addMinLength(schema, label, minLength);
@@ -422,7 +429,11 @@ export function createFieldValidation(type, label, validationMap, field) {
   switch (type) {
     case FIELDS.LONG_TEXT:
     case FIELDS.TEXT: {
-      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength, { [CONDITIONAL_RENDER.TRIM_STRICT]: enforceTrim });
+      const moreThings = {
+        [CONDITIONAL_RENDER.NO_TRIM]: validationMap.get(VALIDATIONS.NO_TRIM),
+        [CONDITIONAL_RENDER.TRIM_STRICT]: enforceTrim
+      };
+      validation = yupTrimStringMax(label, required, maxLength, null, reqMessage, minLength, moreThings);
 
       const regexProps = validationMap.get(VALIDATIONS.REGEXP_VALIDATION);
       if (regexProps) {
@@ -509,8 +520,8 @@ export function createFieldValidation(type, label, validationMap, field) {
 
       const disableFutureDates = !!validationMap.get(VALIDATIONS.DISABLE_FUTURE);
       if (disableFutureDates) {
-        const today = new Date().toDateString();
-        validation = validation.max(today, disableFutureErrorText);
+        const today = new Date();
+        validation = validation.max(today.toISOString(), disableFutureErrorText);
       } else if(!isEmpty(maxValue)) {
         const maxValueDate = new Date(dateStringNormalizer(maxValue));
         validation = validation.max(maxValueDate, maxValueErrorText ?? `Date cannot be after ${maxValueDate.toDateString()}`);
