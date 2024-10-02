@@ -14,6 +14,7 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
  * @param {function} [props.titleRender] - function to render the title
  * @param {function} [props.rightRender] - function to render the right side of the header
  * @param {string} [props.color] - color of the header
+ * @param {object} [props.props] - additional props to pass to the AppBar
  * @returns {React.ReactElement}
  */
 const SubHeader = ({ title, titleRender, rightRender, color = 'accent', rightRenderProps, ...props }) => {
@@ -69,6 +70,8 @@ SubHeader.propTypes = {
   color: PropTypes.string,
   titleRender: PropTypes.func,
   rightRender: PropTypes.func,
+  rightRenderProps: PropTypes.object,
+  props: PropTypes.object,
 };
 
 export default SubHeader;

@@ -1,32 +1,18 @@
-import { ConfigForm, GenericConfigForm, defaultChoiceMapper, yupCurrency } from "@timmons-group/shared-react-components";
+import { ConfigForm, GenericConfigForm } from "@timmons-group/config-form";
 import { layout } from "./helpers/FormLayoutPreset";
+import { useFormContext } from "react-hook-form";
 
-const choiceFormatter = (fieldId, response, options) => {
-  if (fieldId === 'asyncPublicHolidays') {
-    const { data } = response || {};
-    const formattedChoices = data.map((choiceDataItem, index) => {
-      return { id: index, label: choiceDataItem.name };
-    });
-
-    return formattedChoices;
-  }
-
-  return defaultChoiceMapper(response, options);
-}
-
-function customValidations(configFormValidations) {
-  console.log('configFormValidations', configFormValidations)
-  return {
-    ...configFormValidations,
-    intTest: yupCurrency().required('Bacon is required'),
-  }
+const options = {
+  mode: 'onChange'
 }
 
 const ConfigFormTester = () => {
   const formData = {
     email: 'duderino@gmail.com',
-    moMoneyChild: 0,
-
+    // dateApplicationReceived: '2022-01-01',
+    // dateApplicationReceived: '2024-01-02T05:00:00.000Z',
+    dateApplicationReceived: '2024-09-11T20:54:39.768Z',
+    // dateApplicationReceived: '12/31/2023',
   }
 
   const onSubmit = (data) => {
@@ -34,14 +20,29 @@ const ConfigFormTester = () => {
   }
 
   return (
-    <ConfigForm formLayout={layout.layout} data={formData} parseOptions={{ choiceFormatter }}/*  addCustomValidations={customValidations} */>
+    <ConfigForm formLayout={layout.layout} data={formData} formOptions={options}>
       <GenericConfigForm
         headerTitle="Bacon Bits"
-        isEdit={true}
+        // isEdit={isEdit}
         // sectionProps={sectionProps}
         onSubmit={onSubmit}
       />
+      <AThing />
     </ConfigForm>
+  )
+}
+
+const AThing = () => {
+  const {useFormObject} = useFormContext();
+  return (
+    <div>
+      <h1>Thing</h1>
+      <button onClick={() => {
+        console.log('Values', useFormObject.getValues())
+        console.log('FormState', useFormObject.formState)
+      }}
+      >DO IT</button>
+    </div>
   )
 }
 

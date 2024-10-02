@@ -1,0 +1,59 @@
+{
+  "name": "@timmons-group/config-form",
+  "version": "0.0.1",
+  "private": false,
+  "description": "React Components and helpers to build a form via configuration with react-hook-form and MUI",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timmonsgroup/shared-react-components.git"
+  },
+  "keywords": [
+    "React",
+    "MUI",
+    "React",
+    "Hook",
+    "Form"
+  ],
+  "author": "Nathan Grant",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/timmonsgroup/shared-react-components/issues"
+  },
+  "homepage": "https://github.com/timmonsgroup/shared-react-components#readme",
+  "dependencies": {
+    "@timmons-group/shared-react-components": "*"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.6",
+    "@mui/material": "^5.10.6",
+    "@mui/utils": "^5.15.14",
+    "@mui/x-date-pickers": "^6.20.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "yup": "^1.3.2",
+    "@hookform/resolvers": "^3.1.1"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./components": "./components/index.js",
+    "./components/*": "./components/*",
+    "./helpers": "./helpers/index.js",
+    "./helpers/*": "./helpers/*",
+    "./hooks": "./hooks/index.js",
+    "./hooks/*": "./hooks/*",
+    "./muiTheme": "./muiTheme.js",
+    "./constants": "./constants.js",
+    "./models": "./models/index.js"
+  }
+}

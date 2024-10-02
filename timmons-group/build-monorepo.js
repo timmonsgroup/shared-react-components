@@ -179,7 +179,7 @@ const buildConfig = (packageJsonPath) => {
         // file, so e.g. src/nested/foo.js becomes nested/foo
         path.relative(
             `src/${outputFolder}`,
-            file   
+            file
         )
         //Remove the extension
         .replace(path.extname(file), ''),
@@ -218,7 +218,7 @@ const buildConfig = (packageJsonPath) => {
                 allowExportsFolderMapping: true,
                 rootDir: rootPath,
                 preserveModules: true,
-                
+
             }),
             // typescript({
             //     extensions: ['.ts', '.tsx'],
@@ -394,6 +394,7 @@ const buildConfig = (packageJsonPath) => {
             "@mui/icons-material/InfoOutlined",
             '@emotion/styled',
             'jsx-runtime',
+            "@timmons-group/config-form",
             "@timmons-group/shared-auth-config",
             "@timmons-group/shared-react-auth",
             "@timmons-group/shared-react-permission-filter",

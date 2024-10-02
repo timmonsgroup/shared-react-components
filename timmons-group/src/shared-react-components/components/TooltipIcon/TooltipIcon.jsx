@@ -1,11 +1,11 @@
 /** @module TooltipIcon */
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
   ClickAwayListener, Tooltip
 } from '@mui/material';
-import {Info} from '@mui/icons-material';
+import { Info } from '@mui/icons-material';
 
 /**
  * TooltipIcon is a wrapper around the MUI InfoOutlined icon (default) that displays a tooltip when clicked
@@ -41,6 +41,7 @@ const TooltipIcon = ({ iconComponent, infoText, ...props }) => {
       <div onMouseOver={() => setIfNotClickOpen(true)}
         onMouseLeave={() => setIfNotClickOpen(false)}>
         <Tooltip
+          describeChild
           placement="top"
           PopperProps={{
             disablePortal: true,
@@ -52,7 +53,15 @@ const TooltipIcon = ({ iconComponent, infoText, ...props }) => {
           disableTouchListener
           title={infoText}
         >
-          <TheIcon onClick={onClickOpen} sx={{alignItems: 'center', justifyContent: 'center'}} {...props}></TheIcon>
+          <TheIcon
+            tabIndex={0}
+            onFocus={() => setIfNotClickOpen(true)}
+            onBlur={() => setIfNotClickOpen(false)}
+            onClick={onClickOpen}
+            titleAccess={infoText}
+            sx={{ alignItems: 'center', justifyContent: 'center' }}
+            {...props}
+          ></TheIcon>
         </Tooltip>
       </div>
     </ClickAwayListener>

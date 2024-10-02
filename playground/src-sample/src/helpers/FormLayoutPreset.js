@@ -1,5 +1,7 @@
+import theTheme from '@timmons-group/shared-react-components/muiTheme';
 import { FIRE_DEPTS } from './LargeDataset';
-import { FIELD_TYPES } from '@timmons-group/shared-react-components';
+import { FIELD_TYPES } from '@timmons-group/config-form';
+import { max } from 'date-fns';
 const FUNDING_SOURCES = [
   {
     id: 0,
@@ -68,6 +70,27 @@ export const createTextModel = (
   ...otherThings,
 });
 
+export const createLongTextModel = (
+  name,
+  label,
+  required = false,
+  otherThings = {},
+  dataThings = {}
+) => ({
+  label,
+  path: name,
+  type: 1,
+  model: {
+    name,
+    id: 5,
+    modelid: 10,
+    type: 1,
+    data: dataThings,
+  },
+  required,
+  ...otherThings,
+});
+
 const emailField = createTextModel('email', 'Email', true, {
   placeholder: 'Please enter your email address',
   altHelperText: 'I GO ELSEWHERE!',
@@ -117,6 +140,28 @@ const zipField = createTextModel('zipCode', 'Zippity', true, {
 
 const phoneField = createTextModel('phone', 'Phone Number', true, {
   phone: true,
+});
+
+const longText = createLongTextModel('longText', 'Long Text', true, {
+  placeholder: 'Please enter a long text',
+  altHelperText: 'I GO ELSEWHERE!',
+  helperText: 'I am a long text field!',
+  enforceTrim: true,
+  noTrim: false,
+  maxLength: 10,
+  conditions: [
+    {
+      when: {
+        fieldId: 'email',
+        operation: 'eq',
+        value: 'money@gmail.com'
+      },
+      then: {
+        noTrim: true,
+        // enforceTrim: false,
+      }
+    },
+  ]
 });
 
 const fireDepartmentField = {
@@ -392,7 +437,6 @@ const integerField = {
   placeholder: 'I was once a float like you',
   minValue: 1.01,
   maxValue: 100,
-  hidden: true,
   model: {
     id: 8,
     modelid: 10,
@@ -400,20 +444,7 @@ const integerField = {
     name: 'intTest',
     data: {},
   },
-  conditions: [
-    {
-      when: {
-        fieldId: 'moMoney',
-        operation: 'gte',
-        value: 100
-      },
-      then: {
-        minValue: 3.01,
-        required: true,
-        hidden: false,
-      },
-    },
-  ],
+  required: true,
   disabled: false,
 };
 
@@ -468,33 +499,29 @@ const moneyChild = {
   type: 4,
   helperText: 'I are child.',
   placeholder: 'A child of moMoney',
-  // hidden: true,
+  hidden: true,
   model: {
-    // data: {
-    //   minValue: 1.01,
-    // },
+    data: {
+      minValue: 1.01,
+    },
     id: 8,
     modelid: 10,
     type: 4,
     name: 'moMoneyChild',
   },
   minValue: 2.01,
-  // conditions: [
-  //   {
-  //     then: {
-  //       hidden: false,
-  //       minValue: 3.01,
-  //     },
-  //     when: 'moMoney',
-  //     // when: {
-  //     //   fieldId: 'moMoney',
-  //     //   operation: 'gte',
-  //     //   value: 100
-  //     // },
-  //     is: 100,
-  //   },
-  // ],
-  required: true,
+  conditions: [
+    {
+      then: {
+        hidden: false,
+        minValue: 3.01,
+      },
+      when: 'moMoney',
+      is: 100,
+      required: true,
+    },
+  ],
+  required: false,
   disabled: false,
 };
 
@@ -549,7 +576,8 @@ const dateField = {
   },
   required: true,
   disabled: false,
-  disableFuture: true,
+  maxValue: '9/26/2024',
+  // disableFuture: true,
   disableFutureErrorText:
     'This error text appears when the date picker fails its disable future validation ${max}',
 };
@@ -597,7 +625,6 @@ const virginiaCities = {
   ],
   required: false
 }
-
 
 const conditionalUrlField = {
   "label": "Groups",
@@ -742,7 +769,8 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
-          // customRegexField,
+          dateField,
+          longText,
           moneyChild,
           emailField,
           moneyField,
@@ -750,15 +778,6 @@ export const layout = {
           integerField,
           virginiaCities,
           conditionalUrlField,
-          // zipField,
-          // phoneField,
-          // fireDepartmentField,
-          // checkboxes,
-          // asyncTypeahead,
-          // dateField,
-          // clusterField,
-          // integerField,
-          // anotherCluster,
         ],
       },
       // {

@@ -111,53 +111,6 @@ const baseThemeProperties = {
     marginLeft: '5px',
     marginRight: '5px',
   },
-  inspector: {
-    icon: {
-      color: orange,
-      fontSize: '16px',
-      marginRight: '3px'
-    },
-    noData: {
-      color: lightGray,
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '70vh',
-    },
-    heading: {
-      fontFamily: 'sans-serif',
-      fontSize: '22px',
-      fontWeight: 'bold',
-      color: darkBlue,
-    },
-    clearButton: {
-      fontSize: '12px',
-      marginBottom: '5px'
-    },
-    cardHeader: {
-      lineHeight: '1.5',
-      marginRight: '10px',
-      marginLeft: '5px',
-      fontSize: '16px',
-      fontWeight: '600',
-    },
-    cardFooter: {
-      lineHeight: '1.75',
-      marginRight: '10px',
-      marginLeft: '5px',
-    },
-    cardFooterLinks: {
-      color: orange,
-      fontSize: '12px',
-      fontWeight: 'bold',
-      display: 'inline-block',
-    },
-    featuredCard: {
-      heading: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '14px', color: darkBlue, marginTop: '10px' },
-      legend: { fontFamily: 'sans-serif', fontWeight: 'bold', fontSize: '32px', color: '#434343', marginBottom: '20px' },
-    }
-  },
   configView: {
     clusterField: {
       alternateRowColor: '#F6F6F6',
@@ -177,45 +130,11 @@ const baseThemeProperties = {
     paddingLeft: 2,
     paddingRight: 0
   },
-  filterableCard: {
-    header: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingBottom: '4px',
-      borderBottom: `2px solid ${lightGray}`,
-    }
-  },
   palette: {
     text: {
       header: darkBlue,
       special: '#FFDE58',
     },
-    inspectorItem: {
-      outer: {
-        border: '1px solid black',
-        borderRadius: '5px',
-        marginBottom: '10px',
-        marginTop: '15px',
-      },
-      inner: {
-        padding: '0.5em',
-      },
-      divider: {
-        backgroundColor: 'black',
-      }
-    },
-    mapSidebar: {
-      background: lightBlue,
-      selectedBackground: '#002D4C',
-      text: '#ffffff',
-      selectedText: '#ffffff',
-    },
-    slider: {
-      default: '#33CF4D',
-      border: '6px solid #fff'
-    },
-
     background: {
       default: '#B3B3B3',
     },

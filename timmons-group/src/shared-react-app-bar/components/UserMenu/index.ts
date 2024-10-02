@@ -1,1 +1,1 @@
-export {default} from './UserMenu.jsx';
+export {default} from './UserMenu.tsx';

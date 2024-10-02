@@ -7,6 +7,6 @@ set -e
 cd build
 for dir in */; do
   cd $dir
-  npm publish --tag beta
+  npm publish --tag beta --access public
   cd ..
 done
