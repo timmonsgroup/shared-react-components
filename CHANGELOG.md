@@ -1,5 +1,5 @@
 # Change Log #
-## Release 2.0.0 - Eventually ##
+## Release 2.0.0 - 10/02/2024 ##
 
 The main change in this release is moving the Configurable Form components and helpers into their own package. As part of that move we have begun porting the ConfigForm components to TypeScript. This is a work in progress and will be completed piece meal in every release.
 
