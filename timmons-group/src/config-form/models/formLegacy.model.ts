@@ -17,6 +17,16 @@ export type LegacyParsedSection = {
   description?: string;
 }
 
+export type LegacySection = {
+  name?: string;
+  title?: string;
+  layout: LegacyLayoutField[];
+  editable?: boolean;
+  enabled?: boolean;
+  order?: number;
+  description?: string;
+}
+
 export type LegacyLayoutField = {
   path: string;
   type: FieldIntTypes;

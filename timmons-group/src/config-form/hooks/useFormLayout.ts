@@ -13,14 +13,14 @@ import {
 } from '../constants.js';
 
 import { createFieldValidation, getSelectValue, multiToPayload } from '../helpers/formHelpers';
-import {
+import type {
   LegacyParsedFormField, LegacyLayoutField, LegacyDropdownRenderProps,
   LegacyDateRenderProps, LegacyLongTextRenderProps, LegacyTextRenderProps,
   LegacyClusterRenderProps, LegacyParsedSection,
-  ParsedCondition
+  ParsedCondition, LegacyCondition, Condition,
+  LegacySection
 } from '../models/formLegacy.model';
-import { Conditional } from '../models/formFields.model';
-// import { TriggerField } from '../models/form';
+import { When } from '../models/formFields.model.js';
 
 const validationTypes: Array<string> = Object.values(VALIDATIONS);
 const conditionalRenderProps: Array<string> = Object.values(CONDITIONAL_RENDER);
@@ -143,42 +143,6 @@ export const parseFormLayout = async (layout, urlDomain, options) => {
  * @param {Map<string, string>} asyncFieldsMap
  * @returns {ParsedSection} - parsed section
  */
-//// OLD PARSE SECTION FUNCTION
-// export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap) {
-//   console.log('parseSection', section)
-//   if (!section) {
-//     return {};
-//   }
-//   const { editable, enabled } = section;
-//   const layout = (section.layout || []) as LegacyLayoutField[];
-//   const parsedSection: LegacyParsedSection = {
-//     name: section.name,
-//     title: section.title,
-//     order: section.order,
-//     description: section.description,
-//     editable,
-//     enabled,
-//     fields: [],
-//   };
-
-//   if (layout?.length) {
-//     layout.forEach((field: LegacyLayoutField) => {
-//       const parsedField = parseField(field, asyncFieldsMap);
-//       if (parsedField) {
-//         fieldMap.set(field.path, parsedField);
-//         parsedSection.fields.push(field.path); // Fix: Update the type of parsedSection.fields array to allow string values
-//         const { conditions, conditionals } = parsedField;
-//         if (conditionals?.length) {
-//           parseConditionals(field.path, triggerFieldMap, conditionals);
-//         } else if (conditions?.length) {
-//           parseConditions(field.path, triggerFieldMap, conditions);
-//         }
-//       }
-//     });
-//   }
-
-//   return parsedSection;
-// }
 
 const finishParsingTriggerFields = (triggerFields, fields) => {
   // Create validations for each field that has conditional validations
@@ -231,24 +195,29 @@ const finishParsingTriggerFields = (triggerFields, fields) => {
   });
 }
 
-const isWhen = (when) => {
+const isWhen = (when: When | string): when is When => {
+  if (typeof when === 'string') {
+    return false;
+  }
+
   let validWhen = false;
+
   if (when?.fieldId && when?.operation) {
     // isNotNull and isNull are valid operations without a value
     if (when?.value !== undefined || when.operation === 'isNull' || when.operation === 'isNotNull') {
       validWhen = true;
     }
   }
-  // console.log('validWhen', validWhen, when)
   return validWhen;
 }
 
-const isNewConditional = (conditional) => {
-  return isWhen(conditional?.when) && conditional?.then;
+// Type guard for new conditionals
+const isNewConditional = (conditional: LegacyCondition | Condition): conditional is Condition => {
+  return isWhen(conditional?.when) && !!conditional?.then;
 }
 
 //export type Operation = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'in' | 'notIn' | 'regex' | 'notRegex' | 'isNull' | 'isNotNull';
-const transformLegacyCondition = (fieldId, condition, index): ParsedCondition => {
+const transformLegacyCondition = (fieldId: string | number, condition: LegacyCondition, index: number): ParsedCondition => {
   const { when: triggerFieldId, then, isValid } = condition;
   let value = condition?.is;
   return {
@@ -262,17 +231,18 @@ const transformLegacyCondition = (fieldId, condition, index): ParsedCondition =>
   }
 }
 
-const transformCondition = (fieldId, condition, index): ParsedCondition => {
+const transformCondition = (fieldId: string | number, condition: Condition | LegacyCondition, index: number): ParsedCondition => {
   if (isNewConditional(condition)) {
     return {
       conditionId: `${fieldId}-${condition.when.fieldId}-${index}`,
       ...condition
     }
   }
+
   return transformLegacyCondition(fieldId, condition, index);
 }
 
-const parseNewConditions = (fieldId, triggerFields, conditions) => {
+const parseNewConditions = (fieldId: string | number, triggerFields, conditions: (Condition | LegacyCondition)[]) => {
   if (!conditions || conditions.length === 0) {
     return;
   }
@@ -306,13 +276,13 @@ const parseNewConditions = (fieldId, triggerFields, conditions) => {
  * @param {Map<string, string>} asyncFieldsMap
  * @returns {ParsedSection} - parsed section
  */
-export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap) {
+export function parseSection(section: LegacySection, fieldMap, triggerFieldMap, asyncFieldsMap) {
   if (!section) {
     return {};
   }
 
   const { layout, editable, enabled } = section;
-  const parsedSection = {
+  const parsedSection: LegacyParsedSection = {
     name: section.name,
     title: section.title,
     order: section.order,
@@ -326,11 +296,12 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
     layout.forEach((field) => {
       const parsedField = parseField(field, asyncFieldsMap);
       if (parsedField) {
-        fieldMap.set(field.path, parsedField);
-        parsedSection.fields.push(field.path);
+        const { path } = parsedField;
+        fieldMap.set(path, parsedField);
+        parsedSection.fields.push(path);
         const { conditions } = parsedField;
-        if (conditions.length) {
-          parseNewConditions(field.path, triggerFieldMap, conditions);
+        if (conditions?.length) {
+          parseNewConditions(path, triggerFieldMap, conditions);
         }
       }
     });
@@ -339,7 +310,6 @@ export function parseSection(section, fieldMap, triggerFieldMap, asyncFieldsMap)
   return parsedSection;
 }
 
-// TODO: Create a more unified model to play nice with PamLayoutGrid
 /**
  * Parse a field
  * @function
