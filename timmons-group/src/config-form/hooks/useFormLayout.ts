@@ -256,7 +256,7 @@ const parseNewConditions = (fieldId: string | number, triggerFields, conditions:
     // // touches is a map of every field that triggerfield could influence.
     // // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
     const trigField = triggerFields.get(triggerId) || { id: triggerId, touches: new Map() };
-    const affectedFieldConditions:ParsedCondition[]= trigField.touches.get(fieldId) || [];
+    const affectedFieldConditions: ParsedCondition[] = trigField.touches.get(fieldId) || [];
     // console.log('affectedFieldConditions', affectedFieldConditions);
     affectedFieldConditions.push(processedCondition);
     trigField.touches.set(fieldId, affectedFieldConditions);
@@ -317,7 +317,7 @@ export function parseSection(section: LegacySection, fieldMap, triggerFieldMap, 
  * @param {Map<string, string>} [asyncFieldsMap] - map of async fields
  * @returns {ParsedField} parsed field
  */
-export function parseField(field: LegacyLayoutField, asyncFieldsMap:Map<string, any> | null = null): LegacyParsedFormField {
+export function parseField(field: LegacyLayoutField, asyncFieldsMap: Map<string, any> | null = null): LegacyParsedFormField {
   if (!field) {
     return {} as LegacyParsedFormField;
   }
@@ -499,33 +499,6 @@ function parseValidation(validationMap, data, debug = false) {
   });
 }
 
-// const parseConditionals = (fieldId, triggerFields, conditionals: Conditional | Array<Conditional>) => {
-//   const toProcess = Array.isArray(conditionals) ? conditionals : [conditionals];
-//   if (toProcess?.length) {
-//     toProcess.forEach((conditional: Conditional) => {
-//       const { fieldId: triggerId, operation, value, and, or } = conditional;
-//       const trigField = triggerFields.get(triggerId) || { id: triggerId, fieldValues: new Map(), touches: new Map() };
-//       const fieldValues = trigField.fieldValues.get(value) || new Map();
-//       const affectedFields = fieldValues.get(fieldId) || [];
-//       const touched = trigField.touches.get(fieldId) || new Map();
-
-//       touched.set(value, true);
-//       trigField.touches.set(fieldId, touched);
-//       affectedFields.push({ operation, value, and, or });
-//       fieldValues.set(fieldId, affectedFields);
-//       trigField.fieldValues.set(value, fieldValues);
-
-//       triggerFields.set(triggerId, trigField);
-//       if (and) {
-//         parseConditionals(fieldId, triggerFields, and);
-//       }
-//       if (or) {
-//         parseConditionals(fieldId, triggerFields, or);
-//       }
-//     });
-//   }
-// }
-
 /**
  * This is a helper method to convert the data from the database into the format that the form expects.
  * If the data is null or missing will set as need to avoid "uncontrolled" vs "controlled" MUI errors.
@@ -571,48 +544,16 @@ export function getFieldValue(field, formData) {
         const theDate = inData === TODAY_DEFAULT ? new Date() : new Date(dateStringNormalizer(inData));
         inData = theDate;
       }
-      value = inData || null;
+      value = inData ?? null;
       break;
     }
     case FIELDS.CHOICE:
     case FIELDS.OBJECT: {
-      const dataType = typeof inData;
-      if (dataType === 'object') {
-        // Special parsing for checkboxes
-        if (render.multiple && render.checkbox) {
-          if (Array.isArray(inData)) {
-            value = getSelectValue(true, inData) || [];
-          } else {
-            value = [];
-          }
-        } else {
-          value = getSelectValue(render.multiple || false, inData) || '';
-        }
-      } else {
-        if (!inData && render.multiple) {
-          value = [];
-        } else {
-          value = inData || '';
-        }
-      }
+      value = getObjectTypeValue(inData, field);
       break;
     }
     case FIELDS.CLUSTER: {
-      const clusterData: any[] = [];
-      if (Array.isArray(inData) && inData.length) {
-        inData.forEach((nug) => {
-          const lineData: Record<string, any> = {};
-          const { subFields } = field || [];
-          if (Array.isArray(subFields) && subFields.length) {
-            subFields.forEach((subF) => {
-              const { name: fName, value: fValue } = getFieldValue(subF, nug);
-              lineData[fName] = fValue;
-            });
-          }
-          clusterData.push(lineData);
-        });
-      }
-      value = clusterData;
+      value = getClusterValue(inData, field);
 
       break;
     }
@@ -623,6 +564,45 @@ export function getFieldValue(field, formData) {
   return { value, name };
 }
 
+const getObjectTypeValue = (data: any, field): any => {
+  const { render } = field;
+  const { multiple, checkbox } = render;
+  const dataType = typeof data;
+  if (dataType === 'object') {
+    // Special parsing for checkboxes
+    if (multiple && checkbox) {
+      if (Array.isArray(data)) {
+        return getSelectValue(true, data) || [];
+      } else {
+        return [];
+      }
+    } else {
+      return getSelectValue(multiple || false, data) || '';
+    }
+  } else if (!data && multiple) {
+    return [];
+  }
+
+  return data || '';
+}
+
+const getClusterValue = (data: any, field): any => {
+  const clusterData: any[] = [];
+  if (Array.isArray(data) && data.length) {
+    data.forEach((nug) => {
+      const lineData: Record<string, any> = {};
+      const { subFields } = field || [];
+      if (Array.isArray(subFields) && subFields.length) {
+        subFields.forEach((subF) => {
+          const { name: fName, value: fValue } = getFieldValue(subF, nug);
+          lineData[fName] = fValue;
+        });
+      }
+      clusterData.push(lineData);
+    });
+  }
+  return clusterData;
+}
 
 /**
  * This is a helper method to convert the data from the form into the format that the API expects.
