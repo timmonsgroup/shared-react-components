@@ -1,11 +1,24 @@
 /** @module SubHeader */
-import React from 'react';
-import PropTypes from 'prop-types';
+import { type ReactElement, type FC } from 'react';
+import { AppBar, Box, Toolbar, Typography, AppBarProps } from '@mui/material';
 
-import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+declare module '@mui/material/AppBar' {
+  interface AppBarPropsColorOverrides {
+    [color: string]: true;
+  }
+}
+
+interface SubHeaderProps extends AppBarProps {
+  title?: string;
+  titleRender?: () => ReactElement;
+  rightRender?: (props?: any) => ReactElement;
+  color?: string;
+  rightRenderProps?: object;
+  sx?: object;
+}
 
 /**
- * if a titleRenderr is passed in, it will be used to render the title
+ * if a titleRender is passed in, it will be used to render the title
  * otherwise, the title will be rendered as an h3
  * if neither then no header will be rendered
  * @function SubHeader
@@ -15,16 +28,17 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
  * @param {function} [props.rightRender] - function to render the right side of the header
  * @param {string} [props.color] - color of the header
  * @param {object} [props.props] - additional props to pass to the AppBar
- * @returns {React.ReactElement}
+ * @param {object} [props.sx] - sx props
+ * @returns {ReactElement}
  */
-const SubHeader = ({ title, titleRender, rightRender, color = 'accent', rightRenderProps, ...props }) => {
+const SubHeader: FC<SubHeaderProps> = ({ title, titleRender, rightRender, color = 'accent', rightRenderProps, ...props }) => {
   /**
-   * if a titleRenderr is passed in, it will be used to render the title
+   * if a titleRender is passed in, it will be used to render the title
    * otherwise, the title will be rendered as a Typography "subHeader" variant
    * @function renderTitle
-   * @returns {React.ReactElement | null}
+   * @returns {ReactElement | null}
    */
-  const renderTitle = () => {
+  const renderTitle = (): ReactElement | null => {
     if (titleRender || title) {
       return (
         <Box sx={{ flexGrow: 1 }}>
@@ -44,9 +58,9 @@ const SubHeader = ({ title, titleRender, rightRender, color = 'accent', rightRen
    * if a rightRender is passed in, it will be used to render the right side of the header
    * otherwise, nothing will be rendered
    * @function renderRight
-   * @returns {React.ReactElement}
+   * @returns {ReactElement}
    */
-  const renderRight = () => {
+  const renderRight = (): ReactElement | null => {
     if (rightRender) {
       return (
         <Box sx={{ flexGrow: 1, textAlign: 'right' }}>{rightRender({ ...rightRenderProps })}</Box>
@@ -63,15 +77,6 @@ const SubHeader = ({ title, titleRender, rightRender, color = 'accent', rightRen
       </Toolbar>
     </AppBar>
   );
-};
-
-SubHeader.propTypes = {
-  title: PropTypes.string,
-  color: PropTypes.string,
-  titleRender: PropTypes.func,
-  rightRender: PropTypes.func,
-  rightRenderProps: PropTypes.object,
-  props: PropTypes.object,
 };
 
 export default SubHeader;
