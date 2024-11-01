@@ -4,8 +4,12 @@
  * @property {string} path - field path
  */
 import { FIELD_TYPES, MAX_VALUE_ERROR_TEXT, MIN_VALUE_ERROR_TEXT } from '../constants';
-import { Conditional, When } from './formFields.model';
+import { When } from './formFields.model';
+import {
+  Schema
+} from 'yup';
 export type FieldIntTypes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 | 100 | 120 | 999;
+
 
 export type LegacyParsedSection = {
   name?: string;
@@ -27,10 +31,15 @@ export type LegacySection = {
   description?: string;
 }
 
+// create a type for a custom validation function. It must return a yup validation schema
+export type CustomValidationFunction = (field: LegacyParsedFormField) => Schema;
+
+
 export type LegacyLayoutField = {
   path: string;
   type: FieldIntTypes;
   label: string;
+  customValidation?: CustomValidationFunction;
   model: {
     id?: string | number;
     name: string;
@@ -47,7 +56,7 @@ export type LegacyLayoutField = {
   disableFutureErrorText?: string;
   minValue?: number;
   conditions?: Array<LegacyCondition | Condition>;
-  conditionals?: Array<Conditional>;
+  // conditionals?: Array<Conditional>;
   hidden?: boolean;
   multiple?: boolean;
   checkbox?: boolean;
@@ -71,13 +80,14 @@ export type LegacyParsedFormField = {
   type: FieldIntTypes;
   hidden: boolean;
   conditions?: Array<LegacyCondition | Condition>;
-  conditionals?: Conditional[];
+  // conditionals?: Conditional[];
   specialProps?: Record<string, any>;
   defaultValue?: Record<string, any>;
   modelData?: Record<string, any>;
   render: LegacyFieldRender;
   subFields?: LegacyParsedFormField[];
   validations?: Record<string, any>;
+  customValidation?: CustomValidationFunction;
 }
 
 export type LegacyFieldRender =

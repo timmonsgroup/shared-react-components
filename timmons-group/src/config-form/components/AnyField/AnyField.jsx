@@ -184,9 +184,63 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
       };
       return renderRadio;
     }
+    case FIELD_TYPES.FLAG: {
+      return singleCheckboxRenderer(layout, fieldOptions, finalId, fieldComponentProps);
+    }
     default:
       return textRenderer(layout, fieldOptions, fieldComponentProps);
   }
+};
+
+const singleCheckboxRenderer = (layout, fieldOptions, finalId, fieldComponentProps) => {
+  console.log('singleCheckboxRenderer', layout, fieldOptions, finalId, fieldComponentProps);
+  const { label, disabled, required, helperText, iconHelperText, altHelperText } = layout;
+
+  const SingleCheckbox = ({ field, fieldState: { error } }) => {
+    return (
+      <FormControl
+        data-src-field={finalId || field.id}
+        error={!!error}
+        disabled={disabled}
+        component="fieldset"
+        variant="standard"
+      >
+        <AnyFieldLabel
+          asFormInput={true}
+          htmlFor={finalId || field.name}
+          error={!!error}
+          label={label}
+          required={!!required}
+          disabled={disabled}
+          iconText={iconHelperText}
+          fieldOptions={fieldOptions}
+          helperText={helperText}
+        />
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox
+              data-src-checkbox={finalId || field.id}
+              onBlur={field.onBlur}
+              checked={field.value}
+              {...fieldComponentProps}
+              onChange={(e) => {
+                field.onChange(e.target.checked);
+              }}
+            />}
+            label={label}
+          />
+          {altHelperText && <FormHelperText error={false}>{altHelperText}</FormHelperText>}
+          <FormErrorMessage error={error} />
+        </FormGroup>
+      </FormControl>
+    );
+  };
+
+  SingleCheckbox.propTypes = {
+    field: PropTypes.object,
+    fieldState: PropTypes.object,
+  };
+  return SingleCheckbox;
 };
 
 /**

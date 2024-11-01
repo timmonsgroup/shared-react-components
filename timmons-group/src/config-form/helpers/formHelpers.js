@@ -529,7 +529,7 @@ export function createFieldValidation(type, label, validationMap, field) {
 
       if (!isEmpty(minValue)) {
         const minValueDate = new Date(dateStringNormalizer(minValue));
-        validation = validation.min(maxValueDate.toISOString(), minValueErrorText ?? `Date cannot be before ${minValueDate.toDateString()}`);
+        validation = validation.min(minValueDate.toISOString(), minValueErrorText ?? `Date cannot be before ${minValueDate.toDateString()}`);
       }
 
       break;

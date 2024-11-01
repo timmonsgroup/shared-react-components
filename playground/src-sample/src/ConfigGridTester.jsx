@@ -5,7 +5,64 @@ import {
   LAND_GRID,
   LANDS_GRID_LAYOUT } from "./helpers/GridHelpers";
 
+export const CustomActions = ({
+  muiGridColumn,
+  actions,
+  params,
+  themeGroup,
+  useTypeVariant,
+}) => {
+  return (
+    <div
+      aria-label="action button group"
+      className="grid-actions"
+      size="small"
+      style={{
+        width:"500px",
+        margin: 'auto',
+      }}
+    >
+      {actions.map((action, index) => {
+        return (
+          <button key={index} size="small">
+            {action.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 const ConfigGridTester = () => {
+  const actions = [{
+    order: 0,
+    flex: 5,
+    // width: 400,
+    actionList: [
+      {
+        label: 'Verify',
+        order: 0,
+        clickHandler: (row) => {
+          console.log('Verify', row);
+        },
+      },
+      {
+        label: 'Reset',
+        order: 0,
+        clickHandler: (row) => {
+          console.log('Reset', row);
+        }
+      },
+      {
+        label: 'Delete',
+        order: 3,
+        clickHandler: (row) => {
+          console.log('Delete', row);
+        }
+      }
+    ]
+  }];
+
   const extraGridProps = {
     // components: { Toolbar: MUIGridToolbar },
     // Four buttons appear on the MUI grid by default, we want to hide them
@@ -26,6 +83,8 @@ const ConfigGridTester = () => {
     <ConfigGrid
       layout={LANDS_GRID_LAYOUT}
       data={LAND_GRID}
+      actions={actions}
+      // actionsComponent={CustomActions}
       // themeGroup={themeGroup}
       // initialSortColumn="name"
       initialSortDirection="desc"

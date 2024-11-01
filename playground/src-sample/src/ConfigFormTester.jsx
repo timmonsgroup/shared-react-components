@@ -9,6 +9,7 @@ const options = {
 const ConfigFormTester = () => {
   const formData = {
     email: 'duderino@gmail.com',
+    fireDepartment: 'Fire Department',
     // dateApplicationReceived: '2022-01-01',
     // dateApplicationReceived: '2024-01-02T05:00:00.000Z',
     dateApplicationReceived: '2024-09-11T20:54:39.768Z',

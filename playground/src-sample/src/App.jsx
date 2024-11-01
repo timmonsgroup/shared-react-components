@@ -10,6 +10,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ConfigFormTester from './ConfigFormTester'
 import ContextBooks from './ContextPerComponent/ContextBooks';
 import theTheme from './muiTheme';
+import ConfigGridTester from './ConfigGridTester';
 
 function App() {
   console.log('AUTH_STATES', AUTH_STATES)
@@ -17,11 +18,12 @@ function App() {
     <ThemeProvider theme={theTheme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <ConfigGridTester />
         <ContextBooks />
         <ConfigFormTester />
-        <ContainerWithCard>
+        {/* <ContainerWithCard>
           <FormTester />
-        </ContainerWithCard>
+        </ContainerWithCard> */}
       </LocalizationProvider>
     </ThemeProvider>
   )

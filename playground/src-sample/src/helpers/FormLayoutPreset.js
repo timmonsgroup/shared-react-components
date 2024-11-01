@@ -1,7 +1,11 @@
 import theTheme from '@timmons-group/shared-react-components/muiTheme';
 import { FIRE_DEPTS } from './LargeDataset';
 import { FIELD_TYPES } from '@timmons-group/config-form';
-import { max } from 'date-fns';
+import {
+  string, array, date, number, object
+} from 'yup';
+import { is } from 'date-fns/locale';
+import { createAnyModel } from './helpers';
 const FUNDING_SOURCES = [
   {
     id: 0,
@@ -91,6 +95,8 @@ export const createLongTextModel = (
   ...otherThings,
 });
 
+const flagField = createAnyModel(FIELD_TYPES.FLAG, 'flag', 'Flag');
+
 const emailField = createTextModel('email', 'Email', true, {
   placeholder: 'Please enter your email address',
   altHelperText: 'I GO ELSEWHERE!',
@@ -106,6 +112,45 @@ const emailField = createTextModel('email', 'Email', true, {
   //     }
   //   }
   // ],
+});
+
+const customValidationField = createTextModel('customText', 'Custom Text Field', true, {
+  customValidation: (field) => {
+    console.log('field', field);
+    return string().required('This field is required').min(5, 'This field must be at least 5 characters long')
+    .when('email', {
+      is: (email) => email === 'nathan.grant@timmons.com',
+      then: () => string().min(15, 'Now I must be at least 15 characters long')
+    });
+  },
+  conditions: [
+    {
+      when: {
+        fieldId: 'email',
+        operation: 'eq',
+        value: 'nathan.grant@timmons.com'
+      },
+      then: {
+        placeholder: 'nathan is here',
+        helperText: 'He\'s at timmons',
+      }
+    },
+    {
+      when: {
+        fieldId: 'email',
+        operation: 'eq',
+        value: 'nathanattimmons@gmail.com'
+      },
+      then: {
+        placeholder: 'nathan is here',
+        helperText: 'He\'s at timmons but GMAIL',
+        customValidation: (field) => {
+          console.log('field', field);
+          return string().min(7, 'This field must be at least 7 characters long')
+        }
+      }
+    }
+  ]
 });
 
 const customRegexField = createTextModel(
@@ -182,15 +227,15 @@ const fireDepartmentField = {
   helperText:
     'When you select one of the options magic might happen. Like random dog facts or something. Somewhere. Maybe.',
   required: true,
-  conditions: [
-    {
-      when: 'fireDepartment',
-      isValid: true,
-      then: {
-        helperText: 'The magic will die when you clear me!',
-      },
-    },
-  ],
+  // conditions: [
+  //   {
+  //     when: 'fireDepartment',
+  //     isValid: true,
+  //     then: {
+  //       helperText: 'The magic will die when you clear me!',
+  //     },
+  //   },
+  // ],
   disabled: false,
   // 'url': 'https://datausa.io/api/data?drilldowns=State&measures=dep'
   possibleChoices: FIRE_DEPTS,
@@ -769,15 +814,18 @@ export const layout = {
         name: 'Section One',
         order: 10,
         layout: [
-          dateField,
-          longText,
-          moneyChild,
+          customValidationField,
+          flagField,
+          fireDepartmentField,
+          // dateField,
+          // longText,
+          // moneyChild,
           emailField,
-          moneyField,
-          asyncTypeahead,
-          integerField,
-          virginiaCities,
-          conditionalUrlField,
+          // moneyField,
+          // asyncTypeahead,
+          // integerField,
+          // virginiaCities,
+          // conditionalUrlField,
         ],
       },
       // {

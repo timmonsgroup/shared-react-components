@@ -10,6 +10,10 @@ const ContextBooks = () => {
       <BookProvider>
         <BookChangeButton changeTo="This book one" />
         <DumbBook />
+        <BookProvider>
+          <BookChangeButton changeTo="This book three" />
+          <DumbBook />
+        </BookProvider>
       </BookProvider>
       <BookProvider>
         <BookChangeButton changeTo="2nd Book" />

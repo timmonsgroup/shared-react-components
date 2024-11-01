@@ -149,13 +149,10 @@ const finishParsingTriggerFields = (triggerFields, fields) => {
   triggerFields.forEach((trigField) => {
     const touches = trigField.touches;
     touches.forEach((conditions, touchedId) => {
-      // console.log('Touched field Id', touchedId);
-      // console.log('\tTouched field conditions for trigField', trigField.id, conditions);
       conditions.forEach((condition, aFI) => {
         const layout = new Map();
         const validationProps = new Map();
         if (!fields.has(touchedId)) {
-          // console.log('missing field', touchedId);
           return;
         }
         const field = fields.get(touchedId);
@@ -163,7 +160,10 @@ const finishParsingTriggerFields = (triggerFields, fields) => {
         parseValidation(validationProps, field.modelData);
         parseValidation(validationProps, field.render);
 
-        // console.log('\tcondition', condition);
+        let customValidation = field.customValidation;
+        if (condition.then.customValidation) {
+          customValidation = condition.then.customValidation;
+        }
 
         // loop through validation object
         Object.keys(condition.then).forEach((key) => {
@@ -186,9 +186,10 @@ const finishParsingTriggerFields = (triggerFields, fields) => {
         // We'll pass the merged field to the createFieldValidation function so that it can use the dynamic render props (like requiredErrorText)
         mergedField.render = { ...field.render, ...dynRender };
         // Create a yup validation for the field that is triggered by the triggerField
+        const theValidation = customValidation ? customValidation(mergedField) : createFieldValidation(type, label, validationProps, mergedField);
         condition.then = {
           layout,
-          validation: createFieldValidation(type, label, validationProps, mergedField)
+          validation: theValidation
         };
       });
     });
@@ -248,22 +249,17 @@ const parseNewConditions = (fieldId: string | number, triggerFields, conditions:
   }
 
   conditions.forEach((condition, index) => {
-    // console.log('condition', condition)
     const processedCondition = transformCondition(fieldId, condition, index);
     const triggerId = processedCondition.when.fieldId;
-    // console.log('processedCondition', triggerId)
 
     // // touches is a map of every field that triggerfield could influence.
     // // For any value a triggerField fires we need to roll back any fields that COULD have been affected by previous values
     const trigField = triggerFields.get(triggerId) || { id: triggerId, touches: new Map() };
     const affectedFieldConditions: ParsedCondition[] = trigField.touches.get(fieldId) || [];
-    // console.log('affectedFieldConditions', affectedFieldConditions);
     affectedFieldConditions.push(processedCondition);
     trigField.touches.set(fieldId, affectedFieldConditions);
-    // console.log('updated affectedFieldConditions', trigField.touches.get(fieldId));
 
     triggerFields.set(triggerId, trigField);
-    // console.log('updated triggerField', triggerFields.get(triggerId));
   });
 }
 
@@ -322,7 +318,7 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap: Map<string,
     return {} as LegacyParsedFormField;
   }
 
-  const { path, label, type, model, conditions = [], linkFormat, conditionals = [] } = field;
+  const { path, label, type, model, conditions = [], linkFormat } = field;
   const name = path || model?.name || `unknown${model?.id || ''}`;
 
   const hidden = !!field[CONDITIONAL_RENDER.HIDDEN];
@@ -331,7 +327,7 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap: Map<string,
     id: name,
     path,
     conditions,
-    conditionals,
+    // conditionals,
     label,
     type,
     hidden,
@@ -467,12 +463,17 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap: Map<string,
     parsedField.render = updatedRender;
   }
 
-  const validations = new Map();
-  parseValidation(validations, field);
-  parseValidation(validations, data);
+  if (field.customValidation) {
+    parsedField.customValidation = field.customValidation;
+    parsedField.validations = field.customValidation(parsedField);
+  } else {
+    const validations = new Map();
+    parseValidation(validations, field);
+    parseValidation(validations, data);
 
-  if (validations.size) {
-    parsedField.validations = createFieldValidation(type, label, validations, parsedField);
+    if (validations.size) {
+      parsedField.validations = createFieldValidation(type, label, validations, parsedField);
+    }
   }
 
   return parsedField;
