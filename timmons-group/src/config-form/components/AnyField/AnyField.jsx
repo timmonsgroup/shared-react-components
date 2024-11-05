@@ -182,7 +182,7 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
   }
 };
 const radioRenderer = (layout, fieldOptions, finalId, fieldComponentProps) => {
-  const { label, options } = layout;
+  const { label, options, required } = layout;
   const things = options || layout.choices || [];
   const rOptions = things.map((item) => ({ id: item.id || item.value, label: item.label }));
   const renderRadio = ({ field, fieldState: { error } }) => {
@@ -190,13 +190,18 @@ const radioRenderer = (layout, fieldOptions, finalId, fieldComponentProps) => {
     // so we need to manually connect a few props here for react hook form
     return (
       <RadioOptions
+        disabled={!!layout.disabled}
         items={rOptions}
-        isRequired={true}
+        isRequired={!!required}
         id={finalId || field.id || field.name}
         label={label}
         value={value}
         onChange={onChange}
         error={error}
+        altHelperText={layout.altHelperText}
+        iconHelperText={layout.altHelperText}
+        helperText={layout.helperText}
+        fieldOptions={fieldOptions}
         {...fieldComponentProps}
       />);
   };

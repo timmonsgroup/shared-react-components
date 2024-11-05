@@ -220,6 +220,8 @@ const fireDepartmentField = {
     name: 'fireDepartment',
     data: {},
   },
+  // disabled: true,
+  radio:true,
   placeholder: 'The typeahead will populate this field',
   altHelperText: 'I GO ELSEWHERE!',
   iconHelperText:
@@ -236,7 +238,6 @@ const fireDepartmentField = {
   //     },
   //   },
   // ],
-  disabled: false,
   // 'url': 'https://datausa.io/api/data?drilldowns=State&measures=dep'
   possibleChoices: FIRE_DEPTS,
 };
