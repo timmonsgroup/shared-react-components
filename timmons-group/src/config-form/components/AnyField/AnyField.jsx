@@ -146,8 +146,9 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
     fieldOptions.icon.color = fieldOptions.icon.color || 'primary';
   }
 
-  const { id, type, label, options } = layout;
+  const { id, type } = layout;
   const finalId = nestedName || id;
+
   switch (type) {
     case FIELD_TYPES.DATE: {
       return dateRenderer(layout, fieldOptions, finalId, fieldComponentProps);
@@ -165,24 +166,13 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
       if (layout.multiple && layout.checkbox) {
         return checkboxRenderer(layout, fieldOptions, finalId, fieldComponentProps);
       }
+      if (layout.radio) {
+        return radioRenderer(layout, fieldOptions, finalId, fieldComponentProps);
+      }
       return typeaheadRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }
     case 'radio': {
-      const renderRadio = ({ field: { value, onChange }, fieldState: { error } }) => {
-        // so we need to manually connect a few props here for react hook form
-        return (
-          <RadioOptions
-            items={options}
-            isRequired={true}
-            id={finalId}
-            label={label}
-            value={value}
-            onChange={onChange}
-            error={error}
-            {...fieldComponentProps}
-          />);
-      };
-      return renderRadio;
+      return radioRenderer(layout, fieldOptions, finalId, fieldComponentProps);
     }
     case FIELD_TYPES.FLAG: {
       return singleCheckboxRenderer(layout, fieldOptions, finalId, fieldComponentProps);
@@ -191,9 +181,30 @@ const renderType = (layout, fieldOptions = {}, nestedName, fieldComponentProps) 
       return textRenderer(layout, fieldOptions, fieldComponentProps);
   }
 };
+const radioRenderer = (layout, fieldOptions, finalId, fieldComponentProps) => {
+  const { label, options } = layout;
+  const things = options || layout.choices || [];
+  const rOptions = things.map((item) => ({ id: item.id || item.value, label: item.label }));
+  const renderRadio = ({ field, fieldState: { error } }) => {
+    const { value, onChange } = field;
+    // so we need to manually connect a few props here for react hook form
+    return (
+      <RadioOptions
+        items={rOptions}
+        isRequired={true}
+        id={finalId || field.id || field.name}
+        label={label}
+        value={value}
+        onChange={onChange}
+        error={error}
+        {...fieldComponentProps}
+      />);
+  };
+  return renderRadio;
+};
+
 
 const singleCheckboxRenderer = (layout, fieldOptions, finalId, fieldComponentProps) => {
-  console.log('singleCheckboxRenderer', layout, fieldOptions, finalId, fieldComponentProps);
   const { label, disabled, required, helperText, iconHelperText, altHelperText } = layout;
 
   const SingleCheckbox = ({ field, fieldState: { error } }) => {
@@ -548,7 +559,7 @@ const checkboxRenderer = (layout, fieldOptions, finalId, fieldComponentProps) =>
                 data-src-checkbox={item.id}
                 onBlur={field.onBlur}
                 checked={field?.value?.includes(item.id)}
-                  {...fieldComponentProps}
+                {...fieldComponentProps}
                 onChange={(e) => {
                   field.onChange(handleMultiSelectChange(field, item.id));
                 }}

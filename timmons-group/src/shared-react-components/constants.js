@@ -35,7 +35,7 @@ export const FIELD_TYPES = Object.freeze({
   SPATIAL: 20,
   LINK: 100,
   CLUSTER: 120,
-  NONE: 999
+  NONE: 999,
 });
 
 export const REQUIRED = 'required';

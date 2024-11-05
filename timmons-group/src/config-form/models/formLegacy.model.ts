@@ -60,6 +60,7 @@ export type LegacyLayoutField = {
   hidden?: boolean;
   multiple?: boolean;
   checkbox?: boolean;
+  radio?: boolean;
   linkFormat?: string;
   zip?: boolean;
   email?: boolean;
@@ -133,6 +134,7 @@ export type LegacyDropdownRenderProps = LegacyBaseFieldRenderProps & {
   type: typeof FIELD_TYPES['CHOICE'] | typeof FIELD_TYPES['OBJECT'];
   multiple?: boolean;
   checkbox?: boolean;
+  radio?: boolean;
 }
 
 export type LegacyDateRenderProps = LegacyBaseFieldRenderProps & {

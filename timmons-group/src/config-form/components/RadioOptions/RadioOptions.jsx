@@ -1,4 +1,3 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import { FormControl, FormControlLabel, FormLabel, RadioGroup, Radio } from '@mui/material';

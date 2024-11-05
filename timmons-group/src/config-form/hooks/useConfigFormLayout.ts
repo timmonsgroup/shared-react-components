@@ -60,6 +60,7 @@ export type DateFieldRender = BaseFieldRender & {
 export type SelectFieldRender = BaseFieldRender & {
   multiple?: boolean;
   checkbox?: boolean;
+  radio?: boolean;
   choices?: Array<Record<string, any>>;
   url?: string;
 }

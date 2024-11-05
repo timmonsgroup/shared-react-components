@@ -392,6 +392,7 @@ export function parseField(field: LegacyLayoutField, asyncFieldsMap: Map<string,
       choices: [],
       multiple: !!field.multiple,
       checkbox: !!field.checkbox,
+      radio: !!field.radio,
       type
     };
 
