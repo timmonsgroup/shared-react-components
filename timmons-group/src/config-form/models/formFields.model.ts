@@ -1,30 +1,29 @@
 import { LegacyFieldRender } from "./formLegacy.model";
 
-export type CoreProps = {
+export interface CoreProps {
   id: string | number;
   name?: string;
   description?: string;
 }
 
-
-// create a type for a layout
-export type Layout = CoreProps & {
+// create an interface for a layout
+export interface Layout extends CoreProps {
   layoutKey: string;
   type: string | number;
   sections: Section[];
 }
 
-// create a type for a section
-export type Section = CoreProps & {
+// create an interface for a section
+export interface Section extends CoreProps {
   order?: number;
   layout: Array<SectionLayout>;
 }
 
-// create a type for a section layout
-export type SectionLayout = {
+// create an interface for a section layout
+export interface SectionLayout {
 }
 
-export type CoreFieldProps = {
+export interface CoreFieldProps {
   id: string | number;
   name?: string;
   type: string;
@@ -33,7 +32,7 @@ export type CoreFieldProps = {
   condtions: Array<Conditional>;
 }
 
-export type FieldRender = {
+export interface FieldRender {
   required?: boolean;
   disabled?: boolean;
   hidden?: boolean;
@@ -42,7 +41,7 @@ export type FieldRender = {
   helperText?: string;
 }
 
-export type Validations = {
+export interface Validations {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -64,7 +63,7 @@ export type Conditional = When & Then;
  * }
  *
  */
-export type When = {
+export interface When {
   fieldId: string;
   operation: Operation;
   value: string | number | boolean | RegExp;
@@ -74,7 +73,7 @@ export type When = {
 
 export type Whens = When | Array<When>;
 
-export type Then = {
+export interface Then {
   render?: FieldRender | LegacyFieldRender;
   validations?: Validations;
 }
