@@ -9,6 +9,7 @@ import { Schema } from 'yup';
 export type FieldIntTypes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 | 100 | 120 | 999;
 
 export interface LegacyFormLayout {
+  id?: string | number;
   type: 1,
   sections: LegacySection[];
 }
@@ -25,6 +26,7 @@ export interface LegacyParsedSection {
 }
 
 export interface LegacySection {
+  id?: string | number;
   name?: string;
   title?: string;
   layout: LegacyLayoutField[];
