@@ -1,7 +1,6 @@
 /** @module UserMenu */
 import { type FC, useState } from 'react';
 import { Button, Menu, MenuItem, Link, useMediaQuery, Typography, Box } from '@mui/material';
-import PropTypes from 'prop-types';
 import { ArrowDropDown, ArrowDropUp, AccountCircle } from '@mui/icons-material';
 
 import { useAuth } from '@timmons-group/shared-react-auth';
@@ -25,10 +24,6 @@ export const MenuArrow: FC<MenuArrowProps> = ({ open }) => {
   }
   let rets = <ArrowDropUp />;
   return rets
-};
-
-MenuArrow.propTypes = {
-  open: PropTypes.bool,
 };
 
 /**

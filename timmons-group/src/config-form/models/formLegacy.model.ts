@@ -5,13 +5,16 @@
  */
 import { FIELD_TYPES, MAX_VALUE_ERROR_TEXT, MIN_VALUE_ERROR_TEXT } from '../constants';
 import { When } from './formFields.model';
-import {
-  Schema
-} from 'yup';
+import { Schema } from 'yup';
 export type FieldIntTypes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 | 100 | 120 | 999;
 
+export interface LegacyFormLayout {
+  type: 1,
+  sections: LegacySection[];
+}
 
-export type LegacyParsedSection = {
+
+export interface LegacyParsedSection {
   name?: string;
   title?: string;
   fields: string[];
@@ -21,7 +24,7 @@ export type LegacyParsedSection = {
   description?: string;
 }
 
-export type LegacySection = {
+export interface LegacySection {
   name?: string;
   title?: string;
   layout: LegacyLayoutField[];
@@ -35,7 +38,7 @@ export type LegacySection = {
 export type CustomValidationFunction = (field: LegacyParsedFormField) => Schema;
 
 
-export type LegacyLayoutField = {
+export interface LegacyLayoutField {
   path: string;
   type: FieldIntTypes;
   label: string;
@@ -74,7 +77,7 @@ export type LegacyLayoutField = {
   layout?: Array<LegacyLayoutField>;
 }
 
-export type LegacyParsedFormField = {
+export interface LegacyParsedFormField {
   id: string;
   path: string;
   label: string;
@@ -95,7 +98,7 @@ export type LegacyFieldRender =
   LegacyBaseFieldRenderProps | LegacyDropdownRenderProps | LegacyDateRenderProps | LegacyLongTextRenderProps
   | LegacyTextRenderProps | LegacyClusterRenderProps;
 
-export type LegacyBaseFieldRenderProps = {
+export interface LegacyBaseFieldRenderProps {
   type: FieldIntTypes;
   label: string;
   name: string;
@@ -130,36 +133,36 @@ export type LegacyBaseFieldRenderProps = {
   linkFormat?: string;
 }
 
-export type LegacyDropdownRenderProps = LegacyBaseFieldRenderProps & {
+export interface LegacyDropdownRenderProps extends LegacyBaseFieldRenderProps {
   type: typeof FIELD_TYPES['CHOICE'] | typeof FIELD_TYPES['OBJECT'];
   multiple?: boolean;
   checkbox?: boolean;
   radio?: boolean;
 }
 
-export type LegacyDateRenderProps = LegacyBaseFieldRenderProps & {
+export interface LegacyDateRenderProps extends LegacyBaseFieldRenderProps {
   disableFuture?: boolean;
   disableFutureErrorText?: string;
 }
 
-export type LegacyLongTextRenderProps = LegacyBaseFieldRenderProps & {
+export interface LegacyLongTextRenderProps extends LegacyBaseFieldRenderProps {
   isMultiLine?: boolean;
 }
 
-export type LegacyTextRenderProps = LegacyBaseFieldRenderProps & {
+export interface LegacyTextRenderProps extends LegacyBaseFieldRenderProps {
   email?: boolean;
   phone?: boolean;
   zip?: boolean;
 }
 
-export type LegacyClusterRenderProps = LegacyBaseFieldRenderProps & {
+export interface LegacyClusterRenderProps extends LegacyBaseFieldRenderProps {
   type: typeof FIELD_TYPES['CLUSTER'];
   addLabel?: string;
   removeLabel?: string;
   clusterColumnCount?: number;
 }
 
-export type LegacyCondition = {
+export interface LegacyCondition {
   when: string;
   is: string | number;
   isValid?: boolean;

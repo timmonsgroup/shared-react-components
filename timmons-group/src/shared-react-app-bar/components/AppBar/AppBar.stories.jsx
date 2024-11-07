@@ -1,4 +1,3 @@
-import React from 'react';
 import AppBar from './AppBar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { authContext } from '@timmons-group/shared-react-auth';

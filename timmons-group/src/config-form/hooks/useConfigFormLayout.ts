@@ -6,13 +6,13 @@
 import { FIELD_TYPES } from "../constants";
 import { Conditional } from "../models/formFields.model";
 import { LegacyParsedSection } from "../models/formLegacy.model";
-import { type AnySchema, string } from "yup";
+import { type AnySchema } from "yup";
 
 //create a union type for the different types of fields using the keyof the FIELD_TYPES object
 export type FieldTypes = keyof typeof FIELD_TYPES;
 export type ConfigFormFieldTypes = Lowercase<FieldTypes>;
 
-export type ConfigFormField = {
+export interface ConfigFormField {
   id: string;
   type: ConfigFormFieldTypes;
   render: ConfigFormFieldRender;
@@ -22,14 +22,14 @@ export type ConfigFormField = {
   watchers?: Map<string, boolean>;
 }
 
-export type RegexpValidation = {
+export interface RegexpValidation {
   pattern: RegExp | string;
   flags?: string;
   errorMessage?: string;
 }
 
 export type ConfigFormFieldRender = BaseFieldRender | DateFieldRender | SelectFieldRender | TextFieldRender;
-export type ConfigFormValidationOptions = {
+export interface ConfigFormValidationOptions {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -42,7 +42,7 @@ export type ConfigFormValidationOptions = {
   [key: string]: any;
 }
 
-export type BaseFieldRender = {
+export interface BaseFieldRender {
   required?: boolean;
   disabled?: boolean;
   hidden?: boolean;
@@ -52,12 +52,12 @@ export type BaseFieldRender = {
   [key: string]: any;
 }
 
-export type DateFieldRender = BaseFieldRender & {
+export interface DateFieldRender extends BaseFieldRender {
   disableFuture?: boolean;
   disableFutureErrorText?: string;
 }
 
-export type SelectFieldRender = BaseFieldRender & {
+export interface SelectFieldRender extends BaseFieldRender  {
   multiple?: boolean;
   checkbox?: boolean;
   radio?: boolean;
@@ -65,12 +65,12 @@ export type SelectFieldRender = BaseFieldRender & {
   url?: string;
 }
 
-export type ConfigFormLayout = {
+export interface ConfigFormLayout {
   sections?: LegacyParsedSection[];
   fields: Map<string, ConfigFormField>;
 }
 
-export type TextFieldRender = BaseFieldRender & {
+export interface TextFieldRender extends BaseFieldRender {
   emptyMessage?: string;
   iconHelperText?: string;
   altHelperText?: string;

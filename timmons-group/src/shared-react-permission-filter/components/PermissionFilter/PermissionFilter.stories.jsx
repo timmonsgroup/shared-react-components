@@ -1,4 +1,3 @@
-import React from 'react';
 import PermissionFilter from './PermissionFilter';
 import { BrowserRouter as Router } from 'react-router-dom';
 

@@ -11,7 +11,7 @@ import { Schema } from 'yup';
  * @property {Map<String, Object>} fields - map of fieldId to field object
  * @property {Map<String, Object>} triggerFields - map of fieldId to field object
  */
-export type ParsedFormLayout = {
+export interface ParsedFormLayout {
   sections: ParsedSection[];
   fields: Map<string, ParsedField>;
   triggerFields: Map<string, TriggerField>;
@@ -26,7 +26,7 @@ export type ParsedFormLayout = {
  * @property {Array} enabled - if the section is enabled
  * @property {number} order - order of the section
  */
-export type ParsedSection = {
+export interface ParsedSection {
   name: string;
   title: string;
   fields: ParsedField[];
@@ -41,7 +41,7 @@ export type ParsedSection = {
  * @property {object} validations - The validation schema for the form
  * @property {object} fieldsToWatch - The fields that need to be watched for changes
  */
-export type ProcessedDynamicFormLayout = {
+export interface ProcessedDynamicFormLayout {
   defaultValues: object;
   validations: object;
   fieldsToWatch: object;
@@ -60,7 +60,7 @@ export type ProcessedDynamicFormLayout = {
  * @property {Array<ParsedField>} [subFields] - subFields for the field if its type is FIELD_TYPES.CLUSTER (i.e. 100)
  * @property {FieldRenderProps} render - render props for the field
  */
-export type ParsedField = {
+export interface ParsedField {
   id: string;
   label: string;
   type: string;
@@ -91,7 +91,7 @@ export type ParsedField = {
  * @property {Array<object>} [choices] - choices for the field
  * @property {Schema} validations - validations for the field
  */
-export type FieldRenderProps = {
+export interface FieldRenderProps {
   type: string;
   label: string;
   name: string;
@@ -125,7 +125,7 @@ export type FieldRenderProps = {
  * @property {boolean} [suppressSuccessToast] - true to suppress the success toast
  * @property {boolean} [suppressErrorToast] - true to suppress the error toast *
  */
-export type SubmitOptions = {
+export interface SubmitOptions {
   enqueueSnackbar?: Function;
   nav?: Function;
   onSuccess?: Function;
@@ -148,7 +148,7 @@ export type SubmitOptions = {
  * @property {object} then - conditions
  * @property {boolean} isValid - if the field is valid
  */
-export type TriggerCondition = {
+export interface TriggerCondition {
   when: string;
   is: string;
   then: object;
@@ -164,7 +164,7 @@ export type TriggerFieldTouches = Map<string, Map<string, boolean>>;
  * @property {TriggerFieldValues} fieldValues - map of field values
  * @property {TriggerFieldTouches} touches - map of fields that trigger field could influence
  */
-export type TriggerField = {
+export interface TriggerField {
   id: string;
   fieldValues: TriggerFieldValues;
   touches: TriggerFieldTouches;
@@ -178,7 +178,7 @@ export type TriggerField = {
  * @property {Array} fields - The fields in the section
  * @property {boolean} [visible] - Whether the section is visible
  */
-export type FormSection = {
+export interface FormSection {
   name?: string;
   description?: string;
   fields: any[];
@@ -192,7 +192,7 @@ export type FormSection = {
  * @property {boolean} [modifying] - true if the form is currently being modified
  * @property {function} [setModifying] - function to set the modifying state
  */
-export type FormSubmitOptions = {
+export interface FormSubmitOptions {
   enqueueSnackbar?: Function;
   nav?: Function;
   modifying?: boolean;
@@ -207,7 +207,7 @@ export type FormSubmitOptions = {
  * @property {boolean} [solitary] - true if the row is a solitary field
  * @property {boolean} [isInline] - true if the row is an inline field
  */
-export type RowFields = {
+export interface RowFields {
   fields: ParsedField[];
   size?: number;
   maxColumns?: number;
