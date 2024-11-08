@@ -14,7 +14,6 @@ export interface LegacyFormLayout {
   sections: LegacySection[];
 }
 
-
 export interface LegacyParsedSection {
   name?: string;
   title?: string;

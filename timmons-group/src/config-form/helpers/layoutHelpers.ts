@@ -3,14 +3,19 @@ import { FieldIntTypes, LegacyLayoutField } from '../models';
 import { Conditional } from '../models/formFields.model';
 import { checkConditional } from './formHelpers';
 
+// Convert const VALIDATIONS = { NO_TRIM: 'noTrim', ANOTHER_KEY: 'anotherKey'} to type ValidationKeys = 'NO_TRIM' | 'ANOTHER_KEY'
 type ValidationKeys = keyof typeof VALIDATIONS;
+// Use the Keys above to create a type ValidationValues = 'noTrim' | 'anotherKey'
 type ValidationValues = typeof VALIDATIONS[ValidationKeys];
 
 type RenderKeys = keyof typeof CONDITIONAL_RENDER;
 type RenderValues = typeof CONDITIONAL_RENDER[RenderKeys];
 
+// Merge all those in a union type FormFieldPropertyValues = 'noTrim' | 'anotherKey' | 'conditionalRenderKey'
 type FormFieldPropertyValues = ValidationValues | RenderValues;
 
+// Create a type FormFieldLayoutPropertyMap that maps the FormFieldPropertyValues to any so the following would be valid
+// For example: const myProps: FormFieldLayoutPropertyMap = { noTrim: true, anotherKey: 'someValue' }
 type FormFieldLayoutPropertyMap = {
   [key in FormFieldPropertyValues]?: any;
 };
